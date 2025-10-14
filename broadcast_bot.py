@@ -17,8 +17,9 @@ CONFIG_PATH = "config/config.json"
 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
     config = json.load(f)
 
-BROADCAST_BOT_TOKEN = config.get("broadcast_bot_token")
-ADMIN_CHAT_ID = int(config.get("admin_chat_id"))
+# Load sensitive values from environment variables
+BROADCAST_BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN")
+ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
 
 # Group IDs (set your actual ones)
 VIP_GROUP_ID = -1002721581400

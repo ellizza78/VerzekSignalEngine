@@ -1,8 +1,4 @@
 {
-  "telegram_bot_token": "7948953134:AAF78qUiIF5S8BdQUFUf9kGJ-NSWJeLqGC8",
-  "broadcast_bot_token": "8479454611:AAHltFsysPnAnovTX4xlCJlXUFBsbyZICj4",
-  "admin_chat_id": 572038606,
-
   "signal_group_ids": [
     -1002721581400
   ],

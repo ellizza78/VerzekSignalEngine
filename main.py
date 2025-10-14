@@ -36,8 +36,9 @@ def load_config():
 
 config = load_config()
 
-BOT_TOKEN = config["telegram_bot_token"]
-ADMIN_CHAT_ID = int(config["admin_chat_id"])
+# Load sensitive values from environment variables
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
 SIGNAL_GROUP_IDS = [int(gid) for gid in config.get("signal_group_ids", [])]
 WATCHED_SIGNAL_SOURCES = [int(cid) for cid in config.get("watched_signal_sources", [])]
 SCAN_INTERVAL = config.get("scan_interval", 10)
