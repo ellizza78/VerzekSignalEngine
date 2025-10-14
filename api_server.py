@@ -19,6 +19,30 @@ app = Flask(__name__)
 
 start_time = time.time()
 
+# ============================
+# HOME PAGE
+# ============================
+
+@app.route("/")
+def home():
+    uptime = round(time.time() - start_time, 2)
+    return jsonify({
+        "name": "VerzekAutoTrader API",
+        "version": "1.0",
+        "status": "online",
+        "uptime_seconds": uptime,
+        "description": "Automated cryptocurrency trading bot API",
+        "endpoints": {
+            "/": "API documentation (this page)",
+            "/api/status": "Get bot status and uptime",
+            "/api/test": "Test API connection",
+            "/api/trades": "Get all executed trades",
+            "/api/latest": "Get latest trade"
+        },
+        "message": "VerzekAutoTrader is running smoothly! 🚀"
+    })
+
+
 @app.route("/api/status")
 def get_status():
     uptime = round(time.time() - start_time, 2)
