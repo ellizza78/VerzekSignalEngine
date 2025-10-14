@@ -82,9 +82,10 @@ python broadcast_bot.py
 ```
 
 ## Deployment
-- **Deployment Target**: Autoscale
+- **Deployment Target**: Reserved VM (24/7 Always-On)
 - **Run Command**: `python api_server.py`
-- The project is configured to deploy the REST API server for external access
+- The project is configured for continuous 24/7 operation using a Reserved VM deployment
+- This ensures the bot stays online continuously to monitor Telegram channels and execute trades
 
 ## Database/Storage
 All data is stored locally in the `database/` folder:
@@ -109,7 +110,7 @@ All Python dependencies are managed via pip:
   - Installed Python 3.11 and all dependencies
   - Added `get_all_trades()` function to trade_executor.py for API compatibility
   - Configured Flask API workflow on port 5000
-  - Set up autoscale deployment configuration
+  - Set up Reserved VM deployment for 24/7 continuous operation
   - All API endpoints tested and working
 
 ## User Preferences
