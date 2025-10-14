@@ -120,6 +120,40 @@ def save_trade_record(trade):
 
 
 # =====================================
+# GET ALL TRADES (For API)
+# =====================================
+
+def get_all_trades():
+    """Retrieve all trades from the CSV log file for API consumption."""
+    csv_path = "database/trades_log.csv"
+    
+    if not os.path.exists(csv_path):
+        return []
+    
+    trades = []
+    with open(csv_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        # Skip header
+        for line in lines[1:]:
+            parts = line.strip().split(",")
+            if len(parts) >= 10:
+                trades.append({
+                    "timestamp": parts[0],
+                    "symbol": parts[1],
+                    "side": parts[2],
+                    "entry_price": float(parts[3]),
+                    "tp": parts[4] if parts[4] != "None" else None,
+                    "sl": parts[5] if parts[5] != "None" else None,
+                    "amount": float(parts[6]),
+                    "balance": float(parts[7]),
+                    "mode": parts[8],
+                    "status": parts[9]
+                })
+    
+    return trades
+
+
+# =====================================
 # DEMO RUN (Optional)
 # =====================================
 
