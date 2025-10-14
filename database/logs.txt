@@ -1,0 +1,570 @@
+
+[2025-10-07 16:37:29] [START] 🚀 VerzekSignalBot launching...
+[2025-10-07 16:37:30] [SUCCESS] ✅ Bot connected successfully! Monitoring 2 groups.
+[2025-10-07 16:47:31] [INFO] 🔍 Checking for new signals...
+[2025-10-07 16:54:55] [START] 🚀 VerzekSignalBot launching...
+[2025-10-07 16:54:56] [SUCCESS] ✅ Bot connected successfully! Monitoring 2 groups.
+[2025-10-07 17:04:58] [INFO] 🔍 Checking for new signals...
+
+Updated working bot version from local PC
+
+[2025-10-09 08:51:34] [START] 🚀 VerzekSignalBot launching...
+[2025-10-09 08:51:36] [SUCCESS] ✅ Bot connected successfully! Monitoring 2 groups.
+[2025-10-09 12:24:04] [TRADE] 📈 Simulating LONG BTCUSDT | Entry: 68000.0000 | Leverage: 10x
+[2025-10-09 12:24:04] [MARGIN] 📉 BTCUSDT price dropped 3.5% → Averaging 2x at 65620.0000
+[2025-10-09 12:24:04] [MARGIN] 📉 BTCUSDT price dropped 4.0% → Averaging 4x at 65280.0000
+[2025-10-09 12:24:04] [MARGIN] 📉 BTCUSDT price dropped 4.5% → Averaging 8x at 64940.0000
+[2025-10-09 12:24:04] [SUCCESS] ✅ Trade simulated: BTCUSDT LONG | TP 68680.0000 | SL 67524.0000
+[2025-10-09 12:45:31] [TEST] Running BinanceClient simulation test...
+[2025-10-09 12:45:31] [WARNING] ⚠️ API keys missing. Switching to simulation mode automatically.
+[2025-10-09 12:45:31] [SIMULATED] 📊 Simulated BUY order placed for BTCUSDT — Amount: 0.01, Price: 99.1315
+[2025-10-09 12:45:31] [TP/SL] 🎯 TP: 105.0, 🛑 SL: 95.0 (Simulated for Order 1760010331878)
+[2025-10-09 12:45:31] [POSITION] 📈 Simulated position for BTCUSDT: {'symbol': 'BTCUSDT', 'size': 0.9885543703525986, 'entry_price': 100.22434585314102, 'unrealized_pnl': -1.36, 'timestamp': '2025-10-09T11:45:31.906339', 'mode': 'demo'}
+[2025-10-09 12:45:31] [BALANCE] 💰 Simulated USDT balance: 1730.4
+[2025-10-09 12:48:06] [TRADE] 📢 Executing BUY trade for BTCUSDT (amount: 0.01)...
+[2025-10-09 12:48:06] [WARNING] ⚠️ API keys missing. Switching to simulation mode automatically.
+[2025-10-09 12:48:06] [SIMULATED] 📊 Simulated BUY order placed for BTCUSDT — Amount: 0.01, Price: 96.2748
+[2025-10-09 12:48:06] [TP/SL] 🎯 TP: 105.5, 🛑 SL: 95.2 (Simulated for Order 1760010486804)
+[2025-10-09 12:48:06] [BALANCE] 💰 Simulated USDT balance: 1020.21
+[2025-10-09 12:48:06] [TRADE_SUCCESS] ✅ Trade executed: {'timestamp': '2025-10-09T11:48:06.844678', 'symbol': 'BTCUSDT', 'side': 'buy', 'amount': 0.01, 'entry_price': 96.27477160715914, 'tp': 105.5, 'sl': 95.2, 'balance': 1020.21, 'mode': 'demo'}
+[2025-10-09 12:54:13] [START] 🚀 VerzekSignalBot launching...
+[2025-10-09 12:54:14] [SUCCESS] ✅ Bot connected successfully! Monitoring 2 groups.
+[2025-10-09 13:04:15] [INFO] 🔍 Checking for new signals...
+[2025-10-09 14:25:13] [START] 🚀 VerzekSignalBot launching...
+[2025-10-09 14:25:15] [SUCCESS] ✅ Bot connected successfully! Monitoring 2 groups.
+[2025-10-09 14:35:17] [INFO] 🔍 Checking for new signals...
+[2025-10-09 14:43:43] [INFO] 📩 Parsed VERZEK signal: {'source_type': 'VERZEK', 'symbol': 'BTCUSDT', 'direction': 'LONG', 'timeframe': '1H', 'entry': None, 'tp': [], 'sl': None, 'pattern': 'Engulfing', 'type': 'FUTURES', 'source_text': 'LONG BTCUSDT RSI 28 MACD -0.007 STOCH 18 1H BULLISH ENGULFING'}
+[2025-10-09 14:44:04] [TRADE] 🟢 Simulated trade: BTCUSDT LONG Entry=29710.5360 TP=30007.6413 SL=29413.4306
+[2025-10-09 14:44:04] [INFO] 💾 Trade saved for BTCUSDT
+[2025-10-09 14:51:31] [API] 🌐 Starting Flask API on port 5000
+[2025-10-13 15:00:46] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 15:17:49] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 15:17:49] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 15:17:49] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 15:17:49] [ERROR] ⚠️ Watcher error: urllib3 HTTPError HTTPSConnectionPool(host='api.telegram.org', port=443): Max retries exceeded with url: /bot7974869739:AAEVZLW747A6YKXwdot0MsW_KMMsSEwqx7g/getChat (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000277D7CE82F0>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+[2025-10-13 15:17:49] [ERROR] ⚠️ Watcher error: urllib3 HTTPError HTTPSConnectionPool(host='api.telegram.org', port=443): Max retries exceeded with url: /bot7974869739:AAEVZLW747A6YKXwdot0MsW_KMMsSEwqx7g/getChat (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x00000277D44E7410>: Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+[2025-10-13 15:32:04] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 15:32:04] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 15:32:04] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 15:32:07] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 15:32:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:32:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:32:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:32:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:32:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:32:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:44] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:33:49] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:23] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:28] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:34:47] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:02] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:22] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:35:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:36:59] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:04] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:37:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:18] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:23] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:37] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:38:57] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:02] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:39:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:40:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:39] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:41:59] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:14] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:39] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:42:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:13] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:18] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:32] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:37] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:52] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:43:57] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:44:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:49] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:45:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:13] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:28] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:33] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:48] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:46:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:32] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:47:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:48:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:44] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:49:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:04] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:09] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:50:48] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:22] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:51:47] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:52:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:53:59] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:54:04] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:54:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:54:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:54:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 15:58:13] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 15:58:13] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 15:58:13] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 15:58:18] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:19] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 15:58:19] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:29] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:29] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:39] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:39] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:49] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:58:50] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:00] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:00] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:10] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:10] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:21] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:21] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:31] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:31] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:42] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:42] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:52] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 15:59:52] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:02] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:03] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:13] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:13] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:23] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:23] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:33] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:34] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:44] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:44] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:54] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:00:55] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:05] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:05] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:15] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:16] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:26] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:26] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:36] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:36] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:46] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:47] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:57] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:01:57] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:07] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:07] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:18] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:18] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:28] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:29] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:39] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:40] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:44] [INFO] 👋 User 572038606 started the bot.
+[2025-10-13 16:02:51] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:02:51] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:01] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:01] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:11] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:12] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:22] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:22] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:32] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:32] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:42] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:43] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:53] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:03:53] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:03] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:03] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:14] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:14] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:24] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:24] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:34] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:35] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:45] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:45] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:55] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:04:55] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:05] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:06] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:16] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:16] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:26] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:27] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:05:41] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:05:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:05:56] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:06:07] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:06:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:06:22] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:06:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:06:36] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:06:52] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:06:52] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:07:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:07:06] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:07:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:07:21] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:07:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:07:36] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:10:24] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 16:10:24] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 16:10:24] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 16:10:26] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 16:10:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:10:26] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:10:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:10:41] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:10:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:10:55] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:11:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:11:10] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:12:41] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 16:12:41] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 16:12:41] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 16:12:43] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 16:12:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:12:43] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:12:57] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:12:58] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:13:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:13:12] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:13:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:13:27] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:13:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:13:42] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:13:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:13:57] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:14:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:14:11] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:14:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:14:26] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:14:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:14:41] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:14:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:14:55] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:15:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:15:10] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:15:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:15:25] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:15:39] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:15:40] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:15:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:15:54] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:16:09] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:16:09] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:16:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:16:24] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:16:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:16:38] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:16:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:16:53] [ERROR] ⚠️ Watcher error: Chat not found
+[2025-10-13 16:31:59] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 16:31:59] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 16:31:59] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 16:32:00] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 16:32:00] [INFO] 👋 User 572038606 started the bot.
+[2025-10-13 16:32:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:32:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:32:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:32:39] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:32:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:32:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:17] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:22] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:37] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:33:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:34:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:14] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:33] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:35:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:17] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:32] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:37] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:52] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:36:57] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:37:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:47:48] [START] 🚀 VerzekSignalBot launching...
+[2025-10-13 16:47:48] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-13 16:47:48] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-13 16:47:50] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-13 16:47:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:47:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:09] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:14] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:28] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:33] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:48] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:48:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:32] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:49:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:50:52] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:31] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:51:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:44] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:52:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:04] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:09] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:53:48] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:23] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:28] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:54:47] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:02] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:55:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:56:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:26] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:57:51] [INFO] 🔍 Checking for new signals...
+[2025-10-13 16:57:57] [ERROR] ⚠️ Failed to fetch messages from -1002721581400: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:58:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:58:24] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:58:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:58:44] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:58:59] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:59:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:59:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:59:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:59:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 16:59:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:05] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:00:59] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:04] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:23] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:38] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:43] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:01:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:03] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:18] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:23] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:37] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:42] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:02:57] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:02] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:03:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:04:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:01] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:21] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:41] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:05:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:20] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:40] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:06:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:14] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:19] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:39] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:07:57] [INFO] 🔍 Checking for new signals...
+[2025-10-13 17:07:58] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:08:04] [ERROR] ⚠️ Failed to fetch messages from -1002721581400: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:08:13] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:08:36] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:08:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:08:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:15] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:09:56] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:10] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:35] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:50] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:10:55] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:09] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:14] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:49] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:11:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:13] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:29] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:34] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:49] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:12:54] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:08] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:13] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:28] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:33] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:48] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:13:53] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:07] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:12] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:27] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:32] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:46] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:14:51] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:06] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:11] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:25] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:41] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-13 17:15:45] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:15:56] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-13 17:16:00] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:16:10] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-13 17:16:16] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+[2025-10-13 17:16:26] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-13 17:16:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running

@@ -1,0 +1,47 @@
+{
+  "telegram_bot_token": "7948953134:AAF78qUiIF5S8BdQUFUf9kGJ-NSWJeLqGC8",
+  "broadcast_bot_token": "8479454611:AAHltFsysPnAnovTX4xlCJlXUFBsbyZICj4",
+  "admin_chat_id": 572038606,
+
+  "signal_group_ids": [
+    -1002721581400
+  ],
+
+  "watched_signal_sources": [
+    -1002721581400,
+    -1002726167386
+  ],
+
+  "scan_interval": 10,
+  "mode": "demo",
+
+  "exchange_settings": {
+    "default_exchange": "bybit",
+    "supported_exchanges": ["binance", "bybit", "phemex"],
+    "api_mode": "disabled",
+    "api_key": "",
+    "api_secret": ""
+  },
+
+  "auto_trade": {
+    "enabled": true,
+    "risk_per_trade": 0.02,
+    "default_position_size": 10,
+    "max_concurrent_trades": 3
+  },
+
+  "strategy": {
+    "entry_logic": "RSI + Stochastic + MACD + Candle Pattern + Pivot",
+    "take_profit_percent": 1.5,
+    "stop_loss_percent": 1.0,
+    "signal_timeframe": "1H",
+    "target_profit_mode": "short_term"
+  },
+
+  "logging": {
+    "enable_trade_log": true,
+    "enable_signal_log": true,
+    "log_file": "database/forward_log.txt",
+    "cleanup_days": 30
+  }
+}

@@ -1,0 +1,15 @@
+[
+    {
+        "symbol": "BTCUSDT",
+        "direction": "LONG",
+        "type": "FUTURES",
+        "entry": 29710.53595039167,
+        "tp": 30007.6413,
+        "sl": 29413.4306,
+        "timeframe": "1H",
+        "pattern": "Engulfing",
+        "status": "EXECUTED",
+        "timestamp": "2025-10-09 13:44:04",
+        "source_type": "VERZEK"
+    }
+]
