@@ -36,7 +36,8 @@ bot = Bot(token=BROADCAST_BOT_TOKEN)
 KEYWORDS = (
     "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
     "STOP LOSS", "TARGETS", "TARGET", "PROFIT", "LOSS",
-    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT", "REACHED", "CANCELLED"
+    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT", "REACHED", "CANCELLED",
+    "ACHIEVED", "CLOSED", "TAKE-PROFIT", "TAKE PROFIT", "GAINED"
 )
 
 def clean_signal(text):

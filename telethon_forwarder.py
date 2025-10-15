@@ -27,7 +27,8 @@ TARGET_IDS = {VIP_GROUP_ID, TRIAL_GROUP_ID}
 KEYWORDS = (
     "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
     "STOP LOSS", "TARGETS", "TARGET", "PROFIT", "LOSS",
-    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT"
+    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT",
+    "ACHIEVED", "CLOSED", "TAKE-PROFIT", "TAKE PROFIT", "GAINED"
 )
 
 # --- Init client with StringSession (no DB locks) ---

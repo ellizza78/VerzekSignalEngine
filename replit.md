@@ -35,8 +35,9 @@ VerzekAutoTrader is an automated cryptocurrency trading bot that listens to Tele
 
 4. **Telethon Auto-Forwarder** (`telethon_forwarder.py`) - Universal signal monitor
    - Monitors ALL Telegram sources 24/7: personal chats, channels, groups (even when user is offline)
-   - Enhanced signal detection with 17+ keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL, STOP LOSS, TARGETS, TARGET, PROFIT, LOSS, LEV, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED
-   - Supports multiple signal formats: entry signals, profit notifications, stop loss alerts, cancellations
+   - Enhanced signal detection with 24+ keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL, STOP LOSS, TARGETS, TARGET, PROFIT, LOSS, LEV, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED, ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
+   - Supports multiple signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations
+   - Spam filter blocks promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, etc.)
    - Forwards raw signals to @broadnews_bot for cleaning and broadcasting
    - Uses StringSession (no database locking issues)
    - Requires one-time authentication via `setup_telethon.py`
@@ -118,11 +119,12 @@ All Python dependencies are managed via pip:
 - `schedule` - Task scheduling
 
 ## Recent Changes
-- **2025-10-15**: Enhanced Signal Detection & Multiple Format Support
-  - Expanded keyword detection: Added TARGETS, PROFIT, LOSS, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED
-  - Now supports diverse signal formats (profit notifications, stop loss alerts, signal cancellations)
+- **2025-10-15**: Enhanced Signal Detection & Spam Filtering
+  - Expanded keyword detection to 24+ keywords: Added ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
+  - Now supports all signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations
+  - Added spam filter to block promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, PARTICIPATE, etc.)
   - Fixed signal cleaning: Preserves coin pair names (e.g., BTCUSDT, ORDI/USDT) while removing hashtags
-  - Telethon forwarder now monitors ALL Telegram sources (personal chats, channels, groups)
+  - Telethon forwarder monitors ALL Telegram sources (personal chats, channels, groups) 24/7
   - Signal cleaning removes only # symbols and leverage indicators (Lev x26) but keeps essential data
   - System works 24/7 even when user is completely offline
 
