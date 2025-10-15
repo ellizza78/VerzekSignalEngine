@@ -68,13 +68,55 @@ def broadcast_message(update, context):
     except Exception:
         pass
 
+def auto_forward_signals(update, context):
+    """Auto-forward signals from monitored channels to VIP and TRIAL groups"""
+    message = update.message
+    text = (message.text or message.caption or "").strip()
+    
+    if not text:
+        return
+    
+    # Check if message contains trading keywords
+    if not any(k in text.upper() for k in KEYWORDS):
+        return
+    
+    # Get source info
+    source_chat = message.chat.title or message.chat.username or "Signal Source"
+    
+    # Format message with Verzek branding
+    header = "🔥 New Signal Alert (VerzekSignalBot)\n━━━━━━━━━━━━━━━━━━\n"
+    formatted_msg = header + text
+    
+    # Broadcast to VIP and TRIAL groups
+    try:
+        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_msg)
+        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_msg)
+        logger.info(f"📡 Auto-forwarded signal from {source_chat}")
+        
+        # Log it
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
+    except Exception as e:
+        logger.error(f"⚠️ Auto-forward failed: {e}")
+
+
 def main():
     updater = Updater(BROADCAST_BOT_TOKEN, use_context=True)
     dp = updater.dispatcher
 
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, broadcast_message))
+    # Handler for admin personal messages (manual broadcast)
+    dp.add_handler(MessageHandler(
+        Filters.text & ~Filters.command & Filters.private, 
+        broadcast_message
+    ))
+    
+    # Handler for signal source channels (auto-forward)
+    dp.add_handler(MessageHandler(
+        Filters.text & ~Filters.command & Filters.group,
+        auto_forward_signals
+    ))
 
-    logger.info("🚀 VerzekBroadcastBot is now listening for admin signals...")
+    logger.info("🚀 VerzekBroadcastBot is now listening for admin signals and monitoring signal sources...")
     updater.start_polling()
     updater.idle()
 
