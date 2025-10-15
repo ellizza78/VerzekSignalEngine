@@ -15,15 +15,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Flask API Server"
+args = "VerzekAutoTrader"
 
 [[workflows.workflow]]
-name = "Flask API Server"
+name = "VerzekAutoTrader"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python api_server.py"
+args = "python run_all_bots.py"
 waitForPort = 5000
 
 [workflows.workflow.metadata]

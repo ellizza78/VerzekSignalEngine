@@ -590,3 +590,4 @@ Updated working bot version from local PC
 [2025-10-15 00:46:53] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
 [2025-10-15 00:46:53] [INFO] 👋 User 572038606 started the bot.
 [2025-10-15 00:46:54] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-15 00:51:04] [API] 🌐 Starting Flask API on port 5000
