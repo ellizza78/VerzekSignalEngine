@@ -1714,3 +1714,19 @@ Take-Profit: 62500 / 63000 / 64000
 Stop-Loss: 61500
 Leverage: 10x
 Exchange: Binance Futures
+[2025-10-15 03:32:19] 🔥 Signal Alert (Verzek Trading Signals)
+━━━━━━━━━━━━━━━━━━
+#Signal #TON/USDT $TON 
+Short 🩸 Lev x26 #Crypto 
+
+Entry: 2.2821 - Stop Loss: 2.3087 
+
+Targets: 2.2688 - 2.2555 - 2.2422 - 2.2289 - 2.2156
+[2025-10-15 03:32:24] 🔥 Signal Alert (Verzek Trading Signals)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
