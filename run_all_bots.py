@@ -3,8 +3,9 @@ run_all_bots.py
 ---------------
 Runs all VerzekAutoTrader bots simultaneously:
 - Flask API Server
-- Main Signal Bot (optional - uncomment if needed)
+- Telethon Forwarder (Auto-forwarding from personal chats)
 - Broadcast Bot
+- Main Signal Bot (optional - uncomment if needed)
 """
 
 import subprocess
@@ -16,6 +17,11 @@ def run_flask_api():
     """Run Flask API server"""
     print("🌐 Starting Flask API Server...")
     subprocess.run([sys.executable, "api_server.py"])
+
+def run_telethon_forwarder():
+    """Run Telethon Auto-Forwarder"""
+    print("🔄 Starting Telethon Auto-Forwarder...")
+    subprocess.run([sys.executable, "telethon_forwarder.py"])
 
 def run_broadcast_bot():
     """Run Broadcast Bot"""
@@ -37,6 +43,10 @@ if __name__ == "__main__":
     # Give Flask a moment to start
     time.sleep(2)
     
+    # Start Telethon Auto-Forwarder in a thread
+    telethon_thread = Thread(target=run_telethon_forwarder, daemon=True)
+    telethon_thread.start()
+    
     # Start Broadcast Bot in a thread
     broadcast_thread = Thread(target=run_broadcast_bot, daemon=True)
     broadcast_thread.start()
@@ -46,7 +56,8 @@ if __name__ == "__main__":
     # main_thread.start()
     
     print("✅ All services started successfully!")
-    print("📡 Broadcast Bot is listening to your personal chat...")
+    print("🔄 Auto-Forwarder monitoring your personal chats...")
+    print("📡 Broadcast Bot is listening and ready to broadcast...")
     print("🌐 API Server running on port 5000")
     
     # Keep the main thread alive
