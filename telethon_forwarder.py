@@ -83,17 +83,30 @@ async def auto_forward(event):
     if "VERZEKSIGNALBOT" in upper or "NEW SIGNAL ALERT" in upper:
         return
 
-    # 5) Only act on signal-like content (>= 2 keywords)
+    # 5) Block spam/promotional messages (common spam keywords)
+    SPAM_KEYWORDS = (
+        "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
+        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", "@",
+        "JOIN OUR", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
+        "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL"
+    )
+    
+    spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
+    if spam_hits >= 2:
+        print(f"⛔ Blocked spam/promotional message")
+        return
+    
+    # 6) Only act on signal-like content (>= 2 keywords)
     hits = sum(k in upper for k in KEYWORDS)
     if hits < 2:
         return
 
-    # 6) De-duplicate exact same text
+    # 7) De-duplicate exact same text
     if seen_before(text):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 7) Send RAW signal to broadcast bot (bot will add header)
+    # 8) Send RAW signal to broadcast bot (bot will add header)
     try:
         await client.send_message(BROADCAST_BOT_USERNAME, text)
         print(f"✅ Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
