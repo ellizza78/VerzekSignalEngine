@@ -70,3 +70,797 @@ Take-Profit: 62500 / 63000 / 64000
 Stop-Loss: 61500
 Leverage: 10x
 Exchange: Binance Futures
+[2025-10-15 02:14:49] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:50] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:50] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:50] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:51] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:51] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:51] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:52] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:52] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:52] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:52] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:52] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:53] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:53] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:53] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:53] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:14:54] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:00] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:00] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:00] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:06] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:06] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:06] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:06] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:06] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:13] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:13] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:13] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:15:13] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:40] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:41] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:41] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:41] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:42] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:42] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:42] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:43] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:43] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:43] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:44] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:44] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:45] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:45] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:45] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:46] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:46] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:46] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:51] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:51] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:51] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:52] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:52] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:52] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:57] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:57] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:58] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:58] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:25:58] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:26:03] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:26:03] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:26:04] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:26:04] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
+[2025-10-15 02:26:04] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BUY BTC/USDT
+ENTRY: 65000
+TP: 66000
+SL: 64500
