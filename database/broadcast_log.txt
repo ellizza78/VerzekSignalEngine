@@ -1939,3 +1939,69 @@ Operations: Sell/Short
 average transaction price 0.01949
 quantity2570
 average position price 0.019480255
+[2025-10-15 16:06:08] #Signal #MANA/USDT $MANA 
+Short 🩸 Lev x8 #Crypto 
+
+Entry: 0.2566 - Stop Loss: 0.2659 
+
+Targets: 0.25195 - 0.2473 - 0.24265 - 0.238 - 0.23335
+[2025-10-15 17:04:08] #Signal #HBAR/USDT $HBAR 
+Short 🩸 Lev x37 #Crypto 
+
+Entry: 0.18093 - Stop Loss: 0.1824 
+
+Targets: 0.180195 - 0.17946 - 0.178725 - 0.17799 - 0.177255
+[2025-10-15 17:04:46] #HBAR/USDT / $HBAR 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-15 17:10:25] #XRPUSDT - 🚨 Target 1 reached
+💸 Profit collected 14.633%
+⏰ Posted: 1 Hours 37 Minutes Ago
+[2025-10-15 17:10:36] #HBARUSDT - 🚨 Target 1 reached
+💸 Profit collected 15.1329%
+⏰ Posted: 6 Minutes Ago
+[2025-10-15 17:11:29] #GRTUSDT - 🚨 Target 2 reached
+💸 Profit collected 23.3474%
+⏰ Posted: 5 Hours 11 Minutes Ago
+[2025-10-15 17:15:05] #HBARUSDT - 🚨 Target 2 reached
+💸 Profit collected 22.5971%
+⏰ Posted: 10 Minutes Ago
+[2025-10-15 17:15:08] #ALGOUSDT - 🚨 Target 1 reached
+💸 Profit collected 15.7816%
+⏰ Posted: 4 Hours 8 Minutes Ago
+[2025-10-15 17:15:12] #ETHUSDT - 🚨 Target 1 reached
+💸 Profit collected 14.1367%
+⏰ Posted: 2 Hours 25 Minutes Ago
+[2025-10-15 17:31:46] #XLMUSDT - 🚨 Target 3 reached
+💸 Profit collected 30.2867%
+⏰ Posted: 3 Hours 7 Minutes Ago
+[2025-10-15 18:56:47] BOT SESSION COMPLETED WITH AMAZING RESULTS ✅
+
+EUR/USD OTC ➡️ +$276 ✅
+NZD/USD OTC ➡️ +$460 ✅
+CAD/JPY OTC ➡️ +$368 ✅
+AUD/CHF OTC ➡️ $0 ❌
+AUD/CHF OTC ➡️ +$276 ✅
+EUR/USD OTC ➡️ +$276 ✅
+EUR/USD OTC ➡️ +$276 ✅
+EUR/USD OTC ➡️ +$460 ✅
+USD/CAD OTC ➡️ +$154 ✅
+AUD/NZD OTC ➡️ +$276 ✅
+
+TOTAL PROFIT: 3,042💲
+
+🟢 Another day of precise and consistent trading! The bot delivered accurate signals across multiple pairs, turning strategy into real profit.
+
+➡️ You can start receiving the same reliable signals — just message me to connect to the bot! 💰
+
+✉️ @Sanjay_Message_Bot
+[2025-10-15 19:56:31] 🌙 GN, TRADERS!
+
+⚪️ Another productive day on the market is behind us! Step by step, we’re growing our balances and fine-tuning our trading strategies ✅
+
+Rest up tonight—tomorrow is full of new signals and opportunities to boost your profits ✨
+
+✉️ Reach out: @Sanjay_Message_Bot

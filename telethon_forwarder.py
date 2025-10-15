@@ -71,7 +71,7 @@ async def auto_forward(event):
         return
 
     # 3) Block known spammers by username
-    BLOCKED_USERS = ["powellnolan"]  # Add spammer usernames here (lowercase)
+    BLOCKED_USERS = ["powellnolan", "sanjay_message_bot"]  # Add spammer usernames here (lowercase)
     
     try:
         sender = await event.get_sender()
@@ -96,7 +96,7 @@ async def auto_forward(event):
     # 5) Block spam/promotional messages (common spam keywords)
     SPAM_KEYWORDS = (
         "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
-        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", 
+        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", "REACH OUT",
         "JOIN OUR", "JOIN US", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
         "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL",
         "CRYPTO PUMP", "PUMP AND", "YESTERDAY", "REVEALED", 
@@ -105,7 +105,9 @@ async def auto_forward(event):
         "WHAT IS A", "HOW IT WORKS", "WHY IT", "EXAMPLE",
         "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED",
         "HYPERLIQUID", "NO KYC", "NO RESTRICTIONS", "INSTANT SIGNUP",
-        "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT"
+        "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT",
+        "GN, TRADERS", "GOOD NIGHT", "REST UP", "PRODUCTIVE DAY",
+        "GROWING OUR", "FINE-TUNING", "STEP BY STEP"
     )
     
     spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
