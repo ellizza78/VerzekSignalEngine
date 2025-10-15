@@ -87,9 +87,14 @@ async def auto_forward(event):
     # 5) Block spam/promotional messages (common spam keywords)
     SPAM_KEYWORDS = (
         "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
-        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", "@",
-        "JOIN OUR", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
-        "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL"
+        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", 
+        "JOIN OUR", "JOIN US", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
+        "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL",
+        "CRYPTO PUMP", "PUMP AND", "YESTERDAY", "REVEALED", 
+        "PROVEN SYSTEM", "BUILD TRUST", "FULL STORY", "NO LUCK",
+        "DISCIPLINE", "BE PART", "NEXT BIG", "MAKE PROFIT",
+        "WHAT IS A", "HOW IT WORKS", "WHY IT", "EXAMPLE",
+        "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED"
     )
     
     spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
