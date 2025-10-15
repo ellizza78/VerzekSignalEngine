@@ -35,6 +35,31 @@ bot = Bot(token=BROADCAST_BOT_TOKEN)
 
 KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
 
+def clean_signal(text):
+    """Remove unwanted formatting from signals"""
+    import re
+    
+    # Remove hashtags (#Signal, #Crypto, etc.)
+    text = re.sub(r'#\w+', '', text)
+    
+    # Remove leverage indicators (Lev x26, Lev: x10, etc.)
+    text = re.sub(r'Lev\s*:?\s*x?\d+', '', text, flags=re.IGNORECASE)
+    
+    # Remove extra emojis that are standalone
+    text = re.sub(r'🩸', '', text)
+    
+    # Clean up multiple spaces
+    text = re.sub(r'\s+', ' ', text)
+    
+    # Clean up multiple newlines (keep max 2)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    
+    # Strip leading/trailing whitespace from each line
+    lines = [line.strip() for line in text.split('\n')]
+    text = '\n'.join(line for line in lines if line)
+    
+    return text.strip()
+
 def broadcast_message(update, context):
     user_id = update.effective_user.id
     message = update.message
@@ -60,9 +85,12 @@ def broadcast_message(update, context):
         logger.info("Ignored non-trading message.")
         return
 
+    # Clean the signal (remove hashtags, leverage indicators, etc.)
+    cleaned_text = clean_signal(text)
+    
     # Compose broadcast message with Verzek header
     header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
-    msg = header + text
+    msg = header + cleaned_text
 
     try:
         bot.send_message(chat_id=VIP_GROUP_ID, text=msg)
@@ -106,9 +134,12 @@ def auto_forward_signals(update, context):
     # Get source info
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
+    # Clean the signal (remove hashtags, leverage indicators, etc.)
+    cleaned_text = clean_signal(text)
+    
     # Format message with Verzek branding
     header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
-    formatted_msg = header + text
+    formatted_msg = header + cleaned_text
     
     # Broadcast to VIP and TRIAL groups
     try:
