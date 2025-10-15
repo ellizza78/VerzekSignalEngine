@@ -577,3 +577,9 @@ Updated working bot version from local PC
 [2025-10-15 00:22:42] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
 [2025-10-15 00:22:43] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
 [2025-10-15 00:22:43] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-15 00:29:34] [START] 🚀 VerzekSignalBot launching...
+[2025-10-15 00:29:34] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-15 00:29:34] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-15 00:29:35] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-15 00:29:35] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-15 00:29:35] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
