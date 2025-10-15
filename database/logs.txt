@@ -570,3 +570,10 @@ Updated working bot version from local PC
 [2025-10-13 17:16:30] [ERROR] ⚠️ Watcher error: Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
 [2025-10-14 23:26:28] [API] 🌐 Starting Flask API on port 5000
 [2025-10-14 23:39:20] [API] 🌐 Starting Flask API on port 5000
+[2025-10-15 00:17:15] [API] 🌐 Starting Flask API on port 5000
+[2025-10-15 00:22:42] [START] 🚀 VerzekSignalBot launching...
+[2025-10-15 00:22:42] [INFO] 🔁 Forwarder registered successfully.
+[2025-10-15 00:22:42] [WATCH] 📡 Watching 2 signal sources for updates...
+[2025-10-15 00:22:42] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
+[2025-10-15 00:22:43] [SUCCESS] ✅ Bot connected successfully! Monitoring 1 groups.
+[2025-10-15 00:22:43] [ERROR] ⚠️ Watcher error: Forbidden: bot was kicked from the supergroup chat
