@@ -50,6 +50,11 @@ def broadcast_message(update, context):
     if user_id != ADMIN_CHAT_ID:
         return
 
+    # Prevent re-broadcasting if message already has our header
+    if "VERZEK TRADING SIGNALS" in text.upper() or "SIGNAL ALERT" in text.upper():
+        logger.info("Ignored message - already has Verzek header")
+        return
+    
     # Check for signal keywords
     if not any(k in text.upper() for k in KEYWORDS):
         logger.info("Ignored non-trading message.")
@@ -89,8 +94,9 @@ def auto_forward_signals(update, context):
     if chat_id == VIP_GROUP_ID or chat_id == TRIAL_GROUP_ID:
         return  # Ignore messages from our own broadcast targets
     
-    # Prevent loop - ignore if message already has our header
-    if "VERZEKSIGNALBOT" in text.upper() or "NEW SIGNAL ALERT" in text.upper():
+    # CRITICAL: Prevent loop - ignore if message already has our header
+    if "VERZEK TRADING SIGNALS" in text.upper() or "SIGNAL ALERT" in text.upper():
+        logger.info("Ignored message from group - already has Verzek header")
         return
     
     # Check if message contains trading keywords

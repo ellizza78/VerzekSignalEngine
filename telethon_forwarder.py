@@ -89,13 +89,9 @@ async def auto_forward(event):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 7) Format message with Verzek header
-    header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
-    formatted_msg = header + text
-    
-    # 8) Send to broadcast bot (which will then broadcast to VIP/TRIAL)
+    # 7) Send RAW signal to broadcast bot (bot will add header)
     try:
-        await client.send_message(BROADCAST_BOT_USERNAME, formatted_msg)
+        await client.send_message(BROADCAST_BOT_USERNAME, text)
         print(f"✅ Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
     except Exception as e:
         print(f"⚠️ Failed to send to broadcast bot: {e}")
