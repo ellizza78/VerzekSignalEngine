@@ -103,7 +103,9 @@ async def auto_forward(event):
         "PROVEN SYSTEM", "BUILD TRUST", "FULL STORY", "NO LUCK",
         "DISCIPLINE", "BE PART", "NEXT BIG", "MAKE PROFIT",
         "WHAT IS A", "HOW IT WORKS", "WHY IT", "EXAMPLE",
-        "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED"
+        "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED",
+        "HYPERLIQUID", "NO KYC", "NO RESTRICTIONS", "INSTANT SIGNUP",
+        "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT"
     )
     
     spam_hits = sum(k in upper for k in SPAM_KEYWORDS)

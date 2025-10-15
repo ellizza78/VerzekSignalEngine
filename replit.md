@@ -123,7 +123,8 @@ All Python dependencies are managed via pip:
 - **2025-10-15**: Enhanced Signal Detection & Spam Filtering
   - Expanded keyword detection to 24+ keywords: Added ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
   - Now supports all signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations
-  - Added spam filter to block promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, PARTICIPATE, etc.)
+  - Added spam filter to block promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, PARTICIPATE, HYPERLIQUID, NO KYC, etc.)
+  - Username blocklist blocks known spammers (@PowellNolan) by username before keyword analysis
   - Fixed signal cleaning: Preserves coin pair names (e.g., BTCUSDT, ORDI/USDT) while removing hashtags
   - Telethon forwarder monitors ALL Telegram sources (personal chats, channels, groups) 24/7
   - Signal cleaning removes only # symbols and leverage indicators (Lev x26) but keeps essential data
