@@ -24,7 +24,11 @@ TRIAL_GROUP_ID = -1002726167386
 TARGET_IDS = {VIP_GROUP_ID, TRIAL_GROUP_ID}
 
 # --- SIGNAL KEYWORDS ---
-KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
+KEYWORDS = (
+    "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
+    "STOP LOSS", "TARGETS", "TARGET", "PROFIT", "LOSS",
+    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT"
+)
 
 # --- Init client with StringSession (no DB locks) ---
 # Load session string from environment or file

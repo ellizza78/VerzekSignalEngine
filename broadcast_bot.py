@@ -33,7 +33,11 @@ logger = logging.getLogger("VerzekBroadcastBot")
 
 bot = Bot(token=BROADCAST_BOT_TOKEN)
 
-KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
+KEYWORDS = (
+    "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
+    "STOP LOSS", "TARGETS", "TARGET", "PROFIT", "LOSS",
+    "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT", "REACHED", "CANCELLED"
+)
 
 def clean_signal(text):
     """Remove unwanted formatting from signals"""
@@ -44,13 +48,13 @@ def clean_signal(text):
     cleaned_lines = []
     
     for line in lines:
-        # Remove hashtags (#Signal, #Crypto, etc.)
-        line = re.sub(r'#\w+', '', line)
+        # Remove only # symbol but keep the word (e.g., #BTCUSDT -> BTCUSDT)
+        line = re.sub(r'#', '', line)
         
         # Remove leverage indicators (Lev x26, Lev: x10, etc.)
         line = re.sub(r'Lev\s*:?\s*x?\d+', '', line, flags=re.IGNORECASE)
         
-        # Remove extra emojis
+        # Remove extra emojis (optional cleanup)
         line = re.sub(r'🩸', '', line)
         
         # Clean up multiple spaces on the same line

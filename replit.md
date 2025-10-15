@@ -33,10 +33,11 @@ VerzekAutoTrader is an automated cryptocurrency trading bot that listens to Tele
    - Broadcasts to VIP Group (-1002721581400) and TRIAL Group (-1002726167386)
    - Loop prevention: Never re-broadcasts from VIP/TRIAL groups
 
-4. **Telethon Auto-Forwarder** (`telethon_forwarder.py`) - Personal chat monitor
-   - Monitors all personal Telegram chats 24/7 (even when user is offline)
-   - Auto-detects trading signals (keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL)
-   - Forwards to @broadnews_bot for broadcasting
+4. **Telethon Auto-Forwarder** (`telethon_forwarder.py`) - Universal signal monitor
+   - Monitors ALL Telegram sources 24/7: personal chats, channels, groups (even when user is offline)
+   - Enhanced signal detection with 17+ keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL, STOP LOSS, TARGETS, TARGET, PROFIT, LOSS, LEV, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED
+   - Supports multiple signal formats: entry signals, profit notifications, stop loss alerts, cancellations
+   - Forwards raw signals to @broadnews_bot for cleaning and broadcasting
    - Uses StringSession (no database locking issues)
    - Requires one-time authentication via `setup_telethon.py`
 
@@ -117,6 +118,14 @@ All Python dependencies are managed via pip:
 - `schedule` - Task scheduling
 
 ## Recent Changes
+- **2025-10-15**: Enhanced Signal Detection & Multiple Format Support
+  - Expanded keyword detection: Added TARGETS, PROFIT, LOSS, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED
+  - Now supports diverse signal formats (profit notifications, stop loss alerts, signal cancellations)
+  - Fixed signal cleaning: Preserves coin pair names (e.g., BTCUSDT, ORDI/USDT) while removing hashtags
+  - Telethon forwarder now monitors ALL Telegram sources (personal chats, channels, groups)
+  - Signal cleaning removes only # symbols and leverage indicators (Lev x26) but keeps essential data
+  - System works 24/7 even when user is completely offline
+
 - **2025-10-15**: Telethon Auto-Forwarder & Loop Prevention
   - Added Telethon auto-forwarder to monitor personal chats 24/7
   - Fixed infinite broadcast loop with VIP/TRIAL group exclusion
