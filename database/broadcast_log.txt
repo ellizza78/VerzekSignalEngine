@@ -34,3 +34,27 @@ Take-Profit: 62500 / 63000 / 64000
 Stop-Loss: 61500
 Leverage: 10x
 Exchange: Binance Futures
+[2025-10-15 00:46:35] 🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 BTC/USDT LONG SIGNAL 🔥
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 00:46:35] 🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 BTC/USDT LONG SIGNAL 🔥
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 00:46:36] 🔥 New Signal Alert (VerzekSignalBot)
+━━━━━━━━━━━━━━━━━━
+🔥 BTC/USDT LONG SIGNAL 🔥
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
