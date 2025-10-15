@@ -84,6 +84,15 @@ def auto_forward_signals(update, context):
     if not text:
         return
     
+    # CRITICAL: Prevent loop - NEVER forward from VIP/TRIAL groups
+    chat_id = message.chat_id
+    if chat_id == VIP_GROUP_ID or chat_id == TRIAL_GROUP_ID:
+        return  # Ignore messages from our own broadcast targets
+    
+    # Prevent loop - ignore if message already has our header
+    if "VERZEKSIGNALBOT" in text.upper() or "NEW SIGNAL ALERT" in text.upper():
+        return
+    
     # Check if message contains trading keywords
     if not any(k in text.upper() for k in KEYWORDS):
         return

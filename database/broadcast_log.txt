@@ -1282,3 +1282,435 @@ SL: 64500
 ENTRY: 65000
 TP: 66000
 SL: 64500
+[2025-10-15 03:02:42] BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:07] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:07] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:07] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:08] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:08] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:08] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:09] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:09] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:09] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:10] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:10] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:10] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:11] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:11] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:12] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:12] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:12] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:13] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:19] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:19] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:20] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:20] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:20] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:27] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:27] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:28] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:28] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:29] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:32] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:32] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:33] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:33] AUTO-FORWARD from VERZEK TRIAL SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
+[2025-10-15 03:11:33] AUTO-FORWARD from VERZEK VIP SIGNALS: 🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+🔥 New Signal Alert (VerzekSignalBot)
+🔥 Auto-Detected Signal (Verzek AutoForward)
+━━━━━━━━━━━━━━━━━━
+BTC/USDT LONG SIGNAL
+Entry: 62000 - 62100
+Take-Profit: 62500 / 63000 / 64000
+Stop-Loss: 61500
+Leverage: 10x
+Exchange: Binance Futures
