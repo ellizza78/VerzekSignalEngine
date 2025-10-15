@@ -37,7 +37,14 @@ KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
 
 def broadcast_message(update, context):
     user_id = update.effective_user.id
-    text = (update.message.text or "").strip()
+    message = update.message
+    
+    # Get text from message or forwarded message
+    text = (message.text or message.caption or "").strip()
+    
+    # If it's a forwarded message, get the original text
+    if message.forward_from or message.forward_from_chat:
+        logger.info(f"📥 Received forwarded message from admin")
 
     # Only accept from admin
     if user_id != ADMIN_CHAT_ID:
@@ -55,6 +62,7 @@ def broadcast_message(update, context):
     try:
         bot.send_message(chat_id=VIP_GROUP_ID, text=msg)
         bot.send_message(chat_id=TRIAL_GROUP_ID, text=msg)
+        logger.info(f"✅ Broadcast successful to VIP & TRIAL groups")
     except Exception as e:
         logger.error(f"⚠️ Broadcast send failed: {e}")
 
