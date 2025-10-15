@@ -39,26 +39,35 @@ def clean_signal(text):
     """Remove unwanted formatting from signals"""
     import re
     
-    # Remove hashtags (#Signal, #Crypto, etc.)
-    text = re.sub(r'#\w+', '', text)
+    # Process line by line to preserve structure
+    lines = text.split('\n')
+    cleaned_lines = []
     
-    # Remove leverage indicators (Lev x26, Lev: x10, etc.)
-    text = re.sub(r'Lev\s*:?\s*x?\d+', '', text, flags=re.IGNORECASE)
+    for line in lines:
+        # Remove hashtags (#Signal, #Crypto, etc.)
+        line = re.sub(r'#\w+', '', line)
+        
+        # Remove leverage indicators (Lev x26, Lev: x10, etc.)
+        line = re.sub(r'Lev\s*:?\s*x?\d+', '', line, flags=re.IGNORECASE)
+        
+        # Remove extra emojis
+        line = re.sub(r'🩸', '', line)
+        
+        # Clean up multiple spaces on the same line
+        line = re.sub(r' {2,}', ' ', line)
+        
+        # Strip leading/trailing whitespace
+        line = line.strip()
+        
+        # Keep non-empty lines
+        if line:
+            cleaned_lines.append(line)
     
-    # Remove extra emojis that are standalone
-    text = re.sub(r'🩸', '', text)
+    # Join lines and clean up excessive blank lines
+    result = '\n'.join(cleaned_lines)
+    result = re.sub(r'\n{3,}', '\n\n', result)
     
-    # Clean up multiple spaces
-    text = re.sub(r'\s+', ' ', text)
-    
-    # Clean up multiple newlines (keep max 2)
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    
-    # Strip leading/trailing whitespace from each line
-    lines = [line.strip() for line in text.split('\n')]
-    text = '\n'.join(line for line in lines if line)
-    
-    return text.strip()
+    return result.strip()
 
 def broadcast_message(update, context):
     user_id = update.effective_user.id
