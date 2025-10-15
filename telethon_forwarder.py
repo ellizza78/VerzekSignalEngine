@@ -70,11 +70,20 @@ async def auto_forward(event):
     if event.chat_id in TARGET_IDS:
         return
 
-    # 3) Ignore messages from broadcast bot to prevent loops
+    # 3) Block known spammers by username
+    BLOCKED_USERS = ["powellnolan"]  # Add spammer usernames here (lowercase)
+    
     try:
         sender = await event.get_sender()
         username = (sender.username or "").lower()
+        
+        # Block broadcast bot to prevent loops
         if username == BROADCAST_BOT_USERNAME.lower():
+            return
+        
+        # Block known spammers
+        if username in BLOCKED_USERS:
+            print(f"🚫 Blocked message from spammer: @{username}")
             return
     except Exception:
         pass

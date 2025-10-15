@@ -38,6 +38,7 @@ VerzekAutoTrader is an automated cryptocurrency trading bot that listens to Tele
    - Enhanced signal detection with 24+ keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL, STOP LOSS, TARGETS, TARGET, PROFIT, LOSS, LEV, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED, ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
    - Supports multiple signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations
    - Spam filter blocks promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, etc.)
+   - Username blocklist prevents known spammers (@PowellNolan) from being forwarded
    - Forwards raw signals to @broadnews_bot for cleaning and broadcasting
    - Uses StringSession (no database locking issues)
    - Requires one-time authentication via `setup_telethon.py`
