@@ -20,6 +20,11 @@ def run_flask_api():
 
 def run_telethon_forwarder():
     """Run Telethon Auto-Forwarder"""
+    # Check if authenticated first
+    import os
+    if not os.path.exists("telethon_session_string.txt"):
+        print("⚠️ Telethon not authenticated yet. Run 'python setup_telethon.py' first.")
+        return
     print("🔄 Starting Telethon Auto-Forwarder...")
     subprocess.run([sys.executable, "telethon_forwarder.py"])
 

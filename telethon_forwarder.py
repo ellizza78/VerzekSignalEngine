@@ -1,12 +1,15 @@
 """
-VerzekTelethonForwarder v2.0
+VerzekTelethonForwarder v2.1
 ----------------------------
 Monitors your Telegram account for signal-like messages and forwards them
 to your Broadcast Bot (which then broadcasts to VIP & TRIAL).
+Fixed: Database locking issues with StringSession
 """
 
 import hashlib
+import os
 from telethon import TelegramClient, events
+from telethon.sessions import StringSession
 
 # --- YOUR TELEGRAM CREDENTIALS ---
 api_id = 26395582
@@ -23,8 +26,16 @@ TARGET_IDS = {VIP_GROUP_ID, TRIAL_GROUP_ID}
 # --- SIGNAL KEYWORDS ---
 KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
 
-# --- Init client ---
-client = TelegramClient("verzek_forwarder_session", api_id, api_hash)
+# --- Init client with StringSession (no DB locks) ---
+# Load session string from environment or file
+session_file = "telethon_session_string.txt"
+if os.path.exists(session_file):
+    with open(session_file, "r") as f:
+        session_string = f.read().strip()
+    client = TelegramClient(StringSession(session_string), api_id, api_hash)
+else:
+    # First time: create new session
+    client = TelegramClient(StringSession(), api_id, api_hash)
 
 # simple rolling de-dupe cache
 _recent = []
@@ -87,4 +98,13 @@ async def auto_forward(event):
 
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
 client.start()
+
+# Save session string for future use (no DB needed)
+session_file = "telethon_session_string.txt"
+if not os.path.exists(session_file):
+    session_string = client.session.save()
+    with open(session_file, "w") as f:
+        f.write(session_string)
+    print(f"✅ Session saved to {session_file}")
+
 client.run_until_disconnected()

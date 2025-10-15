@@ -28,10 +28,19 @@ VerzekAutoTrader is an automated cryptocurrency trading bot that listens to Tele
    - Sends notifications to admin
 
 3. **Broadcast Bot** (`broadcast_bot.py`) - Signal broadcaster
-   - Forwards signals from admin to VIP/TRIAL groups
-   - Adds custom Verzek branding
+   - Receives signals from admin/Telethon forwarder
+   - Adds custom Verzek header: "🔥 New Signal Alert (VerzekSignalBot)"
+   - Broadcasts to VIP Group (-1002721581400) and TRIAL Group (-1002726167386)
+   - Loop prevention: Never re-broadcasts from VIP/TRIAL groups
 
-4. **Trade Executor** (`trade_executor.py`) - Trade execution engine
+4. **Telethon Auto-Forwarder** (`telethon_forwarder.py`) - Personal chat monitor
+   - Monitors all personal Telegram chats 24/7 (even when user is offline)
+   - Auto-detects trading signals (keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL)
+   - Forwards to @broadnews_bot for broadcasting
+   - Uses StringSession (no database locking issues)
+   - Requires one-time authentication via `setup_telethon.py`
+
+5. **Trade Executor** (`trade_executor.py`) - Trade execution engine
    - Supports Binance, Bybit, Phemex (via API keys)
    - Falls back to simulation mode if no API keys
    - Logs all trades to CSV
@@ -62,23 +71,27 @@ The following secrets are required and configured in Replit Secrets:
 
 ## Running the Project
 
-### Development (Current Setup)
-The Flask API Server workflow is configured to run automatically:
-```bash
-python api_server.py
-```
-This serves the REST API on port 5000 (0.0.0.0:5000).
+### Automatic (Recommended)
+The VerzekAutoTrader workflow runs all services automatically:
+- Flask API Server (port 5000)
+- Broadcast Bot (@broadnews_bot)
+- Telethon Auto-Forwarder (if authenticated)
 
-### Running the Main Bot
-To start the Telegram signal monitoring bot:
+### First-Time Telethon Setup
+Before the auto-forwarder can work, run this ONCE in the Replit Shell:
 ```bash
-python main.py
+python setup_telethon.py
 ```
+This authenticates your Telegram account. You'll receive a code on Telegram.
+After authentication, the auto-forwarder will work automatically 24/7.
 
-### Running the Broadcast Bot
-To start the signal broadcaster:
+### Manual Execution
+You can also run individual components:
 ```bash
-python broadcast_bot.py
+python api_server.py      # Flask API
+python broadcast_bot.py   # Broadcast bot only
+python telethon_forwarder.py  # Auto-forwarder only (after setup)
+python main.py            # Main signal bot
 ```
 
 ## Deployment
@@ -104,6 +117,14 @@ All Python dependencies are managed via pip:
 - `schedule` - Task scheduling
 
 ## Recent Changes
+- **2025-10-15**: Telethon Auto-Forwarder & Loop Prevention
+  - Added Telethon auto-forwarder to monitor personal chats 24/7
+  - Fixed infinite broadcast loop with VIP/TRIAL group exclusion
+  - Changed from SQLite to StringSession (fixes database locking issues)
+  - Created one-time setup script for Telethon authentication
+  - Broadcast bot now prevents re-broadcasting its own messages
+  - Updated workflow to run Flask API + Broadcast Bot + Telethon Forwarder
+
 - **2025-10-14**: Initial Replit setup
   - Moved sensitive tokens to environment variables
   - Created .gitignore for Python artifacts and sensitive data

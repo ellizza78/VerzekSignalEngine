@@ -59,3 +59,8 @@ Thumbs.db
 .env
 secrets.json
 config.json.backup
+
+# Telethon session files
+*.session
+*.session-journal
+telethon_session_string.txt
