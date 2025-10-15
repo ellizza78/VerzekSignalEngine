@@ -56,7 +56,7 @@ def broadcast_message(update, context):
         return
 
     # Compose broadcast message with Verzek header
-    header = "🔥 New Signal Alert (VerzekSignalBot)\n━━━━━━━━━━━━━━━━━━\n"
+    header = "🔥 New Signal Alert (VerzekSignalBot)\n"
     msg = header + text
 
     try:
@@ -92,7 +92,7 @@ def auto_forward_signals(update, context):
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
     # Format message with Verzek branding
-    header = "🔥 New Signal Alert (VerzekSignalBot)\n━━━━━━━━━━━━━━━━━━\n"
+    header = "🔥 New Signal Alert (VerzekSignalBot)\n"
     formatted_msg = header + text
     
     # Broadcast to VIP and TRIAL groups

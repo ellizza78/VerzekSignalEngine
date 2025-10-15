@@ -1,8 +1,8 @@
 """
-VerzekTelethonForwarder v1.2
+VerzekTelethonForwarder v2.0
 ----------------------------
 Monitors your Telegram account for signal-like messages and forwards them
-to VIP & TRIAL, with loop-prevention and de-duplication.
+to your Broadcast Bot (which then broadcasts to VIP & TRIAL).
 """
 
 import hashlib
@@ -12,13 +12,13 @@ from telethon import TelegramClient, events
 api_id = 26395582
 api_hash = "a32cb77b68ad84fb0dd60531d83698dc"
 
-# --- TARGET GROUPS ---
+# --- BROADCAST BOT USERNAME (change this to your actual bot username) ---
+BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot username
+
+# --- TARGET GROUPS (for loop prevention only) ---
 VIP_GROUP_ID = -1002721581400
 TRIAL_GROUP_ID = -1002726167386
 TARGET_IDS = {VIP_GROUP_ID, TRIAL_GROUP_ID}
-
-# --- OPTIONAL: ignore messages sent by these usernames (bots, helpers) ---
-IGNORE_USERNAMES = {"broadnews_bot"}  # your broadcaster username
 
 # --- SIGNAL KEYWORDS ---
 KEYWORDS = ("BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", "STOP LOSS")
@@ -50,22 +50,22 @@ async def auto_forward(event):
     if event.out:
         return
 
-    # 2) Do not process messages already in our TARGET groups
+    # 2) Do not process messages already in VIP/TRIAL groups (loop prevention)
     if event.chat_id in TARGET_IDS:
         return
 
-    # 3) Ignore messages from our own broadcast bot (or other usernames)
+    # 3) Ignore messages from broadcast bot to prevent loops
     try:
         sender = await event.get_sender()
         username = (sender.username or "").lower()
-        if username in IGNORE_USERNAMES:
+        if username == BROADCAST_BOT_USERNAME.lower():
             return
     except Exception:
-        pass  # if we can't fetch sender, continue with other guards
+        pass
 
     # 4) Prevent loops by header text check
     upper = text.upper()
-    if "VERZEKSIGNALBOT" in upper or "AUTOFORWARD" in upper:
+    if "VERZEKSIGNALBOT" in upper or "NEW SIGNAL ALERT" in upper:
         return
 
     # 5) Only act on signal-like content (>= 2 keywords)
@@ -75,18 +75,15 @@ async def auto_forward(event):
 
     # 6) De-duplicate exact same text
     if seen_before(text):
+        print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 7) Compose clean message and send once to each target
-    header = "🔥 Auto-Detected Signal (Verzek AutoForward)\n━━━━━━━━━━━━━━━━━━\n"
-    msg = header + text
-
+    # 7) Send ONLY to broadcast bot (which will then broadcast to VIP/TRIAL)
     try:
-        await client.send_message(VIP_GROUP_ID, msg)
-        await client.send_message(TRIAL_GROUP_ID, msg)
-        print(f"✅ Forwarded clean signal from chat {event.chat_id}: {text[:90]}...")
+        await client.send_message(BROADCAST_BOT_USERNAME, text)
+        print(f"✅ Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
     except Exception as e:
-        print(f"⚠️ Forward failed: {e}")
+        print(f"⚠️ Failed to send to broadcast bot: {e}")
 
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
 client.start()
