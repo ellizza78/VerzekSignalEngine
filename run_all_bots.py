@@ -38,6 +38,11 @@ def run_main_bot():
     print("🤖 Starting Main Signal Bot...")
     subprocess.run([sys.executable, "main.py"])
 
+def run_target_monitor():
+    """Run Target Monitor for progressive TPs"""
+    print("🎯 Starting Target Monitor...")
+    subprocess.run([sys.executable, "target_monitor.py"])
+
 if __name__ == "__main__":
     print("🚀 VerzekAutoTrader - Starting All Services...")
     
@@ -56,6 +61,10 @@ if __name__ == "__main__":
     broadcast_thread = Thread(target=run_broadcast_bot, daemon=True)
     broadcast_thread.start()
     
+    # Start Target Monitor in a thread
+    target_monitor_thread = Thread(target=run_target_monitor, daemon=True)
+    target_monitor_thread.start()
+    
     # Uncomment below if you want to run the main signal bot too
     # main_thread = Thread(target=run_main_bot, daemon=True)
     # main_thread.start()
@@ -63,6 +72,7 @@ if __name__ == "__main__":
     print("✅ All services started successfully!")
     print("🔄 Auto-Forwarder monitoring your personal chats...")
     print("📡 Broadcast Bot is listening and ready to broadcast...")
+    print("🎯 Target Monitor checking for take profit levels...")
     print("🌐 API Server running on port 5000")
     
     # Keep the main thread alive

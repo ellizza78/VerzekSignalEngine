@@ -2429,3 +2429,7 @@ CHZUSDT     :+20.52% 🟢
 🚫 Loss Trades: 11
 
 Seize this opportunity now! Join us to level up your crypto trading!
+[2025-10-16 12:01:35] #JUPUSDT - Closed! 🔘
+Trade closed with 38.7824% profit.
+[2025-10-16 12:01:55] #JUPUSDT - Closed! 🔘
+Trade closed with 28.9583% profit.
