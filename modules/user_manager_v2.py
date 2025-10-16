@@ -23,6 +23,11 @@ class User:
         self.full_name: str = ""
         self.password_hash: str = ""
         
+        # Subscription security
+        self.license_key: str = ""
+        self.referral_code: str = ""
+        self.referred_by: str = ""  # Referral code used during signup
+        
         # Subscription plan
         self.plan = "free"  # free, pro, vip
         self.plan_started_at: Optional[str] = None

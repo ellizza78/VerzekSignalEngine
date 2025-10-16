@@ -14,6 +14,8 @@ from modules.auth import (
     create_access_token, create_refresh_token,
     token_required, refresh_token_required
 )
+from modules.subscription_security import subscription_security
+from modules.payment_system import payment_system
 from flask_simple_captcha import CAPTCHA
 import time
 import os
@@ -775,6 +777,205 @@ def control_circuit_breaker():
         return jsonify(result)
     else:
         return jsonify({"error": "Invalid action. Use 'activate' or 'deactivate'"}), 400
+
+
+# ============================
+# PAYMENT & SUBSCRIPTION SYSTEM
+# ============================
+
+@app.route("/api/payments/create", methods=["POST"])
+@token_required
+def create_payment_request(current_user_id):
+    """Create payment request for subscription upgrade"""
+    data = request.json
+    plan = data.get('plan')
+    
+    if not plan or plan not in ['pro', 'vip']:
+        return jsonify({'error': 'Invalid plan. Choose pro or vip'}), 400
+    
+    result = payment_system.create_payment_request(current_user_id, plan)
+    return jsonify(result)
+
+
+@app.route("/api/payments/verify", methods=["POST"])
+@token_required
+def submit_payment_verification(current_user_id):
+    """Submit payment for verification with TX hash and MANDATORY HMAC signature"""
+    data = request.json
+    
+    payment_id = data.get('payment_id')
+    tx_hash = data.get('tx_hash')
+    referral_code = data.get('referral_code')
+    signature = request.headers.get('X-Payment-Signature')
+    
+    if not payment_id or not tx_hash:
+        return jsonify({'error': 'payment_id and tx_hash required'}), 400
+    
+    if not signature:
+        return jsonify({'error': 'X-Payment-Signature header required for security'}), 401
+    
+    payment_data = {
+        'payment_id': payment_id,
+        'tx_hash': tx_hash,
+        'user_id': current_user_id
+    }
+    
+    if not subscription_security.verify_payment_signature(payment_data, signature):
+        return jsonify({'error': 'Invalid payment signature'}), 403
+    
+    result = payment_system.verify_usdt_payment(
+        payment_id, tx_hash, current_user_id, referral_code
+    )
+    return jsonify(result)
+
+
+@app.route("/api/payments/pending", methods=["GET"])
+@token_required
+def get_pending_payments_admin(current_user_id):
+    """Admin: Get pending payment verifications"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    pending = payment_system.get_pending_payments()
+    return jsonify({'count': len(pending), 'payments': pending})
+
+
+@app.route("/api/payments/confirm/<payment_id>", methods=["POST"])
+@token_required
+def confirm_payment_admin(current_user_id, payment_id):
+    """Admin: Confirm payment and activate subscription with MANDATORY HMAC signature"""
+    from datetime import datetime, timedelta
+    
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    data = request.json
+    is_valid = data.get('is_valid', False)
+    signature = request.headers.get('X-Admin-Signature')
+    
+    if not signature:
+        return jsonify({'error': 'X-Admin-Signature header required for security'}), 401
+    
+    admin_action = {
+        'payment_id': payment_id,
+        'admin_id': current_user_id,
+        'is_valid': is_valid,
+        'timestamp': int(datetime.now().timestamp())
+    }
+    
+    if not subscription_security.verify_payment_signature(admin_action, signature):
+        return jsonify({'error': 'Invalid admin signature'}), 403
+    
+    result = payment_system.admin_confirm_payment(payment_id, is_valid)
+    
+    if result['success'] and is_valid:
+        target_user = user_manager.get_user(result['user_id'])
+        target_user.plan = result['plan']
+        target_user.plan_started_at = datetime.now().isoformat()
+        target_user.plan_expires_at = (datetime.now() + timedelta(days=30)).isoformat()
+        
+        license_key = subscription_security.generate_license_key(
+            result['user_id'], result['plan'], 30
+        )
+        target_user.license_key = license_key
+        
+        user_manager._save_users()
+        
+        result['license_key'] = license_key
+    
+    return jsonify(result)
+
+
+# ============================
+# REFERRAL SYSTEM
+# ============================
+
+@app.route("/api/referral/code", methods=["GET"])
+@token_required
+def get_referral_code(current_user_id):
+    """Get user's referral code"""
+    user = user_manager.get_user(current_user_id)
+    
+    if not hasattr(user, 'referral_code') or not user.referral_code:
+        user.referral_code = subscription_security.generate_referral_code(current_user_id)
+        payment_system.register_referral_code(current_user_id, user.referral_code)
+        user_manager._save_users()
+    
+    return jsonify({
+        'referral_code': user.referral_code,
+        'referral_link': f"https://verzek.app/register?ref={user.referral_code}"
+    })
+
+
+@app.route("/api/referral/stats", methods=["GET"])
+@token_required
+def get_referral_stats_endpoint(current_user_id):
+    """Get referral statistics and earnings"""
+    stats = payment_system.get_referral_stats(current_user_id)
+    return jsonify(stats)
+
+
+@app.route("/api/referral/payout", methods=["POST"])
+@token_required
+def request_referral_payout_endpoint(current_user_id):
+    """Request payout of referral earnings"""
+    data = request.json
+    wallet_address = data.get('wallet_address')
+    
+    if not wallet_address:
+        return jsonify({'error': 'wallet_address required'}), 400
+    
+    result = payment_system.request_referral_payout(current_user_id, wallet_address)
+    return jsonify(result)
+
+
+@app.route("/api/referral/payouts/pending", methods=["GET"])
+@token_required
+def get_pending_payouts_admin(current_user_id):
+    """Admin: Get pending referral payouts"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    pending = payment_system.get_pending_payouts()
+    return jsonify({'count': len(pending), 'payouts': pending})
+
+
+# ============================
+# SUBSCRIPTION SECURITY
+# ============================
+
+@app.route("/api/subscription/validate", methods=["POST"])
+@token_required
+def validate_subscription(current_user_id):
+    """Validate user's subscription and license key"""
+    user = user_manager.get_user(current_user_id)
+    
+    if not hasattr(user, 'license_key') or not user.license_key:
+        return jsonify({
+            'valid': False,
+            'plan': user.plan,
+            'message': 'No license key found'
+        })
+    
+    is_valid, message = subscription_security.validate_license_key(
+        user.license_key, current_user_id
+    )
+    
+    if not is_valid and user.plan in ['pro', 'vip']:
+        user.plan = 'free'
+        user_manager._save_users()
+    
+    return jsonify({
+        'valid': is_valid,
+        'plan': user.plan,
+        'message': message
+    })
 
 
 if __name__ == "__main__":
