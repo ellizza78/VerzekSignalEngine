@@ -49,3 +49,21 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **PyJWT**: For JWT authentication.
 - **Bcrypt**: For password hashing.
 - **flask-simple-captcha**: For CAPTCHA implementation.
+
+## Recent Changes
+- **2025-10-16**: Complete Referral & In-App Wallet System
+  - ✅ **10% Recurring Commission**: Monthly referral bonuses for lifetime of subscription
+  - ✅ **In-App Wallet**: Each user gets generated wallet for referral earnings
+  - ✅ **Withdrawal System**: $10 minimum, $1 fee (credited to system wallet)
+  - ✅ **Recurring Payments Service**: Background task processes monthly commissions daily
+  - ✅ **Wallet Balance API**: GET /api/wallet/balance endpoint
+  - ✅ **Updated Referral Stats**: Now includes wallet_balance and recurring_subscriptions count
+
+- **2025-10-16**: Secure Payment & Subscription System
+  - ✅ License Key Security: URL-safe base64 encoding with embedded expiry (survives restarts)
+  - ✅ USDT TRC20 Payments: Manual admin verification workflow with fraud detection
+  - ✅ Payment Flow: User→Admin Verification→Subscription Activation→License Generation
+  - ✅ HMAC Signature Verification: MANDATORY X-Payment-Signature & X-Admin-Signature headers
+  - ✅ Plan Pricing: PRO $29.99/mo, VIP $99.99/mo (USDT TRC20)
+  - ✅ Persistent Storage: licenses.json, payments.json, referrals.json
+  - ✅ Fraud Protection: Multi-layer validation, tamper-proof checksums

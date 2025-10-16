@@ -724,3 +724,10 @@ Updated working bot version from local PC
 [2025-10-16 15:46:07] [ORCHESTRATOR] ℹ️ No active positions found for ETHUSDT to close
 [2025-10-16 15:50:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'BCHUSDT', 'reason': 'stop_loss_hit', 'source_text': '#BCHUSDT - Stop Loss ⛔️\nLoss: 30.7239%'}
 [2025-10-16 15:50:08] [ORCHESTRATOR] ℹ️ No active positions found for BCHUSDT to close
+[2025-10-16 15:55:30] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 15:55:31] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 15:55:31] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 15:55:31] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 15:55:32] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 15:56:19] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'stop_loss_hit', 'source_text': '#XRPUSDT - Stop Loss ⛔️\nLoss: 30.5542%'}
+[2025-10-16 15:56:19] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close

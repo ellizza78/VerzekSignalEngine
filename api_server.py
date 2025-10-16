@@ -914,9 +914,22 @@ def get_referral_code(current_user_id):
 @app.route("/api/referral/stats", methods=["GET"])
 @token_required
 def get_referral_stats_endpoint(current_user_id):
-    """Get referral statistics and earnings"""
+    """Get referral statistics, earnings, and in-app wallet balance"""
     stats = payment_system.get_referral_stats(current_user_id)
     return jsonify(stats)
+
+
+@app.route("/api/wallet/balance", methods=["GET"])
+@token_required
+def get_wallet_balance(current_user_id):
+    """Get user's in-app wallet balance"""
+    wallet_balance = payment_system.referrals.get('wallets', {}).get(current_user_id, 0.0)
+    return jsonify({
+        'balance': wallet_balance,
+        'currency': 'USDT',
+        'minimum_withdrawal': 10.0,
+        'withdrawal_fee': 1.0
+    })
 
 
 @app.route("/api/referral/payout", methods=["POST"])
