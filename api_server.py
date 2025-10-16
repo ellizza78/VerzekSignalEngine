@@ -5,7 +5,7 @@ Flask REST API layer for VerzekAutoTrader.
 Allows mobile app or external dashboard to fetch real-time data.
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from utils.logger import log_event
 from trade_executor import get_all_trades
 from modules import UserManager, PositionTracker, SafetyManager
@@ -28,6 +28,8 @@ from modules.two_factor_auth import two_factor_auth
 from modules.backup_system import backup_system
 from modules.tronscan_client import tronscan_client
 from modules.audit_logger import audit_logger, AuditEventType
+from modules.admin_dashboard import admin_dashboard
+from modules.push_notifications import push_service
 
 app = Flask(__name__)
 
@@ -1383,6 +1385,195 @@ def get_security_alerts(current_user_id):
         'alert_count': len(alerts),
         'alerts': alerts
     })
+
+
+# ============================
+# ADMIN DASHBOARD
+# ============================
+
+@app.route("/admin/dashboard")
+def admin_dashboard_view():
+    """Serve admin dashboard web interface"""
+    return render_template('admin_dashboard.html')
+
+
+@app.route("/api/admin/overview", methods=["GET"])
+@token_required
+def admin_overview(current_user_id):
+    """Get system overview dashboard (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    overview = admin_dashboard.get_system_overview()
+    
+    audit_logger.log_event(
+        AuditEventType.ADMIN_ACTION,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'view_dashboard_overview'}
+    )
+    
+    return jsonify(overview)
+
+
+@app.route("/api/admin/users", methods=["GET"])
+@token_required
+def admin_users_list(current_user_id):
+    """Get user list with filtering (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    plan_filter = request.args.get('plan')
+    search = request.args.get('search')
+    
+    users = admin_dashboard.get_user_list(plan_filter, search)
+    
+    return jsonify({
+        'total': len(users),
+        'users': users
+    })
+
+
+@app.route("/api/admin/payments/pending", methods=["GET"])
+@token_required
+def admin_pending_payments(current_user_id):
+    """Get pending payment verifications (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    pending = admin_dashboard.get_pending_payments()
+    
+    return jsonify({
+        'total': len(pending),
+        'payments': pending
+    })
+
+
+@app.route("/api/admin/activity", methods=["GET"])
+@token_required
+def admin_recent_activity(current_user_id):
+    """Get recent system activity (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    limit = request.args.get('limit', 50, type=int)
+    activities = admin_dashboard.get_recent_activity(limit)
+    
+    return jsonify({
+        'total': len(activities),
+        'activities': activities
+    })
+
+
+@app.route("/api/admin/health", methods=["GET"])
+@token_required
+def admin_system_health(current_user_id):
+    """Get system health metrics (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    health = admin_dashboard.get_system_health()
+    
+    return jsonify(health)
+
+
+@app.route("/api/admin/revenue", methods=["GET"])
+@token_required
+def admin_revenue_analytics(current_user_id):
+    """Get revenue analytics (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    days = request.args.get('days', 30, type=int)
+    analytics = admin_dashboard.get_revenue_analytics(days)
+    
+    return jsonify(analytics)
+
+
+@app.route("/api/admin/trading/performance", methods=["GET"])
+@token_required
+def admin_trading_performance(current_user_id):
+    """Get trading performance metrics (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    performance = admin_dashboard.get_trading_performance()
+    
+    return jsonify(performance)
+
+
+# ============================
+# PUSH NOTIFICATIONS
+# ============================
+
+@app.route("/api/notifications/register", methods=["POST"])
+@token_required
+def register_device_token(current_user_id):
+    """Register device for push notifications"""
+    data = request.json
+    device_token = data.get('device_token')
+    
+    if not device_token:
+        return jsonify({'error': 'device_token is required'}), 400
+    
+    success = push_service.register_device(current_user_id, device_token)
+    
+    audit_logger.log_event(
+        AuditEventType.SETTINGS_CHANGED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'register_push_token'}
+    )
+    
+    return jsonify({
+        'success': success,
+        'message': 'Device registered for notifications' if success else 'Device already registered'
+    })
+
+
+@app.route("/api/notifications/unregister", methods=["POST"])
+@token_required
+def unregister_device_token(current_user_id):
+    """Unregister device from push notifications"""
+    data = request.json
+    device_token = data.get('device_token')
+    
+    if not device_token:
+        return jsonify({'error': 'device_token is required'}), 400
+    
+    success = push_service.unregister_device(current_user_id, device_token)
+    
+    return jsonify({
+        'success': success,
+        'message': 'Device unregistered' if success else 'Device not found'
+    })
+
+
+@app.route("/api/notifications/test", methods=["POST"])
+@token_required
+def test_notification(current_user_id):
+    """Send test notification"""
+    result = push_service.send_notification(
+        current_user_id,
+        "🔔 Test Notification",
+        "VerzekAutoTrader push notifications are working!"
+    )
+    
+    return jsonify(result)
 
 
 if __name__ == "__main__":
