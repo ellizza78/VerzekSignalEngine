@@ -2647,3 +2647,15 @@ New #Crypto #Signal Open
 📡 10+ Signals/Day
 🎯 Entry Price, Stop Lost, Targets
 📈 Leverage, Risk Management
+[2025-10-16 16:35:09] #Signal #TIA/USDT $TIA 
+Short 🩸 Lev x5 #Crypto 
+
+Entry: 1.03 - Stop Loss: 1.095 
+
+Targets: 0.9975 - 0.965 - 0.9325 - 0.9 - 0.8675
+[2025-10-16 16:36:07] #Signal #ALGO/USDT $ALGO 
+Short 🩸 Lev x6 #Crypto 
+
+Entry: 0.1894 - Stop Loss: 0.1992 
+
+Targets: 0.1845 - 0.1796 - 0.1747 - 0.1698 - 0.1649

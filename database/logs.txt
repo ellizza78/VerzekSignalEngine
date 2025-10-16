@@ -771,3 +771,7 @@ Updated working bot version from local PC
 [2025-10-16 16:33:25] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 16:33:25] [RECURRING] 💰 Recurring Payments Service started
 [2025-10-16 16:33:25] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:35:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'TIAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #TIA/USDT $TIA \nShort 🩸 Lev x5 #Crypto \n\nEntry: 1.03 - Stop Loss: 1.095 \n\nTargets: 0.9975 - 0.965 - 0.9325 - 0.9 - 0.8675'}
+[2025-10-16 16:35:08] [ORCHESTRATOR] ℹ️ No active positions found for TIAUSDT to close
+[2025-10-16 16:36:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ALGOUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ALGO/USDT $ALGO \nShort 🩸 Lev x6 #Crypto \n\nEntry: 0.1894 - Stop Loss: 0.1992 \n\nTargets: 0.1845 - 0.1796 - 0.1747 - 0.1698 - 0.1649'}
+[2025-10-16 16:36:07] [ORCHESTRATOR] ℹ️ No active positions found for ALGOUSDT to close
