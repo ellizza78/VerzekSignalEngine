@@ -652,3 +652,25 @@ Updated working bot version from local PC
 [2025-10-16 12:35:30] [ORCHESTRATOR] ℹ️ No active positions found for CHZUSDT to close
 [2025-10-16 12:59:08] [AUTH] New user registered: test@verzek.com
 [2025-10-16 12:59:17] [AUTH] User logged in: test@verzek.com
+[2025-10-16 13:26:05] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 13:26:06] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 13:26:06] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 13:26:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 14:06:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #XRP/USDT $XRP \nLong 🚀 Lev x9 #Crypto \n\nEntry: 2.436 - Stop Loss: 2.3533 \n\nTargets: 2.47735 - 2.5187 - 2.56005 - 2.6014 - 2.64275'}
+[2025-10-16 14:06:07] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
+[2025-10-16 14:06:11] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'signal_cancelled', 'source_text': '#XRPUSDT - Signal Cancelled ❎\nClosed due to opposite direction signal'}
+[2025-10-16 14:06:11] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
+[2025-10-16 14:06:23] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'signal_cancelled', 'source_text': '#XRPUSDT - Signal Cancelled ❎\nClosed due to opposite direction signal'}
+[2025-10-16 14:06:23] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
+[2025-10-16 14:18:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ROSEUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ROSE/USDT $ROSE \nShort 🩸 Lev x9 #Crypto \n\nEntry: 0.01898 - Stop Loss: 0.0196 \n\nTargets: 0.01867 - 0.01836 - 0.01805 - 0.01774 - 0.01743'}
+[2025-10-16 14:18:07] [ORCHESTRATOR] ℹ️ No active positions found for ROSEUSDT to close
+[2025-10-16 14:20:26] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ROSEUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ROSE/USDT $ROSE \nShort 🩸 Lev x9 #Crypto \n\nEntry: 0.01898 - Stop Loss: 0.0196 \n\nTargets: 0.01867 - 0.01836 - 0.01805 - 0.01774 - 0.01743'}
+[2025-10-16 14:20:26] [ORCHESTRATOR] ℹ️ No active positions found for ROSEUSDT to close
+[2025-10-16 14:24:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'WLFIUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #WLFI/USDT $WLFI \nLong 🚀 Lev x14 #Crypto \n\nEntry: 0.1421 - Stop Loss: 0.1391 \n\nTargets: 0.1436 - 0.1451 - 0.1466 - 0.1481 - 0.1496'}
+[2025-10-16 14:24:07] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
+[2025-10-16 14:24:26] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'WLFIUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #WLFI/USDT $WLFI \nLong 🚀 Lev x14 #Crypto \n\nEntry: 0.1421 - Stop Loss: 0.1391 \n\nTargets: 0.1436 - 0.1451 - 0.1466 - 0.1481 - 0.1496'}
+[2025-10-16 14:24:26] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
+[2025-10-16 14:25:40] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'WLFIUSDT', 'reason': 'signal_cancelled', 'source_text': '#WLFIUSDT - Signal Cancelled ❎\nTarget achieved before entering the entry zone'}
+[2025-10-16 14:25:40] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
+[2025-10-16 14:26:11] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'WLFIUSDT', 'reason': 'signal_cancelled', 'source_text': '#WLFIUSDT - Signal Cancelled ❎\nTarget achieved before entering the entry zone'}
+[2025-10-16 14:26:11] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
