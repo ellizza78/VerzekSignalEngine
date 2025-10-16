@@ -756,3 +756,8 @@ Updated working bot version from local PC
 [2025-10-16 16:16:06] [ORCHESTRATOR] ℹ️ No active positions found for SANDUSDT to close
 [2025-10-16 16:20:09] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ADAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ADA/USDT $ADA \nShort 🩸 Lev x6 #Crypto \n\nEntry: 0.6498 - Stop Loss: 0.6847 \n\nTargets: 0.63235 - 0.6149 - 0.59745 - 0.58 - 0.56255'}
 [2025-10-16 16:20:09] [ORCHESTRATOR] ℹ️ No active positions found for ADAUSDT to close
+[2025-10-16 16:22:09] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 16:22:11] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 16:22:11] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:22:11] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 16:22:11] [ORCHESTRATOR] DCA Orchestrator initialized
