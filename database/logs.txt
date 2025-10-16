@@ -754,3 +754,5 @@ Updated working bot version from local PC
 [2025-10-16 16:13:41] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 16:16:06] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'SANDUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #SAND/USDT $SAND \nShort 🩸 Lev x5 #Crypto \n\nEntry: 0.2092 - Stop Loss: 0.2218 \n\nTargets: 0.2029 - 0.1966 - 0.1903 - 0.184 - 0.1777'}
 [2025-10-16 16:16:06] [ORCHESTRATOR] ℹ️ No active positions found for SANDUSDT to close
+[2025-10-16 16:20:09] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ADAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ADA/USDT $ADA \nShort 🩸 Lev x6 #Crypto \n\nEntry: 0.6498 - Stop Loss: 0.6847 \n\nTargets: 0.63235 - 0.6149 - 0.59745 - 0.58 - 0.56255'}
+[2025-10-16 16:20:09] [ORCHESTRATOR] ℹ️ No active positions found for ADAUSDT to close
