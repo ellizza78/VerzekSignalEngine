@@ -80,12 +80,21 @@ class AdminDashboard:
                     search_lower in u.full_name.lower() or
                     search_lower in u.user_id.lower()]
         
+        # Load all positions ONCE for performance (not in loop)
+        all_positions = self.position_tracker.load_positions()
+        
+        # Group positions by user_id for fast lookup
+        positions_by_user = {}
+        for pos in all_positions:
+            if pos.user_id not in positions_by_user:
+                positions_by_user[pos.user_id] = []
+            positions_by_user[pos.user_id].append(pos)
+        
         # Format user data
         user_list = []
         for user in users:
-            # Get user's positions
-            user_positions = [p for p in self.position_tracker.load_positions() 
-                            if p.user_id == user.user_id]
+            # Get user's positions from pre-loaded dict
+            user_positions = positions_by_user.get(user.user_id, [])
             
             # Get user's active license
             license_key = None

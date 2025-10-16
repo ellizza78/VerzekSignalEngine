@@ -766,3 +766,8 @@ Updated working bot version from local PC
 [2025-10-16 16:29:38] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 16:29:38] [RECURRING] 💰 Recurring Payments Service started
 [2025-10-16 16:29:38] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:33:23] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 16:33:25] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 16:33:25] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:33:25] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 16:33:25] [ORCHESTRATOR] DCA Orchestrator initialized
