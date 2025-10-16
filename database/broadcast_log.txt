@@ -2596,3 +2596,8 @@ Profit: 45.4301% 📈
 Period: 1 Days 1 Hours 32 Minutes ⏰
 [2025-10-16 15:56:19] #XRPUSDT - Stop Loss ⛔️
 Loss: 30.5542%
+[2025-10-16 15:57:47] #RUNEUSDT - 🚨 Target 4 reached
+💸 Profit collected 37.8163%
+⏰ Posted: 1 Days 4 Hours 6 Minutes Ago
+[2025-10-16 15:57:49] #MANAUSDT - Stop Loss ⛔️
+Loss: 32.279%

@@ -731,3 +731,5 @@ Updated working bot version from local PC
 [2025-10-16 15:55:32] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 15:56:19] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'stop_loss_hit', 'source_text': '#XRPUSDT - Stop Loss ⛔️\nLoss: 30.5542%'}
 [2025-10-16 15:56:19] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
+[2025-10-16 15:57:48] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'MANAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#MANAUSDT - Stop Loss ⛔️\nLoss: 32.279%'}
+[2025-10-16 15:57:48] [ORCHESTRATOR] ℹ️ No active positions found for MANAUSDT to close
