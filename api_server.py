@@ -41,6 +41,16 @@ from modules.social_trading import SocialTradingManager
 from modules.custom_indicators import CustomIndicatorEngine
 from modules.backtesting_engine import BacktestingEngine
 
+# Phase 5 Advanced Features
+from modules.ai_trade_assistant import AITradeAssistant
+from modules.multi_timeframe_analysis import MultiTimeframeAnalysis
+from modules.smart_order_routing import SmartOrderRouter
+from modules.social_features import SocialFeaturesManager
+from modules.advanced_charting import AdvancedChartingSystem
+from modules.auto_optimization import AutoOptimizationEngine
+from modules.ai_risk_scoring import AIRiskScoringSystem
+from modules.trading_journal import TradingJournal
+
 app = Flask(__name__)
 
 # Configure CAPTCHA
@@ -69,6 +79,16 @@ advanced_analytics = AdvancedAnalytics(position_tracker)
 social_trading = SocialTradingManager(position_tracker)
 custom_indicators = CustomIndicatorEngine(position_tracker)
 backtesting_engine = BacktestingEngine(position_tracker)
+
+# Phase 5 managers
+ai_assistant = AITradeAssistant()
+mtf_analyzer = MultiTimeframeAnalysis()
+order_router = SmartOrderRouter()
+social_features = SocialFeaturesManager()
+chart_system = AdvancedChartingSystem()
+auto_optimizer = AutoOptimizationEngine()
+risk_scorer = AIRiskScoringSystem()
+trading_journal = TradingJournal()
 
 # ============================
 # APP STATUS
@@ -2143,6 +2163,415 @@ def get_backtest_history(current_user_id):
     """Get backtest history"""
     history = backtesting_engine.get_backtest_history(current_user_id)
     return jsonify({'history': history})
+
+
+# ============================
+# PHASE 5: AI TRADE ASSISTANT
+# ============================
+
+@app.route("/api/ai/analyze-signal", methods=["POST"])
+@token_required
+def ai_analyze_signal(current_user_id):
+    """AI-powered signal analysis"""
+    data = request.json
+    result = ai_assistant.analyze_signal(data)
+    return jsonify(result)
+
+
+@app.route("/api/ai/recommend-trade", methods=["POST"])
+@token_required
+def ai_recommend_trade(current_user_id):
+    """AI trade recommendation"""
+    market_data = request.json.get('market_data', {})
+    user_profile = request.json.get('user_profile', {})
+    result = ai_assistant.generate_trade_recommendation(market_data, user_profile)
+    return jsonify(result)
+
+
+@app.route("/api/ai/analyze-portfolio", methods=["POST"])
+@token_required
+def ai_analyze_portfolio(current_user_id):
+    """AI portfolio analysis"""
+    positions = position_tracker.get_user_positions(current_user_id)
+    market_conditions = request.json.get('market_conditions', {})
+    result = ai_assistant.analyze_portfolio(positions, market_conditions)
+    return jsonify(result)
+
+
+@app.route("/api/ai/predict-market", methods=["POST"])
+@token_required
+def ai_predict_market(current_user_id):
+    """AI market prediction"""
+    data = request.json
+    result = ai_assistant.predict_market_movement(
+        data.get('symbol'),
+        data.get('timeframe'),
+        data.get('historical_data', [])
+    )
+    return jsonify(result)
+
+
+@app.route("/api/ai/sentiment", methods=["POST"])
+@token_required
+def ai_sentiment(current_user_id):
+    """AI sentiment analysis"""
+    data = request.json
+    result = ai_assistant.sentiment_analysis(
+        data.get('news', []),
+        data.get('social_media', [])
+    )
+    return jsonify(result)
+
+
+@app.route("/api/ai/chat", methods=["POST"])
+@token_required
+def ai_chat(current_user_id):
+    """AI trading assistant chat"""
+    data = request.json
+    result = ai_assistant.chat_assistant(
+        data.get('message'),
+        data.get('conversation_history', [])
+    )
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: MULTI-TIMEFRAME ANALYSIS
+# ============================
+
+@app.route("/api/analysis/multi-timeframe", methods=["POST"])
+@token_required
+def multi_timeframe_analysis(current_user_id):
+    """Multi-timeframe analysis"""
+    data = request.json
+    result = mtf_analyzer.analyze_multiple_timeframes(
+        data.get('symbol'),
+        data.get('price_data', {})
+    )
+    return jsonify(result)
+
+
+@app.route("/api/analysis/divergence", methods=["POST"])
+@token_required
+def detect_divergence(current_user_id):
+    """Detect price/indicator divergence"""
+    data = request.json
+    result = mtf_analyzer.detect_divergence(
+        data.get('price_data', []),
+        data.get('indicator', 'rsi')
+    )
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: SMART ORDER ROUTING
+# ============================
+
+@app.route("/api/routing/best-execution", methods=["POST"])
+@token_required
+def find_best_execution(current_user_id):
+    """Find best execution across exchanges"""
+    data = request.json
+    result = order_router.find_best_execution(
+        data.get('symbol'),
+        data.get('side'),
+        data.get('quantity'),
+        data.get('exchange_prices', {})
+    )
+    return jsonify(result)
+
+
+@app.route("/api/routing/split-order", methods=["POST"])
+@token_required
+def split_order(current_user_id):
+    """Split order across exchanges"""
+    data = request.json
+    result = order_router.split_order_across_exchanges(
+        data.get('symbol'),
+        data.get('side'),
+        data.get('quantity'),
+        data.get('exchange_prices', {}),
+        data.get('max_exchanges', 3)
+    )
+    return jsonify(result)
+
+
+@app.route("/api/routing/price-impact", methods=["POST"])
+@token_required
+def analyze_price_impact(current_user_id):
+    """Analyze price impact"""
+    data = request.json
+    result = order_router.analyze_price_impact(
+        data.get('symbol'),
+        data.get('quantity'),
+        data.get('orderbook', [])
+    )
+    return jsonify(result)
+
+
+@app.route("/api/routing/recommend-strategy", methods=["POST"])
+@token_required
+def recommend_execution_strategy(current_user_id):
+    """Recommend execution strategy"""
+    data = request.json
+    result = order_router.recommend_execution_strategy(
+        data.get('symbol'),
+        data.get('side'),
+        data.get('quantity'),
+        data.get('urgency', 'medium'),
+        data.get('exchange_data', {})
+    )
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: SOCIAL FEATURES
+# ============================
+
+@app.route("/api/social/chat/send", methods=["POST"])
+@token_required
+def send_chat_message(current_user_id):
+    """Send chat message"""
+    data = request.json
+    result = social_features.send_message(
+        data.get('room_id'),
+        current_user_id,
+        data.get('username'),
+        data.get('message')
+    )
+    return jsonify(result)
+
+
+@app.route("/api/social/chat/messages/<room_id>", methods=["GET"])
+@token_required
+def get_chat_messages(current_user_id, room_id):
+    """Get chat messages"""
+    limit = request.args.get('limit', 50, type=int)
+    result = social_features.get_messages(room_id, limit)
+    return jsonify(result)
+
+
+@app.route("/api/social/chat/rooms", methods=["GET"])
+@token_required
+def get_chat_rooms(current_user_id):
+    """Get active chat rooms"""
+    result = social_features.get_active_rooms()
+    return jsonify(result)
+
+
+@app.route("/api/social/leaderboard", methods=["GET"])
+@token_required
+def get_leaderboard(current_user_id):
+    """Get leaderboard"""
+    period = request.args.get('period', 'all_time')
+    limit = request.args.get('limit', 100, type=int)
+    result = social_features.get_leaderboard(period, limit)
+    return jsonify(result)
+
+
+@app.route("/api/social/leaderboard/rank", methods=["GET"])
+@token_required
+def get_user_rank(current_user_id):
+    """Get user rank"""
+    period = request.args.get('period', 'all_time')
+    result = social_features.get_user_rank(current_user_id, period)
+    return jsonify(result)
+
+
+@app.route("/api/social/competitions", methods=["GET"])
+@token_required
+def get_competitions(current_user_id):
+    """Get competitions"""
+    status = request.args.get('status', 'active')
+    result = social_features.get_competitions(status)
+    return jsonify(result)
+
+
+@app.route("/api/social/competitions/<competition_id>/join", methods=["POST"])
+@token_required
+def join_competition(current_user_id, competition_id):
+    """Join competition"""
+    data = request.json
+    result = social_features.join_competition(
+        competition_id,
+        current_user_id,
+        data.get('username')
+    )
+    return jsonify(result)
+
+
+@app.route("/api/social/competitions/<competition_id>/leaderboard", methods=["GET"])
+@token_required
+def get_competition_leaderboard(current_user_id, competition_id):
+    """Get competition leaderboard"""
+    result = social_features.get_competition_leaderboard(competition_id)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: ADVANCED CHARTING
+# ============================
+
+@app.route("/api/charting/indicator", methods=["POST"])
+@token_required
+def calculate_indicator(current_user_id):
+    """Calculate technical indicator"""
+    data = request.json
+    result = chart_system.calculate_indicator(
+        data.get('indicator'),
+        data.get('price_data', []),
+        data.get('params', {})
+    )
+    return jsonify(result)
+
+
+@app.route("/api/charting/config", methods=["POST"])
+@token_required
+def generate_chart_config(current_user_id):
+    """Generate chart configuration"""
+    data = request.json
+    result = chart_system.generate_chart_config(
+        data.get('indicators', []),
+        data.get('params', {})
+    )
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: AUTO-OPTIMIZATION
+# ============================
+
+@app.route("/api/optimization/optimize", methods=["POST"])
+@token_required
+def optimize_strategy(current_user_id):
+    """Optimize strategy parameters"""
+    data = request.json
+    result = auto_optimizer.optimize_strategy(
+        data.get('strategy_name'),
+        data.get('historical_trades', []),
+        data.get('parameter_ranges', {})
+    )
+    return jsonify(result)
+
+
+@app.route("/api/optimization/backtest", methods=["POST"])
+@token_required
+def backtest_parameters(current_user_id):
+    """Backtest parameters"""
+    data = request.json
+    result = auto_optimizer.backtest_parameters(
+        data.get('params', {}),
+        data.get('historical_data', [])
+    )
+    return jsonify(result)
+
+
+@app.route("/api/optimization/suggestions", methods=["POST"])
+@token_required
+def get_optimization_suggestions(current_user_id):
+    """Get optimization suggestions"""
+    data = request.json
+    result = auto_optimizer.suggest_improvements(data)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: AI RISK SCORING
+# ============================
+
+@app.route("/api/risk/position", methods=["POST"])
+@token_required
+def evaluate_position_risk(current_user_id):
+    """Evaluate position risk"""
+    data = request.json
+    result = risk_scorer.evaluate_position_risk(
+        data.get('position', {}),
+        data.get('market_data', {}),
+        data.get('user_settings', {})
+    )
+    return jsonify(result)
+
+
+@app.route("/api/risk/portfolio", methods=["GET"])
+@token_required
+def evaluate_portfolio_risk(current_user_id):
+    """Evaluate portfolio risk"""
+    positions = position_tracker.get_user_positions(current_user_id)
+    user_data = user_manager.get_user_by_id(current_user_id)
+    balance = float(user_data.get('balance', 10000)) if user_data else 10000
+    market_conditions = request.json.get('market_conditions', {}) if request.json else {}
+    result = risk_scorer.evaluate_portfolio_risk(positions, balance, market_conditions)
+    return jsonify(result)
+
+
+@app.route("/api/risk/var", methods=["POST"])
+@token_required
+def calculate_var(current_user_id):
+    """Calculate Value at Risk"""
+    positions = position_tracker.get_user_positions(current_user_id)
+    data = request.json
+    result = risk_scorer.calculate_var(
+        positions,
+        data.get('confidence_level', 0.95),
+        data.get('time_horizon_days', 1)
+    )
+    return jsonify(result)
+
+
+@app.route("/api/risk/stress-test", methods=["POST"])
+@token_required
+def run_stress_test(current_user_id):
+    """Run portfolio stress test"""
+    positions = position_tracker.get_user_positions(current_user_id)
+    data = request.json
+    result = risk_scorer.stress_test(
+        positions,
+        data.get('scenarios', [])
+    )
+    return jsonify(result)
+
+
+# ============================
+# PHASE 5: TRADING JOURNAL
+# ============================
+
+@app.route("/api/journal/entry", methods=["POST"])
+@token_required
+def add_journal_entry(current_user_id):
+    """Add journal entry"""
+    data = request.json
+    result = trading_journal.add_entry(
+        current_user_id,
+        data.get('trade', {}),
+        data.get('notes', ''),
+        data.get('emotions', [])
+    )
+    return jsonify(result)
+
+
+@app.route("/api/journal/entries", methods=["GET"])
+@token_required
+def get_journal_entries(current_user_id):
+    """Get journal entries"""
+    limit = request.args.get('limit', 50, type=int)
+    result = trading_journal.get_entries(current_user_id, limit)
+    return jsonify(result)
+
+
+@app.route("/api/journal/patterns", methods=["GET"])
+@token_required
+def analyze_journal_patterns(current_user_id):
+    """Analyze trading patterns"""
+    result = trading_journal.analyze_patterns(current_user_id)
+    return jsonify(result)
+
+
+@app.route("/api/journal/insights", methods=["GET"])
+@token_required
+def get_journal_insights(current_user_id):
+    """Get trading insights"""
+    result = trading_journal.generate_insights(current_user_id)
+    return jsonify(result)
 
 
 if __name__ == "__main__":

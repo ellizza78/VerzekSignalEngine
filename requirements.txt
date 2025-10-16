@@ -13,3 +13,4 @@ cryptography
 Flask-Limiter
 pyotp
 qrcode
+openai
