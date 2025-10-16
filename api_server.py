@@ -14,11 +14,24 @@ from modules.auth import (
     create_access_token, create_refresh_token,
     token_required, refresh_token_required
 )
+from flask_simple_captcha import CAPTCHA
 import time
 import os
 import re
 
 app = Flask(__name__)
+
+# Configure CAPTCHA
+CAPTCHA_CONFIG = {
+    'SECRET_CAPTCHA_KEY': os.environ.get('CAPTCHA_SECRET_KEY', 'VerzekAutoTrader2025SecureKey!@#'),
+    'CAPTCHA_LENGTH': 6,
+    'CAPTCHA_DIGITS': True,
+    'EXPIRE_SECONDS': 600,
+    'CAPTCHA_IMG_FORMAT': 'JPEG'
+}
+
+SIMPLE_CAPTCHA = CAPTCHA(config=CAPTCHA_CONFIG)
+app = SIMPLE_CAPTCHA.init_app(app)
 
 # Initialize managers
 user_manager = UserManager()
@@ -117,6 +130,75 @@ def test():
     })
 
 
+@app.route("/api/system/ip")
+def get_server_ip():
+    """Get server IP for exchange API whitelisting"""
+    import requests as req
+    try:
+        response = req.get('https://api.ipify.org?format=json', timeout=5)
+        server_ip = response.json().get('ip', '34.11.228.15')
+    except:
+        server_ip = '34.11.228.15'
+    
+    return jsonify({
+        "server_ip": server_ip,
+        "instructions": {
+            "step_1": "Copy the IP address above",
+            "step_2": "Go to your exchange (Binance, Bybit, etc.)",
+            "step_3": "When creating API keys, select 'Restrict access to trusted IPs only'",
+            "step_4": "Add this IP address to the whitelist",
+            "step_5": "Enable 'Enable Futures' permission",
+            "step_6": "Enable 'Enable Reading' permission",
+            "important": "⚠️ ALWAYS use ISOLATED MARGIN on your exchange, NOT Cross Margin"
+        },
+        "supported_exchanges": [
+            {
+                "name": "Binance",
+                "api_url": "https://www.binance.com/en/my/settings/api-management"
+            },
+            {
+                "name": "Bybit",
+                "api_url": "https://www.bybit.com/app/user/api-management"
+            },
+            {
+                "name": "Phemex",
+                "api_url": "https://phemex.com/account/api-management"
+            },
+            {
+                "name": "Coinexx",
+                "api_url": "https://www.coinexx.com/api"
+            }
+        ]
+    })
+
+
+# ============================
+# CAPTCHA ENDPOINTS
+# ============================
+
+@app.route("/api/captcha/generate", methods=["GET"])
+def generate_captcha():
+    """Generate a new CAPTCHA challenge"""
+    captcha_dict = SIMPLE_CAPTCHA.create()
+    return jsonify({
+        "captcha_hash": captcha_dict['captcha_hash'],
+        "captcha_image": captcha_dict['captcha_base64']
+    })
+
+
+@app.route("/api/captcha/verify", methods=["POST"])
+def verify_captcha():
+    """Verify CAPTCHA (standalone endpoint for testing)"""
+    data = request.json
+    c_hash = data.get('captcha_hash')
+    c_text = data.get('captcha_text')
+    
+    if SIMPLE_CAPTCHA.verify(c_text, c_hash):
+        return jsonify({'status': 'success', 'message': 'CAPTCHA verified'}), 200
+    else:
+        return jsonify({'status': 'failed', 'error': 'Invalid CAPTCHA'}), 400
+
+
 # ============================
 # AUTHENTICATION
 # ============================
@@ -129,6 +211,15 @@ def register():
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     full_name = data.get("full_name", "")
+    captcha_hash = data.get("captcha_hash")
+    captcha_text = data.get("captcha_text")
+    
+    # CAPTCHA validation
+    if not captcha_hash or not captcha_text:
+        return jsonify({"error": "CAPTCHA is required"}), 400
+    
+    if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
+        return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
     
     # Validation
     if not email or not password:
@@ -186,6 +277,15 @@ def login():
     
     email = data.get("email", "").strip().lower()
     password = data.get("password")
+    captcha_hash = data.get("captcha_hash")
+    captcha_text = data.get("captcha_text")
+    
+    # CAPTCHA validation
+    if not captcha_hash or not captcha_text:
+        return jsonify({"error": "CAPTCHA is required"}), 400
+    
+    if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
+        return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
     
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400

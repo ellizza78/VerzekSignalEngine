@@ -67,6 +67,8 @@ class User:
             "auto_follow": True,  # Strictly follow signals as received
             "target_based_tp": True,  # Take profit at each target reached
             "auto_stop_on_signals": True,  # Auto-stop on cancelled/SL/closed messages
+            "signal_quality_filter": True,  # Filter signals based on quality score
+            "signal_quality_threshold": 60.0,  # Minimum quality score (0-100) to auto-trade
             "targets": {
                 "enabled": True,
                 "take_profit_on_each": True  # TP at Target 1, 2, 3, 4

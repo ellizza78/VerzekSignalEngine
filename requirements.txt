@@ -8,3 +8,4 @@ telegram
 bcrypt
 PyJWT
 telethon
+flask-simple-captcha

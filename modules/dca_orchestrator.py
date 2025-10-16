@@ -6,6 +6,7 @@ Integrates DCA engine with user management, safety rails, and exchange execution
 from typing import Optional, Dict
 import hashlib
 from modules import DCAEngine, PositionTracker, UserManager, SafetyManager, PositionSide
+from modules.signal_filter import signal_filter
 from exchanges import ExchangeFactory
 from utils.logger import log_event
 import trade_executor
@@ -31,7 +32,8 @@ class DCAOrchestrator:
         entry_price: Optional[float] = None,
         leverage: int = 10,
         targets: Optional[list] = None,
-        stop_loss: Optional[float] = None
+        stop_loss: Optional[float] = None,
+        provider: str = "unknown"
     ) -> dict:
         """Execute a trading signal with full safety checks
         
@@ -43,6 +45,7 @@ class DCAOrchestrator:
             leverage: Leverage (will be capped to user's max)
             targets: List of target dicts [{"target_num": 1, "price": 50000}, ...]
             stop_loss: Stop loss price (optional)
+            provider: Signal provider name for quality tracking
         
         Returns:
             Execution result dictionary
@@ -51,6 +54,35 @@ class DCAOrchestrator:
         user = self.user_manager.get_user(user_id)
         if not user:
             return {"success": False, "error": "User not found"}
+        
+        # Step 1.5: Signal Quality Check (if enabled)
+        signal_quality_enabled = user.strategy_settings.get("signal_quality_filter", True)
+        quality_threshold = user.strategy_settings.get("signal_quality_threshold", 60.0)
+        
+        if signal_quality_enabled:
+            signal_data = {
+                "symbol": symbol,
+                "signal_type": side.lower(),
+                "entry_price": entry_price or 0,
+                "stop_loss": stop_loss or 0,
+                "targets": targets or [],
+                "provider": provider
+            }
+            
+            should_trade, quality_score, reason = signal_filter.should_auto_trade(
+                signal_data, quality_threshold
+            )
+            
+            if not should_trade:
+                log_event("ORCHESTRATOR", f"Signal quality check failed for {symbol}: {reason}")
+                return {
+                    "success": False,
+                    "error": f"Signal quality too low: {reason}",
+                    "quality_score": quality_score,
+                    "quality_threshold": quality_threshold
+                }
+            
+            log_event("ORCHESTRATOR", f"Signal quality check passed for {symbol}: {quality_score:.1f}/100")
         
         # Step 2: Check if DCA is enabled for user
         if not user.dca_settings.get("enabled", False):
