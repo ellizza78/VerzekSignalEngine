@@ -2379,3 +2379,53 @@ Entry: 2.7115 - Stop Loss: 2.5703
 Targets: 2.7821 - 2.8527 - 2.9233 - 2.9939 - 3.0645
 [2025-10-16 10:42:09] #SUIUSDT - Signal Cancelled ❎
 Closed due to opposite direction signal
+[2025-10-16 11:00:16] 📈 Last 24 hours results - #October16
+
+GRTUSDT     :+22.01% 🟢
+HBARUSDT    :-29.80% 🚫
+JUPUSDT     :+38.78% 🟢
+ROSEUSDT    :-29.39% 🚫
+WLFIUSDT    :-29.51% 🚫
+ENAUSDT     :-30.65% 🚫
+SOLUSDT     :+38.37% 🟢
+QNTUSDT     :-30.20% 🚫
+ROSEUSDT    :+29.33% 🟢
+ENAUSDT     :+22.06% 🟢
+HBARUSDT    :+15.20% 🟢
+ROSEUSDT    :-29.73% 🚫
+JUPUSDT     :+28.96% 🟢
+KASUSDT     :-31.38% 🚫
+HBARUSDT    :+22.60% 🟢
+MANAUSDT    :+14.34% 🟢
+ROSEUSDT    :+15.12% 🟢
+XRPUSDT     :+29.27% 🟢
+ETHUSDT     :+14.14% 🟢
+XLMUSDT     :+37.86% 🟢
+HBARUSDT    :-29.00% 🚫
+XRPUSDT     :-30.49% 🚫
+ALGOUSDT    :+23.67% 🟢
+ADAUSDT     :+22.64% 🟢
+ORDIUSDT    :+29.96% 🟢
+QNTUSDT     :+21.64% 🟢
+ENAUSDT     :-29.17% 🚫
+GRTUSDT     :+31.17% 🟢
+RUNEUSDT    :+30.25% 🟢
+WLFIUSDT    :+37.21% 🟢
+TAOUSDT     :+39.56% 🟢
+SNXUSDT     :+26.58% 🟢
+BTCUSDT     :+37.63% 🟢
+FETUSDT     :+36.52% 🟢
+NEARUSDT    :-31.60% 🚫
+SEIUSDT     :+13.52% 🟢
+INJUSDT     :+21.34% 🟢
+SUIUSDT     :+13.19% 🟢
+CHZUSDT     :+20.52% 🟢
+
+💰 Total Profit: 733.44% profit
+💹 Average Profit/Trade: 26.19%
+📡 Signal Calls: 39 calls
+📊 Win Rate: 71.79%
+🟢 Profit Trades: 28
+🚫 Loss Trades: 11
+
+Seize this opportunity now! Join us to level up your crypto trading!

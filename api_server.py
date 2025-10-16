@@ -46,9 +46,12 @@ def home():
             "/api/latest": "Get latest trade",
             "/api/users": "User management (GET/POST)",
             "/api/users/<user_id>": "Single user (GET/PUT/DELETE)",
-            "/api/users/<user_id>/risk": "Risk settings (GET/PUT)",
-            "/api/users/<user_id>/dca": "DCA settings (GET/PUT)",
+            "/api/users/<user_id>/general": "General mode settings (GET/PUT)",
+            "/api/users/<user_id>/risk": "Capital & risk settings (GET/PUT)",
+            "/api/users/<user_id>/strategy": "Strategy parameters (GET/PUT)",
+            "/api/users/<user_id>/dca": "DCA margin call settings (GET/PUT)",
             "/api/users/<user_id>/exchanges": "Exchange accounts (GET/POST)",
+            "/api/users/<user_id>/subscription": "Subscription management (GET/POST)",
             "/api/positions": "All positions (GET)",
             "/api/positions/<user_id>": "User positions (GET)",
             "/api/safety/status": "Safety system status (GET)",
@@ -168,7 +171,31 @@ def handle_single_user(user_id):
 
 
 # ============================
-# RISK SETTINGS
+# GENERAL MODE SETTINGS
+# ============================
+
+@app.route("/api/users/<user_id>/general", methods=["GET", "PUT"])
+def handle_general_settings(user_id):
+    """Get or update user's general mode settings"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify(user.general_settings)
+    
+    elif request.method == "PUT":
+        updates = request.json
+        user.update_general_settings(updates)
+        user_manager._save_users()
+        return jsonify({
+            "message": "General settings updated",
+            "general_settings": user.general_settings
+        })
+
+
+# ============================
+# CAPITAL & RISK SETTINGS
 # ============================
 
 @app.route("/api/users/<user_id>/risk", methods=["GET", "PUT"])
@@ -192,7 +219,31 @@ def handle_risk_settings(user_id):
 
 
 # ============================
-# DCA SETTINGS
+# STRATEGY PARAMETERS
+# ============================
+
+@app.route("/api/users/<user_id>/strategy", methods=["GET", "PUT"])
+def handle_strategy_settings(user_id):
+    """Get or update user's strategy parameters"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify(user.strategy_settings)
+    
+    elif request.method == "PUT":
+        updates = request.json
+        user.update_strategy_settings(updates)
+        user_manager._save_users()
+        return jsonify({
+            "message": "Strategy settings updated",
+            "strategy_settings": user.strategy_settings
+        })
+
+
+# ============================
+# DCA MARGIN CALL SETTINGS (VIP ONLY)
 # ============================
 
 @app.route("/api/users/<user_id>/dca", methods=["GET", "PUT"])
@@ -254,6 +305,54 @@ def handle_exchanges(user_id):
         
         user_manager.remove_exchange_account(user_id, account_id)
         return jsonify({"message": "Exchange account removed"})
+
+
+# ============================
+# SUBSCRIPTION MANAGEMENT
+# ============================
+
+@app.route("/api/users/<user_id>/subscription", methods=["GET", "POST"])
+def handle_subscription(user_id):
+    """Get subscription info or activate a plan"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        # Check if subscription expired and lock if needed
+        user.check_and_lock_expired_users()
+        user_manager._save_users()
+        
+        return jsonify({
+            "plan": user.plan,
+            "plan_started_at": user.plan_started_at,
+            "plan_expires_at": user.plan_expires_at,
+            "is_expired": user.is_subscription_expired(),
+            "group_access": user.telegram_group_access,
+            "features": user.get_plan_features()
+        })
+    
+    elif request.method == "POST":
+        data = request.json
+        plan = data.get("plan")  # free, pro, vip
+        
+        if plan not in ["free", "pro", "vip"]:
+            return jsonify({"error": "Invalid plan. Must be: free, pro, or vip"}), 400
+        
+        # Set duration based on plan
+        duration_map = {"free": 3, "pro": 30, "vip": 30}
+        duration = duration_map[plan]
+        
+        user.activate_subscription(plan, duration)
+        user_manager._save_users()
+        
+        return jsonify({
+            "message": f"{plan.upper()} plan activated successfully",
+            "plan": user.plan,
+            "plan_expires_at": user.plan_expires_at,
+            "group_access": user.telegram_group_access,
+            "features": user.get_plan_features()
+        }), 201
 
 
 # ============================
