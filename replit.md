@@ -44,6 +44,55 @@ None specified yet.
 - **24/7 Operation**: Configured for continuous uptime using a Reserved VM deployment.
 - **Subscription Model**: Implements Free, Pro, and VIP tiers, controlling access to features like auto-trading, DCA automation, and number of exchange connections. Default safety settings for new users (auto-trade disabled).
 
+## Target-Based Take Profit System
+
+### Overview
+Automated progressive take profit system that monitors positions and executes partial closes at each target level from trading signals.
+
+### How It Works
+1. **Signal Parsing**: Extracts numbered targets from Telegram signals
+   - Patterns: "TARGET 1: 50000", "TARGET 2: 51000", "TP 1:", "TAKE PROFIT 1:"
+   - Returns structured data: `[{"target_num": 1, "price": 50000}, ...]`
+
+2. **Position Tracking**: Enhanced position data structure
+   - `targets`: Array of target objects with prices
+   - `stop_loss`: Stop loss price
+   - `remaining_quantity`: Tracks quantity for progressive TP
+   - `reached_targets`: Array of hit target numbers
+   - `total_profit_taken`: Cumulative profit tracker
+
+3. **Target Monitoring**: Background service (`target_monitor.py`)
+   - Checks all active positions every 5 seconds
+   - Compares current price vs targets
+   - LONG: Target reached when price >= target_price
+   - SHORT: Target reached when price <= target_price
+
+4. **Progressive Take Profit**:
+   - Closes position in stages as each target is reached
+   - Default split: [25%, 25%, 25%, 25%] for 4 targets
+   - Customizable via `strategy_settings.partial_tp_splits`
+   - Final target: Closes 100% of remaining position
+   - Calculates and records profit for each TP
+
+### Example Flow
+**Signal**: "BTCUSDT LONG, TARGET 1: 50000, TARGET 2: 51000, TARGET 3: 52000, TARGET 4: 53000"
+
+1. Position opens at entry price
+2. Price hits 50000 → Close 25%, profit recorded, Target 1 marked reached
+3. Price hits 51000 → Close 25% more, profit added, Target 2 marked
+4. Price hits 52000 → Close 25% more, profit added, Target 3 marked
+5. Price hits 53000 → Close remaining 25%, position closed, total PnL recorded
+
+### User Settings
+- `strategy_settings.target_based_tp`: Enable/disable feature (default: True)
+- `strategy_settings.partial_tp_splits`: Customize TP percentages (default: [25, 25, 25, 25])
+
+### Services Running
+- **Flask API**: Port 5000
+- **Telethon Forwarder**: Signal monitoring
+- **Broadcast Bot**: Signal broadcasting
+- **Target Monitor**: TP execution (NEW)
+
 ## External Dependencies
 - **Telegram API**: Used for signal monitoring (via `telethon` library) and broadcasting (via `python-telegram-bot`).
 - **Binance API**: Integrated for trading operations.
@@ -53,3 +102,14 @@ None specified yet.
 - **Flask**: Python web framework for the REST API.
 - **Requests**: Python HTTP library for making external API calls.
 - **Schedule**: Python library for scheduling tasks.
+
+## Recent Changes
+- **2025-10-16**: Phase 2 Task 4 Complete - Target-Based Take Profit System
+  - ✅ Enhanced signal parser to extract numbered targets (TARGET 1, 2, 3, 4...)
+  - ✅ Added comprehensive target tracking to position model
+  - ✅ Implemented progressive TP logic in DCA Orchestrator
+  - ✅ Created background Target Monitor service (5-second interval)
+  - ✅ Implemented final target closure (100% close on last target)
+  - ✅ Integrated Target Monitor into run_all_bots.py
+  - ✅ Customizable TP split percentages via user settings
+  - ✅ System tested and running in production
