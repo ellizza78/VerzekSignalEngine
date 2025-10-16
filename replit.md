@@ -1,58 +1,134 @@
 # VerzekAutoTrader
 
 ## Overview
-VerzekAutoTrader is an automated cryptocurrency trading bot that listens to Telegram signal channels, parses trade signals, and executes trades automatically. It includes:
-- Real-time Telegram signal monitoring
-- Automated trade execution (demo/live modes)
-- REST API server for monitoring and data access
-- Signal broadcasting capabilities
-- Trade logging and analytics
+VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading platform with Royal Q-style DCA (Dollar Cost Averaging) capabilities. The system monitors Telegram for trading signals, broadcasts them to VIP/TRIAL groups, and executes automated DCA trades with advanced risk management.
+
+**Core Features:**
+- 24/7 Telegram signal monitoring & broadcasting
+- Royal Q DCA Engine with margin call strategy
+- Multi-exchange support (Binance, Bybit, Phemex, Coinexx)
+- Multi-user/multi-tenant architecture
+- Advanced safety rails (kill switch, circuit breaker, idempotency)
+- REST API for mobile app integration
+- Demo mode for testing without API keys
 
 ## Project Status
-**Status**: Ready to run in Replit environment
-**Last Updated**: October 14, 2025
+**Status**: Phase 1 Complete - Royal Q Engine Production-Ready
+**Last Updated**: October 16, 2025
 
 ## Architecture
 
-### Main Components
-1. **Flask API Server** (`api_server.py`) - REST API on port 5000
-   - `/api/status` - Bot status and uptime
-   - `/api/trades` - All executed trades
-   - `/api/latest` - Latest trade
-   - `/api/test` - Connection test
+### Core Trading Modules (`modules/`)
 
-2. **Main Bot** (`main.py`) - Telegram signal monitoring bot
-   - Listens to configured signal channels
-   - Parses trading signals (LONG/SHORT, TP, SL, ENTRY)
-   - Executes trades automatically
-   - Sends notifications to admin
+1. **Royal Q DCA Engine** (`royalq_engine.py`)
+   - Dollar Cost Averaging strategy with margin calls
+   - Configurable DCA levels with multipliers (1x, 1.5x, 2x, etc.)
+   - Average entry price calculation across all fills
+   - Automatic take profit when price rebounds
+   - Partial TP support (30%/30%/40% splits)
+   - Stop loss protection with trailing option
+   - Investment cap per symbol ($100 default)
+   - Position tracking with PnL calculation
 
-3. **Broadcast Bot** (`broadcast_bot.py`) - Signal broadcaster
-   - Receives signals from admin/Telethon forwarder
-   - Adds custom Verzek header: "🔥 New Signal Alert (VerzekSignalBot)"
-   - Broadcasts to VIP Group (-1002721581400) and TRIAL Group (-1002726167386)
-   - Loop prevention: Never re-broadcasts from VIP/TRIAL groups
+2. **Multi-User Management** (`user_manager_v2.py`)
+   - Multi-tenant architecture (each user has own settings)
+   - Per-user Royal Q DCA configurations
+   - Risk settings: leverage caps, position size, daily limits
+   - Exchange account management (CRUD operations)
+   - Symbol whitelist/blacklist enforcement
+   - Daily stats tracking with auto-reset
+   - Subscription plans (free/pro/vip)
+   - Trading statistics (wins/losses/PnL)
 
-4. **Telethon Auto-Forwarder** (`telethon_forwarder.py`) - Universal signal monitor
-   - Monitors ALL Telegram sources 24/7: personal chats, channels, groups (even when user is offline)
-   - Enhanced signal detection with 24+ keywords: BUY, SELL, LONG, SHORT, ENTRY, TP, SL, STOP LOSS, TARGETS, TARGET, PROFIT, LOSS, LEV, LEVERAGE, SIGNAL, USDT, /USDT, REACHED, CANCELLED, ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
-   - Supports multiple signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations
-   - Spam filter blocks promotional messages (HOW TO, GUIDE, CONTACT, JOIN OUR, etc.)
-   - Username blocklist prevents known spammers (@PowellNolan, @Sanjay_Message_Bot) from being forwarded
-   - Forwards raw signals to @broadnews_bot for cleaning and broadcasting
-   - Uses StringSession (no database locking issues)
-   - Requires one-time authentication via `setup_telethon.py`
+3. **Safety Manager** (`safety_manager.py`)
+   - **Kill Switch**: Emergency stop for all trading
+   - **Circuit Breaker**: Auto-triggers on rapid losses
+     - 10% max loss threshold (configurable)
+     - 5 consecutive losses limit (configurable)
+     - 60-minute lookback window
+   - **Order Idempotency**: Prevents duplicate orders via stable hashing
+   - **Trading Pause**: Time-based trading halt (auto-resume)
+   - **Validation**: Symbol, leverage, and order size checks
+   - Persistent state across restarts
 
-5. **Trade Executor** (`trade_executor.py`) - Trade execution engine
-   - Supports Binance, Bybit, Phemex (via API keys)
-   - Falls back to simulation mode if no API keys
-   - Logs all trades to CSV
+4. **Royal Q Orchestrator** (`royalq_orchestrator.py`)
+   - Master coordinator integrating all components
+   - Full signal execution pipeline with safety checks
+   - DCA trigger monitoring and execution
+   - Position closure with PnL tracking
+   - Demo mode support (works without API keys)
+   - Comprehensive logging of all operations
 
-### Supporting Files
-- `signal_parser.py` - Parses Telegram messages into trade data
-- `telegram_listener.py` - Handles Telegram message monitoring
-- `utils/logger.py` - Centralized logging
-- `utils/user_manager.py` - User/admin management
+5. **Position Tracker** (`position_tracker.py`)
+   - Tracks all open positions across users
+   - Persistent storage in JSON format
+   - Position status management
+   - Historical position records
+
+### Exchange Adapters (`exchanges/`)
+
+6. **Exchange Interface** (`exchange_interface.py`)
+   - Unified API across all exchanges
+   - Methods: balance, ticker, orders, cancellation
+   - Demo clients for offline testing
+
+7. **Exchange Implementations**
+   - **Binance** (`binance_client.py`) - Live + Demo
+   - **Bybit** (`bybit_client.py`) - Live + Demo
+   - **Phemex** (`phemex_client.py`) - Live + Demo
+   - **Coinexx** (`coinexx_client.py`) - Live + Demo
+   - **ExchangeFactory**: Client instantiation and management
+   - Secure API key loading from environment variables
+   - Demo mode with deterministic offline pricing
+
+### Signal Broadcasting System
+
+8. **Telethon Auto-Forwarder** (`telethon_forwarder.py`)
+   - Monitors ALL Telegram sources 24/7 (personal chats, channels, groups)
+   - 24+ signal keywords detection
+   - Spam filter (60+ promotional keywords blocked)
+   - Username blocklist (@PowellNolan, @Sanjay_Message_Bot, @OfficialRoyalQBot)
+   - Forwards to @broadnews_bot for broadcasting
+   - StringSession (no database locking)
+
+9. **Broadcast Bot** (`broadcast_bot.py`)
+   - Receives signals from Telethon forwarder
+   - Adds Verzek header: "🔥 New Signal Alert"
+   - Broadcasts to VIP Group (-1002721581400) & TRIAL Group (-1002726167386)
+   - Loop prevention (never re-broadcasts from VIP/TRIAL)
+
+10. **Legacy Components**
+    - `main.py` - Original signal monitoring bot
+    - `signal_parser.py` - Message parsing
+    - `trade_executor.py` - Trade execution with demo fallback
+
+### REST API Server
+
+11. **Flask API** (`api_server.py`) - Port 5000
+    - **User Management:**
+      - `GET/POST /api/users` - List/create users
+      - `GET/PUT/DELETE /api/users/<id>` - User CRUD
+      - `GET /api/users/<id>/stats` - User statistics
+    
+    - **Settings:**
+      - `GET/PUT /api/users/<id>/risk` - Risk settings
+      - `GET/PUT /api/users/<id>/royalq` - Royal Q DCA settings
+      - `GET/POST/DELETE /api/users/<id>/exchanges` - Exchange accounts
+    
+    - **Positions:**
+      - `GET /api/positions` - All positions
+      - `GET /api/positions/<id>` - User positions
+    
+    - **Safety Controls:**
+      - `GET /api/safety/status` - Safety system status
+      - `POST /api/safety/killswitch` - Kill switch control
+      - `POST /api/safety/pause` - Pause trading
+      - `POST /api/safety/resume` - Resume trading
+      - `POST /api/safety/circuit-breaker` - Circuit breaker control
+    
+    - **Legacy:**
+      - `GET /api/trades` - All trades
+      - `GET /api/latest` - Latest trade
 
 ## Configuration
 
@@ -105,11 +181,13 @@ python main.py            # Main signal bot
 
 ## Database/Storage
 All data is stored locally in the `database/` folder:
-- `trades_log.csv` - All executed trades
-- `trades_log.json` - Trade records in JSON format
+- `users_v2.json` - Multi-user database (Royal Q settings, risk controls)
+- `positions.json` - All open/closed positions
+- `safety_state.json` - Safety system state (kill switch, circuit breaker)
+- `trades_log.csv` - Legacy trade log
+- `trades_log.json` - Trade records in JSON
 - `logs.txt` - System logs
 - `broadcast_log.txt` - Broadcast history
-- `users.json` - User database
 - `forward_log.txt` - Signal forwarding log
 
 ## Dependencies
@@ -119,7 +197,48 @@ All Python dependencies are managed via pip:
 - `requests` - HTTP library
 - `schedule` - Task scheduling
 
+## Royal Q DCA Strategy
+
+### How It Works
+1. **Base Order**: Opens initial position (default $10)
+2. **Margin Calls**: Triggers DCA orders when price drops
+   - Level 1: -1.5% drop, 1.0x multiplier ($10)
+   - Level 2: -2.0% drop, 1.2x multiplier ($12)
+   - Level 3: -3.0% drop, 1.5x multiplier ($15)
+3. **Average Entry**: Calculates weighted average across all fills
+4. **Take Profit**: Closes position when price rebounds to target
+5. **Stop Loss**: Hard stop at -3% (configurable)
+
+### Risk Management
+- **Leverage Caps**: Per-user maximum leverage (default 10x)
+- **Position Limits**: Max concurrent positions (default 3)
+- **Daily Trade Limit**: Max trades per day (default 20)
+- **Daily Loss Limit**: Max loss % per day (default 5%)
+- **Investment Cap**: Max USD per symbol (default $100)
+- **Symbol Control**: Whitelist/blacklist enforcement
+
+### Safety Rails
+- **Kill Switch**: Emergency stop for all trading
+- **Circuit Breaker**: Auto-triggers on:
+  - 10% total loss in 60 minutes
+  - 5 consecutive losing trades
+- **Order Idempotency**: MD5 hash of signal context prevents duplicates
+- **Trading Pause**: Temporary halt with auto-resume
+
 ## Recent Changes
+- **2025-10-16**: Phase 1 Complete - Royal Q DCA System Production-Ready
+  - ✅ Royal Q DCA Engine with margin call strategy
+  - ✅ Multi-user management system with per-user Royal Q settings
+  - ✅ 4 exchange adapters (Binance, Bybit, Phemex, Coinexx) with demo modes
+  - ✅ Safety Manager with kill switch, auto circuit breaker, order idempotency
+  - ✅ Comprehensive Flask API with 20+ endpoints
+  - ✅ Royal Q Orchestrator integrating all components
+  - ✅ Demo mode support (works without exchange API keys)
+  - ✅ Automatic circuit breaker triggers on rapid losses
+  - ✅ Idempotent order IDs prevent duplicate trades
+  - ✅ Daily risk limits (trade count, loss %, position count)
+  - Added @OfficialRoyalQBot to spam blocker
+
 - **2025-10-15**: Enhanced Signal Detection & Spam Filtering
   - Expanded keyword detection to 24+ keywords: Added ACHIEVED, CLOSED, TAKE-PROFIT, TAKE PROFIT, GAINED
   - Now supports all signal formats: entry signals, profit notifications, stop loss alerts, trade closures, cancellations

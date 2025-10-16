@@ -2275,3 +2275,57 @@ Targets: 2.286 - 2.262 - 2.238 - 2.214 - 2.19
 [2025-10-16 09:34:34] #JUPUSDT - 🚨 Target 1 reached
 💸 Profit collected 15.3061%
 ⏰ Posted: 46 Minutes Ago
+[2025-10-16 09:39:09] #SOLUSDT - 🚨 Target 1 reached
+💸 Profit collected 15.3495%
+⏰ Posted: 4 Hours 12 Minutes Ago
+[2025-10-16 09:39:13] #ALGOUSDT - 🚨 Target 2 reached
+💸 Profit collected 23.6723%
+⏰ Posted: 20 Hours 33 Minutes Ago
+[2025-10-16 09:39:14] #NEARUSDT - Signal Cancelled ❎
+Target achieved before entering the entry zone
+[2025-10-16 09:40:04] #XLMUSDT - 🚨 Target 4 reached
+💸 Profit collected 37.8584%
+⏰ Posted: 19 Hours 15 Minutes Ago
+[2025-10-16 09:40:09] #SOLUSDT - 🚨 Target 2 reached
+💸 Profit collected 23.0242%
+⏰ Posted: 4 Hours 13 Minutes Ago
+[2025-10-16 09:40:09] #BTCUSDT - 🚨 Target 4 reached
+💸 Profit collected 37.6288%
+⏰ Posted: 1 Days 4 Hours 16 Minutes Ago
+[2025-10-16 09:40:10] #GRTUSDT - 🚨 Target 1 reached
+💸 Profit collected 14.6764%
+⏰ Posted: 35 Minutes Ago
+[2025-10-16 09:40:11] #CHZUSDT - 🚨 Target 2 reached
+💸 Profit collected 20.5245%
+⏰ Posted: 2 Days 3 Hours 29 Minutes Ago
+[2025-10-16 09:40:12] #ENAUSDT - Closed! 🔘
+Trade closed with 22.0564% profit.
+[2025-10-16 09:40:17] #XRPUSDT - 🚨 Target 3 reached
+💸 Profit collected 29.2659%
+⏰ Posted: 18 Hours 7 Minutes Ago
+[2025-10-16 09:40:17] #JUPUSDT - 🚨 Target 2 reached
+💸 Profit collected 23.166%
+⏰ Posted: 52 Minutes Ago
+[2025-10-16 09:40:18] #SEIUSDT - 🚨 Target 1 reached
+💸 Profit collected 13.5246%
+⏰ Posted: 1 Days 18 Hours 38 Minutes Ago
+[2025-10-16 09:40:19] #FETUSDT - 🚨 Target 4 reached
+💸 Profit collected 36.5169%
+⏰ Posted: 1 Days 13 Hours 40 Minutes Ago
+[2025-10-16 09:40:19] #ORDIUSDT - 🚨 Target 3 reached
+💸 Profit collected 29.9609%
+⏰ Posted: 21 Hours 10 Minutes Ago
+[2025-10-16 09:40:26] #SOLUSDT - 🚨 Target 3 reached
+💸 Profit collected 30.699%
+⏰ Posted: 4 Hours 13 Minutes Ago
+[2025-10-16 09:40:27] #GRTUSDT - 🚨 Target 2 reached
+💸 Profit collected 22.0146%
+⏰ Posted: 35 Minutes Ago
+[2025-10-16 09:40:27] #JUPUSDT - 🚨 Target 2 reached
+💸 Profit collected 21.7187%
+⏰ Posted: 12 Hours 52 Minutes Ago
+[2025-10-16 09:40:28] #GRTUSDT - 🚨 Target 3 reached
+💸 Profit collected 31.1688%
+⏰ Posted: 21 Hours 40 Minutes Ago
+[2025-10-16 09:40:28] #ROSEUSDT - Closed! 🔘
+Trade closed with 29.3257% profit.
