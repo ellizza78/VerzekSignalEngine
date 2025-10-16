@@ -34,6 +34,13 @@ from modules.analytics_engine import analytics_engine
 from modules.advanced_orders import advanced_order_manager
 from modules.webhook_handler import webhook_handler
 
+# Phase 4 Advanced Features
+from modules.portfolio_rebalancer import PortfolioRebalancer
+from modules.advanced_analytics import AdvancedAnalytics
+from modules.social_trading import SocialTradingManager
+from modules.custom_indicators import CustomIndicatorEngine
+from modules.backtesting_engine import BacktestingEngine
+
 app = Flask(__name__)
 
 # Configure CAPTCHA
@@ -55,6 +62,13 @@ limiter = init_rate_limiter(app)
 user_manager = UserManager()
 position_tracker = PositionTracker()
 safety_manager = SafetyManager()
+
+# Phase 4 managers
+portfolio_rebalancer = PortfolioRebalancer(position_tracker)
+advanced_analytics = AdvancedAnalytics(position_tracker)
+social_trading = SocialTradingManager(position_tracker)
+custom_indicators = CustomIndicatorEngine(position_tracker)
+backtesting_engine = BacktestingEngine(position_tracker)
 
 # ============================
 # APP STATUS
@@ -1906,6 +1920,229 @@ def get_position_limits(current_user_id):
             'max_position_size': getattr(user, 'max_position_size', None)
         }
     })
+
+
+# ============================
+# PHASE 4: PORTFOLIO REBALANCING
+# ============================
+
+@app.route("/api/portfolio/allocation", methods=["POST"])
+@token_required
+def set_portfolio_allocation(current_user_id):
+    """Set target portfolio allocation"""
+    data = request.json
+    allocations = data.get('allocations', {})
+    
+    result = portfolio_rebalancer.set_allocation(current_user_id, allocations)
+    return jsonify(result)
+
+
+@app.route("/api/portfolio/allocation", methods=["GET"])
+@token_required
+def get_portfolio_allocation(current_user_id):
+    """Get current and target portfolio allocation"""
+    current = portfolio_rebalancer.get_current_allocation(current_user_id)
+    drift = portfolio_rebalancer.get_allocation_drift(current_user_id)
+    
+    return jsonify({
+        'current_allocation': current,
+        'drift': drift
+    })
+
+
+@app.route("/api/portfolio/rebalance", methods=["POST"])
+@token_required
+def rebalance_portfolio(current_user_id):
+    """Execute portfolio rebalancing"""
+    data = request.json
+    dry_run = data.get('dry_run', True)
+    
+    result = portfolio_rebalancer.execute_rebalance(current_user_id, dry_run=dry_run)
+    return jsonify(result)
+
+
+@app.route("/api/portfolio/auto-rebalance", methods=["POST"])
+@token_required
+def enable_auto_rebalance(current_user_id):
+    """Enable automatic rebalancing"""
+    data = request.json
+    threshold = data.get('threshold', 5.0)
+    
+    result = portfolio_rebalancer.enable_auto_rebalance(current_user_id, threshold)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 4: ADVANCED ANALYTICS
+# ============================
+
+@app.route("/api/analytics/patterns/<symbol>", methods=["GET"])
+@token_required
+def detect_patterns(current_user_id, symbol):
+    """Detect trading patterns for a symbol"""
+    result = advanced_analytics.detect_patterns(symbol)
+    return jsonify(result)
+
+
+@app.route("/api/analytics/predict/<symbol>", methods=["GET"])
+@token_required
+def predict_price(current_user_id, symbol):
+    """Predict future price movement"""
+    hours_ahead = request.args.get('hours', 24, type=int)
+    result = advanced_analytics.predict_price_movement(symbol, hours_ahead)
+    return jsonify(result)
+
+
+@app.route("/api/analytics/win-probability", methods=["POST"])
+@token_required
+def calculate_win_probability(current_user_id):
+    """Calculate win probability for a trade"""
+    data = request.json
+    symbol = data.get('symbol')
+    side = data.get('side')
+    
+    result = advanced_analytics.calculate_win_probability(current_user_id, symbol, side)
+    return jsonify(result)
+
+
+@app.route("/api/analytics/sentiment/<symbol>", methods=["GET"])
+@token_required
+def get_market_sentiment(current_user_id, symbol):
+    """Get market sentiment analysis"""
+    result = advanced_analytics.get_market_sentiment(symbol)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 4: SOCIAL TRADING
+# ============================
+
+@app.route("/api/social/become-master", methods=["POST"])
+@token_required
+def become_master(current_user_id):
+    """Register as a master trader"""
+    data = request.json
+    result = social_trading.become_master_trader(current_user_id, data)
+    return jsonify(result)
+
+
+@app.route("/api/social/masters", methods=["GET"])
+@token_required
+def get_top_masters(current_user_id):
+    """Get top performing master traders"""
+    limit = request.args.get('limit', 10, type=int)
+    sort_by = request.args.get('sort_by', 'pnl')
+    
+    masters = social_trading.get_top_masters(limit, sort_by)
+    return jsonify({'masters': masters})
+
+
+@app.route("/api/social/copy", methods=["POST"])
+@token_required
+def copy_master(current_user_id):
+    """Start copying a master trader"""
+    data = request.json
+    master_id = data.get('master_id')
+    settings = data.get('settings', {})
+    
+    result = social_trading.copy_trader(current_user_id, master_id, settings)
+    return jsonify(result)
+
+
+@app.route("/api/social/stop-copy", methods=["POST"])
+@token_required
+def stop_copy(current_user_id):
+    """Stop copying a master trader"""
+    data = request.json
+    copy_id = data.get('copy_id')
+    
+    result = social_trading.stop_copying(current_user_id, copy_id)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 4: CUSTOM INDICATORS
+# ============================
+
+@app.route("/api/indicators", methods=["POST"])
+@token_required
+def create_indicator(current_user_id):
+    """Create custom indicator"""
+    data = request.json
+    result = custom_indicators.create_indicator(current_user_id, data)
+    return jsonify(result)
+
+
+@app.route("/api/strategies", methods=["POST"])
+@token_required
+def create_strategy(current_user_id):
+    """Create custom trading strategy"""
+    data = request.json
+    result = custom_indicators.create_strategy(current_user_id, data)
+    return jsonify(result)
+
+
+@app.route("/api/strategies", methods=["GET"])
+@token_required
+def get_strategies(current_user_id):
+    """Get user's custom strategies"""
+    strategies = custom_indicators.get_user_strategies(current_user_id)
+    return jsonify({'strategies': strategies})
+
+
+@app.route("/api/strategies/<strategy_id>/toggle", methods=["POST"])
+@token_required
+def toggle_strategy(current_user_id, strategy_id):
+    """Enable/disable a strategy"""
+    data = request.json
+    enabled = data.get('enabled', True)
+    
+    result = custom_indicators.toggle_strategy(current_user_id, strategy_id, enabled)
+    return jsonify(result)
+
+
+@app.route("/api/strategies/<strategy_id>", methods=["DELETE"])
+@token_required
+def delete_strategy(current_user_id, strategy_id):
+    """Delete a custom strategy"""
+    result = custom_indicators.delete_strategy(current_user_id, strategy_id)
+    return jsonify(result)
+
+
+@app.route("/api/strategies/<strategy_id>/evaluate", methods=["POST"])
+@token_required
+def evaluate_strategy(current_user_id, strategy_id):
+    """Evaluate strategy against current market data"""
+    data = request.json
+    market_data = data.get('market_data', {})
+    
+    result = custom_indicators.evaluate_strategy(strategy_id, market_data)
+    return jsonify(result)
+
+
+# ============================
+# PHASE 4: BACKTESTING
+# ============================
+
+@app.route("/api/backtest", methods=["POST"])
+@token_required
+def run_backtest(current_user_id):
+    """Run strategy backtest"""
+    data = request.json
+    strategy_config = data.get('strategy')
+    symbol = data.get('symbol', 'BTCUSDT')
+    days = data.get('days', 30)
+    
+    result = backtesting_engine.backtest_strategy(strategy_config, symbol, days)
+    return jsonify(result)
+
+
+@app.route("/api/backtest/history", methods=["GET"])
+@token_required
+def get_backtest_history(current_user_id):
+    """Get backtest history"""
+    history = backtesting_engine.get_backtest_history(current_user_id)
+    return jsonify({'history': history})
 
 
 if __name__ == "__main__":
