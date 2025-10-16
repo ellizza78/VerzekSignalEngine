@@ -11,6 +11,8 @@ import logging
 import json
 from telegram import Bot
 from telegram.ext import Updater, MessageHandler, Filters
+from signal_parser import parse_close_signal
+from modules.dca_orchestrator import DCAOrchestrator
 
 # Load config
 CONFIG_PATH = "config/config.json"
@@ -32,6 +34,9 @@ logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(
 logger = logging.getLogger("VerzekBroadcastBot")
 
 bot = Bot(token=BROADCAST_BOT_TOKEN)
+
+# Initialize DCA Orchestrator for auto-close functionality
+orchestrator = DCAOrchestrator()
 
 KEYWORDS = (
     "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
@@ -98,6 +103,24 @@ def broadcast_message(update, context):
     if not any(k in text.upper() for k in KEYWORDS):
         logger.info("Ignored non-trading message.")
         return
+    
+    # Check if this is a close/cancel signal
+    close_signal = parse_close_signal(text)
+    if close_signal and close_signal.get("symbol"):
+        symbol = close_signal["symbol"]
+        reason = close_signal["reason"]
+        
+        logger.info(f"🛑 Detected close signal for {symbol}: {reason}")
+        
+        # Trigger auto-close for all active positions of this symbol
+        try:
+            result = orchestrator.auto_close_positions(symbol, reason)
+            if result.get("success"):
+                logger.info(f"✅ Auto-closed {result.get('closed_count', 0)} positions for {symbol}")
+            else:
+                logger.info(f"ℹ️ {result.get('message', 'No positions to close')}")
+        except Exception as e:
+            logger.error(f"⚠️ Error auto-closing positions for {symbol}: {e}")
 
     # Clean the signal (remove hashtags, leverage indicators, etc.)
     cleaned_text = clean_signal(text)
