@@ -2329,3 +2329,17 @@ Trade closed with 22.0564% profit.
 ⏰ Posted: 21 Hours 40 Minutes Ago
 [2025-10-16 09:40:28] #ROSEUSDT - Closed! 🔘
 Trade closed with 29.3257% profit.
+[2025-10-16 09:40:51] #JUPUSDT - 🚨 Target 3 reached
+💸 Profit collected 31.0259%
+⏰ Posted: 52 Minutes Ago
+[2025-10-16 09:40:51] #JUPUSDT - 🚨 Target 3 reached
+💸 Profit collected 28.9583%
+⏰ Posted: 12 Hours 52 Minutes Ago
+[2025-10-16 09:41:06] #QNTUSDT - Stop Loss ⛔️
+Loss: 30.2048%
+[2025-10-16 09:41:11] #JUPUSDT - 🚨 Target 4 reached
+💸 Profit collected 38.7824%
+⏰ Posted: 53 Minutes Ago
+[2025-10-16 09:41:37] #SOLUSDT - 🚨 Target 4 reached
+💸 Profit collected 38.3737%
+⏰ Posted: 4 Hours 14 Minutes Ago
