@@ -103,7 +103,68 @@ Automated progressive take profit system that monitors positions and executes pa
 - **Requests**: Python HTTP library for making external API calls.
 - **Schedule**: Python library for scheduling tasks.
 
+## Auto-Stop Logic System
+
+### Overview
+Automated position closure system that detects signal cancellations, stop loss hits, and close messages from Telegram and automatically closes affected positions.
+
+### Supported Close Signals
+- **"Signal Cancelled"** or **"Signal Canceled"**
+- **"Closed"** or **"Close"** (e.g., "BTCUSDT Closed")
+- **"Stop Loss Hit"** or **"SL Hit"**
+- **"Position Closed"** or **"Trade Closed"**
+
+### How It Works
+1. **Signal Detection**: Broadcast Bot receives message from Telegram
+2. **Parse Close Signal**: `parse_close_signal()` checks for close keywords
+3. **Extract Details**: Identifies symbol (e.g., BTCUSDT) and close reason
+4. **Check User Settings**: Verifies if `auto_stop_on_cancel` is enabled
+5. **Auto-Close**: Triggers `auto_close_positions(symbol, reason)`
+6. **Find Positions**: Locates all active positions for that symbol
+7. **Place Orders**: Executes opposite orders at current market price
+8. **Calculate PnL**: Computes final profit/loss (including any partial TPs)
+9. **Update State**: Sets position to closed, records trade, updates user stats
+
+### Close Reasons
+- `signal_cancelled`: Signal was cancelled by provider
+- `stop_loss_hit`: Stop loss was triggered
+- `closed`: General position closure
+- `manual_close`: User manually closed
+
+### User Settings
+- `strategy_settings.auto_stop_on_cancel`: Enable/disable auto-close (default: **True**)
+- When disabled, positions remain open for manual management
+
+### Example Flow
+```
+Message: "BTCUSDT - Signal Cancelled"
+1. Broadcast Bot detects close signal
+2. Extracts: symbol=BTCUSDT, reason=signal_cancelled
+3. Finds all active BTCUSDT positions
+4. For each position (if auto_stop enabled):
+   - Get current price
+   - Place close order (sell for LONG, buy for SHORT)
+   - Calculate final PnL = entry profit + partial TPs
+   - Update position: status="closed", auto_closed=True
+   - Record trade in user stats
+5. Broadcast close message to groups
+```
+
+### Integration Points
+- **signal_parser.py**: `parse_close_signal()` function
+- **modules/dca_orchestrator.py**: `auto_close_positions()` method
+- **broadcast_bot.py**: Detects and triggers auto-close before broadcasting
+
 ## Recent Changes
+- **2025-10-16**: Phase 2 Task 5 Complete - Auto-Stop Logic System
+  - ✅ Enhanced signal parser to detect close/cancel messages
+  - ✅ Implemented auto_close_positions() method in DCA Orchestrator
+  - ✅ Integrated auto-close detection into Broadcast Bot
+  - ✅ Added per-user auto_stop_on_cancel setting (default: True)
+  - ✅ Calculates final PnL including partial TP profits
+  - ✅ Updates position state with close_reason and auto_closed flag
+  - ✅ Architect-approved: End-to-end flow validated and production-ready
+
 - **2025-10-16**: Phase 2 Task 4 Complete - Target-Based Take Profit System
   - ✅ Enhanced signal parser to extract numbered targets (TARGET 1, 2, 3, 4...)
   - ✅ Added comprehensive target tracking to position model
