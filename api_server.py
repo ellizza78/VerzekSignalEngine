@@ -47,7 +47,7 @@ def home():
             "/api/users": "User management (GET/POST)",
             "/api/users/<user_id>": "Single user (GET/PUT/DELETE)",
             "/api/users/<user_id>/risk": "Risk settings (GET/PUT)",
-            "/api/users/<user_id>/royalq": "Royal Q settings (GET/PUT)",
+            "/api/users/<user_id>/dca": "DCA settings (GET/PUT)",
             "/api/users/<user_id>/exchanges": "Exchange accounts (GET/POST)",
             "/api/positions": "All positions (GET)",
             "/api/positions/<user_id>": "User positions (GET)",
@@ -192,26 +192,26 @@ def handle_risk_settings(user_id):
 
 
 # ============================
-# ROYAL Q SETTINGS
+# DCA SETTINGS
 # ============================
 
-@app.route("/api/users/<user_id>/royalq", methods=["GET", "PUT"])
-def handle_royalq_settings(user_id):
-    """Get or update user's Royal Q DCA settings"""
+@app.route("/api/users/<user_id>/dca", methods=["GET", "PUT"])
+def handle_dca_settings(user_id):
+    """Get or update user's DCA settings"""
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
     
     if request.method == "GET":
-        return jsonify(user.royalq_settings)
+        return jsonify(user.dca_settings)
     
     elif request.method == "PUT":
         updates = request.json
-        user.update_royalq_settings(updates)
+        user.update_dca_settings(updates)
         user_manager._save_users()
         return jsonify({
-            "message": "Royal Q settings updated",
-            "royalq_settings": user.royalq_settings
+            "message": "DCA settings updated",
+            "dca_settings": user.dca_settings
         })
 
 

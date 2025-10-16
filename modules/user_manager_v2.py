@@ -1,6 +1,6 @@
 """
 Multi-User Management System
-Handles user profiles, exchange connections, risk settings, and Royal Q configurations
+Handles user profiles, exchange connections, risk settings, and DCA configurations
 """
 
 import json
@@ -43,8 +43,8 @@ class User:
             "total_pnl": 0.0
         }
         
-        # Royal Q (DCA) settings
-        self.royalq_settings = {
+        # DCA settings
+        self.dca_settings = {
             "enabled": False,
             "base_order": 10.0,  # $10 base order
             "max_investment": 100.0,  # $100 max per symbol
@@ -146,9 +146,9 @@ class User:
         self.risk_settings.update(settings)
         self.updated_at = datetime.now().isoformat()
     
-    def update_royalq_settings(self, settings: dict):
-        """Update Royal Q DCA settings"""
-        self.royalq_settings.update(settings)
+    def update_dca_settings(self, settings: dict):
+        """Update DCA settings"""
+        self.dca_settings.update(settings)
         self.updated_at = datetime.now().isoformat()
     
     def update_trading_preferences(self, preferences: dict):
@@ -179,7 +179,7 @@ class User:
             "plan_expires_at": self.plan_expires_at,
             "exchange_accounts": self.exchange_accounts,
             "risk_settings": self.risk_settings,
-            "royalq_settings": self.royalq_settings,
+            "dca_settings": self.dca_settings,
             "trading_preferences": self.trading_preferences,
             "stats": self.stats,
             "daily_stats": self.daily_stats
@@ -195,7 +195,7 @@ class User:
         user.plan_expires_at = data.get("plan_expires_at")
         user.exchange_accounts = data.get("exchange_accounts", [])
         user.risk_settings = data.get("risk_settings", user.risk_settings)
-        user.royalq_settings = data.get("royalq_settings", user.royalq_settings)
+        user.dca_settings = data.get("dca_settings", user.dca_settings)
         user.trading_preferences = data.get("trading_preferences", user.trading_preferences)
         user.stats = data.get("stats", user.stats)
         user.daily_stats = data.get("daily_stats", user.daily_stats)
@@ -263,8 +263,8 @@ class UserManager:
         
         if "risk_settings" in updates:
             user.update_risk_settings(updates["risk_settings"])
-        if "royalq_settings" in updates:
-            user.update_royalq_settings(updates["royalq_settings"])
+        if "dca_settings" in updates:
+            user.update_dca_settings(updates["dca_settings"])
         if "trading_preferences" in updates:
             user.update_trading_preferences(updates["trading_preferences"])
         if "plan" in updates:

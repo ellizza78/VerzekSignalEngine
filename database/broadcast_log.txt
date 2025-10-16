@@ -2357,3 +2357,25 @@ New #Crypto #Signal Open
 📡 10+ Signals/Day
 🎯 Entry Price, Stop Lost, Targets
 📈 Leverage, Risk Management
+[2025-10-16 10:40:07] #Signal #ETH/USDT $ETH 
+Long 🚀 Lev x11 #Crypto 
+
+Entry: 4052.08 - Stop Loss: 3940.66 
+
+Targets: 4107.79 - 4163.5 - 4219.21 - 4274.92 - 4330.63
+[2025-10-16 10:40:10] #ETHUSDT - Signal Cancelled ❎
+Closed due to opposite direction signal
+[2025-10-16 10:40:29] #ETH/USDT / $ETH 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-16 10:42:06] #Signal #SUI/USDT $SUI 
+Long 🚀 Lev x6 #Crypto 
+
+Entry: 2.7115 - Stop Loss: 2.5703 
+
+Targets: 2.7821 - 2.8527 - 2.9233 - 2.9939 - 3.0645
+[2025-10-16 10:42:09] #SUIUSDT - Signal Cancelled ❎
+Closed due to opposite direction signal

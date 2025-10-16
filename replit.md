@@ -1,11 +1,11 @@
 # VerzekAutoTrader
 
 ## Overview
-VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading platform with Royal Q-style DCA (Dollar Cost Averaging) capabilities. The system monitors Telegram for trading signals, broadcasts them to VIP/TRIAL groups, and executes automated DCA trades with advanced risk management.
+VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading platform with DCA (Dollar Cost Averaging) capabilities. The system monitors Telegram for trading signals, broadcasts them to VIP/TRIAL groups, and executes automated DCA trades with advanced risk management.
 
 **Core Features:**
 - 24/7 Telegram signal monitoring & broadcasting
-- Royal Q DCA Engine with margin call strategy
+- DCA Engine with margin call strategy
 - Multi-exchange support (Binance, Bybit, Phemex, Coinexx)
 - Multi-user/multi-tenant architecture
 - Advanced safety rails (kill switch, circuit breaker, idempotency)
@@ -13,14 +13,14 @@ VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading plat
 - Demo mode for testing without API keys
 
 ## Project Status
-**Status**: Phase 1 Complete - Royal Q Engine Production-Ready
+**Status**: Phase 1 Complete - DCA Engine Production-Ready
 **Last Updated**: October 16, 2025
 
 ## Architecture
 
 ### Core Trading Modules (`modules/`)
 
-1. **Royal Q DCA Engine** (`royalq_engine.py`)
+1. **DCA Engine** (`dca_engine.py`)
    - Dollar Cost Averaging strategy with margin calls
    - Configurable DCA levels with multipliers (1x, 1.5x, 2x, etc.)
    - Average entry price calculation across all fills
@@ -32,7 +32,7 @@ VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading plat
 
 2. **Multi-User Management** (`user_manager_v2.py`)
    - Multi-tenant architecture (each user has own settings)
-   - Per-user Royal Q DCA configurations
+   - Per-user DCA configurations
    - Risk settings: leverage caps, position size, daily limits
    - Exchange account management (CRUD operations)
    - Symbol whitelist/blacklist enforcement
@@ -51,7 +51,7 @@ VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading plat
    - **Validation**: Symbol, leverage, and order size checks
    - Persistent state across restarts
 
-4. **Royal Q Orchestrator** (`royalq_orchestrator.py`)
+4. **DCA Orchestrator** (`dca_orchestrator.py`)
    - Master coordinator integrating all components
    - Full signal execution pipeline with safety checks
    - DCA trigger monitoring and execution
@@ -112,7 +112,7 @@ VerzekAutoTrader has evolved into a comprehensive multi-tenant auto-trading plat
     
     - **Settings:**
       - `GET/PUT /api/users/<id>/risk` - Risk settings
-      - `GET/PUT /api/users/<id>/royalq` - Royal Q DCA settings
+      - `GET/PUT /api/users/<id>/dca` - DCA settings
       - `GET/POST/DELETE /api/users/<id>/exchanges` - Exchange accounts
     
     - **Positions:**
@@ -181,7 +181,7 @@ python main.py            # Main signal bot
 
 ## Database/Storage
 All data is stored locally in the `database/` folder:
-- `users_v2.json` - Multi-user database (Royal Q settings, risk controls)
+- `users_v2.json` - Multi-user database (DCA settings, risk controls)
 - `positions.json` - All open/closed positions
 - `safety_state.json` - Safety system state (kill switch, circuit breaker)
 - `trades_log.csv` - Legacy trade log
@@ -197,7 +197,7 @@ All Python dependencies are managed via pip:
 - `requests` - HTTP library
 - `schedule` - Task scheduling
 
-## Royal Q DCA Strategy
+## DCA Strategy
 
 ### How It Works
 1. **Base Order**: Opens initial position (default $10)
@@ -226,13 +226,13 @@ All Python dependencies are managed via pip:
 - **Trading Pause**: Temporary halt with auto-resume
 
 ## Recent Changes
-- **2025-10-16**: Phase 1 Complete - Royal Q DCA System Production-Ready
-  - ✅ Royal Q DCA Engine with margin call strategy
-  - ✅ Multi-user management system with per-user Royal Q settings
+- **2025-10-16**: Phase 1 Complete - DCA System Production-Ready
+  - ✅ DCA Engine with margin call strategy
+  - ✅ Multi-user management system with per-user DCA settings
   - ✅ 4 exchange adapters (Binance, Bybit, Phemex, Coinexx) with demo modes
   - ✅ Safety Manager with kill switch, auto circuit breaker, order idempotency
   - ✅ Comprehensive Flask API with 20+ endpoints
-  - ✅ Royal Q Orchestrator integrating all components
+  - ✅ DCA Orchestrator integrating all components
   - ✅ Demo mode support (works without exchange API keys)
   - ✅ Automatic circuit breaker triggers on rapid losses
   - ✅ Idempotent order IDs prevent duplicate trades

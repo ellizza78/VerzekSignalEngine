@@ -1,27 +1,27 @@
 """
-Royal Q Orchestrator
-Integrates Royal Q DCA engine with user management, safety rails, and exchange execution
+DCA Orchestrator
+Integrates DCA engine with user management, safety rails, and exchange execution
 """
 
 from typing import Optional, Dict
 import hashlib
-from modules import RoyalQEngine, PositionTracker, UserManager, SafetyManager, PositionSide
+from modules import DCAEngine, PositionTracker, UserManager, SafetyManager, PositionSide
 from exchanges import ExchangeFactory
 from utils.logger import log_event
 import trade_executor
 
 
-class RoyalQOrchestrator:
-    """Orchestrates Royal Q DCA trading with all safety and management layers"""
+class DCAOrchestrator:
+    """Orchestrates DCA trading with all safety and management layers"""
     
     def __init__(self):
         self.user_manager = UserManager()
         self.safety_manager = SafetyManager()
         self.position_tracker = PositionTracker()
-        self.royalq_engines: Dict[str, RoyalQEngine] = {}  # user_id -> engine
+        self.dca_engines: Dict[str, DCAEngine] = {}  # user_id -> engine
         self.exchange_factory = ExchangeFactory()
         
-        log_event("ORCHESTRATOR", "Royal Q Orchestrator initialized")
+        log_event("ORCHESTRATOR", "DCA Orchestrator initialized")
     
     def execute_signal(
         self,
@@ -48,9 +48,9 @@ class RoyalQOrchestrator:
         if not user:
             return {"success": False, "error": "User not found"}
         
-        # Step 2: Check if Royal Q is enabled for user
-        if not user.royalq_settings.get("enabled", False):
-            return {"success": False, "error": "Royal Q not enabled for user"}
+        # Step 2: Check if DCA is enabled for user
+        if not user.dca_settings.get("enabled", False):
+            return {"success": False, "error": "DCA not enabled for user"}
         
         # Step 3: Safety checks
         trading_allowed, reason = self.safety_manager.is_trading_allowed()
@@ -110,14 +110,14 @@ class RoyalQOrchestrator:
         if not can_trade:
             return {"success": False, "error": "Daily trading limits exceeded"}
         
-        # Step 9: Get or create Royal Q engine for user
-        if user_id not in self.royalq_engines:
-            self.royalq_engines[user_id] = RoyalQEngine(
+        # Step 9: Get or create DCA engine for user
+        if user_id not in self.dca_engines:
+            self.dca_engines[user_id] = DCAEngine(
                 user_id=user_id,
-                config=user.royalq_settings
+                config=user.dca_settings
             )
         
-        engine = self.royalq_engines[user_id]
+        engine = self.dca_engines[user_id]
         
         # Step 10: Get current price if not provided
         if entry_price is None:
@@ -128,12 +128,12 @@ class RoyalQOrchestrator:
                 return {"success": False, "error": f"Cannot fetch price for {symbol}"}
         
         # Step 11: Calculate position size
-        base_order_size = user.royalq_settings.get("base_order", 10.0)
+        base_order_size = user.dca_settings.get("base_order", 10.0)
         is_valid, msg = self.safety_manager.validate_order_size(base_order_size)
         if not is_valid:
             return {"success": False, "error": msg}
         
-        # Step 12: Open position with Royal Q
+        # Step 12: Open position with DCA
         position_side = PositionSide.LONG if side.upper() == "LONG" else PositionSide.SHORT
         
         try:
@@ -172,7 +172,7 @@ class RoyalQOrchestrator:
                 "quantity": base_order_size / entry_price,
                 "leverage": leverage,
                 "status": "open",
-                "royalq_enabled": True
+                "dca_enabled": True
             })
             
             # Step 15: Update user stats
@@ -238,7 +238,7 @@ class RoyalQOrchestrator:
                 symbol=symbol,
                 side=side,
                 amount=quantity,
-                tp=None,  # TP/SL managed by Royal Q engine
+                tp=None,  # TP/SL managed by DCA engine
                 sl=None
             )
             
@@ -265,10 +265,10 @@ class RoyalQOrchestrator:
         Returns:
             DCA execution result
         """
-        if user_id not in self.royalq_engines:
+        if user_id not in self.dca_engines:
             return {"success": False, "error": "No active engine for user"}
         
-        engine = self.royalq_engines[user_id]
+        engine = self.dca_engines[user_id]
         user = self.user_manager.get_user(user_id)
         
         if not user:
@@ -331,10 +331,10 @@ class RoyalQOrchestrator:
         reason: str = "Manual close"
     ) -> dict:
         """Close a position and record results"""
-        if user_id not in self.royalq_engines:
+        if user_id not in self.dca_engines:
             return {"success": False, "error": "No active engine for user"}
         
-        engine = self.royalq_engines[user_id]
+        engine = self.dca_engines[user_id]
         user = self.user_manager.get_user(user_id)
         
         if not user:

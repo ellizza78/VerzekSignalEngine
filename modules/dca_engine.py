@@ -1,5 +1,5 @@
 """
-Royal Q DCA (Dollar Cost Averaging) Engine
+DCA (Dollar Cost Averaging) Engine
 Implements margin call strategy with layered buying/selling and take-profit logic.
 
 Strategy Overview:
@@ -48,8 +48,8 @@ class DCALevel:
         }
 
 
-class RoyalQPosition:
-    """Manages a single position with Royal Q DCA strategy"""
+class DCAPosition:
+    """Manages a single position with DCA strategy"""
     
     def __init__(
         self,
@@ -347,11 +347,11 @@ class RoyalQPosition:
         }
 
 
-class RoyalQEngine:
-    """Main Royal Q DCA Engine - manages multiple positions"""
+class DCAEngine:
+    """Main DCA Engine - manages multiple positions"""
     
     def __init__(self):
-        self.positions: Dict[str, RoyalQPosition] = {}
+        self.positions: Dict[str, DCAPosition] = {}
     
     def create_position(
         self,
@@ -361,25 +361,25 @@ class RoyalQEngine:
         side: str,
         base_order_size: float,
         entry_price: float,
-        royalq_config: dict
-    ) -> RoyalQPosition:
-        """Create a new Royal Q position"""
+        dca_config: dict
+    ) -> DCAPosition:
+        """Create a new DCA position"""
         position_side = PositionSide.LONG if side.upper() in ["LONG", "BUY"] else PositionSide.SHORT
         
-        position = RoyalQPosition(
+        position = DCAPosition(
             position_id=position_id,
             user_id=user_id,
             symbol=symbol,
             side=position_side,
             base_order_size=base_order_size,
             entry_price=entry_price,
-            config=royalq_config
+            config=dca_config
         )
         
         self.positions[position_id] = position
         return position
     
-    def get_position(self, position_id: str) -> Optional[RoyalQPosition]:
+    def get_position(self, position_id: str) -> Optional[DCAPosition]:
         """Get position by ID"""
         return self.positions.get(position_id)
     
@@ -420,14 +420,14 @@ class RoyalQEngine:
         
         return result
     
-    def get_active_positions(self, user_id: Optional[str] = None) -> List[RoyalQPosition]:
+    def get_active_positions(self, user_id: Optional[str] = None) -> List[DCAPosition]:
         """Get all active positions, optionally filtered by user"""
         positions = [p for p in self.positions.values() if p.status == "active"]
         if user_id:
             positions = [p for p in positions if p.user_id == user_id]
         return positions
     
-    def get_user_positions(self, user_id: str) -> List[RoyalQPosition]:
+    def get_user_positions(self, user_id: str) -> List[DCAPosition]:
         """Get all positions for a user"""
         return [p for p in self.positions.values() if p.user_id == user_id]
     
