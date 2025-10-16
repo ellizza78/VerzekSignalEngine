@@ -50,8 +50,14 @@ from modules.advanced_charting import AdvancedChartingSystem
 from modules.auto_optimization import AutoOptimizationEngine
 from modules.ai_risk_scoring import AIRiskScoringSystem
 from modules.trading_journal import TradingJournal
+from telegram import Update, Bot
+import json as json_module
 
 app = Flask(__name__)
+
+# Telegram Bot instance (will be set by broadcast_bot)
+telegram_bot_instance = None
+telegram_message_handler = None
 
 # Configure CAPTCHA
 CAPTCHA_CONFIG = {
@@ -2572,6 +2578,38 @@ def get_journal_insights(current_user_id):
     """Get trading insights"""
     result = trading_journal.generate_insights(current_user_id)
     return jsonify(result)
+
+
+# ============================
+# TELEGRAM WEBHOOK ENDPOINT
+# ============================
+
+@app.route("/webhook/broadcast", methods=["POST"])
+def telegram_webhook():
+    """Webhook endpoint for Telegram broadcast bot"""
+    try:
+        update_data = request.get_json()
+        
+        # Create Update object from webhook data
+        if telegram_bot_instance and telegram_message_handler:
+            update = Update.de_json(update_data, telegram_bot_instance)
+            
+            # Process the update with the registered handler
+            if update and update.message:
+                telegram_message_handler(update, None)
+        
+        return jsonify({"ok": True})
+    except Exception as e:
+        log_event("WEBHOOK", f"Error processing webhook: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+def set_telegram_webhook_handler(bot_instance, message_handler):
+    """Called by broadcast_bot to register its handlers"""
+    global telegram_bot_instance, telegram_message_handler
+    telegram_bot_instance = bot_instance
+    telegram_message_handler = message_handler
+    log_event("WEBHOOK", "Telegram webhook handlers registered")
 
 
 if __name__ == "__main__":

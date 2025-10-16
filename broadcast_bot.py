@@ -1,6 +1,7 @@
 """
-VerzekBroadcastBot v1.1
-------------------------
+VerzekBroadcastBot v2.0 - Webhook Edition
+------------------------------------------
+Uses webhooks instead of polling to eliminate conflicts.
 Listens to admin (personal chat) for Cornix-style signals and broadcasts
 them with Verzek-branded header to VIP and TRIAL groups.
 """
@@ -9,8 +10,8 @@ import os
 import time
 import logging
 import json
-from telegram import Bot
-from telegram.ext import Updater, MessageHandler, Filters
+import requests
+from telegram import Bot, Update
 from signal_parser import parse_close_signal
 from modules.dca_orchestrator import DCAOrchestrator
 
@@ -22,6 +23,9 @@ with open(CONFIG_PATH, "r", encoding="utf-8") as f:
 # Load sensitive values from environment variables
 BROADCAST_BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN")
 ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
+
+# Webhook URL (Replit provides HTTPS)
+WEBHOOK_URL = "https://verzek-auto-trader.replit.app/webhook/broadcast"
 
 # Group IDs (set your actual ones)
 VIP_GROUP_ID = -1002721581400
@@ -79,22 +83,30 @@ def clean_signal(text):
     
     return result.strip()
 
-def broadcast_message(update, context):
-    user_id = update.effective_user.id
+def process_message(update, context):
+    """Process incoming messages (called by webhook)"""
     message = update.message
+    if not message:
+        return
+    
+    user_id = message.from_user.id if message.from_user else None
+    chat_id = message.chat_id
     
     # Get text from message or forwarded message
     text = (message.text or message.caption or "").strip()
     
+    if not text:
+        return
+    
     # If it's a forwarded message, get the original text
     if message.forward_from or message.forward_from_chat:
-        logger.info(f"📥 Received forwarded message from admin")
-
-    # Only accept from admin
-    if user_id != ADMIN_CHAT_ID:
-        return
-
-    # Prevent re-broadcasting if message already has our header
+        logger.info(f"📥 Received forwarded message")
+    
+    # CRITICAL: Prevent loop - NEVER forward from VIP/TRIAL groups
+    if chat_id == VIP_GROUP_ID or chat_id == TRIAL_GROUP_ID:
+        return  # Ignore messages from our own broadcast targets
+    
+    # CRITICAL: Prevent loop - ignore if message already has our header
     if "VERZEK TRADING SIGNALS" in text.upper() or "SIGNAL ALERT" in text.upper():
         logger.info("Ignored message - already has Verzek header")
         return
@@ -104,6 +116,16 @@ def broadcast_message(update, context):
         logger.info("Ignored non-trading message.")
         return
     
+    # Handle private messages from admin (manual broadcast)
+    if message.chat.type == 'private' and user_id == ADMIN_CHAT_ID:
+        broadcast_admin_message(message, text)
+    
+    # Handle group messages (auto-forward)
+    elif message.chat.type in ['group', 'supergroup']:
+        auto_forward_signal(message, text)
+
+def broadcast_admin_message(message, text):
+    """Broadcast message from admin"""
     # Check if this is a close/cancel signal
     close_signal = parse_close_signal(text)
     if close_signal and close_signal.get("symbol"):
@@ -146,28 +168,8 @@ def broadcast_message(update, context):
     except Exception:
         pass
 
-def auto_forward_signals(update, context):
+def auto_forward_signal(message, text):
     """Auto-forward signals from monitored channels to VIP and TRIAL groups"""
-    message = update.message
-    text = (message.text or message.caption or "").strip()
-    
-    if not text:
-        return
-    
-    # CRITICAL: Prevent loop - NEVER forward from VIP/TRIAL groups
-    chat_id = message.chat_id
-    if chat_id == VIP_GROUP_ID or chat_id == TRIAL_GROUP_ID:
-        return  # Ignore messages from our own broadcast targets
-    
-    # CRITICAL: Prevent loop - ignore if message already has our header
-    if "VERZEK TRADING SIGNALS" in text.upper() or "SIGNAL ALERT" in text.upper():
-        logger.info("Ignored message from group - already has Verzek header")
-        return
-    
-    # Check if message contains trading keywords
-    if not any(k in text.upper() for k in KEYWORDS):
-        return
-    
     # Get source info
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
@@ -190,26 +192,53 @@ def auto_forward_signals(update, context):
     except Exception as e:
         logger.error(f"⚠️ Auto-forward failed: {e}")
 
+def setup_webhook():
+    """Set up webhook with Telegram"""
+    try:
+        # Delete any existing webhook first
+        bot.delete_webhook()
+        logger.info("🗑️ Deleted existing webhook")
+        
+        # Set new webhook
+        success = bot.set_webhook(
+            url=WEBHOOK_URL,
+            drop_pending_updates=True  # Clear any pending updates
+        )
+        
+        if success:
+            logger.info(f"✅ Webhook set successfully: {WEBHOOK_URL}")
+            
+            # Verify webhook info
+            webhook_info = bot.get_webhook_info()
+            logger.info(f"📡 Webhook URL: {webhook_info.url}")
+            logger.info(f"📡 Pending updates: {webhook_info.pending_update_count}")
+            return True
+        else:
+            logger.error("❌ Failed to set webhook")
+            return False
+    except Exception as e:
+        logger.error(f"❌ Error setting up webhook: {e}")
+        return False
 
 def main():
-    updater = Updater(BROADCAST_BOT_TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    # Handler for admin personal messages (manual broadcast)
-    dp.add_handler(MessageHandler(
-        Filters.text & ~Filters.command & Filters.private, 
-        broadcast_message
-    ))
+    """Initialize webhook-based bot"""
+    logger.info("🚀 VerzekBroadcastBot v2.0 (Webhook Edition) starting...")
     
-    # Handler for signal source channels (auto-forward)
-    dp.add_handler(MessageHandler(
-        Filters.text & ~Filters.command & Filters.group,
-        auto_forward_signals
-    ))
-
-    logger.info("🚀 VerzekBroadcastBot is now listening for admin signals and monitoring signal sources...")
-    updater.start_polling()
-    updater.idle()
+    # Set up webhook with Telegram
+    if setup_webhook():
+        logger.info("✅ Webhook mode activated - no polling conflicts!")
+        logger.info("📡 Listening for admin signals and monitoring signal sources...")
+        logger.info("🔗 Webhook endpoint: /webhook/broadcast")
+        
+        # Register handlers with Flask app (if running in same process)
+        try:
+            from api_server import set_telegram_webhook_handler
+            set_telegram_webhook_handler(bot, process_message)
+            logger.info("✅ Handlers registered with Flask API")
+        except ImportError:
+            logger.warning("⚠️ Could not register handlers - Flask API not running in same process")
+    else:
+        logger.error("❌ Failed to set up webhook - bot will not receive messages")
 
 if __name__ == "__main__":
     main()
