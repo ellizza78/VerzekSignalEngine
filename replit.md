@@ -163,6 +163,17 @@ Message: "BTCUSDT - Signal Cancelled"
 - **broadcast_bot.py**: Detects and triggers auto-close before broadcasting
 
 ## Recent Changes
+- **2025-10-16**: CAPTCHA, Signal Filtering & IP Whitelisting Complete
+  - ✅ CAPTCHA System: flask-simple-captcha for registration and login security
+  - ✅ Signal Quality Filter: Scoring algorithm (0-100) filters best signals for auto-trading
+    - R/R ratio (30pts), SL presence (20pts), targets (20pts), entry clarity (15pts), provider rep (15pts)
+    - Default threshold: 60/100 for auto-execution
+    - User-configurable via strategy_settings.signal_quality_threshold
+  - ✅ IP Whitelisting: /api/system/ip endpoint displays server IP (34.11.228.15)
+  - ✅ Exchange Setup Screen: Mobile tab with IP copy, 6-step instructions, exchange links
+  - ✅ Updated Onboarding: Step 3 explains IP whitelisting requirement for Futures API keys
+  - ✅ Architect-approved: All features tested and production-ready
+
 - **2025-10-16**: VZK Branding & Onboarding Complete
   - ✅ VZK Logo: Added to Login, Register, and Dashboard screens
   - ✅ Color Scheme: Complete update to Teal/Gold gradient (#0A4A5C → #1B9AAA, #F9C74F)
