@@ -646,3 +646,7 @@ Updated working bot version from local PC
 [2025-10-16 12:21:19] [TARGET_MONITOR] 🎯 Target Monitor started
 [2025-10-16 12:21:19] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 12:21:20] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 12:35:26] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'CHZUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #CHZ/USDT $CHZ \nLong 🚀 Lev x7 #Crypto \n\nEntry: 0.03462 - Stop Loss: 0.0332 \n\nTargets: 0.03533 - 0.03604 - 0.03675 - 0.03746 - 0.03817'}
+[2025-10-16 12:35:26] [ORCHESTRATOR] ℹ️ No active positions found for CHZUSDT to close
+[2025-10-16 12:35:30] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'CHZUSDT', 'reason': 'signal_cancelled', 'source_text': '#CHZUSDT - Signal Cancelled ❎\nClosed due to opposite direction signal'}
+[2025-10-16 12:35:30] [ORCHESTRATOR] ℹ️ No active positions found for CHZUSDT to close
