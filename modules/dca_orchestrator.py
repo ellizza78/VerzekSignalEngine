@@ -379,3 +379,187 @@ class DCAOrchestrator:
             return close_result
         
         return {"success": False, "error": "Failed to close position"}
+    
+    def monitor_targets(self):
+        """Monitor all active positions for target hits and execute progressive TPs"""
+        active_positions = self.position_tracker.get_active_positions()
+        
+        for position in active_positions:
+            # Skip positions without targets
+            if not position.get("targets"):
+                continue
+            
+            # Check if target-based TP is enabled for user
+            user = self.user_manager.get_user(position["user_id"])
+            if not user or not user.strategy_settings.get("target_based_tp", True):
+                continue
+            
+            # Get current price
+            symbol = position["symbol"]
+            user_id = position["user_id"]
+            
+            # Get exchange client for price
+            exchanges = user.exchange_accounts
+            if not exchanges:
+                continue
+            
+            active_exchange = next((e for e in exchanges if e.get("enabled", True)), None)
+            if not active_exchange:
+                continue
+            
+            exchange_name = active_exchange["exchange"]
+            testnet = active_exchange.get("testnet", False)
+            client = self.exchange_factory.get_client(exchange_name, testnet=testnet)
+            
+            if not client:
+                continue
+            
+            try:
+                current_price = client.get_ticker_price(symbol)
+                
+                # Check each target
+                for target in position["targets"]:
+                    target_num = target["target_num"]
+                    target_price = target["price"]
+                    
+                    # Skip already reached targets
+                    if target_num in position.get("reached_targets", []):
+                        continue
+                    
+                    # Check if target is reached
+                    side = position["side"].upper()
+                    target_reached = False
+                    
+                    if side == "LONG":
+                        # For LONG, target reached when price >= target
+                        target_reached = current_price >= target_price
+                    else:
+                        # For SHORT, target reached when price <= target
+                        target_reached = current_price <= target_price
+                    
+                    if target_reached:
+                        # Execute progressive TP
+                        self._execute_progressive_tp(
+                            position_id=position["position_id"],
+                            target_num=target_num,
+                            target_price=target_price,
+                            current_price=current_price,
+                            user_id=user_id,
+                            symbol=symbol
+                        )
+                        
+            except Exception as e:
+                log_event("ORCHESTRATOR", f"Error monitoring targets for {symbol}: {e}")
+    
+    def _execute_progressive_tp(
+        self,
+        position_id: str,
+        target_num: int,
+        target_price: float,
+        current_price: float,
+        user_id: str,
+        symbol: str
+    ):
+        """Execute progressive take profit at a target"""
+        position = self.position_tracker.get_position(position_id)
+        if not position:
+            return
+        
+        # Get user settings for TP split percentages
+        user = self.user_manager.get_user(user_id)
+        if not user:
+            return
+        
+        # Get TP split strategy from user settings
+        partial_tp_splits = user.strategy_settings.get("partial_tp_splits", [25, 25, 25, 25])
+        total_targets = len(position["targets"])
+        
+        # Calculate percentage to close for this target
+        if target_num <= len(partial_tp_splits):
+            close_percentage = partial_tp_splits[target_num - 1] / 100.0
+        else:
+            # Equal split for remaining targets
+            close_percentage = 1.0 / total_targets
+        
+        # Check if this is the final target
+        is_final_target = target_num == total_targets
+        
+        # For final target, close 100% of remaining position
+        if is_final_target:
+            close_percentage = 1.0
+        
+        # Calculate quantity to close
+        remaining_qty = position.get("remaining_quantity", position["quantity"])
+        close_qty = remaining_qty * close_percentage
+        
+        # Execute partial close on exchange
+        try:
+            exchanges = user.exchange_accounts
+            if not exchanges:
+                return
+            
+            active_exchange = next((e for e in exchanges if e.get("enabled", True)), None)
+            if not active_exchange:
+                return
+            
+            exchange_name = active_exchange["exchange"]
+            testnet = active_exchange.get("testnet", False)
+            client = self.exchange_factory.get_client(exchange_name, testnet=testnet)
+            
+            if not client:
+                return
+            
+            # Place sell order (opposite of position side)
+            side = "sell" if position["side"].upper() == "LONG" else "buy"
+            
+            order_result = self._place_order(
+                client=client,
+                symbol=symbol,
+                side=side,
+                quantity=close_qty,
+                price=current_price,
+                leverage=position.get("leverage", 10),
+                user_id=user_id
+            )
+            
+            if order_result.get("success"):
+                # Calculate profit for this TP
+                entry_price = position["entry_price"]
+                if position["side"].upper() == "LONG":
+                    profit = (current_price - entry_price) * close_qty
+                else:
+                    profit = (entry_price - current_price) * close_qty
+                
+                # Update position
+                new_remaining = remaining_qty - close_qty
+                reached_targets = position.get("reached_targets", [])
+                reached_targets.append(target_num)
+                total_profit = position.get("total_profit_taken", 0) + profit
+                
+                update_data = {
+                    "remaining_quantity": new_remaining,
+                    "reached_targets": reached_targets,
+                    "total_profit_taken": total_profit
+                }
+                
+                # If final target or no quantity remaining, close position
+                if is_final_target or new_remaining <= 0.0001:
+                    update_data["status"] = "closed"
+                    update_data["closed_at"] = __import__('datetime').datetime.now().isoformat()
+                    update_data["close_reason"] = f"Target {target_num} reached (Final)"
+                    update_data["exit_price"] = current_price
+                    update_data["final_pnl"] = total_profit
+                    
+                    # Update user stats
+                    user.stats["active_positions"] = max(0, user.stats.get("active_positions", 1) - 1)
+                    self.user_manager.record_trade_for_user(user_id, total_profit)
+                    self.user_manager._save_users()
+                    
+                    log_event("ORCHESTRATOR", f"🎯 Final Target {target_num} reached! Position fully closed: {symbol} @ {current_price} | Total Profit: ${total_profit:.2f}")
+                else:
+                    log_event("ORCHESTRATOR", f"🎯 Target {target_num} reached! Partial TP executed: {symbol} @ {current_price} | Closed {close_percentage*100:.1f}% | Profit: ${profit:.2f}")
+                
+                self.position_tracker.update_position(position_id, update_data)
+                
+        except Exception as e:
+            log_event("ORCHESTRATOR", f"Error executing progressive TP: {e}")
