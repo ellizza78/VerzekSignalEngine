@@ -25,16 +25,23 @@ None specified yet.
 
 ### REST API Server
 - A Flask-based API on port 5000 providing endpoints for:
-    - **User Management**: CRUD operations for users, including retrieving statistics.
-    - **Settings Management**: Configuration for general mode (live/demo), risk parameters (capital, position sizing, limits), strategy parameters (auto-follow, TP/SL), and DCA settings.
-    - **Subscription Management**: Activation and status updates for user subscriptions.
-    - **Exchange Account Management**: CRUD operations for user exchange connections.
-    - **Position Management**: Retrieval of all or user-specific trading positions.
-    - **Safety Controls**: Endpoints to check status and control the kill switch, trading pause, and circuit breaker.
+    - **Authentication**: JWT-based registration, login, token refresh, and user info endpoints
+    - **User Management**: CRUD operations for users, including retrieving statistics
+    - **Settings Management**: Configuration for general mode (live/demo), risk parameters (capital, position sizing, limits), strategy parameters (auto-follow, TP/SL), and DCA settings
+    - **Subscription Management**: Activation and status updates for user subscriptions
+    - **Exchange Account Management**: CRUD operations for user exchange connections
+    - **Position Management**: Retrieval of all or user-specific trading positions
+    - **Safety Controls**: Endpoints to check status and control the kill switch, trading pause, and circuit breaker
 
-### UI/UX Decisions
-- The project is designed with a focus on comprehensive configuration and control through its REST API, implying a potential external mobile app or web interface for user interaction (though not part of this replit).
-- Subscription tiers are clearly defined with feature gating, guiding user experience based on their plan.
+### Mobile Application
+- **React Native + Expo**: Cross-platform mobile app for iOS and Android
+- **JWT Authentication**: Secure login/register with automatic token refresh
+- **Secure Storage**: AsyncStorage for tokens and user data
+- **Dashboard**: Account overview, trading stats, subscription status, and quick actions
+- **API Integration**: Full integration with Flask backend via REST API
+- **Token Management**: Automatic access token refresh on 401 errors
+- **Navigation**: Auth-based routing (Login/Register stack vs Main app stack)
+- **UI/UX**: Modern dark theme with responsive design (Navy blue: #1a1a2e, Accent: #e94560)
 
 ### System Design Choices
 - **Multi-tenancy**: Designed to serve multiple users, each with isolated configurations and trading strategies.
@@ -156,6 +163,28 @@ Message: "BTCUSDT - Signal Cancelled"
 - **broadcast_bot.py**: Detects and triggers auto-close before broadcasting
 
 ## Recent Changes
+- **2025-10-16**: React Native Mobile App Complete
+  - ✅ Created Expo React Native app structure (mobile_app/VerzekApp/)
+  - ✅ Implemented JWT authentication with secure token storage
+  - ✅ Built Login/Register screens with form validation
+  - ✅ Created Dashboard with user stats and subscription info
+  - ✅ Integrated API service layer with automatic token refresh
+  - ✅ Added auth context for global authentication state
+  - ✅ Configured navigation with auth-based routing
+  - ✅ Backend tested: Registration, Login, and Protected endpoints verified
+  - ✅ Modern dark UI with Navy/Pink color scheme
+  - 📱 Ready for iOS/Android deployment via Expo
+
+- **2025-10-16**: JWT Authentication System Complete
+  - ✅ Added PyJWT and bcrypt dependencies
+  - ✅ Created auth module with token generation/verification
+  - ✅ Implemented 4 auth endpoints: register, login, refresh, me
+  - ✅ Extended User model with email, full_name, password_hash
+  - ✅ Secure password hashing (bcrypt) and validation
+  - ✅ Access tokens (1hr) and refresh tokens (30 days)
+  - ✅ Token-based authentication decorators
+  - ✅ Password hash excluded from API responses for security
+
 - **2025-10-16**: Phase 2 Task 5 Complete - Auto-Stop Logic System
   - ✅ Enhanced signal parser to detect close/cancel messages
   - ✅ Implemented auto_close_positions() method in DCA Orchestrator
