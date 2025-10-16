@@ -43,6 +43,11 @@ def run_target_monitor():
     print("🎯 Starting Target Monitor...")
     subprocess.run([sys.executable, "target_monitor.py"])
 
+def run_recurring_payments():
+    """Run Recurring Payments Handler for monthly commissions"""
+    print("💰 Starting Recurring Payments Handler...")
+    subprocess.run([sys.executable, "recurring_payments_service.py"])
+
 if __name__ == "__main__":
     print("🚀 VerzekAutoTrader - Starting All Services...")
     
@@ -65,6 +70,10 @@ if __name__ == "__main__":
     target_monitor_thread = Thread(target=run_target_monitor, daemon=True)
     target_monitor_thread.start()
     
+    # Start Recurring Payments Handler in a thread
+    recurring_thread = Thread(target=run_recurring_payments, daemon=True)
+    recurring_thread.start()
+    
     # Uncomment below if you want to run the main signal bot too
     # main_thread = Thread(target=run_main_bot, daemon=True)
     # main_thread.start()
@@ -73,6 +82,7 @@ if __name__ == "__main__":
     print("🔄 Auto-Forwarder monitoring your personal chats...")
     print("📡 Broadcast Bot is listening and ready to broadcast...")
     print("🎯 Target Monitor checking for take profit levels...")
+    print("💰 Recurring Payments processing monthly commissions...")
     print("🌐 API Server running on port 5000")
     
     # Keep the main thread alive

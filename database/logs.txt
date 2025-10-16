@@ -722,3 +722,5 @@ Updated working bot version from local PC
 [2025-10-16 15:45:19] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 15:46:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ETHUSDT', 'reason': 'stop_loss_hit', 'source_text': '#ETHUSDT - Stop Loss ⛔️\nLoss: 30.2467%'}
 [2025-10-16 15:46:07] [ORCHESTRATOR] ℹ️ No active positions found for ETHUSDT to close
+[2025-10-16 15:50:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'BCHUSDT', 'reason': 'stop_loss_hit', 'source_text': '#BCHUSDT - Stop Loss ⛔️\nLoss: 30.7239%'}
+[2025-10-16 15:50:08] [ORCHESTRATOR] ℹ️ No active positions found for BCHUSDT to close

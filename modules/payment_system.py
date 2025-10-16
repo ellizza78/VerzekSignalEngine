@@ -26,7 +26,7 @@ class PaymentSystem:
             'vip': 99.99   # USDT monthly
         }
         
-        self.REFERRAL_BONUS_PERCENT = 20  # 20% commission
+        self.REFERRAL_BONUS_PERCENT = 10  # 10% recurring commission
     
     def _load_payments(self) -> List[dict]:
         """Load payment records"""
@@ -49,7 +49,9 @@ class PaymentSystem:
         return {
             'codes': {},  # referral_code -> user_id
             'referrals': {},  # referrer_user_id -> [referee_user_ids]
-            'earnings': {}  # user_id -> total_earnings
+            'earnings': {},  # user_id -> total_earnings
+            'wallets': {},  # user_id -> wallet_balance
+            'recurring': {}  # user_id -> [recurring_subscriptions]
         }
     
     def _save_referrals(self):
@@ -199,82 +201,115 @@ class PaymentSystem:
             }
     
     def register_referral_code(self, user_id: str, referral_code: str):
-        """Register user's referral code"""
+        """Register user's referral code and initialize in-app wallet"""
         self.referrals['codes'][referral_code] = user_id
         self.referrals['referrals'][user_id] = []
         self.referrals['earnings'][user_id] = 0.0
+        self.referrals['wallets'][user_id] = 0.0
+        self.referrals['recurring'][user_id] = []
         self._save_referrals()
         
-        log_event("REFERRAL", f"Referral code {referral_code} registered for user {user_id}")
+        log_event("REFERRAL", f"Referral code {referral_code} and wallet initialized for user {user_id}")
     
-    def _process_referral_bonus(self, referrer_id: str, referee_id: str, payment_amount: float):
-        """Process referral bonus when referee makes payment"""
+    def _process_referral_bonus(self, referrer_id: str, referee_id: str, payment_amount: float, is_recurring: bool = False):
+        """
+        Process referral bonus when referee makes payment
+        10% commission credited to in-app wallet
+        Continues every month for recurring subscriptions
+        """
         bonus = payment_amount * (self.REFERRAL_BONUS_PERCENT / 100)
         
         if referrer_id not in self.referrals['referrals']:
             self.referrals['referrals'][referrer_id] = []
         
-        self.referrals['referrals'][referrer_id].append({
-            'referee_id': referee_id,
-            'payment_amount': payment_amount,
-            'bonus_earned': bonus,
-            'date': datetime.now().isoformat()
-        })
+        if not is_recurring:
+            self.referrals['referrals'][referrer_id].append({
+                'referee_id': referee_id,
+                'payment_amount': payment_amount,
+                'bonus_earned': bonus,
+                'date': datetime.now().isoformat()
+            })
+            
+            if referrer_id not in self.referrals['recurring']:
+                self.referrals['recurring'][referrer_id] = []
+            
+            self.referrals['recurring'][referrer_id].append({
+                'referee_id': referee_id,
+                'started_at': datetime.now().isoformat()
+            })
         
         if referrer_id not in self.referrals['earnings']:
             self.referrals['earnings'][referrer_id] = 0.0
         
+        if referrer_id not in self.referrals['wallets']:
+            self.referrals['wallets'][referrer_id] = 0.0
+        
         self.referrals['earnings'][referrer_id] += bonus
+        self.referrals['wallets'][referrer_id] += bonus
         
         self._save_referrals()
         
-        log_event("REFERRAL", f"Referral bonus ${bonus} credited to {referrer_id} from {referee_id}")
+        bonus_type = "Recurring" if is_recurring else "Initial"
+        log_event("REFERRAL", f"{bonus_type} referral bonus ${bonus} credited to {referrer_id} wallet from {referee_id}")
     
     def get_referral_stats(self, user_id: str) -> dict:
-        """Get referral statistics for user"""
+        """Get referral statistics for user including in-app wallet balance"""
         return {
             'total_referrals': len(self.referrals['referrals'].get(user_id, [])),
             'total_earnings': self.referrals['earnings'].get(user_id, 0.0),
+            'wallet_balance': self.referrals['wallets'].get(user_id, 0.0),
+            'recurring_subscriptions': len(self.referrals['recurring'].get(user_id, [])),
             'referral_history': self.referrals['referrals'].get(user_id, []),
-            'pending_payout': self.referrals['earnings'].get(user_id, 0.0)
+            'pending_payout': self.referrals['wallets'].get(user_id, 0.0)
         }
     
     def request_referral_payout(self, user_id: str, wallet_address: str) -> dict:
         """
-        Request referral bonus payout to user's wallet
+        Request referral bonus payout from in-app wallet to user's external wallet
         Minimum payout: $10 USDT
+        Withdrawal fee: $1 USDT (goes to system wallet)
         """
-        earnings = self.referrals['earnings'].get(user_id, 0.0)
+        wallet_balance = self.referrals['wallets'].get(user_id, 0.0)
         
-        if earnings < 10:
+        if wallet_balance < 10:
             return {
                 'success': False,
                 'error': 'Minimum payout is $10 USDT',
-                'current_balance': earnings
+                'current_balance': wallet_balance
             }
+        
+        WITHDRAWAL_FEE = 1.0
+        payout_amount = wallet_balance - WITHDRAWAL_FEE
         
         payout_id = f"PAYOUT_{user_id}_{int(datetime.now().timestamp())}"
         
         payout_request = {
             'payout_id': payout_id,
             'user_id': user_id,
-            'amount_usdt': earnings,
+            'amount_usdt': payout_amount,
+            'withdrawal_fee': WITHDRAWAL_FEE,
+            'total_deducted': wallet_balance,
             'wallet_address': wallet_address,
             'network': 'TRC20',
             'status': 'pending',
             'requested_at': datetime.now().isoformat()
         }
         
+        self.referrals['wallets'][user_id] = 0.0
+        
+        self._save_referrals()
+        
         self.payments.append(payout_request)
         self._save_payments()
         
-        log_event("PAYOUT", f"Payout request {payout_id}: ${earnings} to {wallet_address}")
+        log_event("PAYOUT", f"Payout request {payout_id}: ${payout_amount} to {wallet_address} (${WITHDRAWAL_FEE} fee)")
         
         return {
             'success': True,
-            'message': f'Payout request submitted. ${earnings} USDT will be sent to {wallet_address} within 24 hours.',
+            'message': f'Payout request submitted. ${payout_amount} USDT will be sent to {wallet_address} within 24 hours. (${WITHDRAWAL_FEE} withdrawal fee applied)',
             'payout_id': payout_id,
-            'amount': earnings
+            'amount': payout_amount,
+            'fee': WITHDRAWAL_FEE
         }
     
     def get_pending_payments(self) -> List[dict]:

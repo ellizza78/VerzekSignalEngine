@@ -2583,3 +2583,8 @@ All take-profit targets achieved 😎
 
 Profit: 44.2232% 📈
 Period: 54 Minutes ⏰
+[2025-10-16 15:50:07] #ROSEUSDT - 🚨 Target 2 reached
+💸 Profit collected 22.0495%
+⏰ Posted: 1 Hours 31 Minutes Ago
+[2025-10-16 15:50:08] #BCHUSDT - Stop Loss ⛔️
+Loss: 30.7239%
