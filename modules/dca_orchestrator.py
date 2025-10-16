@@ -29,7 +29,9 @@ class DCAOrchestrator:
         symbol: str,
         side: str,
         entry_price: Optional[float] = None,
-        leverage: int = 10
+        leverage: int = 10,
+        targets: Optional[list] = None,
+        stop_loss: Optional[float] = None
     ) -> dict:
         """Execute a trading signal with full safety checks
         
@@ -39,6 +41,8 @@ class DCAOrchestrator:
             side: LONG or SHORT
             entry_price: Entry price (optional, will use market if None)
             leverage: Leverage (will be capped to user's max)
+            targets: List of target dicts [{"target_num": 1, "price": 50000}, ...]
+            stop_loss: Stop loss price (optional)
         
         Returns:
             Execution result dictionary
@@ -163,17 +167,26 @@ class DCAOrchestrator:
                 engine.close_position(symbol)
                 return {"success": False, "error": "Failed to place order on exchange"}
             
-            # Step 14: Track position
-            self.position_tracker.save_position({
+            # Step 14: Track position with targets
+            position_quantity = base_order_size / entry_price
+            position_data = {
                 "user_id": user_id,
                 "symbol": symbol,
                 "side": side,
                 "entry_price": entry_price,
-                "quantity": base_order_size / entry_price,
+                "quantity": position_quantity,
+                "remaining_quantity": position_quantity,  # Track for progressive TP
                 "leverage": leverage,
                 "status": "open",
-                "dca_enabled": True
-            })
+                "dca_enabled": True,
+                "targets": targets if targets else [],
+                "stop_loss": stop_loss,
+                "reached_targets": [],  # Track which targets have been hit
+                "total_profit_taken": 0.0,  # Track cumulative profit from TPs
+                "created_at": __import__('datetime').datetime.now().isoformat()
+            }
+            
+            position_id = self.position_tracker.add_position(position_data)
             
             # Step 15: Update user stats
             user.stats["active_positions"] = user.stats.get("active_positions", 0) + 1
