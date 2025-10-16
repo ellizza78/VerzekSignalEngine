@@ -70,6 +70,14 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
 - **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
 
 ## Recent Changes
+- **2025-10-16**: Phase 4 Intelligent Trading & Social Copy Trading COMPLETE ✅
+  - ✅ **Real-Time Price Feed**: WebSocket integration with Binance/Bybit, auto position updates
+  - ✅ **Portfolio Rebalancing**: Auto-allocation management, drift detection, dry-run mode
+  - ✅ **Advanced Analytics**: ML pattern detection, price prediction, win probability, sentiment analysis
+  - ✅ **Social Trading**: Master/follower system, copy trading, automated replication
+  - ✅ **Custom Strategies**: User-defined indicators, multi-condition strategies, backtesting
+  - ✅ **API Endpoints**: 20 new endpoints for Phase 4 features
+
 - **2025-10-16**: Phase 3 Advanced Trading Features & Risk Management COMPLETE ✅
   - ✅ **Advanced Order Types**: Trailing stop loss, OCO orders, automated execution
   - ✅ **Webhook Integration**: TradingView alerts, custom API signals, HMAC security

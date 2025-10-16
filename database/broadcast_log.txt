@@ -2671,3 +2671,15 @@ Short 🩸 Lev x9 #Crypto
 Entry: 0.0802 - Stop Loss: 0.0829 
 
 Targets: 0.07885 - 0.0775 - 0.07615 - 0.0748 - 0.07345
+[2025-10-16 17:05:09] #Signal #RENDER/USDT $RENDER 
+Short 🩸 Lev x5 #Crypto 
+
+Entry: 2.614 - Stop Loss: 2.761 
+
+Targets: 2.5405 - 2.467 - 2.3935 - 2.32 - 2.2465
+[2025-10-16 17:05:30] #RENDER/USDT / $RENDER 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
