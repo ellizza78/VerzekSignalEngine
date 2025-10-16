@@ -28,7 +28,8 @@ KEYWORDS = (
     "BUY", "SELL", "LONG", "SHORT", "ENTRY", "TP", "SL", 
     "STOP LOSS", "TARGETS", "TARGET", "PROFIT", "LOSS",
     "LEV", "LEVERAGE", "SIGNAL", "USDT", "/USDT",
-    "ACHIEVED", "CLOSED", "TAKE-PROFIT", "TAKE PROFIT", "GAINED"
+    "ACHIEVED", "CLOSED", "TAKE-PROFIT", "TAKE PROFIT", "GAINED",
+    "GAINED PROFIT", "ALL TAKE-PROFIT TARGETS ACHIEVED"
 )
 
 # --- Init client with StringSession (no DB locks) ---
@@ -109,12 +110,19 @@ async def auto_forward(event):
         "GN, TRADERS", "GOOD NIGHT", "REST UP", "PRODUCTIVE DAY",
         "GROWING OUR", "FINE-TUNING", "STEP BY STEP",
         "GOLDENCRYPTOSIGNALS", "AI GOLDEN", "AUTO-DETECTS", "BUILT BY",
-        "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS"
+        "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS",
+        "INVITE LINK", "T.ME/", "BINARYBOSS", "BITNOBLES"
     )
     
     spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
     if spam_hits >= 2:
         print(f"⛔ Blocked spam/promotional message")
+        return
+    
+    # 5.5) Block obvious invite link spam (single keyword match for these)
+    INVITE_SPAM_PATTERNS = ["T.ME/", "INVITE LINK"]
+    if any(pattern in upper for pattern in INVITE_SPAM_PATTERNS):
+        print(f"🚫 Blocked invite link spam")
         return
     
     # 6) Only act on signal-like content (>= 2 keywords)
