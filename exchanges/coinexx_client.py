@@ -6,7 +6,7 @@ Handles Coinexx trading with secure API key management
 import os
 import time
 import requests
-from typing import Optional
+from typing import Optional, List
 
 
 class CoinexxClient:
@@ -35,6 +35,8 @@ class CoinexxClient:
                 response = requests.get(url, params=params, headers=headers, timeout=10)
             elif method == "POST":
                 response = requests.post(url, json=params, headers=headers, timeout=10)
+            elif method == "DELETE":
+                response = requests.delete(url, params=params, headers=headers, timeout=10)
             else:
                 return {"error": f"Unsupported method: {method}"}
             
@@ -138,12 +140,20 @@ class CoinexxDemoClient:
         self.demo_orders = []
     
     def get_ticker_price(self, symbol: str) -> Optional[float]:
-        """Get simulated price"""
-        return 30000.0
+        """Get simulated price (deterministic for demo)"""
+        # Deterministic demo pricing based on symbol
+        base_prices = {
+            "BTCUSDT": 43000.0,
+            "ETHUSDT": 2300.0,
+            "BNBUSDT": 310.0,
+            "SOLUSDT": 98.0,
+            "XRPUSDT": 0.52
+        }
+        return base_prices.get(symbol, 30000.0)
     
     def get_account_balance(self) -> dict:
         """Get demo balance"""
-        return {"balance": self.demo_balance, "available": self.demo_balance}
+        return {"balance": self.demo_balance, "availableBalance": self.demo_balance}
     
     def create_market_order(self, symbol: str, side: str, quantity: float, **kwargs) -> dict:
         """Simulate market order"""

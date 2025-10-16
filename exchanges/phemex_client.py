@@ -67,6 +67,8 @@ class PhemexClient:
                 response = requests.get(url, params=params, headers=headers, timeout=10)
             elif method == "POST":
                 response = requests.post(url, json=params, headers=headers, timeout=10)
+            elif method == "DELETE":
+                response = requests.delete(url, params=params, headers=headers, timeout=10)
             else:
                 return {"error": f"Unsupported method: {method}"}
             
@@ -182,20 +184,16 @@ class PhemexDemoClient:
         self.demo_positions = {}
     
     def get_ticker_price(self, symbol: str) -> Optional[float]:
-        """Get simulated price (uses real Phemex price if available)"""
-        try:
-            response = requests.get(
-                "https://api.phemex.com/md/ticker/24hr",
-                params={"symbol": symbol},
-                timeout=5
-            )
-            if response.status_code == 200:
-                data = response.json()
-                if "result" in data and "lastEp" in data["result"]:
-                    return float(data["result"]["lastEp"]) / 10000
-        except:
-            pass
-        return 30000.0
+        """Get simulated price (deterministic for demo)"""
+        # Deterministic demo pricing based on symbol
+        base_prices = {
+            "BTCUSDT": 43000.0,
+            "ETHUSDT": 2300.0,
+            "BNBUSDT": 310.0,
+            "SOLUSDT": 98.0,
+            "XRPUSDT": 0.52
+        }
+        return base_prices.get(symbol, 30000.0)
     
     def get_account_balance(self) -> dict:
         """Get demo balance"""

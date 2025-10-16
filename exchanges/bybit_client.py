@@ -196,20 +196,20 @@ class BybitDemoClient:
         self.demo_orders = []
     
     def get_ticker_price(self, symbol: str) -> Optional[float]:
-        """Get simulated price (uses real Bybit price)"""
-        try:
-            response = requests.get(
-                "https://api.bybit.com/v5/market/tickers",
-                params={"category": "linear", "symbol": symbol},
-                timeout=5
-            )
-            if response.status_code == 200:
-                data = response.json().get("result", {}).get("list", [])
-                if data:
-                    return float(data[0].get("lastPrice", 0))
-        except:
-            pass
-        return None
+        """Get simulated price (deterministic for demo)"""
+        # Deterministic demo pricing based on symbol
+        base_prices = {
+            "BTCUSDT": 43000.0,
+            "ETHUSDT": 2300.0,
+            "BNBUSDT": 310.0,
+            "SOLUSDT": 98.0,
+            "XRPUSDT": 0.52
+        }
+        return base_prices.get(symbol, 30000.0)
+    
+    def get_account_balance(self) -> dict:
+        """Get demo balance"""
+        return {"balance": self.demo_balance, "availableBalance": self.demo_balance}
     
     def create_market_order(self, symbol: str, side: str, quantity: float, **kwargs) -> dict:
         """Simulate market order"""
@@ -217,8 +217,8 @@ class BybitDemoClient:
         if not price:
             return {"error": "Could not get price"}
         
-        return {
-            "orderId": len(self.demo_orders) + 1,
+        order = {
+            "orderId": "demo_" + str(len(self.demo_orders) + 1),
             "symbol": symbol,
             "side": side,
             "orderType": "Market",
@@ -226,18 +226,59 @@ class BybitDemoClient:
             "price": price,
             "status": "Filled"
         }
+        self.demo_orders.append(order)
+        return order
+    
+    def create_limit_order(self, symbol: str, side: str, quantity: float, price: float, **kwargs) -> dict:
+        """Simulate limit order"""
+        order = {
+            "orderId": "demo_" + str(len(self.demo_orders) + 1),
+            "symbol": symbol,
+            "side": side,
+            "orderType": "Limit",
+            "qty": quantity,
+            "price": price,
+            "status": "New"
+        }
+        self.demo_orders.append(order)
+        return order
     
     def create_stop_loss(self, symbol: str, side: str, quantity: float, stop_price: float) -> dict:
         """Simulate stop loss"""
-        return {"orderId": len(self.demo_orders) + 1, "status": "New", "stopLoss": stop_price}
+        order = {
+            "orderId": "demo_sl_" + str(len(self.demo_orders) + 1),
+            "orderType": "Stop",
+            "stopLoss": stop_price,
+            "status": "New"
+        }
+        self.demo_orders.append(order)
+        return order
     
     def create_take_profit(self, symbol: str, side: str, quantity: float, stop_price: float) -> dict:
         """Simulate take profit"""
-        return {"orderId": len(self.demo_orders) + 1, "status": "New", "takeProfit": stop_price}
+        order = {
+            "orderId": "demo_tp_" + str(len(self.demo_orders) + 1),
+            "orderType": "TakeProfit",
+            "takeProfit": stop_price,
+            "status": "New"
+        }
+        self.demo_orders.append(order)
+        return order
     
-    def get_account_balance(self) -> dict:
-        """Get demo balance"""
-        return {"balance": self.demo_balance}
+    def cancel_order(self, symbol: str, order_id: str) -> dict:
+        """Simulate cancel order"""
+        return {"orderId": order_id, "status": "Canceled"}
+    
+    def cancel_all_orders(self, symbol: str) -> dict:
+        """Simulate cancel all orders"""
+        return {"result": "success", "symbol": symbol}
+    
+    def get_open_orders(self, symbol: Optional[str] = None) -> List[dict]:
+        """Get simulated open orders"""
+        orders = [o for o in self.demo_orders if o.get("status") == "New"]
+        if symbol:
+            orders = [o for o in orders if o.get("symbol") == symbol]
+        return orders
     
     def test_connection(self) -> bool:
         """Demo always connected"""
