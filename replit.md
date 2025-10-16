@@ -50,6 +50,25 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Bcrypt**: For password hashing.
 - **flask-simple-captcha**: For CAPTCHA implementation.
 
+## Security Architecture
+
+### API Key Protection
+**CRITICAL**: API keys are NEVER stored in the mobile app. Here's how it works:
+
+1. **Backend-Only Storage**: User API keys are stored ONLY on the backend server, encrypted at rest using AES-128 (Fernet)
+2. **Mobile App**: Stores only account metadata (account_id, exchange name) - NO sensitive credentials
+3. **Trade Execution**: Mobile app sends trade instructions with account_id → Backend retrieves encrypted keys → Decrypts in-memory → Executes trade → Discards keys
+4. **Transport Security**: All communication via HTTPS/TLS with JWT authentication
+5. **Access Control**: User isolation, token validation, role-based permissions
+
+See `SECURITY_ARCHITECTURE.md` for complete details.
+
+### Encryption System
+- **Algorithm**: Fernet (AES-128 CBC mode)
+- **Key Derivation**: PBKDF2 with 100,000 iterations
+- **Master Key**: Stored in Replit Secrets (environment variables)
+- **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
+
 ## Recent Changes
 - **2025-10-16**: Complete Referral & In-App Wallet System
   - ✅ **10% Recurring Commission**: Monthly referral bonuses for lifetime of subscription

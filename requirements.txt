@@ -9,3 +9,4 @@ bcrypt
 PyJWT
 telethon
 flask-simple-captcha
+cryptography
