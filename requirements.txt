@@ -10,3 +10,6 @@ PyJWT
 telethon
 flask-simple-captcha
 cryptography
+Flask-Limiter
+pyotp
+qrcode

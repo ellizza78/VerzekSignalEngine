@@ -20,6 +20,14 @@ from flask_simple_captcha import CAPTCHA
 import time
 import os
 import re
+from datetime import datetime, timedelta
+
+# Phase 1 Security Features
+from modules.rate_limiter import init_rate_limiter
+from modules.two_factor_auth import two_factor_auth
+from modules.backup_system import backup_system
+from modules.tronscan_client import tronscan_client
+from modules.audit_logger import audit_logger, AuditEventType
 
 app = Flask(__name__)
 
@@ -34,6 +42,9 @@ CAPTCHA_CONFIG = {
 
 SIMPLE_CAPTCHA = CAPTCHA(config=CAPTCHA_CONFIG)
 app = SIMPLE_CAPTCHA.init_app(app)
+
+# Initialize rate limiter
+limiter = init_rate_limiter(app)
 
 # Initialize managers
 user_manager = UserManager()
@@ -206,8 +217,9 @@ def verify_captcha():
 # ============================
 
 @app.route("/api/auth/register", methods=["POST"])
+@limiter.limit("5 per minute")
 def register():
-    """Register a new user"""
+    """Register a new user with rate limiting"""
     data = request.json
     
     email = data.get("email", "").strip().lower()
@@ -273,12 +285,14 @@ def register():
 
 
 @app.route("/api/auth/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
-    """Login user and return JWT tokens"""
+    """Login user with 2FA support and rate limiting"""
     data = request.json
     
     email = data.get("email", "").strip().lower()
     password = data.get("password")
+    mfa_token = data.get("mfa_token")  # Optional 2FA token
     captcha_hash = data.get("captcha_hash")
     captcha_text = data.get("captcha_text")
     
@@ -287,6 +301,11 @@ def login():
         return jsonify({"error": "CAPTCHA is required"}), 400
     
     if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
+        audit_logger.log_event(
+            AuditEventType.LOGIN_FAILED,
+            ip_address=request.remote_addr,
+            details={'reason': 'invalid_captcha', 'email': email}
+        )
         return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
     
     if not email or not password:
@@ -301,15 +320,59 @@ def login():
             break
     
     if not user:
+        audit_logger.log_event(
+            AuditEventType.LOGIN_FAILED,
+            ip_address=request.remote_addr,
+            details={'reason': 'user_not_found', 'email': email}
+        )
         return jsonify({"error": "Invalid email or password"}), 401
     
     # Verify password
     if not user.password_hash or not verify_password(password, user.password_hash):
+        audit_logger.log_event(
+            AuditEventType.LOGIN_FAILED,
+            user_id=user.user_id,
+            ip_address=request.remote_addr,
+            details={'reason': 'invalid_password'}
+        )
         return jsonify({"error": "Invalid email or password"}), 401
+    
+    # Check if 2FA is enabled
+    if two_factor_auth.is_enabled(user.user_id):
+        if not mfa_token:
+            # Password correct, but 2FA required
+            return jsonify({
+                "requires_2fa": True,
+                "message": "2FA verification required",
+                "user_id": user.user_id
+            }), 200
+        
+        # Verify 2FA token
+        is_valid, message = two_factor_auth.verify_token(user.user_id, mfa_token)
+        
+        if not is_valid:
+            audit_logger.log_event(
+                AuditEventType.MFA_FAILED,
+                user_id=user.user_id,
+                ip_address=request.remote_addr
+            )
+            return jsonify({"error": f"Invalid 2FA code: {message}"}), 401
+        
+        audit_logger.log_event(
+            AuditEventType.MFA_VERIFIED,
+            user_id=user.user_id,
+            ip_address=request.remote_addr
+        )
     
     # Generate tokens
     access_token = create_access_token(user.user_id, email)
     refresh_token = create_refresh_token(user.user_id)
+    
+    audit_logger.log_event(
+        AuditEventType.LOGIN_SUCCESS,
+        user_id=user.user_id,
+        ip_address=request.remote_addr
+    )
     
     log_event("AUTH", f"User logged in: {email}")
     
@@ -320,7 +383,8 @@ def login():
             "email": email,
             "full_name": user.full_name,
             "plan": user.plan,
-            "plan_expires_at": user.plan_expires_at
+            "plan_expires_at": user.plan_expires_at,
+            "mfa_enabled": two_factor_auth.is_enabled(user.user_id)
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -988,6 +1052,336 @@ def validate_subscription(current_user_id):
         'valid': is_valid,
         'plan': user.plan,
         'message': message
+    })
+
+
+# ============================
+# 2FA / MFA ENDPOINTS
+# ============================
+
+@app.route("/api/2fa/enroll", methods=["POST"])
+@token_required
+def enroll_2fa(current_user_id):
+    """Enroll user in 2FA"""
+    user = user_manager.get_user(current_user_id)
+    
+    enrollment_data = two_factor_auth.enroll_user(current_user_id, user.email)
+    
+    audit_logger.log_event(
+        AuditEventType.MFA_ENROLLED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr
+    )
+    
+    return jsonify({
+        'success': True,
+        'qr_code': enrollment_data['qr_code'],
+        'secret': enrollment_data['secret'],
+        'backup_codes': enrollment_data['backup_codes'],
+        'message': 'Scan QR code with Google Authenticator or Authy'
+    })
+
+
+@app.route("/api/2fa/verify", methods=["POST"])
+@token_required
+def verify_2fa_enable(current_user_id):
+    """Verify and enable 2FA for user"""
+    data = request.json
+    token = data.get('token')
+    
+    if not token:
+        return jsonify({'error': 'Verification token required'}), 400
+    
+    is_valid, message = two_factor_auth.verify_and_enable(current_user_id, token)
+    
+    if is_valid:
+        audit_logger.log_event(
+            AuditEventType.MFA_ENABLED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr
+        )
+    
+    return jsonify({
+        'success': is_valid,
+        'message': message
+    })
+
+
+@app.route("/api/2fa/disable", methods=["POST"])
+@token_required
+def disable_2fa(current_user_id):
+    """Disable 2FA for user (requires password)"""
+    data = request.json
+    password = data.get('password')
+    
+    if not password:
+        return jsonify({'error': 'Password required to disable 2FA'}), 400
+    
+    user = user_manager.get_user(current_user_id)
+    
+    if not verify_password(password, user.password_hash):
+        return jsonify({'error': 'Invalid password'}), 403
+    
+    is_success, message = two_factor_auth.disable_2fa(current_user_id, password)
+    
+    if is_success:
+        audit_logger.log_event(
+            AuditEventType.MFA_DISABLED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr
+        )
+    
+    return jsonify({
+        'success': is_success,
+        'message': message
+    })
+
+
+@app.route("/api/2fa/backup-codes", methods=["POST"])
+@token_required
+def regenerate_backup_codes(current_user_id):
+    """Regenerate 2FA backup codes"""
+    try:
+        backup_codes = two_factor_auth.regenerate_backup_codes(current_user_id)
+        
+        audit_logger.log_event(
+            AuditEventType.ADMIN_ACTION,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'action': 'regenerate_backup_codes'}
+        )
+        
+        return jsonify({
+            'success': True,
+            'backup_codes': backup_codes
+        })
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route("/api/2fa/status", methods=["GET"])
+@token_required
+def get_2fa_status(current_user_id):
+    """Get 2FA status for user"""
+    status = two_factor_auth.get_mfa_status(current_user_id)
+    return jsonify(status)
+
+
+# ============================
+# BACKUP & DISASTER RECOVERY
+# ============================
+
+@app.route("/api/backup/create", methods=["POST"])
+@token_required
+def create_backup(current_user_id):
+    """Create system backup (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    try:
+        backup_path = backup_system.create_backup()
+        
+        audit_logger.log_event(
+            AuditEventType.BACKUP_CREATED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'backup_path': backup_path}
+        )
+        
+        return jsonify({
+            'success': True,
+            'backup_path': backup_path,
+            'message': 'Backup created successfully'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route("/api/backup/list", methods=["GET"])
+@token_required
+def list_backups(current_user_id):
+    """List all available backups (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    backups = backup_system.list_backups()
+    stats = backup_system.get_backup_stats()
+    
+    return jsonify({
+        'backups': backups,
+        'stats': stats
+    })
+
+
+@app.route("/api/backup/restore/<backup_name>", methods=["POST"])
+@token_required
+def restore_backup(current_user_id, backup_name):
+    """Restore from backup (admin only, DANGEROUS)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    # Require password confirmation
+    data = request.json
+    password = data.get('password')
+    
+    if not password or not verify_password(password, user.password_hash):
+        return jsonify({'error': 'Password confirmation required'}), 403
+    
+    success = backup_system.restore_backup(backup_name)
+    
+    if success:
+        audit_logger.log_event(
+            AuditEventType.BACKUP_RESTORED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'backup_name': backup_name},
+            severity='critical'
+        )
+    
+    return jsonify({
+        'success': success,
+        'message': 'Backup restored successfully' if success else 'Restore failed'
+    })
+
+
+# ============================
+# TRONSCAN AUTO-VERIFICATION
+# ============================
+
+@app.route("/api/payments/auto-verify/<payment_id>", methods=["POST"])
+@token_required
+def auto_verify_payment(current_user_id, payment_id):
+    """Auto-verify payment using TronScan API (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    # Get payment details
+    payment = next((p for p in payment_system.payments if p['payment_id'] == payment_id), None)
+    
+    if not payment:
+        return jsonify({'error': 'Payment not found'}), 404
+    
+    if 'tx_hash' not in payment:
+        return jsonify({'error': 'Transaction hash not submitted yet'}), 400
+    
+    # Verify with TronScan
+    verification = tronscan_client.verify_transaction(
+        payment['tx_hash'],
+        payment['amount_usdt']
+    )
+    
+    if verification.get('verified'):
+        # Auto-confirm payment
+        result = payment_system.admin_confirm_payment(payment_id, True)
+        
+        if result['success']:
+            target_user = user_manager.get_user(result['user_id'])
+            target_user.plan = result['plan']
+            target_user.plan_started_at = datetime.now().isoformat()
+            target_user.plan_expires_at = (datetime.now() + timedelta(days=30)).isoformat()
+            
+            license_key = subscription_security.generate_license_key(
+                result['user_id'], result['plan'], 30
+            )
+            target_user.license_key = license_key
+            
+            user_manager._save_users()
+            
+            audit_logger.log_event(
+                AuditEventType.PAYMENT_CONFIRMED,
+                user_id=current_user_id,
+                ip_address=request.remote_addr,
+                details={
+                    'payment_id': payment_id,
+                    'auto_verified': True,
+                    'amount': verification['amount']
+                }
+            )
+            
+            return jsonify({
+                'success': True,
+                'verified': True,
+                'message': 'Payment auto-verified and confirmed',
+                'license_key': license_key,
+                'verification_details': verification
+            })
+    
+    return jsonify({
+        'success': False,
+        'verified': False,
+        'error': verification.get('error', 'Verification failed'),
+        'verification_details': verification
+    })
+
+
+# ============================
+# AUDIT LOGS
+# ============================
+
+@app.route("/api/audit/user/<user_id>", methods=["GET"])
+@token_required
+def get_user_audit_logs(current_user_id, user_id):
+    """Get audit logs for a user (admin or self)"""
+    user = user_manager.get_user(current_user_id)
+    
+    # Can only view own logs unless admin
+    if user.plan != 'admin' and current_user_id != user_id:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    limit = request.args.get('limit', 50, type=int)
+    events = audit_logger.get_user_activity(user_id, limit)
+    
+    return jsonify({
+        'user_id': user_id,
+        'event_count': len(events),
+        'events': events
+    })
+
+
+@app.route("/api/audit/suspicious", methods=["GET"])
+@token_required
+def get_suspicious_activity(current_user_id):
+    """Get suspicious activity (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    limit = request.args.get('limit', 20, type=int)
+    events = audit_logger.get_suspicious_activity(limit)
+    
+    return jsonify({
+        'event_count': len(events),
+        'events': events
+    })
+
+
+@app.route("/api/audit/alerts", methods=["GET"])
+@token_required
+def get_security_alerts(current_user_id):
+    """Get security alerts (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    resolved = request.args.get('resolved')
+    if resolved is not None:
+        resolved = resolved.lower() == 'true'
+    
+    alerts = audit_logger.get_alerts(resolved)
+    
+    return jsonify({
+        'alert_count': len(alerts),
+        'alerts': alerts
     })
 
 

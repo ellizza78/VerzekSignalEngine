@@ -70,6 +70,16 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
 - **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
 
 ## Recent Changes
+- **2025-10-16**: Phase 1 Security & Infrastructure Complete
+  - ✅ **Rate Limiting**: Flask-Limiter with per-IP/user quotas (5/min auth, 100/min global)
+  - ✅ **2FA/MFA System**: TOTP-based auth with QR codes, backup codes, mobile support
+  - ✅ **Automated Backups**: Nightly snapshots with 30-day retention, encrypted archives
+  - ✅ **TronScan Integration**: Automatic USDT TRC20 payment verification via blockchain API
+  - ✅ **Audit Logging**: Comprehensive security event tracking (JSONL format)
+  - ✅ **Security Alerts**: Real-time suspicious activity detection and alerting
+  - ✅ **Encryption Service**: AES-128 (Fernet) for API keys and sensitive data at rest
+  - ✅ **API Endpoints Added**: 2FA enrollment/verification, backup management, audit logs
+
 - **2025-10-16**: Complete Referral & In-App Wallet System
   - ✅ **10% Recurring Commission**: Monthly referral bonuses for lifetime of subscription
   - ✅ **In-App Wallet**: Each user gets generated wallet for referral earnings

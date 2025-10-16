@@ -7,7 +7,7 @@ import os
 import json
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
 from typing import Optional
 from utils.logger import log_event
@@ -25,33 +25,33 @@ class EncryptionService:
     
     def _get_or_create_master_key(self) -> bytes:
         """
-        Get master encryption key from environment or generate new one
-        CRITICAL: This key must be backed up securely!
+        Get master encryption key from environment
+        CRITICAL: Key MUST be set in environment - will raise error if missing
         """
-        # Check if master key exists in environment
+        # MUST have master key in environment for security
         master_key_env = os.environ.get('ENCRYPTION_MASTER_KEY')
         
         if master_key_env:
             # Use existing key from environment
             return master_key_env.encode()
         
-        # Generate new master key using server-specific salt
-        password = os.environ.get('ENCRYPTION_PASSWORD', 'VerzekAutoTrader2025SecureEncryption!@#')
-        salt = os.environ.get('ENCRYPTION_SALT', 'VerzekSalt2025').encode()
+        # SECURITY: Generate secure random key if missing (first run only)
+        # Admin must save this to Replit Secrets immediately!
+        import secrets
+        key = base64.urlsafe_b64encode(secrets.token_bytes(32))
         
-        kdf = PBKDF2(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=100000,
+        log_event("ENCRYPTION", "🔴 CRITICAL: No ENCRYPTION_MASTER_KEY found!")
+        log_event("ENCRYPTION", "🔴 Generated one-time key - MUST be saved to Replit Secrets!")
+        log_event("ENCRYPTION", "🔴 Add this to Secrets tab: ENCRYPTION_MASTER_KEY")
+        log_event("ENCRYPTION", "🔴 Value (COPY NOW, shown once): " + "*" * 20 + " [Hidden for security]")
+        
+        # Do NOT log the actual key - this was the security vulnerability
+        # Admin must regenerate and set in secrets manually
+        raise RuntimeError(
+            "ENCRYPTION_MASTER_KEY not set in environment! "
+            "Generate a secure key and add to Replit Secrets. "
+            "Run: python -c 'import secrets,base64; print(base64.urlsafe_b64encode(secrets.token_bytes(32)).decode())'"
         )
-        
-        key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-        
-        log_event("ENCRYPTION", "⚠️ Generated new encryption key. BACKUP THIS KEY!")
-        log_event("ENCRYPTION", f"Set ENCRYPTION_MASTER_KEY environment variable to: {key.decode()}")
-        
-        return key
     
     def encrypt(self, plaintext: str) -> str:
         """
