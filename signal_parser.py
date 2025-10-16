@@ -122,3 +122,60 @@ def parse_signal(message_text: str):
 
     log_event("INFO", f"📩 Parsed {signal_type} signal: {signal_data}")
     return signal_data
+
+
+def parse_close_signal(message_text: str):
+    """
+    Detect close/cancel signal messages.
+    Returns dict with close action details or None if not a close signal.
+    
+    Detects patterns like:
+    - "Signal Cancelled"
+    - "BTCUSDT Closed"
+    - "Stop Loss Hit"
+    - "SL Hit"
+    - "Position Closed"
+    - "Trade Closed"
+    """
+    
+    text = message_text.upper().strip()
+    if not text:
+        return None
+    
+    # Extract symbol
+    symbol_match = re.search(r"([A-Z]{3,5})[\/\-]?USDT", text)
+    symbol = f"{symbol_match.group(1)}USDT" if symbol_match else None
+    
+    # Detect close/cancel keywords
+    close_keywords = [
+        "SIGNAL CANCELLED", "SIGNAL CANCELED",
+        "CANCELLED", "CANCELED",
+        "CLOSED", "CLOSE",
+        "STOP LOSS HIT", "SL HIT",
+        "STOP LOSS", "STOPLOSS",
+        "POSITION CLOSED", "TRADE CLOSED"
+    ]
+    
+    is_close_signal = any(keyword in text for keyword in close_keywords)
+    
+    if not is_close_signal:
+        return None
+    
+    # Determine close reason
+    close_reason = "manual_close"
+    if "CANCEL" in text:
+        close_reason = "signal_cancelled"
+    elif "STOP LOSS" in text or "SL HIT" in text or "STOPLOSS" in text:
+        close_reason = "stop_loss_hit"
+    elif "CLOSED" in text or "CLOSE" in text:
+        close_reason = "closed"
+    
+    close_data = {
+        "action": "close",
+        "symbol": symbol,
+        "reason": close_reason,
+        "source_text": message_text
+    }
+    
+    log_event("INFO", f"🛑 Detected close signal: {close_data}")
+    return close_data
