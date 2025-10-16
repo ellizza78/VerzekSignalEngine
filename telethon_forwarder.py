@@ -71,7 +71,7 @@ async def auto_forward(event):
         return
 
     # 3) Block known spammers by username
-    BLOCKED_USERS = ["powellnolan", "sanjay_message_bot"]  # Add spammer usernames here (lowercase)
+    BLOCKED_USERS = ["powellnolan", "sanjay_message_bot", "officialroyalqbot"]  # Add spammer usernames here (lowercase)
     
     try:
         sender = await event.get_sender()

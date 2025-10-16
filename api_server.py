@@ -5,13 +5,18 @@ Flask REST API layer for VerzekAutoTrader.
 Allows mobile app or external dashboard to fetch real-time data.
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from utils.logger import log_event
 from trade_executor import get_all_trades
+from modules import UserManager, PositionTracker
 import time
 import os
 
 app = Flask(__name__)
+
+# Initialize managers
+user_manager = UserManager()
+position_tracker = PositionTracker()
 
 # ============================
 # APP STATUS
@@ -37,7 +42,14 @@ def home():
             "/api/status": "Get bot status and uptime",
             "/api/test": "Test API connection",
             "/api/trades": "Get all executed trades",
-            "/api/latest": "Get latest trade"
+            "/api/latest": "Get latest trade",
+            "/api/users": "User management (GET/POST)",
+            "/api/users/<user_id>": "Single user (GET/PUT/DELETE)",
+            "/api/users/<user_id>/risk": "Risk settings (GET/PUT)",
+            "/api/users/<user_id>/royalq": "Royal Q settings (GET/PUT)",
+            "/api/users/<user_id>/exchanges": "Exchange accounts (GET/POST)",
+            "/api/positions": "All positions (GET)",
+            "/api/positions/<user_id>": "User positions (GET)"
         },
         "message": "VerzekAutoTrader is running smoothly! 🚀"
     })
@@ -88,6 +100,199 @@ def test():
     return jsonify({
         "status": "success",
         "message": "📡 Flask API connection successful!"
+    })
+
+
+# ============================
+# USER MANAGEMENT
+# ============================
+
+@app.route("/api/users", methods=["GET", "POST"])
+def handle_users():
+    """Get all users or create a new user"""
+    if request.method == "GET":
+        users = user_manager.get_all_users()
+        return jsonify({
+            "count": len(users),
+            "users": [user.to_dict() for user in users]
+        })
+    
+    elif request.method == "POST":
+        data = request.json
+        user_id = data.get("user_id")
+        telegram_id = data.get("telegram_id")
+        
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+        
+        user = user_manager.create_user(user_id, telegram_id)
+        return jsonify({
+            "message": "User created successfully",
+            "user": user.to_dict()
+        }), 201
+
+
+@app.route("/api/users/<user_id>", methods=["GET", "PUT", "DELETE"])
+def handle_single_user(user_id):
+    """Get, update, or delete a specific user"""
+    if request.method == "GET":
+        user = user_manager.get_user(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        return jsonify(user.to_dict())
+    
+    elif request.method == "PUT":
+        user = user_manager.get_user(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        updates = request.json
+        user_manager.update_user(user_id, updates)
+        return jsonify({
+            "message": "User updated successfully",
+            "user": user_manager.get_user(user_id).to_dict()
+        })
+    
+    elif request.method == "DELETE":
+        user = user_manager.get_user(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        user_manager.delete_user(user_id)
+        return jsonify({"message": "User deleted successfully"})
+
+
+# ============================
+# RISK SETTINGS
+# ============================
+
+@app.route("/api/users/<user_id>/risk", methods=["GET", "PUT"])
+def handle_risk_settings(user_id):
+    """Get or update user's risk settings"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify(user.risk_settings)
+    
+    elif request.method == "PUT":
+        updates = request.json
+        user.update_risk_settings(updates)
+        user_manager._save_users()
+        return jsonify({
+            "message": "Risk settings updated",
+            "risk_settings": user.risk_settings
+        })
+
+
+# ============================
+# ROYAL Q SETTINGS
+# ============================
+
+@app.route("/api/users/<user_id>/royalq", methods=["GET", "PUT"])
+def handle_royalq_settings(user_id):
+    """Get or update user's Royal Q DCA settings"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify(user.royalq_settings)
+    
+    elif request.method == "PUT":
+        updates = request.json
+        user.update_royalq_settings(updates)
+        user_manager._save_users()
+        return jsonify({
+            "message": "Royal Q settings updated",
+            "royalq_settings": user.royalq_settings
+        })
+
+
+# ============================
+# EXCHANGE ACCOUNTS
+# ============================
+
+@app.route("/api/users/<user_id>/exchanges", methods=["GET", "POST", "DELETE"])
+def handle_exchanges(user_id):
+    """Get, add, or remove exchange accounts"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify({
+            "count": len(user.exchange_accounts),
+            "exchanges": user.exchange_accounts
+        })
+    
+    elif request.method == "POST":
+        data = request.json
+        exchange = data.get("exchange")
+        api_key_id = data.get("api_key_id")
+        testnet = data.get("testnet", False)
+        
+        if not exchange or not api_key_id:
+            return jsonify({"error": "exchange and api_key_id required"}), 400
+        
+        user_manager.add_exchange_to_user(user_id, exchange, api_key_id, testnet)
+        return jsonify({
+            "message": "Exchange account added",
+            "exchanges": user_manager.get_user(user_id).exchange_accounts
+        }), 201
+    
+    elif request.method == "DELETE":
+        account_id = request.json.get("account_id")
+        if not account_id:
+            return jsonify({"error": "account_id required"}), 400
+        
+        user_manager.remove_exchange_account(user_id, account_id)
+        return jsonify({"message": "Exchange account removed"})
+
+
+# ============================
+# POSITIONS
+# ============================
+
+@app.route("/api/positions", methods=["GET"])
+def get_all_positions():
+    """Get all positions across all users"""
+    all_positions = position_tracker.get_all_positions()
+    return jsonify({
+        "count": len(all_positions),
+        "positions": all_positions
+    })
+
+
+@app.route("/api/positions/<user_id>", methods=["GET"])
+def get_user_positions(user_id):
+    """Get positions for a specific user"""
+    # Filter positions by user_id
+    all_positions = position_tracker.get_all_positions()
+    user_positions = [p for p in all_positions if p.get("user_id") == user_id]
+    
+    return jsonify({
+        "user_id": user_id,
+        "count": len(user_positions),
+        "positions": user_positions
+    })
+
+
+# ============================
+# STATISTICS
+# ============================
+
+@app.route("/api/users/<user_id>/stats", methods=["GET"])
+def get_user_stats(user_id):
+    """Get user trading statistics"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    return jsonify({
+        "stats": user.stats,
+        "daily_stats": user.daily_stats
     })
 
 
