@@ -40,4 +40,4 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "vm"
-run = ["python", "api_server.py"]
+run = ["python", "run_all_bots.py"]
