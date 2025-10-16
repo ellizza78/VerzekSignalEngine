@@ -563,3 +563,116 @@ class DCAOrchestrator:
                 
         except Exception as e:
             log_event("ORCHESTRATOR", f"Error executing progressive TP: {e}")
+    
+    def auto_close_positions(self, symbol: str, reason: str = "signal_cancelled"):
+        """Auto-close all active positions for a symbol (triggered by close/cancel signals)"""
+        active_positions = self.position_tracker.get_active_positions()
+        
+        # Filter positions for this symbol
+        symbol_positions = [p for p in active_positions if p.get("symbol") == symbol]
+        
+        if not symbol_positions:
+            log_event("ORCHESTRATOR", f"ℹ️ No active positions found for {symbol} to close")
+            return {"success": False, "message": f"No active positions for {symbol}"}
+        
+        closed_count = 0
+        errors = []
+        
+        for position in symbol_positions:
+            user_id = position.get("user_id")
+            position_id = position.get("position_id")
+            
+            # Check if auto-stop is enabled for this user
+            user = self.user_manager.get_user(user_id)
+            if not user:
+                continue
+            
+            # Check if auto_stop_on_cancel is enabled
+            if not user.strategy_settings.get("auto_stop_on_cancel", True):
+                log_event("ORCHESTRATOR", f"⏭️ Auto-stop disabled for user {user_id}, skipping")
+                continue
+            
+            # Get current price for closing
+            try:
+                exchanges = user.exchange_accounts
+                if not exchanges:
+                    continue
+                
+                active_exchange = next((e for e in exchanges if e.get("enabled", True)), None)
+                if not active_exchange:
+                    continue
+                
+                exchange_name = active_exchange["exchange"]
+                testnet = active_exchange.get("testnet", False)
+                client = self.exchange_factory.get_client(exchange_name, testnet=testnet)
+                
+                if not client:
+                    continue
+                
+                current_price = client.get_ticker_price(symbol)
+                
+                # Place close order (opposite of position side)
+                side = "sell" if position["side"].upper() == "LONG" else "buy"
+                remaining_qty = position.get("remaining_quantity", position["quantity"])
+                
+                order_result = self._place_order(
+                    client=client,
+                    symbol=symbol,
+                    side=side,
+                    quantity=remaining_qty,
+                    price=current_price,
+                    leverage=position.get("leverage", 10),
+                    user_id=user_id
+                )
+                
+                if order_result.get("success"):
+                    # Calculate final PnL
+                    entry_price = position["entry_price"]
+                    if position["side"].upper() == "LONG":
+                        pnl = (current_price - entry_price) * remaining_qty
+                    else:
+                        pnl = (entry_price - current_price) * remaining_qty
+                    
+                    # Add any previously taken profit
+                    total_pnl = pnl + position.get("total_profit_taken", 0)
+                    
+                    # Update position to closed
+                    update_data = {
+                        "status": "closed",
+                        "closed_at": __import__('datetime').datetime.now().isoformat(),
+                        "close_reason": reason,
+                        "exit_price": current_price,
+                        "final_pnl": total_pnl,
+                        "auto_closed": True
+                    }
+                    
+                    self.position_tracker.update_position(position_id, update_data)
+                    
+                    # Update user stats
+                    user.stats["active_positions"] = max(0, user.stats.get("active_positions", 1) - 1)
+                    self.user_manager.record_trade_for_user(user_id, total_pnl)
+                    self.user_manager._save_users()
+                    
+                    closed_count += 1
+                    log_event("ORCHESTRATOR", f"🛑 Auto-closed position: {symbol} @ {current_price} | Reason: {reason} | PnL: ${total_pnl:.2f}")
+                else:
+                    errors.append(f"Failed to close position {position_id}")
+                    
+            except Exception as e:
+                errors.append(f"Error closing position {position_id}: {str(e)}")
+                log_event("ORCHESTRATOR", f"Error auto-closing position {position_id}: {e}")
+        
+        if closed_count > 0:
+            return {
+                "success": True,
+                "closed_count": closed_count,
+                "symbol": symbol,
+                "reason": reason,
+                "errors": errors if errors else None
+            }
+        else:
+            return {
+                "success": False,
+                "message": f"Failed to close any positions for {symbol}",
+                "errors": errors
+            }
