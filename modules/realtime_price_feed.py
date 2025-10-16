@@ -220,16 +220,16 @@ class PriceFeedManager:
                 }
                 ws.send(json.dumps(subscribe_msg))
             
-            def send_ping():
-                try:
-                    ping_msg = {"id": 0, "method": "server.ping", "params": []}
-                    ws.send(json.dumps(ping_msg))
-                except:
-                    pass
+            def send_ping_loop():
+                while self.running:
+                    try:
+                        ping_msg = {"id": 0, "method": "server.ping", "params": []}
+                        ws.send(json.dumps(ping_msg))
+                        time.sleep(5)
+                    except:
+                        break
             
-            import threading
-            ping_thread = threading.Timer(5.0, send_ping)
-            ping_thread.daemon = True
+            ping_thread = threading.Thread(target=send_ping_loop, daemon=True)
             ping_thread.start()
         
         while self.running and retry_count < max_retries:
