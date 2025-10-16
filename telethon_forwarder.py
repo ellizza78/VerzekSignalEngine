@@ -107,7 +107,9 @@ async def auto_forward(event):
         "HYPERLIQUID", "NO KYC", "NO RESTRICTIONS", "INSTANT SIGNUP",
         "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT",
         "GN, TRADERS", "GOOD NIGHT", "REST UP", "PRODUCTIVE DAY",
-        "GROWING OUR", "FINE-TUNING", "STEP BY STEP"
+        "GROWING OUR", "FINE-TUNING", "STEP BY STEP",
+        "GOLDENCRYPTOSIGNALS", "AI GOLDEN", "AUTO-DETECTS", "BUILT BY",
+        "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS"
     )
     
     spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
