@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 from typing import Dict, List, Optional
 from datetime import datetime
 import uuid
@@ -15,6 +16,7 @@ class SocialTradingManager:
         self.copy_trades_file = "database/copy_trades.json"
         self.masters = self._load_masters()
         self.followers = self._load_followers()
+        self.copy_lock = threading.Lock()
         
     def _load_masters(self) -> Dict:
         """Load trading masters (users being copied)"""
@@ -80,7 +82,7 @@ class SocialTradingManager:
         self._calculate_master_stats(master_id)
         self._save_masters()
         
-        log_event("SOCIAL_TRADING", f"User {user_id} became master trader {master_id}", severity="info")
+        log_event("SOCIAL_TRADING", f"User {user_id} became master trader {master_id}")
         
         return {
             'success': True,
@@ -162,7 +164,7 @@ class SocialTradingManager:
         self._save_followers()
         self._save_masters()
         
-        log_event("SOCIAL_TRADING", f"User {follower_user_id} started copying {master_id}", severity="info")
+        log_event("SOCIAL_TRADING", f"User {follower_user_id} started copying {master_id}")
         
         return {
             'success': True,
@@ -192,7 +194,7 @@ class SocialTradingManager:
         self._save_followers()
         self._save_masters()
         
-        log_event("SOCIAL_TRADING", f"User {follower_user_id} stopped copying {master_id}", severity="info")
+        log_event("SOCIAL_TRADING", f"User {follower_user_id} stopped copying {master_id}")
         
         return {
             'success': True,
@@ -217,34 +219,35 @@ class SocialTradingManager:
         return masters_list[:limit]
     
     def copy_master_trade(self, master_user_id: str, position_data: Dict):
-        """Automatically copy a master's trade to followers"""
-        master_id = None
-        for mid, mdata in self.masters.items():
-            if mdata['user_id'] == master_user_id:
-                master_id = mid
-                break
-        
-        if not master_id:
-            return
-        
-        for follower_user_id, copies in self.followers.items():
-            for copy_id, copy_data in copies.items():
-                if copy_data['master_id'] == master_id and copy_data.get('active'):
-                    follower_positions = self.position_tracker.get_active_positions(follower_user_id)
-                    
-                    if len(follower_positions) >= copy_data.get('max_positions', 5):
-                        continue
-                    
-                    copied_position = position_data.copy()
-                    copied_position['user_id'] = follower_user_id
-                    copied_position['quantity'] = position_data['quantity'] * copy_data.get('copy_ratio', 1.0)
-                    copied_position['is_copy_trade'] = True
-                    copied_position['copied_from'] = master_user_id
-                    copied_position['copy_id'] = copy_id
-                    
-                    self.position_tracker.add_position(copied_position)
-                    
-                    copy_data['total_copied'] = copy_data.get('total_copied', 0) + 1
-                    self._save_followers()
-                    
-                    log_event("SOCIAL_TRADING", f"Copied trade from {master_user_id} to {follower_user_id}", severity="info")
+        """Automatically copy a master's trade to followers with thread safety"""
+        with self.copy_lock:
+            master_id = None
+            for mid, mdata in self.masters.items():
+                if mdata['user_id'] == master_user_id:
+                    master_id = mid
+                    break
+            
+            if not master_id:
+                return
+            
+            for follower_user_id, copies in self.followers.items():
+                for copy_id, copy_data in copies.items():
+                    if copy_data['master_id'] == master_id and copy_data.get('active'):
+                        follower_positions = self.position_tracker.get_active_positions(follower_user_id)
+                        
+                        if len(follower_positions) >= copy_data.get('max_positions', 5):
+                            continue
+                        
+                        copied_position = position_data.copy()
+                        copied_position['user_id'] = follower_user_id
+                        copied_position['quantity'] = position_data['quantity'] * copy_data.get('copy_ratio', 1.0)
+                        copied_position['is_copy_trade'] = True
+                        copied_position['copied_from'] = master_user_id
+                        copied_position['copy_id'] = copy_id
+                        
+                        self.position_tracker.add_position(copied_position)
+                        
+                        copy_data['total_copied'] = copy_data.get('total_copied', 0) + 1
+                        self._save_followers()
+                        
+                        log_event("SOCIAL_TRADING", f"Copied trade from {master_user_id} to {follower_user_id}")

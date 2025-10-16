@@ -147,7 +147,7 @@ client.start()
 
 # Save session string for future use (no DB needed)
 session_file = "telethon_session_string.txt"
-if not os.path.exists(session_file):
+if not os.path.exists(session_file) and client.session:
     session_string = client.session.save()
     with open(session_file, "w") as f:
         f.write(session_string)

@@ -859,3 +859,12 @@ Updated working bot version from local PC
 [2025-10-16 17:04:29] [API] 🌐 Starting Flask API on port 5000
 [2025-10-16 17:05:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ENDERUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #RENDER/USDT $RENDER \nShort 🩸 Lev x5 #Crypto \n\nEntry: 2.614 - Stop Loss: 2.761 \n\nTargets: 2.5405 - 2.467 - 2.3935 - 2.32 - 2.2465'}
 [2025-10-16 17:05:08] [ORCHESTRATOR] ℹ️ No active positions found for ENDERUSDT to close
+[2025-10-16 17:23:58] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 17:23:59] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 17:23:59] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:23:59] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 17:23:59] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 17:23:59] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 17:23:59] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-16 17:23:59] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-16 17:24:00] [ORCHESTRATOR] DCA Orchestrator initialized

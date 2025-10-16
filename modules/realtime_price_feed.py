@@ -60,11 +60,18 @@ class PriceFeedManager:
             print(f"[PRICE_FEED] Error updating positions: {e}")
     
     def _binance_feed(self, symbols: List[str]):
-        """Binance WebSocket feed"""
+        """Binance WebSocket feed with auto-reconnect"""
         streams = '/'.join([f"{s.lower()}@trade" for s in symbols])
         ws_url = f"wss://stream.binance.com:9443/stream?streams={streams}"
         
+        retry_count = 0
+        max_retries = 10
+        base_delay = 1
+        max_delay = 60
+        
         def on_message(ws, message):
+            nonlocal retry_count
+            retry_count = 0
             try:
                 data = json.loads(message)
                 if 'data' in data:
@@ -79,26 +86,48 @@ class PriceFeedManager:
             print(f"[BINANCE_WS] Error: {error}")
         
         def on_close(ws, close_status_code, close_msg):
-            print(f"[BINANCE_WS] Connection closed")
+            print(f"[BINANCE_WS] Connection closed: {close_msg}")
         
         def on_open(ws):
+            nonlocal retry_count
+            retry_count = 0
             print(f"[BINANCE_WS] Connected - {len(symbols)} symbols")
         
-        ws = websocket.WebSocketApp(
-            ws_url,
-            on_message=on_message,
-            on_error=on_error,
-            on_close=on_close,
-            on_open=on_open
-        )
-        
-        ws.run_forever()
+        while self.running and retry_count < max_retries:
+            try:
+                ws = websocket.WebSocketApp(
+                    ws_url,
+                    on_message=on_message,
+                    on_error=on_error,
+                    on_close=on_close,
+                    on_open=on_open
+                )
+                
+                ws.run_forever()
+                
+                if self.running:
+                    retry_count += 1
+                    delay = min(base_delay * (2 ** retry_count), max_delay)
+                    print(f"[BINANCE_WS] Reconnecting in {delay}s (attempt {retry_count}/{max_retries})...")
+                    time.sleep(delay)
+            except Exception as e:
+                retry_count += 1
+                delay = min(base_delay * (2 ** retry_count), max_delay)
+                print(f"[BINANCE_WS] Connection error: {e}, retrying in {delay}s...")
+                time.sleep(delay)
     
     def _bybit_feed(self, symbols: List[str]):
-        """Bybit WebSocket feed"""
+        """Bybit WebSocket feed with auto-reconnect"""
         ws_url = "wss://stream.bybit.com/v5/public/linear"
         
+        retry_count = 0
+        max_retries = 10
+        base_delay = 1
+        max_delay = 60
+        
         def on_message(ws, message):
+            nonlocal retry_count
+            retry_count = 0
             try:
                 data = json.loads(message)
                 if 'topic' in data and data['topic'].startswith('publicTrade'):
@@ -115,9 +144,11 @@ class PriceFeedManager:
             print(f"[BYBIT_WS] Error: {error}")
         
         def on_close(ws, close_status_code, close_msg):
-            print(f"[BYBIT_WS] Connection closed")
+            print(f"[BYBIT_WS] Connection closed: {close_msg}")
         
         def on_open(ws):
+            nonlocal retry_count
+            retry_count = 0
             print(f"[BYBIT_WS] Connected - {len(symbols)} symbols")
             subscribe_msg = {
                 "op": "subscribe",
@@ -125,15 +156,116 @@ class PriceFeedManager:
             }
             ws.send(json.dumps(subscribe_msg))
         
-        ws = websocket.WebSocketApp(
-            ws_url,
-            on_message=on_message,
-            on_error=on_error,
-            on_close=on_close,
-            on_open=on_open
-        )
+        while self.running and retry_count < max_retries:
+            try:
+                ws = websocket.WebSocketApp(
+                    ws_url,
+                    on_message=on_message,
+                    on_error=on_error,
+                    on_close=on_close,
+                    on_open=on_open
+                )
+                
+                ws.run_forever()
+                
+                if self.running:
+                    retry_count += 1
+                    delay = min(base_delay * (2 ** retry_count), max_delay)
+                    print(f"[BYBIT_WS] Reconnecting in {delay}s (attempt {retry_count}/{max_retries})...")
+                    time.sleep(delay)
+            except Exception as e:
+                retry_count += 1
+                delay = min(base_delay * (2 ** retry_count), max_delay)
+                print(f"[BYBIT_WS] Connection error: {e}, retrying in {delay}s...")
+                time.sleep(delay)
+    
+    def _phemex_feed(self, symbols: List[str]):
+        """Phemex WebSocket feed with auto-reconnect"""
+        ws_url = "wss://phemex.com/ws"
         
-        ws.run_forever()
+        retry_count = 0
+        max_retries = 10
+        base_delay = 1
+        max_delay = 60
+        
+        def on_message(ws, message):
+            nonlocal retry_count
+            retry_count = 0
+            try:
+                data = json.loads(message)
+                if 'result' in data and 'trades_p' in data['result']:
+                    symbol = data['result']['symbol']
+                    for trade in data['result']['trades_p']:
+                        price = float(trade[2])
+                        self.price_cache[symbol] = price
+                        self._notify_subscribers(symbol, price, 'phemex')
+            except Exception as e:
+                print(f"[PHEMEX_WS] Error: {e}")
+        
+        def on_error(ws, error):
+            print(f"[PHEMEX_WS] Error: {error}")
+        
+        def on_close(ws, close_status_code, close_msg):
+            print(f"[PHEMEX_WS] Connection closed: {close_msg}")
+        
+        def on_open(ws):
+            nonlocal retry_count
+            retry_count = 0
+            print(f"[PHEMEX_WS] Connected - {len(symbols)} symbols")
+            for symbol in symbols:
+                subscribe_msg = {
+                    "id": 1,
+                    "method": "trade.subscribe",
+                    "params": [symbol]
+                }
+                ws.send(json.dumps(subscribe_msg))
+            
+            def send_ping():
+                try:
+                    ping_msg = {"id": 0, "method": "server.ping", "params": []}
+                    ws.send(json.dumps(ping_msg))
+                except:
+                    pass
+            
+            import threading
+            ping_thread = threading.Timer(5.0, send_ping)
+            ping_thread.daemon = True
+            ping_thread.start()
+        
+        while self.running and retry_count < max_retries:
+            try:
+                ws = websocket.WebSocketApp(
+                    ws_url,
+                    on_message=on_message,
+                    on_error=on_error,
+                    on_close=on_close,
+                    on_open=on_open
+                )
+                
+                ws.run_forever(ping_interval=5, ping_timeout=3)
+                
+                if self.running:
+                    retry_count += 1
+                    delay = min(base_delay * (2 ** retry_count), max_delay)
+                    print(f"[PHEMEX_WS] Reconnecting in {delay}s (attempt {retry_count}/{max_retries})...")
+                    time.sleep(delay)
+            except Exception as e:
+                retry_count += 1
+                delay = min(base_delay * (2 ** retry_count), max_delay)
+                print(f"[PHEMEX_WS] Connection error: {e}, retrying in {delay}s...")
+                time.sleep(delay)
+    
+    def _coinexx_feed(self, symbols: List[str]):
+        """Coinexx WebSocket feed (placeholder - needs official API docs)"""
+        print(f"[COINEXX_WS] WebSocket not yet implemented - using REST fallback")
+        
+        while self.running:
+            for symbol in symbols:
+                try:
+                    pass
+                except Exception as e:
+                    print(f"[COINEXX] Error fetching {symbol}: {e}")
+            time.sleep(1)
     
     def start_feed(self, exchange: str, symbols: List[str]):
         """Start WebSocket feed for an exchange"""
@@ -143,7 +275,9 @@ class PriceFeedManager:
         
         feed_map = {
             'binance': self._binance_feed,
-            'bybit': self._bybit_feed
+            'bybit': self._bybit_feed,
+            'phemex': self._phemex_feed,
+            'coinexx': self._coinexx_feed
         }
         
         if exchange not in feed_map:
