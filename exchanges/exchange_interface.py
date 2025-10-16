@@ -108,25 +108,25 @@ class ExchangeFactory:
                 return BinanceClient(**kwargs)
         
         elif exchange_name == "bybit":
-            # Will be implemented
+            from .bybit_client import BybitClient, BybitDemoClient
             if mode == "demo":
-                return None  # Use existing demo mode
+                return BybitDemoClient()
             else:
-                return None  # Use existing bybit_client
+                return BybitClient(**kwargs)
         
         elif exchange_name == "phemex":
-            # Will be implemented
+            from .phemex_client import PhemexClient, PhemexDemoClient
             if mode == "demo":
-                return None
+                return PhemexDemoClient()
             else:
-                return None
+                return PhemexClient(**kwargs)
         
         elif exchange_name == "coinexx":
-            # Will be implemented
+            from .coinexx_client import CoinexxClient, CoinexxDemoClient
             if mode == "demo":
-                return None
+                return CoinexxDemoClient()
             else:
-                return None
+                return CoinexxClient(**kwargs)
         
         else:
             raise ValueError(f"Unsupported exchange: {exchange_name}")

@@ -2215,3 +2215,20 @@ profit rate -0.686%
 Loss: 29.5082%
 [2025-10-16 08:38:22] #ENAUSDT - Stop Loss ⛔️
 Loss: 30.647%
+[2025-10-16 08:48:07] #Signal #JUP/USDT $JUP 
+Short 🩸 Lev x15 #Crypto 
+
+Entry: 0.3626 - Stop Loss: 0.3701 
+
+Targets: 0.35885 - 0.3551 - 0.35135 - 0.3476 - 0.34385
+[2025-10-16 08:48:31] #JUP/USDT / $JUP 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-16 08:50:27] BINANCE JUPUSDT Perpetuo 
+Operations: Sell/Short
+average transaction price 0.362
+quantity140
+average position price 0.361819
