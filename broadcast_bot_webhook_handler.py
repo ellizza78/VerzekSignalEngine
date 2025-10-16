@@ -72,53 +72,40 @@ def clean_signal(text):
     
     return result.strip()
 
-def is_spam_or_profit_alert(text):
-    """Check if message is a profit alert or spam"""
+def is_spam(text):
+    """Check if message is spam (invite links, URLs, etc.)"""
     text_upper = text.upper()
     
-    # Profit alert indicators
-    profit_indicators = [
-        "PROFIT COLLECTED",
-        "TARGET REACHED",
-        "GAIN:",
-        "GAINED",
-        "% PROFIT",
-        "ACHIEVED",
-        "POSTED:"
-    ]
-    
-    # Spam indicators
+    # Spam indicators - ONLY block actual spam, not profit alerts
     spam_indicators = [
         "JOIN OUR",
         "CLICK HERE",
         "HTTP://",
         "HTTPS://",
         "T.ME/",
-        "TELEGRAM.ME/",
-        "@"
+        "TELEGRAM.ME/"
     ]
     
-    # Check for profit alerts
-    if any(indicator in text_upper for indicator in profit_indicators):
-        # If it also has a percentage and "Posted:" it's definitely a profit alert
-        if "%" in text and "POSTED:" in text_upper:
-            return True
-    
-    # Check for spam
+    # Check for spam indicators
     if any(indicator in text_upper for indicator in spam_indicators):
+        return True
+    
+    # Block messages that are ONLY an @ mention (invite spam)
+    # But allow @ symbols in regular messages
+    if text.strip().startswith("@") and len(text.strip().split()) == 1:
         return True
     
     return False
 
 def broadcast_admin_message(message, text):
     """Broadcast message from admin"""
-    # Check if it's spam/profit alert
-    if is_spam_or_profit_alert(text):
-        logger.info("📛 Ignored profit alert or spam message")
+    # Check if it's spam
+    if is_spam(text):
+        logger.info("📛 Ignored spam message")
         try:
             bot.send_message(
                 chat_id=ADMIN_CHAT_ID, 
-                text="📛 Message ignored: Detected as profit alert or spam"
+                text="📛 Message ignored: Detected as spam (invite link/URL)"
             )
         except:
             pass
@@ -168,9 +155,9 @@ def broadcast_admin_message(message, text):
 
 def auto_forward_signal(message, text):
     """Auto-forward signals from monitored channels to VIP and TRIAL groups"""
-    # Check if it's spam/profit alert
-    if is_spam_or_profit_alert(text):
-        logger.info("📛 Ignored profit alert or spam message from group")
+    # Check if it's spam
+    if is_spam(text):
+        logger.info("📛 Ignored spam message from group")
         return
     
     # Get source info

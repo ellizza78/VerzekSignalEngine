@@ -82,12 +82,18 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
   - ✅ **API Integration**: 35 new JWT-protected endpoints integrated with Flask
   - ✅ **Defensive AI Init**: Graceful degradation when OpenAI integration unavailable
 
+- **2025-10-16**: Broadcast Bot Spam Filter Fixed ✅
+  - ✅ **Profit Alerts Now Allowed**: Removed profit alert detection from spam filter
+  - ✅ **Spam Still Blocked**: Invite links, URLs (t.me/, http://, etc.) correctly filtered
+  - ✅ **Filter Logic**: `is_spam()` only blocks actual spam, not trading updates
+  - ✅ **Tested Messages**: "#DYDXUSDT - 🚨 Target 1 reached / 💸 Profit collected" now broadcasts
+
 - **2025-10-16**: Production Hardening COMPLETE ✅ (Architect Approved)
   - ✅ **WebSocket Reconnection**: Exponential backoff (1s-60s) for Binance/Bybit/Phemex
   - ✅ **Copy Trading Locking**: threading.Lock() prevents race conditions
   - ✅ **Phemex WebSocket**: Complete handler with continuous 5s heartbeat
   - ✅ **Coinexx Placeholder**: Graceful fallback structure ready
-  - ✅ **Spam Filtering**: Profit alerts recognized, invite links blocked
+  - ✅ **Initial Spam Filtering**: Profit alerts recognized, invite links blocked
   - ✅ **LSP Diagnostics**: All errors fixed
   - ✅ **System Status**: All 7 services operational, production-ready
 
