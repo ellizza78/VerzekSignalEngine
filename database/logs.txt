@@ -775,3 +775,58 @@ Updated working bot version from local PC
 [2025-10-16 16:35:08] [ORCHESTRATOR] ℹ️ No active positions found for TIAUSDT to close
 [2025-10-16 16:36:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ALGOUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #ALGO/USDT $ALGO \nShort 🩸 Lev x6 #Crypto \n\nEntry: 0.1894 - Stop Loss: 0.1992 \n\nTargets: 0.1845 - 0.1796 - 0.1747 - 0.1698 - 0.1649'}
 [2025-10-16 16:36:07] [ORCHESTRATOR] ℹ️ No active positions found for ALGOUSDT to close
+[2025-10-16 16:40:21] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 16:40:23] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 16:40:23] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 16:40:23] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 16:40:23] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 16:40:23] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:40:24] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:40:28] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:33] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:38] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:43] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:48] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:53] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:40:58] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:03] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:08] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:13] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:18] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:23] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:28] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:33] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:38] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:43] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:48] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:53] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:41:58] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:03] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:08] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:13] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:18] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:23] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:28] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:33] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:38] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:43] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:48] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:53] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:42:58] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:43:03] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:43:08] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:43:13] [ADVANCED_ORDERS] ❌ Error in advanced orders monitor: 'PositionTracker' object has no attribute 'load_positions'
+[2025-10-16 16:43:15] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 16:43:16] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 16:43:16] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 16:43:16] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 16:43:16] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:43:16] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 16:43:17] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:45:34] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 16:45:36] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 16:45:36] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 16:45:36] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 16:45:36] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 16:45:36] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 16:45:36] [ORCHESTRATOR] DCA Orchestrator initialized

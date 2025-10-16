@@ -70,6 +70,13 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
 - **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
 
 ## Recent Changes
+- **2025-10-16**: Phase 3 Advanced Trading Features & Risk Management COMPLETE ✅
+  - ✅ **Advanced Order Types**: Trailing stop loss, OCO orders, automated execution
+  - ✅ **Webhook Integration**: TradingView alerts, custom API signals, HMAC security
+  - ✅ **Position Management**: Bulk close, emergency exit, position limits
+  - ✅ **Advanced Orders Monitor**: Background service for real-time order tracking
+  - ✅ **API Endpoints**: 13 new endpoints for advanced trading features
+
 - **2025-10-16**: Phase 2 Admin Dashboard & Enhanced Features COMPLETE ✅
   - ✅ **Admin Dashboard**: Web interface + comprehensive backend API for monitoring
   - ✅ **Push Notifications**: Firebase Cloud Messaging with 10+ notification types

@@ -31,6 +31,8 @@ from modules.audit_logger import audit_logger, AuditEventType
 from modules.admin_dashboard import admin_dashboard
 from modules.push_notifications import push_service
 from modules.analytics_engine import analytics_engine
+from modules.advanced_orders import advanced_order_manager
+from modules.webhook_handler import webhook_handler
 
 app = Flask(__name__)
 
@@ -1613,6 +1615,297 @@ def platform_analytics(current_user_id):
     analytics = analytics_engine.get_platform_analytics(days)
     
     return jsonify(analytics)
+
+
+# ============================
+# ADVANCED ORDERS (Phase 3)
+# ============================
+
+@app.route("/api/orders/trailing-stop", methods=["POST"])
+@token_required
+def create_trailing_stop(current_user_id):
+    """Create a trailing stop loss order"""
+    data = request.json
+    
+    position_id = data.get('position_id')
+    trail_percent = data.get('trail_percent', 0)
+    trail_amount = data.get('trail_amount', 0)
+    activation_price = data.get('activation_price')
+    
+    if not position_id:
+        return jsonify({'error': 'position_id is required'}), 400
+    
+    result = advanced_order_manager.create_trailing_stop(
+        current_user_id,
+        position_id,
+        trail_percent,
+        trail_amount,
+        activation_price
+    )
+    
+    if result['success']:
+        audit_logger.log_event(
+            AuditEventType.TRADE_EXECUTED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'action': 'create_trailing_stop', 'position_id': position_id}
+        )
+    
+    return jsonify(result)
+
+
+@app.route("/api/orders/oco", methods=["POST"])
+@token_required
+def create_oco_order(current_user_id):
+    """Create a One-Cancels-Other order"""
+    data = request.json
+    
+    position_id = data.get('position_id')
+    take_profit_price = data.get('take_profit_price')
+    stop_loss_price = data.get('stop_loss_price')
+    quantity = data.get('quantity')
+    
+    if not all([position_id, take_profit_price, stop_loss_price]):
+        return jsonify({'error': 'position_id, take_profit_price, and stop_loss_price are required'}), 400
+    
+    result = advanced_order_manager.create_oco_order(
+        current_user_id,
+        position_id,
+        float(take_profit_price),
+        float(stop_loss_price),
+        float(quantity) if quantity else None
+    )
+    
+    if result['success']:
+        audit_logger.log_event(
+            AuditEventType.TRADE_EXECUTED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'action': 'create_oco_order', 'position_id': position_id}
+        )
+    
+    return jsonify(result)
+
+
+@app.route("/api/orders/oco/<oco_id>", methods=["DELETE"])
+@token_required
+def cancel_oco_order(current_user_id, oco_id):
+    """Cancel an OCO order"""
+    result = advanced_order_manager.cancel_oco_order(current_user_id, oco_id)
+    
+    if result['success']:
+        audit_logger.log_event(
+            AuditEventType.TRADE_EXECUTED,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={'action': 'cancel_oco_order', 'oco_id': oco_id}
+        )
+    
+    return jsonify(result)
+
+
+@app.route("/api/orders/advanced", methods=["GET"])
+@token_required
+def get_advanced_orders(current_user_id):
+    """Get all advanced orders for user"""
+    orders = advanced_order_manager.get_user_advanced_orders(current_user_id)
+    
+    return jsonify(orders)
+
+
+# ============================
+# WEBHOOK INTEGRATION
+# ============================
+
+@app.route("/api/webhooks", methods=["POST"])
+@token_required
+def create_webhook(current_user_id):
+    """Create a new webhook endpoint"""
+    data = request.json
+    
+    name = data.get('name')
+    source = data.get('source', 'custom')
+    
+    if not name:
+        return jsonify({'error': 'name is required'}), 400
+    
+    result = webhook_handler.create_webhook(current_user_id, name, source)
+    
+    audit_logger.log_event(
+        AuditEventType.SETTINGS_CHANGED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'create_webhook', 'name': name}
+    )
+    
+    return jsonify(result), 201
+
+
+@app.route("/api/webhooks", methods=["GET"])
+@token_required
+def get_user_webhooks(current_user_id):
+    """Get user's webhooks"""
+    webhooks = webhook_handler.get_user_webhooks(current_user_id)
+    
+    return jsonify({'webhooks': webhooks})
+
+
+@app.route("/api/webhooks/<webhook_id>/toggle", methods=["POST"])
+@token_required
+def toggle_webhook(current_user_id, webhook_id):
+    """Enable/disable webhook"""
+    data = request.json
+    enabled = data.get('enabled', True)
+    
+    result = webhook_handler.toggle_webhook(current_user_id, webhook_id, enabled)
+    
+    return jsonify(result)
+
+
+@app.route("/api/webhooks/<webhook_id>", methods=["DELETE"])
+@token_required
+def delete_webhook(current_user_id, webhook_id):
+    """Delete webhook"""
+    result = webhook_handler.delete_webhook(current_user_id, webhook_id)
+    
+    return jsonify(result)
+
+
+@app.route("/api/webhook/<webhook_id>", methods=["POST"])
+def receive_webhook_signal(webhook_id):
+    """Receive signal from external webhook (no auth required)"""
+    data = request.json
+    signature = request.headers.get('X-Webhook-Signature')
+    
+    result = webhook_handler.process_webhook_signal(webhook_id, data, signature)
+    
+    if result['success']:
+        return jsonify(result), 200
+    else:
+        return jsonify(result), 400
+
+
+# ============================
+# POSITION MANAGEMENT
+# ============================
+
+@app.route("/api/positions/bulk-close", methods=["POST"])
+@token_required
+def bulk_close_positions(current_user_id):
+    """Close multiple positions at once"""
+    data = request.json
+    position_ids = data.get('position_ids', [])
+    
+    if not position_ids:
+        return jsonify({'error': 'position_ids is required'}), 400
+    
+    results = []
+    for pos_id in position_ids:
+        position = position_tracker.get_position(pos_id)
+        if position and position.user_id == current_user_id and position.status == 'active':
+            # Mark for closure
+            position.status = 'pending_close'
+            results.append({'position_id': pos_id, 'status': 'pending_close'})
+    
+    position_tracker.save_positions()
+    
+    audit_logger.log_event(
+        AuditEventType.TRADE_EXECUTED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'bulk_close', 'count': len(results)}
+    )
+    
+    return jsonify({
+        'success': True,
+        'closed': len(results),
+        'positions': results
+    })
+
+
+@app.route("/api/positions/emergency-exit", methods=["POST"])
+@token_required
+def emergency_exit(current_user_id):
+    """Emergency exit - close ALL active positions"""
+    positions = position_tracker.load_positions()
+    closed_count = 0
+    
+    for position in positions:
+        if position.user_id == current_user_id and position.status == 'active':
+            position.status = 'emergency_close'
+            closed_count += 1
+    
+    position_tracker.save_positions()
+    
+    audit_logger.log_event(
+        AuditEventType.TRADE_EXECUTED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'emergency_exit', 'count': closed_count},
+        severity='critical'
+    )
+    
+    log_event("POSITION_MGMT", f"⚠️ EMERGENCY EXIT triggered by user {current_user_id}: {closed_count} positions")
+    
+    return jsonify({
+        'success': True,
+        'message': f'Emergency exit initiated for {closed_count} positions',
+        'closed_count': closed_count
+    })
+
+
+@app.route("/api/positions/limits", methods=["POST"])
+@token_required
+def set_position_limits(current_user_id):
+    """Set position limits for user"""
+    data = request.json
+    
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    # Set position limits
+    if 'max_positions' in data:
+        user.max_positions = int(data['max_positions'])
+    if 'max_exposure' in data:
+        user.max_exposure = float(data['max_exposure'])
+    if 'max_position_size' in data:
+        user.max_position_size = float(data['max_position_size'])
+    
+    user_manager._save_users()
+    
+    audit_logger.log_event(
+        AuditEventType.SETTINGS_CHANGED,
+        user_id=current_user_id,
+        ip_address=request.remote_addr,
+        details={'action': 'set_position_limits', 'limits': data}
+    )
+    
+    return jsonify({
+        'success': True,
+        'limits': {
+            'max_positions': getattr(user, 'max_positions', None),
+            'max_exposure': getattr(user, 'max_exposure', None),
+            'max_position_size': getattr(user, 'max_position_size', None)
+        }
+    })
+
+
+@app.route("/api/positions/limits", methods=["GET"])
+@token_required
+def get_position_limits(current_user_id):
+    """Get position limits for user"""
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    return jsonify({
+        'limits': {
+            'max_positions': getattr(user, 'max_positions', None),
+            'max_exposure': getattr(user, 'max_exposure', None),
+            'max_position_size': getattr(user, 'max_position_size', None)
+        }
+    })
 
 
 if __name__ == "__main__":
