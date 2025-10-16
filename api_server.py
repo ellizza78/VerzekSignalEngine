@@ -30,6 +30,7 @@ from modules.tronscan_client import tronscan_client
 from modules.audit_logger import audit_logger, AuditEventType
 from modules.admin_dashboard import admin_dashboard
 from modules.push_notifications import push_service
+from modules.analytics_engine import analytics_engine
 
 app = Flask(__name__)
 
@@ -1574,6 +1575,44 @@ def test_notification(current_user_id):
     )
     
     return jsonify(result)
+
+
+# ============================
+# ADVANCED ANALYTICS
+# ============================
+
+@app.route("/api/analytics/performance", methods=["GET"])
+@token_required
+def user_performance_analytics(current_user_id):
+    """Get user performance analytics"""
+    days = request.args.get('days', 30, type=int)
+    performance = analytics_engine.get_user_performance(current_user_id, days)
+    
+    return jsonify(performance)
+
+
+@app.route("/api/analytics/risk", methods=["GET"])
+@token_required
+def user_risk_metrics(current_user_id):
+    """Get user risk metrics"""
+    risk_metrics = analytics_engine.get_risk_metrics(current_user_id)
+    
+    return jsonify(risk_metrics)
+
+
+@app.route("/api/analytics/platform", methods=["GET"])
+@token_required
+def platform_analytics(current_user_id):
+    """Get platform-wide analytics (admin only)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    days = request.args.get('days', 30, type=int)
+    analytics = analytics_engine.get_platform_analytics(days)
+    
+    return jsonify(analytics)
 
 
 if __name__ == "__main__":
