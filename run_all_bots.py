@@ -53,6 +53,11 @@ def run_advanced_orders_monitor():
     print("📊 Starting Advanced Orders Monitor...")
     subprocess.run([sys.executable, "advanced_orders_monitor.py"])
 
+def run_price_feed_service():
+    """Run Real-Time Price Feed Service for live market data"""
+    print("📡 Starting Price Feed Service...")
+    subprocess.run([sys.executable, "price_feed_service.py"])
+
 if __name__ == "__main__":
     print("🚀 VerzekAutoTrader - Starting All Services...")
     
@@ -83,6 +88,10 @@ if __name__ == "__main__":
     advanced_orders_thread = Thread(target=run_advanced_orders_monitor, daemon=True)
     advanced_orders_thread.start()
     
+    # Start Price Feed Service in a thread
+    price_feed_thread = Thread(target=run_price_feed_service, daemon=True)
+    price_feed_thread.start()
+    
     # Uncomment below if you want to run the main signal bot too
     # main_thread = Thread(target=run_main_bot, daemon=True)
     # main_thread.start()
@@ -93,6 +102,7 @@ if __name__ == "__main__":
     print("🎯 Target Monitor checking for take profit levels...")
     print("💰 Recurring Payments processing monthly commissions...")
     print("📊 Advanced Orders Monitor tracking trailing stops & OCO orders...")
+    print("📡 Price Feed Service streaming live market data...")
     print("🌐 API Server running on port 5000")
     
     # Keep the main thread alive

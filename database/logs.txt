@@ -830,3 +830,30 @@ Updated working bot version from local PC
 [2025-10-16 16:45:36] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
 [2025-10-16 16:45:36] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
 [2025-10-16 16:45:36] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:02:40] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 17:02:40] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 17:02:40] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:02:40] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 17:02:40] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 17:02:40] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-16 17:02:40] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-16 17:02:40] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:03:10] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 17:03:10] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:03:11] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 17:03:11] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 17:03:11] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 17:03:11] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-16 17:03:11] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-16 17:03:11] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:04:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'MOVEUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #MOVE/USDT $MOVE \nShort 🩸 Lev x9 #Crypto \n\nEntry: 0.0802 - Stop Loss: 0.0829 \n\nTargets: 0.07885 - 0.0775 - 0.07615 - 0.0748 - 0.07345'}
+[2025-10-16 17:04:07] [ORCHESTRATOR] ℹ️ No active positions found for MOVEUSDT to close
+[2025-10-16 17:04:27] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-16 17:04:27] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-16 17:04:27] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-16 17:04:27] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-16 17:04:27] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-16 17:04:27] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 17:04:27] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:04:27] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 17:04:29] [API] 🌐 Starting Flask API on port 5000

@@ -3,7 +3,7 @@ import os
 from typing import Dict, List, Optional
 from datetime import datetime
 import uuid
-from modules.audit_logger import log_event
+from utils.logger import log_event
 
 class SocialTradingManager:
     """Manages copy trading and social features"""

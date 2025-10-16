@@ -2,7 +2,7 @@ import json
 import os
 from typing import Dict, List, Optional
 from datetime import datetime
-from modules.audit_logger import log_event
+from utils.logger import log_event
 
 class PortfolioRebalancer:
     """Manages portfolio rebalancing and allocation"""
