@@ -2588,14 +2588,16 @@ def get_journal_insights(current_user_id):
 def telegram_webhook():
     """Webhook endpoint for Telegram broadcast bot"""
     try:
-        import broadcast_bot_webhook_handler
-        
         update_data = request.get_json()
         
         if not update_data:
+            log_event("WEBHOOK", "No JSON data received")
             return jsonify({"ok": False, "error": "No data"}), 400
         
-        # Process the update using the broadcast bot handler
+        log_event("WEBHOOK", f"Received webhook update: {update_data}")
+        
+        # Import and process the update using the broadcast bot handler
+        import broadcast_bot_webhook_handler
         broadcast_bot_webhook_handler.handle_webhook_update(update_data)
         
         return jsonify({"ok": True})
@@ -2603,7 +2605,7 @@ def telegram_webhook():
         log_event("WEBHOOK", f"Error processing webhook: {e}")
         import traceback
         traceback.print_exc()
-        return jsonify({"ok": False, "error": str(e)}), 500
+        return jsonify({"ok": True}), 200  # Return 200 even on error to prevent Telegram retries
 
 
 if __name__ == "__main__":
