@@ -733,3 +733,7 @@ Updated working bot version from local PC
 [2025-10-16 15:56:19] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
 [2025-10-16 15:57:48] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'MANAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#MANAUSDT - Stop Loss ⛔️\nLoss: 32.279%'}
 [2025-10-16 15:57:48] [ORCHESTRATOR] ℹ️ No active positions found for MANAUSDT to close
+[2025-10-16 16:03:55] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'SUIUSDT', 'reason': 'stop_loss_hit', 'source_text': '#SUIUSDT - Stop Loss ⛔️\nLoss: 31.2447%'}
+[2025-10-16 16:03:55] [ORCHESTRATOR] ℹ️ No active positions found for SUIUSDT to close
+[2025-10-16 16:03:56] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'CHZUSDT', 'reason': 'stop_loss_hit', 'source_text': '#CHZUSDT - Stop Loss ⛔️\nLoss: 28.7117%'}
+[2025-10-16 16:03:56] [ORCHESTRATOR] ℹ️ No active positions found for CHZUSDT to close
