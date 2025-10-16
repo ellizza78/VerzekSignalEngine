@@ -2199,3 +2199,19 @@ Operations: Buy/Long
 average transaction price 0.01943
 quantity2580
 average position price 0.019439715
+[2025-10-16 08:27:06] BINANCE ROSEUSDT Perpetuo 
+Operations: Buy/Long
+average transaction price 0.01924
+quantity5160
+average position price 0.019312985
+[2025-10-16 08:27:47] #ROSEUSDT - Stop Loss ⛔️
+Loss: 29.3936%
+[2025-10-16 08:28:41] BINANCE ROSEUSDT Perpetuo 
+Operations: Close/Long
+average transaction price 0.01919
+quantity7740
+profit rate -0.686%
+[2025-10-16 08:37:00] #WLFIUSDT - Stop Loss ⛔️
+Loss: 29.5082%
+[2025-10-16 08:38:22] #ENAUSDT - Stop Loss ⛔️
+Loss: 30.647%
