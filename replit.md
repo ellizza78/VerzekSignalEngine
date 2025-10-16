@@ -163,6 +163,14 @@ Message: "BTCUSDT - Signal Cancelled"
 - **broadcast_bot.py**: Detects and triggers auto-close before broadcasting
 
 ## Recent Changes
+- **2025-10-16**: Mobile App - All Core Screens Production-Ready
+  - ✅ Signals Feed: Real API integration with signalsAPI.getSignals(), parses broadcast log, proper error handling
+  - ✅ Positions Screen: Calls positionsAPI.getUserPositions(), Alert dialogs on errors, no mock fallback
+  - ✅ Settings Screen: All toggles persist via backend API (strategy + notifications), auto-refresh
+  - ✅ Backend API: Added /api/signals and /api/users/<user_id>/preferences endpoints
+  - ✅ All screens architect-approved for production use
+  - 📋 Next: Exchange Accounts screen for API key management
+
 - **2025-10-16**: React Native Mobile App Complete
   - ✅ Created Expo React Native app structure (mobile_app/VerzekApp/)
   - ✅ Implemented JWT authentication with secure token storage
