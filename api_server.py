@@ -502,6 +502,72 @@ def handle_subscription(user_id):
             "group_access": user.telegram_group_access,
             "features": user.get_plan_features()
         }), 201
+# ============================
+# TRADING PREFERENCES
+# ============================
+
+@app.route("/api/users/<user_id>/preferences", methods=["GET", "PUT"])
+def handle_trading_preferences(user_id):
+    """Get or update user's trading preferences (notifications, symbols, etc)"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if request.method == "GET":
+        return jsonify(user.trading_preferences)
+    
+    elif request.method == "PUT":
+        updates = request.json
+        user.trading_preferences.update(updates)
+        user.updated_at = time.time()
+        user_manager._save_users()
+        return jsonify({
+            "message": "Trading preferences updated",
+            "trading_preferences": user.trading_preferences
+        })
+
+
+# ============================
+# SIGNALS FEED
+# ============================
+
+@app.route("/api/signals", methods=["GET"])
+def get_signals():
+    """Get recent trading signals from broadcast log"""
+    try:
+        log_file = "database/broadcast_log.txt"
+        if not os.path.exists(log_file):
+            return jsonify({"count": 0, "signals": []})
+        
+        # Read last 50 lines from log file
+        with open(log_file, "r", encoding="utf-8") as f:
+            lines = f.readlines()[-50:]
+        
+        signals = []
+        for line in lines:
+            # Parse timestamp and text
+            match = re.match(r'\[(.*?)\] (.*)', line.strip())
+            if match:
+                timestamp, text = match.groups()
+                
+                # Only include lines that look like signals (contain trading keywords)
+                if any(kw in text.upper() for kw in ["LONG", "SHORT", "ENTRY", "TARGET", "USDT"]):
+                    signals.append({
+                        "timestamp": timestamp,
+                        "text": text,
+                        "id": f"{timestamp}_{len(signals)}"
+                    })
+        
+        # Reverse to show newest first
+        signals.reverse()
+        
+        return jsonify({
+            "count": len(signals),
+            "signals": signals
+        })
+    except Exception as e:
+        log_event("ERROR", f"Error reading signals: {e}")
+        return jsonify({"error": "Failed to read signals", "count": 0, "signals": []}), 500
 
 
 # ============================

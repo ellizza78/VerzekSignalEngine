@@ -674,3 +674,9 @@ Updated working bot version from local PC
 [2025-10-16 14:25:40] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
 [2025-10-16 14:26:11] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'WLFIUSDT', 'reason': 'signal_cancelled', 'source_text': '#WLFIUSDT - Signal Cancelled ❎\nTarget achieved before entering the entry zone'}
 [2025-10-16 14:26:11] [ORCHESTRATOR] ℹ️ No active positions found for WLFIUSDT to close
+[2025-10-16 14:49:48] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 14:49:50] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 14:49:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 14:49:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 14:52:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'GALAUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #GALA/USDT $GALA \nShort 🩸 Lev x23 #Crypto \n\nEntry: 0.01165 - Stop Loss: 0.0118 \n\nTargets: 0.011575 - 0.0115 - 0.011425 - 0.01135 - 0.011275'}
+[2025-10-16 14:52:08] [ORCHESTRATOR] ℹ️ No active positions found for GALAUSDT to close
