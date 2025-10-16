@@ -5,6 +5,7 @@ Modules for VerzekAutoTrader
 from .royalq_engine import RoyalQEngine, RoyalQPosition, PositionSide
 from .position_tracker import PositionTracker
 from .user_manager_v2 import UserManager, User
+from .safety_manager import SafetyManager
 
 __all__ = [
     'RoyalQEngine',
@@ -12,5 +13,6 @@ __all__ = [
     'PositionSide',
     'PositionTracker',
     'UserManager',
-    'User'
+    'User',
+    'SafetyManager'
 ]

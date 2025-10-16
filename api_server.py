@@ -8,7 +8,7 @@ Allows mobile app or external dashboard to fetch real-time data.
 from flask import Flask, jsonify, request
 from utils.logger import log_event
 from trade_executor import get_all_trades
-from modules import UserManager, PositionTracker
+from modules import UserManager, PositionTracker, SafetyManager
 import time
 import os
 
@@ -17,6 +17,7 @@ app = Flask(__name__)
 # Initialize managers
 user_manager = UserManager()
 position_tracker = PositionTracker()
+safety_manager = SafetyManager()
 
 # ============================
 # APP STATUS
@@ -49,7 +50,11 @@ def home():
             "/api/users/<user_id>/royalq": "Royal Q settings (GET/PUT)",
             "/api/users/<user_id>/exchanges": "Exchange accounts (GET/POST)",
             "/api/positions": "All positions (GET)",
-            "/api/positions/<user_id>": "User positions (GET)"
+            "/api/positions/<user_id>": "User positions (GET)",
+            "/api/safety/status": "Safety system status (GET)",
+            "/api/safety/killswitch": "Kill switch control (POST)",
+            "/api/safety/pause": "Pause trading (POST)",
+            "/api/safety/resume": "Resume trading (POST)"
         },
         "message": "VerzekAutoTrader is running smoothly! 🚀"
     })
@@ -294,6 +299,68 @@ def get_user_stats(user_id):
         "stats": user.stats,
         "daily_stats": user.daily_stats
     })
+
+
+# ============================
+# SAFETY CONTROLS
+# ============================
+
+@app.route("/api/safety/status", methods=["GET"])
+def get_safety_status():
+    """Get safety system status"""
+    return jsonify(safety_manager.get_safety_status())
+
+
+@app.route("/api/safety/killswitch", methods=["POST"])
+def control_killswitch():
+    """Activate or deactivate kill switch"""
+    data = request.json or {}
+    action = data.get("action")  # "activate" or "deactivate"
+    reason = data.get("reason", "Manual activation")
+    
+    if action == "activate":
+        result = safety_manager.activate_kill_switch(reason)
+        return jsonify(result)
+    elif action == "deactivate":
+        result = safety_manager.deactivate_kill_switch()
+        return jsonify(result)
+    else:
+        return jsonify({"error": "Invalid action. Use 'activate' or 'deactivate'"}), 400
+
+
+@app.route("/api/safety/pause", methods=["POST"])
+def pause_trading():
+    """Pause trading for a specific duration"""
+    data = request.json or {}
+    duration = data.get("duration_minutes", 60)
+    reason = data.get("reason", "Manual pause")
+    
+    result = safety_manager.pause_trading(duration, reason)
+    return jsonify(result)
+
+
+@app.route("/api/safety/resume", methods=["POST"])
+def resume_trading():
+    """Resume trading immediately"""
+    result = safety_manager.resume_trading()
+    return jsonify(result)
+
+
+@app.route("/api/safety/circuit-breaker", methods=["POST"])
+def control_circuit_breaker():
+    """Activate or deactivate circuit breaker"""
+    data = request.json or {}
+    action = data.get("action")
+    reason = data.get("reason", "Manual activation")
+    
+    if action == "activate":
+        result = safety_manager.activate_circuit_breaker(reason)
+        return jsonify(result)
+    elif action == "deactivate":
+        result = safety_manager.deactivate_circuit_breaker()
+        return jsonify(result)
+    else:
+        return jsonify({"error": "Invalid action. Use 'activate' or 'deactivate'"}), 400
 
 
 if __name__ == "__main__":
