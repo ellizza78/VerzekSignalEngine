@@ -9,8 +9,14 @@ from flask import Flask, jsonify, request
 from utils.logger import log_event
 from trade_executor import get_all_trades
 from modules import UserManager, PositionTracker, SafetyManager
+from modules.auth import (
+    hash_password, verify_password, 
+    create_access_token, create_refresh_token,
+    token_required, refresh_token_required
+)
 import time
 import os
+import re
 
 app = Flask(__name__)
 
@@ -108,6 +114,149 @@ def test():
     return jsonify({
         "status": "success",
         "message": "📡 Flask API connection successful!"
+    })
+
+
+# ============================
+# AUTHENTICATION
+# ============================
+
+@app.route("/api/auth/register", methods=["POST"])
+def register():
+    """Register a new user"""
+    data = request.json
+    
+    email = data.get("email", "").strip().lower()
+    password = data.get("password")
+    full_name = data.get("full_name", "")
+    
+    # Validation
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    
+    # Email format validation
+    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_regex, email):
+        return jsonify({"error": "Invalid email format"}), 400
+    
+    # Password strength
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+    
+    # Check if user already exists
+    users = user_manager.get_all_users()
+    for user in users:
+        if user.email == email:
+            return jsonify({"error": "User with this email already exists"}), 409
+    
+    # Create user with email as user_id
+    user_id = email.replace("@", "_").replace(".", "_")
+    user = user_manager.create_user(user_id)
+    
+    # Set user credentials
+    user.email = email
+    user.full_name = full_name
+    user.password_hash = hash_password(password)
+    user_manager._save_users()
+    
+    # Generate tokens
+    access_token = create_access_token(user_id, email)
+    refresh_token = create_refresh_token(user_id)
+    
+    log_event("AUTH", f"New user registered: {email}")
+    
+    return jsonify({
+        "message": "Registration successful",
+        "user": {
+            "user_id": user_id,
+            "email": email,
+            "full_name": full_name,
+            "plan": user.plan
+        },
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "Bearer"
+    }), 201
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def login():
+    """Login user and return JWT tokens"""
+    data = request.json
+    
+    email = data.get("email", "").strip().lower()
+    password = data.get("password")
+    
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    
+    # Find user by email
+    users = user_manager.get_all_users()
+    user = None
+    for u in users:
+        if u.email == email:
+            user = u
+            break
+    
+    if not user:
+        return jsonify({"error": "Invalid email or password"}), 401
+    
+    # Verify password
+    if not user.password_hash or not verify_password(password, user.password_hash):
+        return jsonify({"error": "Invalid email or password"}), 401
+    
+    # Generate tokens
+    access_token = create_access_token(user.user_id, email)
+    refresh_token = create_refresh_token(user.user_id)
+    
+    log_event("AUTH", f"User logged in: {email}")
+    
+    return jsonify({
+        "message": "Login successful",
+        "user": {
+            "user_id": user.user_id,
+            "email": email,
+            "full_name": user.full_name,
+            "plan": user.plan,
+            "plan_expires_at": user.plan_expires_at
+        },
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "Bearer"
+    })
+
+
+@app.route("/api/auth/refresh", methods=["POST"])
+@refresh_token_required
+def refresh():
+    """Refresh access token using refresh token"""
+    user_id = request.user_id
+    user = user_manager.get_user(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Generate new access token
+    access_token = create_access_token(user_id, user.email)
+    
+    return jsonify({
+        "access_token": access_token,
+        "token_type": "Bearer"
+    })
+
+
+@app.route("/api/auth/me", methods=["GET"])
+@token_required
+def get_current_user():
+    """Get current authenticated user info"""
+    user_id = request.user_id
+    user = user_manager.get_user(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    return jsonify({
+        "user": user.to_dict()
     })
 
 

@@ -642,3 +642,7 @@ Updated working bot version from local PC
 [2025-10-16 12:11:05] [TARGET_MONITOR] 🎯 Target Monitor started
 [2025-10-16 12:11:05] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-16 12:11:05] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 12:21:17] [API] 🌐 Starting Flask API on port 5000
+[2025-10-16 12:21:19] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-16 12:21:19] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-16 12:21:20] [ORCHESTRATOR] DCA Orchestrator initialized

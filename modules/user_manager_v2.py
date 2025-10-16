@@ -18,6 +18,11 @@ class User:
         self.created_at = datetime.now().isoformat()
         self.updated_at = self.created_at
         
+        # User credentials (for mobile app authentication)
+        self.email: str = ""
+        self.full_name: str = ""
+        self.password_hash: str = ""
+        
         # Subscription plan
         self.plan = "free"  # free, pro, vip
         self.plan_started_at: Optional[str] = None
@@ -300,10 +305,12 @@ class User:
         self.updated_at = datetime.now().isoformat()
     
     def to_dict(self) -> dict:
-        """Convert user to dictionary"""
+        """Convert user to dictionary (password_hash excluded for security)"""
         return {
             "user_id": self.user_id,
             "telegram_id": self.telegram_id,
+            "email": self.email,
+            "full_name": self.full_name,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "plan": self.plan,
@@ -320,10 +327,19 @@ class User:
             "daily_stats": self.daily_stats
         }
     
+    def to_storage_dict(self) -> dict:
+        """Convert user to dictionary for storage (includes password_hash)"""
+        data = self.to_dict()
+        data["password_hash"] = self.password_hash  # Include for storage
+        return data
+    
     @staticmethod
     def from_dict(data: dict) -> 'User':
         """Create user from dictionary"""
         user = User(data["user_id"], data.get("telegram_id"))
+        user.email = data.get("email", "")
+        user.full_name = data.get("full_name", "")
+        user.password_hash = data.get("password_hash", "")  # Load from storage but never expose via to_dict()
         user.created_at = data.get("created_at", user.created_at)
         user.updated_at = data.get("updated_at", user.updated_at)
         user.plan = data.get("plan", "free")
@@ -367,7 +383,7 @@ class UserManager:
     def _save_users(self):
         """Save users to storage"""
         try:
-            data = {user_id: user.to_dict() for user_id, user in self.users.items()}
+            data = {user_id: user.to_storage_dict() for user_id, user in self.users.items()}
             with open(self.storage_path, 'w') as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
