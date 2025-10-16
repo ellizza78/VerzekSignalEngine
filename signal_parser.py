@@ -50,11 +50,23 @@ def parse_signal(message_text: str):
         entry_match = re.search(r"ENTRY[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
         entry = float(entry_match.group(1)) if entry_match else None
 
-        # Take Profits (can be multiple)
-        tp_match = re.findall(r"TAKE\s*PROFIT[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
-        if not tp_match:
-            tp_match = re.findall(r"TP[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
-        take_profits = [float(tp) for tp in tp_match] if tp_match else []
+        # Take Profits (can be multiple, extract numbered targets)
+        # First try: TARGET 1: price, TARGET 2: price, etc.
+        target_match = re.findall(r"TARGET\s*(\d+)[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
+        if target_match:
+            take_profits = [{"target_num": int(t[0]), "price": float(t[1])} for t in target_match]
+        else:
+            # Fallback: TAKE PROFIT / TP with numbers
+            tp_match = re.findall(r"(?:TAKE\s*PROFIT|TP)\s*(\d+)?[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
+            if tp_match:
+                take_profits = [
+                    {"target_num": int(t[0]) if t[0] else i+1, "price": float(t[1])} 
+                    for i, t in enumerate(tp_match)
+                ]
+            else:
+                # Simple TP extraction (no numbers)
+                simple_tp = re.findall(r"(?:TAKE\s*PROFIT|TP)[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
+                take_profits = [{"target_num": i+1, "price": float(tp)} for i, tp in enumerate(simple_tp)]
 
         # Stop Loss
         sl_match = re.search(r"STOP(?:\s*LOSS)?[:\s]*([0-9]+(?:\.[0-9]+)?)", text)
