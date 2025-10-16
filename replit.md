@@ -163,6 +163,15 @@ Message: "BTCUSDT - Signal Cancelled"
 - **broadcast_bot.py**: Detects and triggers auto-close before broadcasting
 
 ## Recent Changes
+- **2025-10-16**: VZK Branding & Onboarding Complete
+  - ✅ VZK Logo: Added to Login, Register, and Dashboard screens
+  - ✅ Color Scheme: Complete update to Teal/Gold gradient (#0A4A5C → #1B9AAA, #F9C74F)
+  - ✅ All Screens: Migrated from hardcoded colors to centralized COLORS constants
+  - ✅ Onboarding Modal: Critical setup instructions (ISOLATED MARGIN, AUTO TRADES settings)
+  - ✅ First-Run Experience: Shows instructions automatically, re-accessible from Dashboard
+  - ✅ LONG/SHORT Indicators: Teal (LONG) / Gold (SHORT) for brand consistency
+  - ✅ Architect-approved: Zero hardcoded colors, cohesive visual design
+
 - **2025-10-16**: Mobile App - All Core Screens Production-Ready
   - ✅ Signals Feed: Real API integration with signalsAPI.getSignals(), parses broadcast log, proper error handling
   - ✅ Positions Screen: Calls positionsAPI.getUserPositions(), Alert dialogs on errors, no mock fallback
