@@ -74,10 +74,16 @@ If you need to test Telethon in development for debugging:
 
 ## 🆘 Troubleshooting
 
+### Issue: AuthKeyDuplicatedError in production logs
+**Solution**: Session is corrupted from dual-IP usage
+1. See **TELETHON_SESSION_RECOVERY.md** for complete recovery steps
+2. Quick fix: Run `python recover_telethon_session.py` in workspace
+3. Republish deployment
+
 ### Issue: "Telethon not authenticated" error in production logs
-**Solution**: The Telethon session was not included in the deployment
-1. Run `python setup_telethon.py` in the workspace to authenticate
-2. Ensure `telethon_session_string.txt` exists
+**Solution**: The Telethon production session was not created
+1. Run `python setup_telethon.py` in the workspace to create production session
+2. Ensure `telethon_session_prod.txt` exists
 3. Click "Republish" to deploy with the session file
 
 ### Issue: Signals not being received

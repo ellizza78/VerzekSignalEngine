@@ -46,17 +46,12 @@ if os.path.exists(session_file):
     client = TelegramClient(StringSession(session_string), api_id, api_hash)
     print(f"[TELETHON] Using existing session from {session_file}")
 else:
-    # Fallback: try old session file for backward compatibility
-    old_session_file = "telethon_session_string.txt"
-    if os.path.exists(old_session_file):
-        print(f"[TELETHON] WARNING: Old session file found. Please run setup to create {session_file}")
-        with open(old_session_file, "r") as f:
-            session_string = f.read().strip()
-        client = TelegramClient(StringSession(session_string), api_id, api_hash)
-    else:
-        # First time: create new session
-        print(f"[TELETHON] ERROR: No session file found. Run setup_telethon.py first!")
-        client = TelegramClient(StringSession(), api_id, api_hash)
+    # No environment-specific session found
+    print(f"[TELETHON] ERROR: No {session_file} found!")
+    print(f"[TELETHON] Run 'python setup_telethon.py' to create production session")
+    print(f"[TELETHON] Or run 'python recover_telethon_session.py' if session is corrupted")
+    import sys
+    sys.exit(1)
 
 # simple rolling de-dupe cache
 _recent = []
@@ -160,12 +155,7 @@ async def auto_forward(event):
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
 client.start()
 
-# Save session string for future use (no DB needed)
-session_file = "telethon_session_string.txt"
-if not os.path.exists(session_file) and client.session:
-    session_string = client.session.save()
-    with open(session_file, "w") as f:
-        f.write(session_string)
-    print(f"✅ Session saved to {session_file}")
+# NOTE: Session is already persisted in environment-specific file (telethon_session_prod.txt or telethon_session_dev.txt)
+# No need to save again - this prevents recreating the legacy session file that causes dual-IP conflicts
 
 client.run_until_disconnected()

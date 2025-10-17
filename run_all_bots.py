@@ -33,13 +33,20 @@ def run_telethon_forwarder():
         print("✅ Telethon will auto-start in production deployment")
         return
     
-    # Check for valid session
-    if not os.path.exists("telethon_session_string.txt"):
-        print("⚠️ Telethon not authenticated. Run 'python setup_telethon.py' first.")
+    # Check for valid environment-specific session
+    session_file = "telethon_session_prod.txt" if is_production else "telethon_session_dev.txt"
+    if not os.path.exists(session_file):
+        print(f"⚠️ {session_file} not found!")
+        if is_production:
+            print("⚠️ Production session missing. Run 'python setup_telethon.py' in workspace before deploying.")
+        else:
+            print("⚠️ Development session missing. Run 'python setup_telethon.py' to create.")
+        print("⚠️ Or run 'python recover_telethon_session.py' if session is corrupted.")
         return
     
     env_type = "PRODUCTION" if is_production else "MANUAL"
     print(f"🔄 Starting Telethon Auto-Forwarder ({env_type})...")
+    print(f"📡 Using session: {session_file}")
     print("📡 Monitoring Telegram for trading signals...")
     subprocess.run([sys.executable, "telethon_forwarder.py"])
 

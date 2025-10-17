@@ -1,1 +1,1 @@
-v1.2-auto-detection
+v1.3-session-isolation
