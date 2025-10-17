@@ -33,15 +33,30 @@ KEYWORDS = (
 )
 
 # --- Init client with StringSession (no DB locks) ---
-# Load session string from environment or file
-session_file = "telethon_session_string.txt"
+# Use ENVIRONMENT-SPECIFIC sessions to prevent dual-IP conflicts
+# Production and development use completely separate sessions
+is_production = os.getenv("REPLIT_DEPLOYMENT") == "1"
+session_file = "telethon_session_prod.txt" if is_production else "telethon_session_dev.txt"
+
+print(f"[TELETHON] Loading {'PRODUCTION' if is_production else 'DEVELOPMENT'} session: {session_file}")
+
 if os.path.exists(session_file):
     with open(session_file, "r") as f:
         session_string = f.read().strip()
     client = TelegramClient(StringSession(session_string), api_id, api_hash)
+    print(f"[TELETHON] Using existing session from {session_file}")
 else:
-    # First time: create new session
-    client = TelegramClient(StringSession(), api_id, api_hash)
+    # Fallback: try old session file for backward compatibility
+    old_session_file = "telethon_session_string.txt"
+    if os.path.exists(old_session_file):
+        print(f"[TELETHON] WARNING: Old session file found. Please run setup to create {session_file}")
+        with open(old_session_file, "r") as f:
+            session_string = f.read().strip()
+        client = TelegramClient(StringSession(session_string), api_id, api_hash)
+    else:
+        # First time: create new session
+        print(f"[TELETHON] ERROR: No session file found. Run setup_telethon.py first!")
+        client = TelegramClient(StringSession(), api_id, api_hash)
 
 # simple rolling de-dupe cache
 _recent = []

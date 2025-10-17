@@ -1,13 +1,14 @@
 """
-One-time Telethon Setup Script
--------------------------------
-Run this script ONCE in the Replit Shell to authenticate your Telegram account.
-After this, the auto-forwarder will work automatically 24/7.
+Environment-Specific Telethon Setup Script
+-------------------------------------------
+Creates PRODUCTION session for deployment (prevents dual-IP conflicts).
+Run this in Replit workspace, then session will be deployed to production.
 
 Command: python setup_telethon.py
 """
 
 import os
+import sys
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 
@@ -15,12 +16,17 @@ from telethon.sessions import StringSession
 api_id = 26395582
 api_hash = "a32cb77b68ad84fb0dd60531d83698dc"
 
-session_file = "telethon_session_string.txt"
-
-print("🔐 Telethon First-Time Setup")
+print("🔐 Telethon Production Session Setup")
 print("=" * 50)
-print("\nThis will authenticate your Telegram account.")
-print("You'll receive a code on your Telegram app.\n")
+print("\n⚠️  IMPORTANT: This creates a PRODUCTION session for deployment")
+print("This session will ONLY work in production (not in development workspace)")
+print("\nYou'll receive a code on your Telegram app.\n")
+
+# Ask user confirmation
+response = input("Continue? (yes/no): ").lower().strip()
+if response != "yes":
+    print("❌ Setup cancelled")
+    sys.exit(0)
 
 # Create client
 client = TelegramClient(StringSession(), api_id, api_hash)
@@ -28,16 +34,21 @@ client = TelegramClient(StringSession(), api_id, api_hash)
 async def main():
     await client.start()
     
-    # Save session string
+    # Save PRODUCTION session
     session_string = client.session.save()
-    with open(session_file, "w") as f:
+    prod_session_file = "telethon_session_prod.txt"
+    
+    with open(prod_session_file, "w") as f:
         f.write(session_string)
     
     print("\n✅ Authentication successful!")
-    print(f"✅ Session saved to {session_file}")
-    print("\nYou can now run the auto-forwarder:")
-    print("  python telethon_forwarder.py")
-    print("\nOr restart the VerzekAutoTrader workflow - it will work automatically!")
+    print(f"✅ Production session saved to {prod_session_file}")
+    print("\n📦 NEXT STEPS:")
+    print("  1. This file will be included in your next deployment")
+    print("  2. Click 'Republish' in the Deployments panel")
+    print("  3. Production will automatically use this session")
+    print("\n⚠️  CRITICAL: Do NOT run Telethon in development workspace")
+    print("  (It will conflict with production and break the session)")
     
     await client.disconnect()
 
