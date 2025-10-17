@@ -18,6 +18,13 @@ api_hash = "a32cb77b68ad84fb0dd60531d83698dc"
 # --- BROADCAST BOT USERNAME (change this to your actual bot username) ---
 BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot username
 
+# --- MONITORED CHANNELS (signals from these channels will be forwarded) ---
+# Add channel usernames or IDs here (without @)
+MONITORED_CHANNELS = [
+    "aigoldencrypto",  # Ai Golden Crypto channel
+    # Add more channels as needed
+]
+
 # --- TARGET GROUPS (for loop prevention only) ---
 VIP_GROUP_ID = -1002721581400
 TRIAL_GROUP_ID = -1002726167386
@@ -104,55 +111,70 @@ async def auto_forward(event):
     if "VERZEKSIGNALBOT" in upper or "NEW SIGNAL ALERT" in upper:
         return
 
-    # 5) Block spam/promotional messages (common spam keywords)
-    SPAM_KEYWORDS = (
-        "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
-        "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", "REACH OUT",
-        "JOIN OUR", "JOIN US", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
-        "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL",
-        "CRYPTO PUMP", "PUMP AND", "YESTERDAY", "REVEALED", 
-        "PROVEN SYSTEM", "BUILD TRUST", "FULL STORY", "NO LUCK",
-        "DISCIPLINE", "BE PART", "NEXT BIG", "MAKE PROFIT",
-        "WHAT IS A", "HOW IT WORKS", "WHY IT", "EXAMPLE",
-        "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED",
-        "HYPERLIQUID", "NO KYC", "NO RESTRICTIONS", "INSTANT SIGNUP",
-        "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT",
-        "GN, TRADERS", "GOOD NIGHT", "REST UP", "PRODUCTIVE DAY",
-        "GROWING OUR", "FINE-TUNING", "STEP BY STEP",
-        "GOLDENCRYPTOSIGNALS", "AI GOLDEN", "AUTO-DETECTS", "BUILT BY",
-        "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS",
-        "INVITE LINK", "T.ME/", "BINARYBOSS", "BITNOBLES"
-    )
+    # 5) Check if message is from a monitored channel (always allow these)
+    from_monitored_channel = False
+    try:
+        chat = await event.get_chat()
+        chat_username = (getattr(chat, 'username', None) or "").lower()
+        if chat_username in [c.lower() for c in MONITORED_CHANNELS]:
+            from_monitored_channel = True
+            print(f"📢 Message from monitored channel: @{chat_username}")
+    except Exception as e:
+        pass
     
-    spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
-    if spam_hits >= 2:
-        print(f"⛔ Blocked spam/promotional message")
-        return
+    # 6) Block spam/promotional messages (only if NOT from monitored channel)
+    if not from_monitored_channel:
+        SPAM_KEYWORDS = (
+            "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
+            "WRITE ME", "CONTACT", "DM ME", "DIRECT MESSAGE", "REACH OUT",
+            "JOIN OUR", "JOIN US", "PARTICIPATE", "PUMP GROUP", "VIP GROUP",
+            "SUBSCRIBE", "CHANNEL", "VIDEO GUIDE", "TEXT MANUAL",
+            "CRYPTO PUMP", "PUMP AND", "YESTERDAY", "REVEALED", 
+            "PROVEN SYSTEM", "BUILD TRUST", "FULL STORY", "NO LUCK",
+            "DISCIPLINE", "BE PART", "NEXT BIG", "MAKE PROFIT",
+            "WHAT IS A", "HOW IT WORKS", "WHY IT", "EXAMPLE",
+            "PICK A COIN", "BUY TOGETHER", "ATTRACTS", "COORDINATED",
+            "HYPERLIQUID", "NO KYC", "NO RESTRICTIONS", "INSTANT SIGNUP",
+            "GLOBAL ACCESS", "BREAK FREE", "TRADE WITHOUT",
+            "GN, TRADERS", "GOOD NIGHT", "REST UP", "PRODUCTIVE DAY",
+            "GROWING OUR", "FINE-TUNING", "STEP BY STEP",
+            "GOLDENCRYPTOSIGNALS", "AUTO-DETECTS", "BUILT BY",
+            "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS",
+            "INVITE LINK", "T.ME/", "BINARYBOSS", "BITNOBLES"
+        )
     
-    # 5.5) Block obvious invite link spam (single keyword match for these)
-    INVITE_SPAM_PATTERNS = ["T.ME/", "INVITE LINK"]
-    if any(pattern in upper for pattern in INVITE_SPAM_PATTERNS):
-        print(f"🚫 Blocked invite link spam")
-        return
+        spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
+        if spam_hits >= 2:
+            print(f"⛔ Blocked spam/promotional message")
+            return
+        
+        # 6.5) Block obvious invite link spam (single keyword match for these)
+        INVITE_SPAM_PATTERNS = ["T.ME/", "INVITE LINK"]
+        if any(pattern in upper for pattern in INVITE_SPAM_PATTERNS):
+            print(f"🚫 Blocked invite link spam")
+            return
     
-    # 6) Only act on signal-like content (>= 2 keywords)
+    # 7) Only act on signal-like content (>= 2 keywords) OR from monitored channel
     hits = sum(k in upper for k in KEYWORDS)
-    if hits < 2:
+    if hits < 2 and not from_monitored_channel:
         return
 
-    # 7) De-duplicate exact same text
+    # 8) De-duplicate exact same text
     if seen_before(text):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 8) Send RAW signal to broadcast bot (bot will add header)
+    # 9) Send RAW signal to broadcast bot (bot will add header)
     try:
         await client.send_message(BROADCAST_BOT_USERNAME, text)
-        print(f"✅ Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
+        source_type = "CHANNEL" if from_monitored_channel else "PERSONAL CHAT"
+        print(f"✅ [{source_type}] Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
     except Exception as e:
         print(f"⚠️ Failed to send to broadcast bot: {e}")
 
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
+print(f"📢 Monitored channels: {', '.join('@' + c for c in MONITORED_CHANNELS) if MONITORED_CHANNELS else 'None'}")
+print(f"💬 Also monitoring personal chats for signals...")
 client.start()
 
 # NOTE: Session is already persisted in environment-specific file (telethon_session_prod.txt or telethon_session_dev.txt)
