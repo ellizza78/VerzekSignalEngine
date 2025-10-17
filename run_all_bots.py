@@ -20,22 +20,26 @@ def run_flask_api():
 
 def run_telethon_forwarder():
     """Run Telethon Auto-Forwarder"""
-    # Check if authenticated first
     import os
     
-    # CRITICAL: Telethon runs ONLY when explicitly enabled
+    # AUTOMATIC PRODUCTION DETECTION (No manual configuration required!)
+    # Replit automatically sets REPLIT_DEPLOYMENT=1 in published apps
     # This prevents dual-IP session conflicts between dev and production
-    # Set ENABLE_TELETHON=true in deployment environment variables to enable
-    if os.getenv("ENABLE_TELETHON", "").lower() != "true":
-        print("⏭️ Telethon disabled (ENABLE_TELETHON not set)")
-        print("📱 To receive signals: Set ENABLE_TELETHON=true in deployment environment")
+    is_production = os.getenv("REPLIT_DEPLOYMENT") == "1"
+    manual_override = os.getenv("ENABLE_TELETHON", "").lower() == "true"
+    
+    if not (is_production or manual_override):
+        print("⏭️ Telethon disabled in development (prevents dual-IP conflicts)")
+        print("✅ Telethon will auto-start in production deployment")
         return
     
+    # Check for valid session
     if not os.path.exists("telethon_session_string.txt"):
-        print("⚠️ Telethon not authenticated yet. Run 'python setup_telethon.py' first.")
+        print("⚠️ Telethon not authenticated. Run 'python setup_telethon.py' first.")
         return
     
-    print("🔄 Starting Telethon Auto-Forwarder...")
+    env_type = "PRODUCTION" if is_production else "MANUAL"
+    print(f"🔄 Starting Telethon Auto-Forwarder ({env_type})...")
     print("📡 Monitoring Telegram for trading signals...")
     subprocess.run([sys.executable, "telethon_forwarder.py"])
 
