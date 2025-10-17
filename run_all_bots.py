@@ -23,14 +23,12 @@ def run_telethon_forwarder():
     # Check if authenticated first
     import os
     
-    # Detect if running in development (Replit workspace) vs production (deployment)
-    # REPL_SLUG exists in workspace, REPL_DEPLOYMENT_ID exists in deployment
-    is_development = os.getenv("REPL_SLUG") and not os.getenv("REPL_DEPLOYMENT_ID")
-    
-    # Skip Telethon in dev to avoid dual-IP conflicts with production
-    if is_development or os.getenv("DISABLE_TELETHON", "").lower() == "true":
-        print("⏭️ Telethon disabled in development (prevents dual-IP session conflicts)")
-        print("📱 Telethon runs ONLY in production deployment for 24/7 signal monitoring")
+    # CRITICAL: Telethon runs ONLY when explicitly enabled
+    # This prevents dual-IP session conflicts between dev and production
+    # Set ENABLE_TELETHON=true in deployment environment variables to enable
+    if os.getenv("ENABLE_TELETHON", "").lower() != "true":
+        print("⏭️ Telethon disabled (ENABLE_TELETHON not set)")
+        print("📱 To receive signals: Set ENABLE_TELETHON=true in deployment environment")
         return
     
     if not os.path.exists("telethon_session_string.txt"):
@@ -38,6 +36,7 @@ def run_telethon_forwarder():
         return
     
     print("🔄 Starting Telethon Auto-Forwarder...")
+    print("📡 Monitoring Telegram for trading signals...")
     subprocess.run([sys.executable, "telethon_forwarder.py"])
 
 def run_broadcast_bot():
