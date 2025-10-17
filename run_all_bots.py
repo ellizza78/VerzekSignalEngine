@@ -23,6 +23,11 @@ def run_telethon_forwarder():
     # Check if authenticated first
     import os
     
+    # TEMPORARILY DISABLED IN DEV - Run only in production to avoid dual-IP conflicts
+    print("⏭️ Telethon disabled in development (prevents dual-IP session conflicts)")
+    print("📱 Telethon runs ONLY in production deployment for 24/7 signal monitoring")
+    return
+    
     # Skip Telethon in dev if DISABLE_TELETHON is set (prevents dual-IP conflicts)
     if os.getenv("DISABLE_TELETHON", "").lower() == "true":
         print("⏭️ Telethon disabled (DISABLE_TELETHON=true)")
