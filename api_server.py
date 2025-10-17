@@ -111,7 +111,7 @@ def home():
     uptime = round(time.time() - start_time, 2)
     return jsonify({
         "name": "VerzekAutoTrader API",
-        "version": "1.1-telethon-fix",
+        "version": "1.2-auto-detection",
         "status": "online",
         "uptime_seconds": uptime,
         "description": "Automated cryptocurrency trading bot API",
