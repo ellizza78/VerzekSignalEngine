@@ -70,6 +70,12 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
 - **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
 
 ## Recent Changes
+- **2025-10-17**: Telethon Dual-IP Authentication Fix ✅ (Architect Approved)
+  - ✅ **DISABLE_TELETHON Environment Variable**: Added toggle to prevent dual-IP session conflicts
+  - ✅ **Deployment Guide**: Created TELETHON_SETUP_GUIDE.md with clear setup instructions
+  - ✅ **Error Resolution**: Fixed AuthKeyDuplicatedError when running dev + production simultaneously
+  - ✅ **Flexible Deployment**: Can now run Telethon in production-only or development-only mode
+
 - **2025-10-16**: Phase 5 Advanced Trading Features COMPLETE ✅
   - ✅ **AI Trade Assistant**: GPT-4o-mini powered signal analysis, recommendations, predictions, sentiment
   - ✅ **Multi-Timeframe Analysis**: Simultaneous analysis across 6 timeframes with divergence detection

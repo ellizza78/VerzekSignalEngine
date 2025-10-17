@@ -22,6 +22,12 @@ def run_telethon_forwarder():
     """Run Telethon Auto-Forwarder"""
     # Check if authenticated first
     import os
+    
+    # Skip Telethon in dev if DISABLE_TELETHON is set (prevents dual-IP conflicts)
+    if os.getenv("DISABLE_TELETHON", "").lower() == "true":
+        print("⏭️ Telethon disabled (DISABLE_TELETHON=true)")
+        return
+    
     if not os.path.exists("telethon_session_string.txt"):
         print("⚠️ Telethon not authenticated yet. Run 'python setup_telethon.py' first.")
         return
