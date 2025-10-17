@@ -23,19 +23,20 @@ def run_telethon_forwarder():
     # Check if authenticated first
     import os
     
-    # TEMPORARILY DISABLED IN DEV - Run only in production to avoid dual-IP conflicts
-    print("⏭️ Telethon disabled in development (prevents dual-IP session conflicts)")
-    print("📱 Telethon runs ONLY in production deployment for 24/7 signal monitoring")
-    return
+    # Detect if running in development (Replit workspace) vs production (deployment)
+    # REPL_SLUG exists in workspace, REPL_DEPLOYMENT_ID exists in deployment
+    is_development = os.getenv("REPL_SLUG") and not os.getenv("REPL_DEPLOYMENT_ID")
     
-    # Skip Telethon in dev if DISABLE_TELETHON is set (prevents dual-IP conflicts)
-    if os.getenv("DISABLE_TELETHON", "").lower() == "true":
-        print("⏭️ Telethon disabled (DISABLE_TELETHON=true)")
+    # Skip Telethon in dev to avoid dual-IP conflicts with production
+    if is_development or os.getenv("DISABLE_TELETHON", "").lower() == "true":
+        print("⏭️ Telethon disabled in development (prevents dual-IP session conflicts)")
+        print("📱 Telethon runs ONLY in production deployment for 24/7 signal monitoring")
         return
     
     if not os.path.exists("telethon_session_string.txt"):
         print("⚠️ Telethon not authenticated yet. Run 'python setup_telethon.py' first.")
         return
+    
     print("🔄 Starting Telethon Auto-Forwarder...")
     subprocess.run([sys.executable, "telethon_forwarder.py"])
 
