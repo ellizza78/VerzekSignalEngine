@@ -933,3 +933,137 @@ Updated working bot version from local PC
 [2025-10-16 21:12:42] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
 [2025-10-16 21:12:42] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-16 21:12:42] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:26:47] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 06:26:47] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 06:26:47] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 06:26:47] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 06:26:47] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:26:47] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 06:26:47] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 06:26:48] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:27:20] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 06:27:20] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 06:27:21] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 06:27:21] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 06:27:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:27:21] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 06:27:21] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 06:27:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:27:37] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 06:35:55] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 06:35:55] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 06:35:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:35:55] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 06:35:55] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 06:35:55] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 06:35:55] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 06:35:56] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:36:12] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 06:57:48] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 06:57:48] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:57:49] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 06:57:49] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 06:57:49] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 06:57:49] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 06:57:49] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 06:57:49] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 06:57:53] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:06:59] [TARGET_MONITOR] 🛑 Target Monitor stopped
+[2025-10-17 07:07:08] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:07:09] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:07:09] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:07:09] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:07:09] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:07:09] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:07:09] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:07:09] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:07:12] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:13:54] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:13:54] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:13:54] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:13:54] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:13:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:13:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:13:54] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:13:54] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:14:06] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:15:54] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:15:54] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:15:54] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:15:54] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:15:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:15:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:15:55] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:15:55] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:16:07] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:16:47] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:16:47] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:16:47] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:16:47] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:16:47] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:16:47] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:16:47] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:16:47] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:16:59] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:22:29] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:22:29] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:22:29] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:22:29] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:22:29] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:22:29] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:22:29] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:22:30] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:24:23] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:24:23] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:24:23] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:24:23] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:24:23] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:24:23] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:24:23] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:24:23] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:24:28] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:28:23] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:28:23] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:28:24] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:28:24] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:28:24] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:28:24] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:28:24] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:28:24] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:28:24] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:28:24] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:28:24] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:28:24] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:28:24] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:28:24] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:28:24] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:28:24] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:28:30] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:28:30] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:29:56] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:29:56] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:29:56] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:29:56] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:29:56] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:29:56] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:29:56] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:29:56] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:30:00] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:35:02] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:35:02] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:35:02] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:35:02] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:35:03] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:35:03] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:35:03] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:35:03] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:35:14] [API] 🌐 Starting Flask API on port 5000
+[2025-10-17 07:37:49] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-17 07:37:49] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-17 07:37:49] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-17 07:37:50] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-17 07:37:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:37:50] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-17 07:37:50] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-17 07:37:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-17 07:37:54] [API] 🌐 Starting Flask API on port 5000
