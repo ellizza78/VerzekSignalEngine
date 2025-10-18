@@ -8,7 +8,7 @@ import re
 import time
 from typing import Optional, Dict, List
 from modules.dca_orchestrator import DCAOrchestrator
-from modules.user_manager import UserManager
+from modules.user_manager_v2 import UserManager
 from utils.logger import log_event
 
 class SignalAutoTrader:
