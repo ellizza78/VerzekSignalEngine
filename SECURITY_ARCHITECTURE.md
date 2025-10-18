@@ -218,7 +218,7 @@ ENCRYPTION_SALT=VerzekSalt2025
 
 ### ✅ Layer 5: Operational Security
 - **Audit Logging**: All API key usage logged
-- **IP Whitelisting**: Exchange APIs restricted to server IP (34.11.228.15)
+- **IP Whitelisting**: Exchange APIs restricted to server IP (dynamic - fetch via /api/system/ip)
 - **Key Rotation**: Automated rotation reminders every 90 days
 - **Breach Detection**: Monitor for unusual API activity
 
@@ -256,7 +256,7 @@ ENCRYPTION_SALT=VerzekSalt2025
 
 ### ✅ Do This:
 1. **Use API Key Restrictions** on exchange:
-   - IP Whitelist: `34.11.228.15` (VerzekAutoTrader server)
+   - IP Whitelist: Get current IP from **Exchange Setup tab** in mobile app (dynamically fetched)
    - Permissions: Trading only (no withdrawals)
    - Expiry: Set 90-day auto-expiration
 

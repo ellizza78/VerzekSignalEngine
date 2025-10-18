@@ -190,13 +190,13 @@ def test():
 
 @app.route("/api/system/ip")
 def get_server_ip():
-    """Get server IP for exchange API whitelisting"""
+    """Get server IP for exchange API whitelisting (dynamically fetched from ipify.org)"""
     import requests as req
     try:
         response = req.get('https://api.ipify.org?format=json', timeout=5)
-        server_ip = response.json().get('ip', '34.11.228.15')
+        server_ip = response.json().get('ip', 'Unable to fetch IP')
     except:
-        server_ip = '34.11.228.15'
+        server_ip = 'Unable to fetch IP'
     
     return jsonify({
         "server_ip": server_ip,
