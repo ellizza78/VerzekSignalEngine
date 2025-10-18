@@ -1,15 +1,49 @@
 # IP Whitelisting Setup Guide
 
-## ✅ Complete Exchange API Connection Setup
+## ⚠️ IMPORTANT: Static IP Requirement for Production
 
-VerzekAutoTrader uses **IP whitelisting** for maximum security when connecting to exchanges. This ensures your API keys can only be used from our trusted server.
+**Binance Futures API keys REQUIRE IP whitelisting** to enable trading permissions. Without IP restrictions, Binance will **automatically delete** API keys with trading permissions for security.
+
+### Problem: Replit Dynamic IPs
+Replit Reserved VM deployments use **dynamic IP addresses** that can change on restart/redeploy. This makes direct IP whitelisting unreliable.
+
+### Solution: Cloudflare Workers Proxy
+VerzekAutoTrader includes a **Cloudflare Workers proxy** that provides a static egress IP address for all exchange API calls.
+
+**Recommended Setup:**
+1. ✅ Deploy Cloudflare Workers proxy (see `cloudflare_proxy/README.md`)
+2. ✅ Get dedicated egress IP from Cloudflare Enterprise
+3. ✅ Whitelist Cloudflare IP on all exchanges
+4. ✅ Enable proxy in Replit (PROXY_ENABLED=true)
 
 ---
 
 ## 📍 Step 1: Get Server IP Address
 
-### Production (Deployed App)
-The server IP is **dynamically assigned** by Replit Reserved VM deployment.
+### Option A: Cloudflare Workers Proxy (Recommended for Production)
+**Best for: Production deployment requiring static IP**
+
+1. Deploy Cloudflare Workers proxy (see `cloudflare_proxy/README.md`)
+2. Contact Cloudflare to get dedicated egress IP (Enterprise plan)
+3. Use Cloudflare IP for exchange whitelisting
+4. Enable proxy in Replit:
+   ```
+   PROXY_ENABLED=true
+   PROXY_URL=https://verzek-exchange-proxy.workers.dev/proxy
+   PROXY_SECRET_KEY=your-secret-key
+   ```
+
+**Benefits:**
+- ✅ Static IP (never changes)
+- ✅ Meets Binance IP whitelisting requirement
+- ✅ Production-ready reliability
+
+**Cost:** ~$200-500/month (Cloudflare Enterprise for dedicated IP)
+
+### Option B: Replit Direct IP (Testing/Development Only)
+**Best for: Development and testing**
+
+The server IP is **dynamically assigned** and can change.
 
 **How to get it:**
 1. Open VerzekAutoTrader mobile app
@@ -17,8 +51,11 @@ The server IP is **dynamically assigned** by Replit Reserved VM deployment.
 3. Copy the displayed server IP (e.g., `34.182.71.28`)
 4. Or visit: `https://your-app.replit.app/api/system/ip`
 
-### Development (Testing)
-Development uses a different IP address and separate exchange accounts.
+**⚠️ WARNING:** This IP can change on deployment restart. Not recommended for production.
+
+### Recommendation
+- **Development:** Use Replit direct IP (Option B)
+- **Production:** Use Cloudflare Workers proxy (Option A)
 
 ---
 

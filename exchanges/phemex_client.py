@@ -9,6 +9,7 @@ import hmac
 import hashlib
 import requests
 from typing import Optional, List
+from exchanges.proxy_helper import get_proxy_helper
 
 
 class PhemexClient:
@@ -38,7 +39,7 @@ class PhemexClient:
         return signature
     
     def _request(self, method: str, endpoint: str, params: Optional[dict] = None, signed: bool = False) -> dict:
-        """Make API request"""
+        """Make API request (with proxy support)"""
         if params is None:
             params = {}
         
@@ -62,15 +63,27 @@ class PhemexClient:
         
         url = f"{self.base_url}{endpoint}"
         
+        # Get proxy helper (automatically routes through proxy if enabled)
+        proxy = get_proxy_helper()
+        
         try:
-            if method == "GET":
-                response = requests.get(url, params=params, headers=headers, timeout=10)
-            elif method == "POST":
-                response = requests.post(url, json=params, headers=headers, timeout=10)
-            elif method == "DELETE":
-                response = requests.delete(url, params=params, headers=headers, timeout=10)
+            # Route through proxy (falls back to direct if proxy disabled/failed)
+            if method == "POST":
+                response = proxy.request(
+                    method=method,
+                    url=url,
+                    headers=headers,
+                    json_data=params,
+                    timeout=10
+                )
             else:
-                return {"error": f"Unsupported method: {method}"}
+                response = proxy.request(
+                    method=method,
+                    url=url,
+                    params=params,
+                    headers=headers,
+                    timeout=10
+                )
             
             response.raise_for_status()
             return response.json()

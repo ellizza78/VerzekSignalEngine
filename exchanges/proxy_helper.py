@@ -82,21 +82,25 @@ class ProxyHelper:
         if parsed_url.query:
             query_string = f"{parsed_url.query}&{query_string}" if query_string else parsed_url.query
         
-        # Prepare body for signature
+        # Prepare body for signature (use EXACT same serialization that will be sent)
         body = ""
         if json_data:
             import json
+            # Serialize JSON with compact format (no spaces)
             body = json.dumps(json_data, separators=(',', ':'))
         
-        # Generate proxy signature
+        # Generate proxy signature on the EXACT body that will be sent
         proxy_signature = self._generate_proxy_signature(body)
         
         # Build proxy headers
         proxy_headers = {
             "X-Proxy-Signature": proxy_signature,
             "X-Exchange-Host": exchange_host,
-            "Content-Type": "application/json" if json_data else "application/x-www-form-urlencoded"
         }
+        
+        # Set Content-Type explicitly
+        if json_data:
+            proxy_headers["Content-Type"] = "application/json"
         
         # Add original exchange headers (API keys, etc.)
         if headers:
@@ -118,12 +122,21 @@ class ProxyHelper:
                     timeout=timeout
                 )
             elif method == "POST":
-                response = requests.post(
-                    proxy_endpoint,
-                    headers=proxy_headers,
-                    data=body if body else None,
-                    timeout=timeout
-                )
+                # For POST, send the SAME serialized body that was signed
+                if body:
+                    # Send exact JSON string that was used for signature
+                    response = requests.post(
+                        proxy_endpoint,
+                        headers=proxy_headers,
+                        data=body,  # Send exact string that was signed
+                        timeout=timeout
+                    )
+                else:
+                    response = requests.post(
+                        proxy_endpoint,
+                        headers=proxy_headers,
+                        timeout=timeout
+                    )
             elif method == "DELETE":
                 response = requests.delete(
                     proxy_endpoint,

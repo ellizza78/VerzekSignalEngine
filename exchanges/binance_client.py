@@ -10,6 +10,7 @@ import hashlib
 import requests
 from typing import Dict, Optional, List
 from datetime import datetime
+from exchanges.proxy_helper import get_proxy_helper
 
 
 class BinanceClient:
@@ -49,7 +50,7 @@ class BinanceClient:
         return signature
     
     def _request(self, method: str, endpoint: str, params: Optional[dict] = None, signed: bool = False) -> dict:
-        """Make API request"""
+        """Make API request (with proxy support)"""
         if params is None:
             params = {}
         
@@ -62,15 +63,18 @@ class BinanceClient:
         base_url = self.base_url if self.market_type == "futures" else self.spot_url
         url = f"{base_url}{endpoint}"
         
+        # Get proxy helper (automatically routes through proxy if enabled)
+        proxy = get_proxy_helper()
+        
         try:
-            if method == "GET":
-                response = requests.get(url, params=params, headers=self.headers, timeout=10)
-            elif method == "POST":
-                response = requests.post(url, params=params, headers=self.headers, timeout=10)
-            elif method == "DELETE":
-                response = requests.delete(url, params=params, headers=self.headers, timeout=10)
-            else:
-                return {"error": f"Unsupported method: {method}"}
+            # Route through proxy (falls back to direct if proxy disabled/failed)
+            response = proxy.request(
+                method=method,
+                url=url,
+                params=params,
+                headers=self.headers,
+                timeout=10
+            )
             
             response.raise_for_status()
             return response.json()
