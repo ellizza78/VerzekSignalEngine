@@ -70,6 +70,18 @@ See `SECURITY_ARCHITECTURE.md` for complete details.
 - **Storage**: `database/user_exchange_accounts.json` contains only encrypted credentials
 
 ## Recent Changes
+- **2025-10-18**: Complete Priority Signal Auto-Trading + IP Whitelisting ✅ (Architect Approved)
+  - ✅ **Priority Signal Detection**: Detects "⚡ Setup Auto-Trade ⚡" and priority keywords in broadcast bot
+  - ✅ **Auto-Trading Pipeline**: ALL signals auto-traded (priority bypass quality filter, regular apply filter)
+  - ✅ **SignalAutoTrader Module**: Parses signals, processes for all auto-trade users, calls orchestrator
+  - ✅ **DCA Orchestrator Priority**: Added `is_priority` parameter, bypasses quality filter when True
+  - ✅ **Visual Priority Indicators**: Adds "⚡ PRIORITY AUTO-TRADE SIGNAL ⚡" header to priority broadcasts
+  - ✅ **IP Whitelisting System**: Dynamic IP fetching via /api/system/ip (ipify.org integration)
+  - ✅ **IP Documentation**: Created comprehensive IP_WHITELISTING_GUIDE.md with 4 exchange tutorials
+  - ✅ **Mobile Integration**: Exchange Setup screen displays current server IP with copy button
+  - ✅ **Updated Security Docs**: SECURITY_ARCHITECTURE.md references dynamic IP (removed hardcoded)
+  - ✅ **Onboarding Guidance**: Modal directs users to Exchange Setup tab for IP whitelisting
+
 - **2025-10-17**: Telethon Environment-Specific Sessions ✅ (Final Solution)
   - ✅ **Separate Sessions**: Development and production use completely independent session files
   - ✅ **Auto Environment Detection**: Uses REPLIT_DEPLOYMENT=1 to select correct session
