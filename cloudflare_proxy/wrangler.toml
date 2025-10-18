@@ -1,0 +1,22 @@
+# Cloudflare Workers Configuration for VerzekAutoTrader Proxy
+# Deploy with: wrangler deploy
+
+name = "verzek-exchange-proxy"
+main = "worker.js"
+compatibility_date = "2024-10-01"
+
+# Worker settings
+workers_dev = true
+
+# Environment variables (set these in Cloudflare dashboard or via wrangler secret)
+[vars]
+# PROXY_SECRET_KEY = "set-via-wrangler-secret-put-PROXY_SECRET_KEY"
+
+# Routes (optional - for custom domain)
+# [[routes]]
+# pattern = "proxy.verzek.com/*"
+# zone_name = "verzek.com"
+
+# Usage limits
+# Free tier: 100,000 requests/day
+# Paid tier: Unlimited requests ($5/month + $0.50/million requests)
