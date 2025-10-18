@@ -1,0 +1,26 @@
+{
+  "name": "verzek-exchange-proxy",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers proxy for VerzekAutoTrader exchange API routing with static IP",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "proxy",
+    "static-ip",
+    "exchange-api",
+    "binance",
+    "bybit",
+    "phemex",
+    "coinexx"
+  ],
+  "author": "VerzekAutoTrader",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
