@@ -33,7 +33,8 @@ class DCAOrchestrator:
         leverage: int = 10,
         targets: Optional[list] = None,
         stop_loss: Optional[float] = None,
-        provider: str = "unknown"
+        provider: str = "unknown",
+        is_priority: bool = False
     ) -> dict:
         """Execute a trading signal with full safety checks
         
@@ -46,6 +47,7 @@ class DCAOrchestrator:
             targets: List of target dicts [{"target_num": 1, "price": 50000}, ...]
             stop_loss: Stop loss price (optional)
             provider: Signal provider name for quality tracking
+            is_priority: If True, bypasses quality filter (for "Setup Auto-Trade" signals)
         
         Returns:
             Execution result dictionary
@@ -55,11 +57,14 @@ class DCAOrchestrator:
         if not user:
             return {"success": False, "error": "User not found"}
         
-        # Step 1.5: Signal Quality Check (if enabled)
+        # Step 1.5: Signal Quality Check (if enabled AND not priority signal)
         signal_quality_enabled = user.strategy_settings.get("signal_quality_filter", True)
         quality_threshold = user.strategy_settings.get("signal_quality_threshold", 60.0)
         
-        if signal_quality_enabled:
+        # PRIORITY SIGNALS bypass quality filter (always trusted)
+        if is_priority:
+            log_event("ORCHESTRATOR", f"⚡ PRIORITY signal for {symbol} - bypassing quality filter")
+        elif signal_quality_enabled:
             signal_data = {
                 "symbol": symbol,
                 "signal_type": side.lower(),

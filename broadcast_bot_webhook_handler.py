@@ -13,6 +13,7 @@ import re
 from telegram import Bot, Update
 from signal_parser import parse_close_signal
 from modules.dca_orchestrator import DCAOrchestrator
+from modules.signal_auto_trader import signal_auto_trader
 
 # Load sensitive values from environment variables
 BROADCAST_BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN")
@@ -72,6 +73,22 @@ def clean_signal(text):
     
     return result.strip()
 
+def is_priority_signal(text):
+    """Check if signal is marked as high priority for auto-trading"""
+    text_upper = text.upper()
+    
+    # Priority indicators from signal providers
+    priority_keywords = [
+        "SETUP AUTO-TRADE",
+        "SETUP AUTOTRADE",
+        "AUTO-TRADE SETUP",
+        "AUTOTRADE SETUP",
+        "PRIORITY SIGNAL",
+        "HIGH PRIORITY"
+    ]
+    
+    return any(keyword in text_upper for keyword in priority_keywords)
+
 def is_spam(text):
     """Check if message is spam (invite links, URLs, etc.)"""
     text_upper = text.upper()
@@ -129,11 +146,19 @@ def broadcast_admin_message(message, text):
         except Exception as e:
             logger.error(f"⚠️ Error auto-closing positions for {symbol}: {e}")
 
+    # Check if this is a priority signal
+    is_priority = is_priority_signal(text)
+    
     # Clean the signal (remove hashtags, leverage indicators, etc.)
     cleaned_text = clean_signal(text)
     
     # Compose broadcast message with Verzek header
-    header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+    if is_priority:
+        header = "⚡ PRIORITY AUTO-TRADE SIGNAL ⚡\n🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+        logger.info("⚡ Broadcasting PRIORITY signal")
+    else:
+        header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+    
     msg = header + cleaned_text
 
     try:
@@ -146,6 +171,15 @@ def broadcast_admin_message(message, text):
     # Log it to file
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {text}\n")
+
+    # Trigger auto-trading for eligible users
+    try:
+        auto_trade_result = signal_auto_trader.process_signal_for_auto_trading(text, provider="admin")
+        if auto_trade_result.get("users_traded", 0) > 0:
+            priority_tag = "⚡ PRIORITY " if is_priority else ""
+            logger.info(f"✅ {priority_tag}Auto-traded for {auto_trade_result['users_traded']} users")
+    except Exception as e:
+        logger.error(f"⚠️ Auto-trade processing failed: {e}")
 
     # Confirmation to admin
     try:
@@ -163,11 +197,19 @@ def auto_forward_signal(message, text):
     # Get source info
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
+    # Check if this is a priority signal
+    is_priority = is_priority_signal(text)
+    
     # Clean the signal (remove hashtags, leverage indicators, etc.)
     cleaned_text = clean_signal(text)
     
     # Format message with Verzek branding
-    header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+    if is_priority:
+        header = "⚡ PRIORITY AUTO-TRADE SIGNAL ⚡\n🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+        logger.info(f"⚡ Auto-forwarding PRIORITY signal from {source_chat}")
+    else:
+        header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
+    
     formatted_msg = header + cleaned_text
     
     # Broadcast to VIP and TRIAL groups
@@ -179,6 +221,16 @@ def auto_forward_signal(message, text):
         # Log it
         with open(LOG_FILE, "a", encoding="utf-8") as f:
             f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
+        
+        # Trigger auto-trading for eligible users
+        try:
+            auto_trade_result = signal_auto_trader.process_signal_for_auto_trading(text, provider=source_chat)
+            if auto_trade_result.get("users_traded", 0) > 0:
+                priority_tag = "⚡ PRIORITY " if is_priority else ""
+                logger.info(f"✅ {priority_tag}Auto-traded for {auto_trade_result['users_traded']} users from {source_chat}")
+        except Exception as e:
+            logger.error(f"⚠️ Auto-trade processing failed: {e}")
+            
     except Exception as e:
         logger.error(f"⚠️ Auto-forward failed: {e}")
 
