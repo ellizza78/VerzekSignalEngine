@@ -21,7 +21,7 @@ const ALLOWED_EXCHANGES = [
 ];
 
 // Security: HMAC signature verification
-const PROXY_SECRET_KEY = 'YOUR_PROXY_SECRET_KEY_HERE'; // Set in Cloudflare Workers environment
+// PROXY_SECRET_KEY is loaded from Cloudflare Workers environment variables
 
 // ============================================
 // CORS HEADERS
