@@ -94,7 +94,7 @@ class ExchangeFactory:
         """Create exchange client
         
         Args:
-            exchange_name: binance, bybit, phemex, coinexx
+            exchange_name: binance, bybit, phemex, kraken
             mode: demo or live
             **kwargs: Additional config (testnet, etc.)
         """
@@ -121,12 +121,12 @@ class ExchangeFactory:
             else:
                 return PhemexClient(**kwargs)
         
-        elif exchange_name == "coinexx":
-            from .coinexx_client import CoinexxClient, CoinexxDemoClient
+        elif exchange_name == "kraken":
+            from .kraken_client import KrakenClient, KrakenDemoClient
             if mode == "demo":
-                return CoinexxDemoClient()
+                return KrakenDemoClient()
             else:
-                return CoinexxClient(**kwargs)
+                return KrakenClient(**kwargs)
         
         else:
             raise ValueError(f"Unsupported exchange: {exchange_name}")
@@ -134,4 +134,4 @@ class ExchangeFactory:
     @staticmethod
     def get_supported_exchanges() -> List[str]:
         """Get list of supported exchanges"""
-        return ["binance", "bybit", "phemex", "coinexx"]
+        return ["binance", "bybit", "phemex", "kraken"]
