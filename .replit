@@ -1,11 +1,8 @@
-modules = ["nodejs-20", "web", "c-clang14", "python-3.11"]
+run = ["bash", "start.sh"]
+modules = ["python-3.11"]
+
 [agent]
 expertMode = true
-integrations = ["python_openai_ai_integrations:1.0.0"]
-
-[nix]
-channel = "stable-25_05"
-packages = ["cargo", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc"]
 
 [workflows]
 runButton = "Project"
@@ -35,6 +32,6 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
-[deployment]
-deploymentTarget = "vm"
-run = ["python", "run_all_bots.py"]
+[[ports]]
+localPort = 46427
+externalPort = 3000

@@ -35,7 +35,9 @@ env/
 *~
 
 # Replit
-.replit
+# (keep these files safe for auto-start)
+!start.sh
+!.replit
 replit.nix
 .upm/
 .pythonlibs/

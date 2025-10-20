@@ -1,0 +1,14 @@
+# create the cloudflared dir (if it doesn't exist) and write config.yml
+mkdir -p ~/.cloudflared
+
+cat > ~/.cloudflared/config.yml <<'EOF'
+tunnel: 46321314-965c-4b50-a0aa-be0c0cca2fbb
+credentials-file: /home/runner/.cloudflared/46321314-965c-4b50-a0aa-be0c0cca2fbb.json
+ingress:
+  - hostname: bot.verzekinnovativesolutions.com
+    service: http://localhost:8000
+  - service: http_status:404
+EOF
+
+# show the file so you can confirm it saved correctly
+cat ~/.cloudflared/config.yml

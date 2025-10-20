@@ -37,7 +37,7 @@ const corsHeaders = {
 // HMAC SIGNATURE VERIFICATION
 // ============================================
 
-async function verifySignature(request, body) {
+async function verifySignature(request, body, secretKey) {
   const signature = request.headers.get('X-Proxy-Signature');
   if (!signature) {
     return false;
@@ -47,7 +47,7 @@ async function verifySignature(request, body) {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     'raw',
-    encoder.encode(PROXY_SECRET_KEY),
+    encoder.encode(secretKey),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign']
@@ -128,11 +128,13 @@ async function proxyToExchange(request, exchangeHost, path, queryParams) {
 // MAIN HANDLER
 // ============================================
 
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request));
-});
+export default {
+  async fetch(request, env, ctx) {
+    return handleRequest(request, env);
+  }
+};
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const url = new URL(request.url);
 
   // Handle CORS preflight
@@ -193,8 +195,19 @@ async function handleRequest(request) {
       ? await request.clone().text() 
       : '';
 
-    // Verify HMAC signature
-    const isValid = await verifySignature(request, bodyText);
+    // Verify HMAC signature using secret from environment
+    const secretKey = env.PROXY_SECRET_KEY;
+    if (!secretKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error: PROXY_SECRET_KEY not set' }),
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        }
+      );
+    }
+    
+    const isValid = await verifySignature(request, bodyText, secretKey);
     if (!isValid) {
       return new Response(
         JSON.stringify({ error: 'Invalid or missing X-Proxy-Signature header' }),
