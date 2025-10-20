@@ -140,7 +140,10 @@ async def auto_forward(event):
             "GROWING OUR", "FINE-TUNING", "STEP BY STEP",
             "GOLDENCRYPTOSIGNALS", "AUTO-DETECTS", "BUILT BY",
             "CLOSED SOURCE", "FREE FOR ALL", "TRADINGVIEW USERS",
-            "INVITE LINK", "T.ME/", "BINARYBOSS", "BITNOBLES"
+            "INVITE LINK", "T.ME/", "BINARYBOSS", "BITNOBLES",
+            "AUTOTRADE GOLDEN BOT", "AUTOTRADE BOT", "PORTFOLIO GROWTH",
+            "SUPERX SHOWDOWN", "PREDICT BTC", "LUCKY DRAW", "DUAL LEADERBOARDS",
+            "TRADING VOLUME", "ROI CONTESTS", "PRIZE POOL"
         )
     
         spam_hits = sum(k in upper for k in SPAM_KEYWORDS)
