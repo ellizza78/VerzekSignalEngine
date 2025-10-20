@@ -10,7 +10,6 @@ import hashlib
 import base64
 import requests
 from typing import Optional, List
-from exchanges.proxy_helper import get_proxy_helper
 
 
 class KrakenClient:
@@ -29,54 +28,77 @@ class KrakenClient:
         else:
             self.base_url = "https://futures.kraken.com/derivatives/api/v3"
     
-    def _generate_signature(self, endpoint: str, nonce: str, data: str = "") -> str:
-        """Generate authentication signature for Kraken API"""
+    def _generate_signature(self, endpoint: str, nonce: str, post_data: str = "") -> str:
+        """Generate authentication signature for Kraken Futures API
+        
+        Steps per Kraken docs:
+        1. Concatenate postData + nonce + endpointPath
+        2. SHA256 hash the result
+        3. Base64-decode api_secret
+        4. HMAC-SHA512 hash using decoded secret
+        5. Base64-encode the result
+        """
         if not self.api_secret:
             return ""
         
-        # Kraken uses SHA256 HMAC
-        message = data + nonce + endpoint
+        # Step 1: Concatenate postData + nonce + endpointPath
+        message = post_data + nonce + endpoint
+        
+        # Step 2: SHA256 hash
+        sha256_hash = hashlib.sha256(message.encode()).digest()
+        
+        # Step 3: Base64-decode api_secret
         secret_decoded = base64.b64decode(self.api_secret)
-        signature = hmac.new(secret_decoded, message.encode(), hashlib.sha256)
+        
+        # Step 4: HMAC-SHA512
+        signature = hmac.new(secret_decoded, sha256_hash, hashlib.sha512)
+        
+        # Step 5: Base64-encode
         return base64.b64encode(signature.digest()).decode()
     
     def _request(self, method: str, endpoint: str, params: Optional[dict] = None, authenticated: bool = False) -> dict:
-        """Make API request (with proxy support)"""
+        """Make API request
+        
+        Note: Kraken uses form-encoded data, so we bypass the proxy helper
+        (which only supports JSON). Kraken doesn't require static IP whitelisting
+        like Binance, so direct connection is acceptable.
+        """
         if params is None:
             params = {}
         
         url = f"{self.base_url}{endpoint}"
         headers = {}
         
+        # Build URL-encoded post data string for authentication
+        post_data_string = ""
+        if params:
+            # URL-encode parameters as required by Kraken
+            from urllib.parse import urlencode
+            post_data_string = urlencode(params)
+        
         # Add authentication headers if needed
         if authenticated:
             nonce = str(int(time.time() * 1000))
-            data_string = ""
-            if params:
-                data_string = "&".join([f"{k}={v}" for k, v in params.items()])
-            
-            signature = self._generate_signature(endpoint, nonce, data_string)
+            signature = self._generate_signature(endpoint, nonce, post_data_string)
             headers["APIKey"] = self.api_key
             headers["Authent"] = signature
             headers["Nonce"] = nonce
         
+        # Use form-encoded data (not JSON) as per Kraken docs
         headers["Content-Type"] = "application/x-www-form-urlencoded"
         
-        # Get proxy helper (automatically routes through proxy if enabled)
-        proxy = get_proxy_helper()
-        
         try:
-            # Route through proxy (falls back to direct if proxy disabled/failed)
-            if method == "POST":
-                response = proxy.request(
+            # Use direct requests (Kraken doesn't need proxy for IP whitelisting)
+            if method == "POST" or method == "PUT":
+                response = requests.request(
                     method=method,
                     url=url,
                     headers=headers,
-                    json_data=params,
+                    data=post_data_string,  # Send as form data
                     timeout=10
                 )
             else:
-                response = proxy.request(
+                response = requests.request(
                     method=method,
                     url=url,
                     params=params,
