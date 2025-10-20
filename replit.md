@@ -13,7 +13,7 @@ The mobile application, built with React Native and Expo, features a modern dark
 ### Technical Implementations
 - **Core Trading Modules**: Manages Dollar Cost Averaging (DCA Engine), risk (Safety Manager, auto-stop logic), signal execution (DCA Orchestrator), and position tracking (Position Tracker). Includes target-based take-profit system.
 - **Multi-User Management**: Supports multi-tenancy with per-user DCA configurations, risk settings, exchange account management, symbol whitelists/blacklists, daily stats, and subscription plans (free/pro/vip).
-- **Exchange Adapters**: Provides a unified interface for Binance, Bybit, Phemex, and Coinexx, supporting both live and demo modes, with secure API key loading. Includes Cloudflare Workers Proxy for static IP egress (solves Binance IP whitelisting requirement).
+- **Exchange Adapters**: Provides a unified interface for Binance, Bybit, Phemex, and Kraken, supporting both live and demo modes, with secure API key loading. Includes Cloudflare Workers Proxy for static IP egress (solves Binance IP whitelisting requirement).
 - **Cloudflare Workers Proxy**: Routes ALL exchange API calls through static IP address to satisfy Binance Futures IP whitelisting requirements (Replit Reserved VMs have dynamic IPs). Features HMAC SHA256 authentication, automatic fallback to direct connection, JSON signature preservation, and environment-based configuration (dev=disabled, prod=enabled).
 - **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering, broadcasting to internal bots and VIP/TRIAL Telegram groups (Broadcast Bot) with priority signal detection and auto-trading capabilities.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, position management, safety controls, and system status. Includes rate limiting, 2FA, and audit logging.
@@ -36,7 +36,7 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Binance API**: For trading operations.
 - **Bybit API**: For trading operations.
 - **Phemex API**: For trading operations.
-- **Coinexx API**: For trading operations.
+- **Kraken Futures API**: For trading operations.
 - **Flask**: Python web framework for the REST API.
 - **Requests**: Python HTTP library.
 - **Schedule**: Python library for task scheduling.
