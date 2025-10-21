@@ -23,6 +23,11 @@ class User:
         self.full_name: str = ""
         self.password_hash: str = ""
         
+        # Email verification (Option 3: CAPTCHA + Email Verification)
+        self.email_verified: bool = False
+        self.verification_token: str = ""
+        self.verification_token_expires: str = ""
+        
         # Subscription security
         self.license_key: str = ""
         self.referral_code: str = ""
@@ -338,6 +343,9 @@ class User:
         """Convert user to dictionary for storage (includes password_hash)"""
         data = self.to_dict()
         data["password_hash"] = self.password_hash  # Include for storage
+        data["email_verified"] = self.email_verified
+        data["verification_token"] = self.verification_token
+        data["verification_token_expires"] = self.verification_token_expires
         return data
     
     @staticmethod
@@ -347,6 +355,9 @@ class User:
         user.email = data.get("email", "")
         user.full_name = data.get("full_name", "")
         user.password_hash = data.get("password_hash", "")  # Load from storage but never expose via to_dict()
+        user.email_verified = data.get("email_verified", False)
+        user.verification_token = data.get("verification_token", "")
+        user.verification_token_expires = data.get("verification_token_expires", "")
         user.created_at = data.get("created_at", user.created_at)
         user.updated_at = data.get("updated_at", user.updated_at)
         user.plan = data.get("plan", "free")
