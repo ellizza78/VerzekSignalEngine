@@ -273,12 +273,17 @@ def register():
     captcha_hash = data.get("captcha_hash")
     captcha_text = data.get("captcha_text")
     
-    # CAPTCHA validation
-    if not captcha_hash or not captcha_text:
-        return jsonify({"error": "CAPTCHA is required"}), 400
+    # CAPTCHA validation (optional for mobile apps)
+    user_agent = request.headers.get('User-Agent', '').lower()
+    is_mobile_app = 'expo' in user_agent or 'react-native' in user_agent
     
-    if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
-        return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
+    if not is_mobile_app:
+        # Web users require CAPTCHA
+        if not captcha_hash or not captcha_text:
+            return jsonify({"error": "CAPTCHA is required"}), 400
+        
+        if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
+            return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
     
     # Validation
     if not email or not password:
@@ -341,17 +346,22 @@ def login():
     captcha_hash = data.get("captcha_hash")
     captcha_text = data.get("captcha_text")
     
-    # CAPTCHA validation
-    if not captcha_hash or not captcha_text:
-        return jsonify({"error": "CAPTCHA is required"}), 400
+    # CAPTCHA validation (optional for mobile apps)
+    user_agent = request.headers.get('User-Agent', '').lower()
+    is_mobile_app = 'expo' in user_agent or 'react-native' in user_agent
     
-    if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
-        audit_logger.log_event(
-            AuditEventType.LOGIN_FAILED,
-            ip_address=request.remote_addr,
-            details={'reason': 'invalid_captcha', 'email': email}
-        )
-        return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
+    if not is_mobile_app:
+        # Web users require CAPTCHA
+        if not captcha_hash or not captcha_text:
+            return jsonify({"error": "CAPTCHA is required"}), 400
+        
+        if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
+            audit_logger.log_event(
+                AuditEventType.LOGIN_FAILED,
+                ip_address=request.remote_addr,
+                details={'reason': 'invalid_captcha', 'email': email}
+            )
+            return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
     
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
