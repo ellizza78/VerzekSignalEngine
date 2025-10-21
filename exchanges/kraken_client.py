@@ -15,12 +15,12 @@ from typing import Optional, List
 class KrakenClient:
     """Kraken Futures API client"""
     
-    def __init__(self, testnet: bool = False):
+    def __init__(self, api_key: str = None, api_secret: str = None, testnet: bool = False):
         self.testnet = testnet
         
-        # Load API keys from environment (Replit Secrets)
-        self.api_key = os.getenv("KRAKEN_API_KEY", "")
-        self.api_secret = os.getenv("KRAKEN_API_SECRET", "")
+        # Accept per-user API keys or fall back to environment (backward compatible)
+        self.api_key = api_key or os.getenv("KRAKEN_API_KEY", "")
+        self.api_secret = api_secret or os.getenv("KRAKEN_API_SECRET", "")
         
         # Set base URL
         if testnet:

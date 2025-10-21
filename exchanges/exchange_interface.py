@@ -90,12 +90,14 @@ class ExchangeFactory:
     """Factory for creating exchange clients"""
     
     @staticmethod
-    def create_client(exchange_name: str, mode: str = "demo", **kwargs):
+    def create_client(exchange_name: str, mode: str = "demo", api_key: Optional[str] = None, api_secret: Optional[str] = None, **kwargs):
         """Create exchange client
         
         Args:
             exchange_name: binance, bybit, phemex, kraken
             mode: demo or live
+            api_key: User's API key (optional, falls back to env vars)
+            api_secret: User's API secret (optional, falls back to env vars)
             **kwargs: Additional config (testnet, etc.)
         """
         exchange_name = exchange_name.lower()
@@ -105,28 +107,28 @@ class ExchangeFactory:
             if mode == "demo":
                 return BinanceDemoClient()
             else:
-                return BinanceClient(**kwargs)
+                return BinanceClient(api_key=api_key, api_secret=api_secret, **kwargs)
         
         elif exchange_name == "bybit":
             from .bybit_client import BybitClient, BybitDemoClient
             if mode == "demo":
                 return BybitDemoClient()
             else:
-                return BybitClient(**kwargs)
+                return BybitClient(api_key=api_key, api_secret=api_secret, **kwargs)
         
         elif exchange_name == "phemex":
             from .phemex_client import PhemexClient, PhemexDemoClient
             if mode == "demo":
                 return PhemexDemoClient()
             else:
-                return PhemexClient(**kwargs)
+                return PhemexClient(api_key=api_key, api_secret=api_secret, **kwargs)
         
         elif exchange_name == "kraken":
             from .kraken_client import KrakenClient, KrakenDemoClient
             if mode == "demo":
                 return KrakenDemoClient()
             else:
-                return KrakenClient(**kwargs)
+                return KrakenClient(api_key=api_key, api_secret=api_secret, **kwargs)
         
         else:
             raise ValueError(f"Unsupported exchange: {exchange_name}")
@@ -135,3 +137,21 @@ class ExchangeFactory:
     def get_supported_exchanges() -> List[str]:
         """Get list of supported exchanges"""
         return ["binance", "bybit", "phemex", "kraken"]
+    
+    def get_client(self, exchange_name: str, api_key: Optional[str] = None, api_secret: Optional[str] = None, testnet: bool = False):
+        """Get exchange client instance (convenience method)
+        
+        Args:
+            exchange_name: binance, bybit, phemex, kraken
+            api_key: User's API key (optional)
+            api_secret: User's API secret (optional)
+            testnet: Use testnet (default: False)
+        """
+        mode = "demo" if testnet else "live"
+        return self.create_client(
+            exchange_name=exchange_name,
+            mode=mode,
+            api_key=api_key,
+            api_secret=api_secret,
+            testnet=testnet
+        )

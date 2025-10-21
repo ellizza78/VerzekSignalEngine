@@ -7,6 +7,7 @@ from typing import Optional, Dict
 import hashlib
 from modules import DCAEngine, PositionTracker, UserManager, SafetyManager, PositionSide
 from modules.signal_filter import signal_filter
+from modules.encryption_service import EncryptionService
 from exchanges import ExchangeFactory
 from utils.logger import log_event
 import trade_executor
@@ -21,6 +22,7 @@ class DCAOrchestrator:
         self.position_tracker = PositionTracker()
         self.dca_engines: Dict[str, DCAEngine] = {}  # user_id -> engine
         self.exchange_factory = ExchangeFactory()
+        self.encryption_service = EncryptionService()
         
         log_event("ORCHESTRATOR", "DCA Orchestrator initialized")
     
@@ -112,8 +114,32 @@ class DCAOrchestrator:
         exchange_name = active_exchange["exchange"]
         testnet = active_exchange.get("testnet", False)
         
-        # Get exchange client
-        client = self.exchange_factory.get_client(exchange_name, testnet=testnet)
+        # Decrypt user's API credentials (if encrypted)
+        api_key = None
+        api_secret = None
+        
+        if active_exchange.get("encrypted"):
+            try:
+                # Decrypt credentials from database
+                decrypted_creds = self.encryption_service.decrypt_api_credentials(active_exchange)
+                api_key = decrypted_creds.get("api_key")
+                api_secret = decrypted_creds.get("api_secret")
+                log_event("ORCHESTRATOR", f"✅ Decrypted API credentials for {exchange_name} (user: {user_id})")
+            except Exception as e:
+                log_event("ERROR", f"Failed to decrypt API credentials for {user_id}: {e}")
+                return {"success": False, "error": "Failed to decrypt exchange credentials"}
+        else:
+            # Legacy unencrypted data (backward compatibility)
+            api_key = active_exchange.get("api_key")
+            api_secret = active_exchange.get("api_secret")
+        
+        # Get exchange client with user's credentials
+        client = self.exchange_factory.get_client(
+            exchange_name=exchange_name,
+            api_key=api_key,
+            api_secret=api_secret,
+            testnet=testnet
+        )
         if not client:
             return {"success": False, "error": f"Exchange {exchange_name} not supported"}
         

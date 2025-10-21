@@ -648,24 +648,69 @@ def handle_exchanges(user_id):
         return jsonify({"error": "User not found"}), 404
     
     if request.method == "GET":
+        # Return exchange accounts without exposing encrypted credentials
+        safe_exchanges = []
+        for exc in user.exchange_accounts:
+            safe_exc = {
+                "id": exc.get("id"),
+                "exchange": exc.get("exchange"),
+                "testnet": exc.get("testnet", False),
+                "enabled": exc.get("enabled", True),
+                "added_at": exc.get("added_at"),
+                "encrypted": exc.get("encrypted", False)
+            }
+            safe_exchanges.append(safe_exc)
+        
         return jsonify({
-            "count": len(user.exchange_accounts),
-            "exchanges": user.exchange_accounts
+            "count": len(safe_exchanges),
+            "exchanges": safe_exchanges
         })
     
     elif request.method == "POST":
         data = request.json
         exchange = data.get("exchange")
-        api_key_id = data.get("api_key_id")
+        api_key = data.get("api_key")
+        api_secret = data.get("api_secret")
         testnet = data.get("testnet", False)
+        enabled = data.get("enabled", True)
         
-        if not exchange or not api_key_id:
-            return jsonify({"error": "exchange and api_key_id required"}), 400
+        if not exchange or not api_key or not api_secret:
+            return jsonify({"error": "exchange, api_key, and api_secret required"}), 400
         
-        user_manager.add_exchange_to_user(user_id, exchange, api_key_id, testnet)
+        # Encrypt API credentials before storing
+        from modules.encryption_service import EncryptionService
+        encryption_service = EncryptionService()
+        
+        try:
+            encrypted_creds = encryption_service.encrypt_api_credentials(api_key, api_secret)
+        except Exception as e:
+            log_event("ERROR", f"Encryption failed for user {user_id}: {e}")
+            return jsonify({"error": "Failed to encrypt credentials"}), 500
+        
+        # Create exchange account with encrypted credentials
+        import time
+        account_id = f"{exchange}_{int(time.time())}"
+        
+        exchange_account = {
+            "id": account_id,
+            "exchange": exchange,
+            "api_key_encrypted": encrypted_creds["api_key_encrypted"],
+            "api_secret_encrypted": encrypted_creds["api_secret_encrypted"],
+            "encrypted": True,
+            "testnet": testnet,
+            "enabled": enabled,
+            "added_at": __import__('datetime').datetime.now().isoformat()
+        }
+        
+        user.exchange_accounts.append(exchange_account)
+        user_manager._save_users()
+        
+        log_event("EXCHANGE", f"✅ Added encrypted {exchange} account for user {user_id}")
+        
         return jsonify({
-            "message": "Exchange account added",
-            "exchanges": user_manager.get_user(user_id).exchange_accounts
+            "message": "Exchange account added successfully",
+            "account_id": account_id,
+            "exchange": exchange
         }), 201
     
     elif request.method == "DELETE":
@@ -673,7 +718,13 @@ def handle_exchanges(user_id):
         if not account_id:
             return jsonify({"error": "account_id required"}), 400
         
-        user_manager.remove_exchange_account(user_id, account_id)
+        user.exchange_accounts = [
+            acc for acc in user.exchange_accounts
+            if acc.get("id") != account_id
+        ]
+        user_manager._save_users()
+        
+        log_event("EXCHANGE", f"🗑️ Removed exchange account {account_id} for user {user_id}")
         return jsonify({"message": "Exchange account removed"})
 
 
