@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List
 from utils.logger import log_event
 from services.admin_notifications import admin_notifier
+from services.financial_tracker import financial_tracker
 
 
 class PaymentSystem:
@@ -185,14 +186,23 @@ class PaymentSystem:
             
             self._save_payments()
             
-            # Notify admin of successful payment
-            admin_notifier.notify_payment_received({
+            # Record in financial tracker
+            financial_summary = financial_tracker.record_payment_received({
                 'user_id': user_id,
                 'plan': plan,
                 'amount_usdt': amount,
                 'tx_hash': payment.get('tx_hash', 'N/A'),
                 'referral_bonus': referral_bonus
             })
+            
+            # Notify admin of successful payment with financial summary
+            admin_notifier.notify_payment_received({
+                'user_id': user_id,
+                'plan': plan,
+                'amount_usdt': amount,
+                'tx_hash': payment.get('tx_hash', 'N/A'),
+                'referral_bonus': referral_bonus
+            }, financial_summary)
             
             return {
                 'success': True,
@@ -316,8 +326,11 @@ class PaymentSystem:
         
         log_event("PAYOUT", f"Payout request {payout_id}: ${payout_amount} to {wallet_address} (${WITHDRAWAL_FEE} fee)")
         
-        # Send instant notification to admin
-        admin_notifier.notify_payout_request(payout_request)
+        # Get current balance for notification
+        current_balance = financial_tracker.get_balance()
+        
+        # Send instant notification to admin with balance info
+        admin_notifier.notify_payout_request(payout_request, current_balance)
         
         return {
             'success': True,

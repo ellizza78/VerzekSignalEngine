@@ -64,7 +64,7 @@ class AdminNotificationService:
             log_event("NOTIFICATIONS", f"❌ Telegram error: {str(e)}")
             return False
     
-    def notify_payout_request(self, payout_data: Dict) -> bool:
+    def notify_payout_request(self, payout_data: Dict, current_balance: Optional[float] = None) -> bool:
         """
         Notify admin of new referral payout request
         
@@ -76,6 +76,7 @@ class AdminNotificationService:
                 'wallet_address': str,
                 'requested_at': str
             }
+            current_balance: Current financial balance (optional)
         """
         user_id = payout_data.get('user_id', 'Unknown')
         amount = payout_data.get('amount_usdt', 0)
@@ -86,7 +87,7 @@ class AdminNotificationService:
         priority = "🔴 HIGH PRIORITY" if amount >= self.HIGH_AMOUNT_THRESHOLD else "🟢"
         
         message = f"""
-{priority} <b>💰 NEW PAYOUT REQUEST</b>
+{priority} <b>💰 PAYOUT REQUEST</b>
 
 <b>User:</b> {user_id}
 <b>Amount:</b> ${amount:.2f} USDT
@@ -100,7 +101,21 @@ class AdminNotificationService:
 
 ⏰ <i>Requested: {payout_data.get('requested_at', 'N/A')}</i>
 
-<b>Action Required:</b>
+"""
+        
+        # Add balance info if provided
+        if current_balance is not None:
+            balance_after = current_balance - amount
+            message += f"""
+━━━━━━━━━━━━━━━━━━━
+💰 <b>BALANCE CHECK</b>
+Current: ${current_balance:.2f}
+After Payout: ${balance_after:.2f}
+━━━━━━━━━━━━━━━━━━━
+
+"""
+        
+        message += f"""<b>Action Required:</b>
 1. Verify wallet address is valid
 2. Send ${amount:.2f} USDT to address above
 3. Mark payout as completed in system
@@ -111,9 +126,52 @@ Processing Time: Within 24 hours
         
         return self.send_telegram(message)
     
-    def notify_payment_received(self, payment_data: Dict) -> bool:
+    def notify_payout_completed(self, payout_data: Dict, financial_summary: Optional[Dict] = None) -> bool:
         """
-        Notify admin of successful subscription payment
+        Notify admin when payout is marked as completed (for their records)
+        
+        Args:
+            payout_data: Payout details
+            financial_summary: Financial tracker data (optional)
+        """
+        user_id = payout_data.get('user_id', 'Unknown')
+        amount = payout_data.get('amount_usdt', 0)
+        tx_hash = payout_data.get('tx_hash', 'N/A')
+        
+        message = f"""
+✅ <b>PAYOUT SENT</b>
+
+<b>User:</b> {user_id}
+<b>Amount:</b> -${amount:.2f} USDT
+
+<b>TX Hash:</b>
+<code>{tx_hash[:32]}...</code>
+
+"""
+        
+        # Add financial summary if provided
+        if financial_summary:
+            balance = financial_summary.get('balance', 0)
+            total_in = financial_summary.get('total_received', 0)
+            total_out = financial_summary.get('total_paid_out', 0)
+            
+            balance_emoji = "📈" if balance >= 0 else "📉"
+            
+            message += f"""
+━━━━━━━━━━━━━━━━━━━
+💰 <b>FINANCIAL SUMMARY</b>
+
+Total Received: ${total_in:.2f}
+Total Paid Out: ${total_out:.2f}
+{balance_emoji} <b>Balance: ${balance:.2f} USDT</b>
+━━━━━━━━━━━━━━━━━━━
+"""
+        
+        return self.send_telegram(message)
+    
+    def notify_payment_received(self, payment_data: Dict, financial_summary: Optional[Dict] = None) -> bool:
+        """
+        Notify admin of successful subscription payment with financial tracking
         
         Args:
             payment_data: {
@@ -123,15 +181,17 @@ Processing Time: Within 24 hours
                 'tx_hash': str,
                 'referral_bonus': float (optional)
             }
+            financial_summary: Financial tracker data (optional)
         """
         user_id = payment_data.get('user_id', 'Unknown')
         plan = payment_data.get('plan', 'N/A').upper()
         amount = payment_data.get('amount_usdt', 0)
         tx_hash = payment_data.get('tx_hash', 'N/A')
         bonus = payment_data.get('referral_bonus', 0)
+        net_revenue = amount - bonus
         
         message = f"""
-✅ <b>PAYMENT VERIFIED</b>
+✅ <b>PAYMENT RECEIVED</b>
 
 <b>User:</b> {user_id}
 <b>Plan:</b> {plan}
@@ -139,13 +199,32 @@ Processing Time: Within 24 hours
 """
         
         if bonus > 0:
-            message += f"\n<b>Referral Bonus:</b> ${bonus:.2f} credited to referrer\n"
+            message += f"<b>Referral Bonus:</b> -${bonus:.2f} (paid to referrer)\n"
+        
+        message += f"<b>Your Revenue:</b> +${net_revenue:.2f} USDT\n"
         
         message += f"""
 <b>TX Hash:</b>
 <code>{tx_hash[:32]}...</code>
 
-💰 Revenue: ${amount - bonus:.2f} USDT
+"""
+        
+        # Add financial summary if provided
+        if financial_summary:
+            balance = financial_summary.get('balance', 0)
+            total_in = financial_summary.get('total_received', 0)
+            total_out = financial_summary.get('total_paid_out', 0)
+            
+            balance_emoji = "📈" if balance >= 0 else "📉"
+            
+            message += f"""
+━━━━━━━━━━━━━━━━━━━
+💰 <b>FINANCIAL SUMMARY</b>
+
+Total Received: ${total_in:.2f}
+Total Paid Out: ${total_out:.2f}
+{balance_emoji} <b>Balance: ${balance:.2f} USDT</b>
+━━━━━━━━━━━━━━━━━━━
 """
         
         return self.send_telegram(message)

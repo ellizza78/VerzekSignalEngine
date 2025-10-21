@@ -7,6 +7,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Dict, List
 from services.admin_notifications import admin_notifier
+from services.financial_tracker import financial_tracker
 
 
 def get_pending_payouts_summary() -> Dict:
@@ -176,6 +177,17 @@ def process_payout(payout_id: str, tx_hash: str, admin_user_id: str) -> Dict:
         # Save updated payments
         with open(payments_file, 'w') as f:
             json.dump(payments, f, indent=2)
+        
+        # Record in financial tracker
+        financial_summary = financial_tracker.record_payout_sent({
+            'payout_id': payout_id,
+            'user_id': payout.get('user_id'),
+            'amount_usdt': payout.get('amount_usdt', 0),
+            'tx_hash': tx_hash
+        })
+        
+        # Notify admin of completed payout with financial summary
+        admin_notifier.notify_payout_completed(payout, financial_summary)
         
         return {
             'success': True,

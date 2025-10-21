@@ -1628,3 +1628,15 @@ Updated working bot version from local PC
 [2025-10-21 19:10:26] [NOTIFICATIONS] ❌ Telegram failed: 400
 [2025-10-21 19:10:27] [NOTIFICATIONS] ❌ Telegram failed: 400
 [2025-10-21 19:10:28] [NOTIFICATIONS] ❌ Telegram failed: 400
+[2025-10-21 19:17:49] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-21 19:17:51] [API] 🌐 Starting Flask API on port 5000
+[2025-10-21 19:17:51] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-21 19:17:51] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-21 19:17:51] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-21 19:17:51] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-21 19:17:51] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-21 19:17:51] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-21 19:17:51] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-21 19:17:51] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-21 19:17:51] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-21 19:17:52] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
