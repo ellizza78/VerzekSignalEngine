@@ -456,11 +456,13 @@ def login():
             "full_name": user.full_name,
             "plan": user.plan,
             "plan_expires_at": user.plan_expires_at,
-            "mfa_enabled": two_factor_auth.is_enabled(user.user_id)
+            "mfa_enabled": two_factor_auth.is_enabled(user.user_id),
+            "email_verified": user.email_verified
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "Bearer"
+        "token_type": "Bearer",
+        "email_verified": user.email_verified
     })
 
 
@@ -798,6 +800,15 @@ def handle_exchanges(user_id):
         })
     
     elif request.method == "POST":
+        # ✅ REQUIRE EMAIL VERIFICATION for trading features
+        if not user.email_verified:
+            return jsonify({
+                "error": "Email verification required",
+                "message": "Please verify your email address before connecting exchange accounts",
+                "email_verified": False,
+                "email": user.email
+            }), 403
+        
         data = request.json
         exchange = data.get("exchange")
         api_key = data.get("api_key")
