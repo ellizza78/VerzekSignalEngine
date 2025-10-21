@@ -60,6 +60,10 @@ externalPort = 3001
 localPort = 19000
 externalPort = 3002
 
+[[ports]]
+localPort = 19001
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "autoscale"
 run = ["python", "run_all_bots.py"]
