@@ -1,5 +1,5 @@
 run = ["bash", "start.sh"]
-modules = ["python-3.11"]
+modules = ["nodejs-20", "python-3.11"]
 
 [agent]
 expertMode = true
@@ -31,3 +31,11 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["python", "run_all_bots.py"]
