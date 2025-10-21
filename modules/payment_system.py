@@ -7,6 +7,7 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List
 from utils.logger import log_event
+from services.admin_notifications import admin_notifier
 
 
 class PaymentSystem:
@@ -171,7 +172,9 @@ class PaymentSystem:
             amount = payment['amount_usdt']
             
             referrer_id = payment.get('referral_code')
+            referral_bonus = 0
             if referrer_id and referrer_id in self.referrals['codes']:
+                referral_bonus = amount * (self.REFERRAL_BONUS_PERCENT / 100)
                 self._process_referral_bonus(
                     referrer_id=self.referrals['codes'][referrer_id],
                     referee_id=user_id,
@@ -181,6 +184,15 @@ class PaymentSystem:
             log_event("PAYMENT", f"Payment {payment_id} verified and subscription activated")
             
             self._save_payments()
+            
+            # Notify admin of successful payment
+            admin_notifier.notify_payment_received({
+                'user_id': user_id,
+                'plan': plan,
+                'amount_usdt': amount,
+                'tx_hash': payment.get('tx_hash', 'N/A'),
+                'referral_bonus': referral_bonus
+            })
             
             return {
                 'success': True,
@@ -303,6 +315,9 @@ class PaymentSystem:
         self._save_payments()
         
         log_event("PAYOUT", f"Payout request {payout_id}: ${payout_amount} to {wallet_address} (${WITHDRAWAL_FEE} fee)")
+        
+        # Send instant notification to admin
+        admin_notifier.notify_payout_request(payout_request)
         
         return {
             'success': True,

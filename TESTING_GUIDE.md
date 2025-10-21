@@ -224,3 +224,32 @@ curl -X GET https://97d3a6c0-0cc4-488f-9056-f562cf567574-00-3d2bstza716gq.kirk.r
 - ✅ Leaderboards & social trading
 
 **Project Status:** ✅ Production Ready!
+
+---
+
+## 📱 Admin Notifications
+
+The platform includes Telegram notifications for critical events:
+
+### Setup Telegram Bot (5 minutes)
+1. Message @BotFather on Telegram
+2. Create bot with `/newbot`
+3. Copy bot token
+4. Message @userinfobot to get your chat ID
+5. Add to Replit Secrets:
+   - `TELEGRAM_BOT_TOKEN=your_token`
+   - `ADMIN_CHAT_ID=your_chat_id`
+
+### Test Notifications
+```bash
+python admin_notify_test.py
+```
+
+### What You'll Be Notified About
+- ✅ **Instant**: Referral payout requests (with wallet address & amount)
+- ✅ **Instant**: High-value payouts (>$100)
+- ✅ **Instant**: Subscription payments verified
+- ✅ **Hourly**: Batch summary of pending payouts
+- ✅ **Daily**: Platform metrics and revenue summary
+
+See `ADMIN_NOTIFICATIONS_GUIDE.md` for full details.

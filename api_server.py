@@ -1271,6 +1271,42 @@ def get_pending_payouts_admin(current_user_id):
     return jsonify({'count': len(pending), 'payouts': pending})
 
 
+@app.route("/api/referral/payouts/<payout_id>/complete", methods=["POST"])
+@token_required
+def complete_payout_admin(current_user_id, payout_id):
+    """Admin: Mark payout as completed after sending USDT"""
+    user = user_manager.get_user(current_user_id)
+    
+    if user.plan != 'admin':
+        return jsonify({'error': 'Admin access required'}), 403
+    
+    data = request.json
+    tx_hash = data.get('tx_hash')
+    
+    if not tx_hash:
+        return jsonify({'error': 'tx_hash required (transaction hash of sent USDT)'}), 400
+    
+    # Import admin dashboard utilities
+    from utils.admin_dashboard import process_payout
+    
+    result = process_payout(payout_id, tx_hash, current_user_id)
+    
+    if result.get('success'):
+        audit_logger.log_event(
+            AuditEventType.ADMIN_ACTION,
+            user_id=current_user_id,
+            ip_address=request.remote_addr,
+            details={
+                'action': 'complete_payout',
+                'payout_id': payout_id,
+                'amount': result.get('amount'),
+                'tx_hash': tx_hash
+            }
+        )
+    
+    return jsonify(result)
+
+
 # ============================
 # SUBSCRIPTION SECURITY
 # ============================
