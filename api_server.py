@@ -33,6 +33,7 @@ from modules.push_notifications import push_service
 from modules.analytics_engine import analytics_engine
 from modules.advanced_orders import advanced_order_manager
 from modules.webhook_handler import webhook_handler
+from services.email_service import email_service
 
 # Phase 4 Advanced Features
 from modules.portfolio_rebalancer import PortfolioRebalancer
@@ -312,25 +313,41 @@ def register():
     user.email = email
     user.full_name = full_name
     user.password_hash = hash_password(password)
+    
+    # Generate email verification token
+    user.verification_token = email_service.generate_verification_token()
+    user.verification_token_expires = email_service.get_token_expiration()
+    user.email_verified = False
+    
     user_manager._save_users()
+    
+    # Send verification email
+    email_result = email_service.send_verification_email(
+        email=email,
+        username=full_name or email.split('@')[0],
+        token=user.verification_token
+    )
     
     # Generate tokens
     access_token = create_access_token(user_id, email)
     refresh_token = create_refresh_token(user_id)
     
-    log_event("AUTH", f"New user registered: {email}")
+    log_event("AUTH", f"New user registered: {email} (verification email sent: {email_result.get('success')})")
     
     return jsonify({
-        "message": "Registration successful",
+        "message": "Registration successful. Please check your email to verify your account.",
         "user": {
             "user_id": user_id,
             "email": email,
             "full_name": full_name,
-            "plan": user.plan
+            "plan": user.plan,
+            "email_verified": False
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
-        "token_type": "Bearer"
+        "token_type": "Bearer",
+        "verification_sent": email_result.get('success', False),
+        "dev_mode": email_result.get('dev_mode', False)
     }), 201
 
 
@@ -479,6 +496,120 @@ def get_current_user():
     return jsonify({
         "user": user.to_dict()
     })
+
+
+@app.route("/api/auth/verify-email/<token>", methods=["GET", "POST"])
+def verify_email(token):
+    """Verify user email address via verification token
+    
+    Can be called via:
+    - GET: Direct link from email (redirects to success page)
+    - POST: API call from mobile app
+    """
+    # Find user by verification token
+    users = user_manager.get_all_users()
+    user = None
+    for u in users:
+        if u.verification_token == token:
+            user = u
+            break
+    
+    if not user:
+        return jsonify({"error": "Invalid or expired verification link"}), 400
+    
+    # Check if already verified
+    if user.email_verified:
+        return jsonify({
+            "message": "Email already verified",
+            "email_verified": True
+        }), 200
+    
+    # Check if token expired
+    if not email_service.is_token_valid(user.verification_token_expires):
+        return jsonify({
+            "error": "Verification link expired. Please request a new one.",
+            "expired": True
+        }), 400
+    
+    # Verify email
+    user.email_verified = True
+    user.verification_token = ""  # Clear token after verification
+    user.verification_token_expires = ""
+    user.updated_at = datetime.now().isoformat()
+    user_manager._save_users()
+    
+    # Send welcome email
+    email_service.send_welcome_email(user.email, user.full_name or user.email.split('@')[0])
+    
+    log_event("AUTH", f"Email verified for user: {user.email}")
+    
+    return jsonify({
+        "message": "Email verified successfully! You can now access all features.",
+        "email_verified": True,
+        "user_id": user.user_id,
+        "email": user.email
+    }), 200
+
+
+@app.route("/api/auth/resend-verification", methods=["POST"])
+@limiter.limit("3 per hour")
+@token_required
+def resend_verification():
+    """Resend email verification link"""
+    user_id = request.user_id
+    user = user_manager.get_user(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if user.email_verified:
+        return jsonify({
+            "message": "Email already verified",
+            "email_verified": True
+        }), 200
+    
+    # Generate new verification token
+    user.verification_token = email_service.generate_verification_token()
+    user.verification_token_expires = email_service.get_token_expiration()
+    user_manager._save_users()
+    
+    # Send verification email
+    email_result = email_service.send_verification_email(
+        email=user.email,
+        username=user.full_name or user.email.split('@')[0],
+        token=user.verification_token
+    )
+    
+    if not email_result.get('success'):
+        return jsonify({
+            "error": "Failed to send verification email. Please try again later.",
+            "details": email_result.get('message')
+        }), 500
+    
+    log_event("AUTH", f"Verification email resent to: {user.email}")
+    
+    return jsonify({
+        "message": "Verification email sent. Please check your inbox.",
+        "email": user.email,
+        "dev_mode": email_result.get('dev_mode', False)
+    }), 200
+
+
+@app.route("/api/auth/check-verification", methods=["GET"])
+@token_required
+def check_verification_status():
+    """Check if user's email is verified"""
+    user_id = request.user_id
+    user = user_manager.get_user(user_id)
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    return jsonify({
+        "email": user.email,
+        "email_verified": user.email_verified,
+        "verification_required": not user.email_verified
+    }), 200
 
 
 # ============================
