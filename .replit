@@ -16,10 +16,6 @@ author = "agent"
 task = "workflow.run"
 args = "VerzekAutoTrader"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Mobile App Dev Server"
-
 [[workflows.workflow]]
 name = "VerzekAutoTrader"
 author = "agent"
@@ -31,18 +27,6 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
-
-[[workflows.workflow]]
-name = "Mobile App Dev Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd mobile_app/VerzekApp && npx expo start --port 19000"
-waitForPort = 19000
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[ports]]
 localPort = 5000
