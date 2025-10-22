@@ -1709,3 +1709,17 @@ Updated working bot version from local PC
 [2025-10-22 10:25:50] [AUTH] User logged in: demo@verzektrader.com
 [2025-10-22 10:34:42] [AUTH] User logged in: demo@verzektrader.com
 [2025-10-22 10:37:51] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 10:44:28] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 10:57:50] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 12:48:31] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-22 12:48:31] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 12:48:31] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 12:48:31] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-22 12:48:31] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-22 12:48:31] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 12:48:31] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-22 12:48:31] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 12:48:32] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-22 12:48:32] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-22 12:48:32] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 12:48:44] [API] 🌐 Starting Flask API on port 5000
