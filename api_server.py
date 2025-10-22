@@ -271,21 +271,6 @@ def register():
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     full_name = data.get("full_name", "")
-    captcha_hash = data.get("captcha_hash")
-    captcha_text = data.get("captcha_text")
-    
-    # CAPTCHA validation (optional for mobile apps)
-    user_agent = request.headers.get('User-Agent', '').lower()
-    is_mobile_app = 'expo' in user_agent or 'react-native' in user_agent
-    
-    # Only require CAPTCHA if provided (skip for mobile apps that don't send it)
-    if captcha_hash and captcha_text:
-        # Verify CAPTCHA if provided
-        if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
-            return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
-    elif not is_mobile_app:
-        # Web users without mobile User-Agent must provide CAPTCHA
-        return jsonify({"error": "CAPTCHA is required"}), 400
     
     # Validation
     if not email or not password:
@@ -361,29 +346,6 @@ def login():
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     mfa_token = data.get("mfa_token")  # Optional 2FA token
-    captcha_hash = data.get("captcha_hash")
-    captcha_text = data.get("captcha_text")
-    
-    # CAPTCHA validation (optional for mobile apps)
-    user_agent = request.headers.get('User-Agent', '').lower()
-    is_mobile_app = 'expo' in user_agent or 'react-native' in user_agent
-    
-    # Log User-Agent for debugging
-    log_event("AUTH", f"Login attempt - User-Agent: {user_agent} | Mobile: {is_mobile_app}")
-    
-    # Only require CAPTCHA if provided (skip for mobile apps that don't send it)
-    if captcha_hash and captcha_text:
-        # Verify CAPTCHA if provided
-        if not SIMPLE_CAPTCHA.verify(captcha_text, captcha_hash):
-            audit_logger.log_event(
-                AuditEventType.LOGIN_FAILED,
-                ip_address=request.remote_addr,
-                details={'reason': 'invalid_captcha', 'email': email}
-            )
-            return jsonify({"error": "Invalid CAPTCHA. Please try again."}), 400
-    elif not is_mobile_app:
-        # Web users without mobile User-Agent must provide CAPTCHA
-        return jsonify({"error": "CAPTCHA is required"}), 400
     
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
