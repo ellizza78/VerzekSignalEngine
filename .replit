@@ -41,7 +41,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd mobile_app/VerzekApp && npx expo start --dev-client"
+args = "cd mobile_app/VerzekApp && npx expo start --dev-client --tunnel"
 
 [[ports]]
 localPort = 5000
