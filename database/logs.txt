@@ -1706,3 +1706,6 @@ Updated working bot version from local PC
 [2025-10-22 08:38:58] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-22 08:38:58] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-22 08:38:58] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 10:25:50] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 10:34:42] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 10:37:51] [AUTH] User logged in: demo@verzektrader.com

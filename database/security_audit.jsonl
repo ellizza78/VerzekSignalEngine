@@ -2,3 +2,6 @@
 {"timestamp": "2025-10-22T08:10:28.571332", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
 {"timestamp": "2025-10-22T08:16:42.409675", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
 {"timestamp": "2025-10-22T08:25:43.914495", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
+{"timestamp": "2025-10-22T10:25:50.702221", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
+{"timestamp": "2025-10-22T10:34:42.416142", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
+{"timestamp": "2025-10-22T10:37:51.872738", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
