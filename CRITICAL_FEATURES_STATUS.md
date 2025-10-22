@@ -62,6 +62,24 @@
 - Email: support@verzektrader.com (tap to copy)
 - Telegram: @VerzekSupport (tap to copy)
 
+### 9. ✅ Auto-Logout After 5 Minutes Inactivity
+- **Implementation:** useInactivityLogout hook
+- **Features:**
+  - Tracks user touches, scrolls, and app state changes
+  - Automatically logs out after 5 minutes of no activity
+  - Timer resets on any user interaction
+  - Works app-wide across all screens
+
+### 10. ✅ Leverage Settings Per Exchange
+- **Location:** Exchange Detail screen (when connected)
+- **Features:**
+  - Slider from 1x to 125x leverage
+  - Auto-saves on slider release
+  - Persists per user per exchange
+  - Shows "Saving..." feedback
+  - Warning about high leverage risk
+  - Used when placing trades
+
 ---
 
 ## 🔴 **CRITICAL ISSUES TO FIX**
