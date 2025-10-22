@@ -1693,3 +1693,4 @@ Updated working bot version from local PC
 [2025-10-22 08:16:26] [API] 🌐 Starting Flask API on port 5000
 [2025-10-22 08:16:27] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-22 08:16:42] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 08:25:43] [AUTH] User logged in: demo@verzektrader.com
