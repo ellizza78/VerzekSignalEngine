@@ -1652,3 +1652,31 @@ Updated working bot version from local PC
 [2025-10-22 06:56:16] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-22 06:56:17] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-22 06:56:29] [API] 🌐 Starting Flask API on port 5000
+[2025-10-22 08:09:19] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:09:21] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:09:21] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-22 08:09:21] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-22 08:09:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 08:09:21] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-22 08:09:21] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-22 08:09:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 08:09:21] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-22 08:09:21] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-22 08:09:21] [API] 🌐 Starting Flask API on port 5000
+[2025-10-22 08:09:22] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:10:04] [AUTH] Login attempt - User-Agent: verzekautotrader/1.0 (expo; react-native) | Mobile: True
+[2025-10-22 08:10:04] [AUTH] User logged in: demo@verzektrader.com
+[2025-10-22 08:10:11] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:10:13] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:10:13] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-22 08:10:13] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-22 08:10:13] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-22 08:10:13] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-22 08:10:13] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 08:10:13] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-22 08:10:13] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-22 08:10:14] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-22 08:10:14] [API] 🌐 Starting Flask API on port 5000
+[2025-10-22 08:10:14] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-22 08:10:28] [AUTH] Login attempt - User-Agent: verzekautotrader/1.0 (expo; react-native) | Mobile: True
+[2025-10-22 08:10:28] [AUTH] User logged in: demo@verzektrader.com
