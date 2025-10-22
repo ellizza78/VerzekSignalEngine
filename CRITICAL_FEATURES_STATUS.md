@@ -1,23 +1,66 @@
-# 🔴 CRITICAL FEATURES STATUS - User Testing Feedback
+# 🔴 CRITICAL FEATURES STATUS - User Testing Feedback (UPDATED)
 
 ## ✅ **COMPLETED FEATURES**
 
-### 1. ✅ Subscription/Payment Screen
-- **Location:** Settings → Subscription / Profile → Upgrade Plan
+### 1. ✅ Three-Tier Subscription System
+- **Location:** Profile → Upgrade Plan
+- **Pricing (CORRECTED):**
+  - **TRIAL:** FREE for 4 days - Telegram trial group access
+  - **VIP:** $50 USDT/month - Signals only, NO auto-trading
+  - **PREMIUM:** $120 USDT/month - Full auto-trading enabled
 - **Features:**
-  - Two-tier plans: VIP ($30) and PREMIUM ($50)
-  - VIP: Signals only, manual trading
-  - PREMIUM: Full auto-trading
-  - USDT TRC20 payment flow
-  - TX hash submission
-  - Referral code field
-  - Admin wallet address (UPDATE REQUIRED)
-  - Support contact info displayed
+  - USDT TRC20 payment flow with QR code
+  - TX hash submission and admin verification
+  - Optional referral code field (10% recurring commissions)
+  - Free trial activation (no payment required)
+  - Support contacts displayed
 
 ### 2. ✅ Payment API Endpoints
 - Submit payment with TX hash
 - Check payment status
 - View payment history
+- Trial activation
+
+### 3. ✅ CAPTCHA on Registration
+- Displays CAPTCHA image from backend
+- Verifies before account creation
+- Auto-refresh CAPTCHA button
+- Security verification label
+
+### 4. ✅ Email Verification System
+- EmailVerificationScreen already exists
+- Blocks exchange connections until verified
+- Resend verification email (60s cooldown)
+- Shows verification instructions
+
+### 5. ✅ Live Signals Feed
+- **Location:** Signals tab (SignalsFeedScreen)
+- **Features:**
+  - Real-time signals from Telegram
+  - Parses symbol, direction (LONG/SHORT), entry, targets, stop-loss, leverage
+  - Shows signal quality status (active/closed)
+  - Timestamp ("3m ago", "2h ago")
+  - Pull-to-refresh
+  - Empty state: "No signals yet"
+
+### 6. ✅ Connection Status Indicator
+- **Location:** Dashboard (top banner)
+- **Shows:**
+  - 🟢 "Signals Connected" when receiving Telegram signals
+  - 🟡 "Waiting for Signals" when no recent signals
+  - Last signal received time ("5m ago", "Never")
+  - Auto-refreshes on pull-down
+
+### 7. ✅ Referral Code Display
+- **Location:** Profile screen (top section)
+- Shows unique referral code
+- Copy-to-clipboard button
+- "Earn 10% monthly commissions" hint
+
+### 8. ✅ Support Contact Info
+- **Location:** Profile screen (bottom section)
+- Email: support@verzektrader.com (tap to copy)
+- Telegram: @VerzekSupport (tap to copy)
 
 ---
 
