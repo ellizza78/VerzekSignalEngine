@@ -7,6 +7,17 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 22, 2025 - Phase 1 Critical Features Completed:**
+- ✅ Updated subscription pricing: TRIAL (4 days free), VIP ($50/month), PREMIUM ($120/month)
+- ✅ Fixed CAPTCHA integration on registration (end-to-end flow verified)
+- ✅ Email verification system enforced (blocks exchange connections until verified)
+- ✅ Live signals feed displaying real-time Telegram signals with parsing
+- ✅ Connection status indicator on Dashboard (shows Telegram connectivity)
+- ✅ Referral code display in Profile with copy-to-clipboard
+- ✅ Support contact info added (support@verzektrader.com, @VerzekSupport)
+- ✅ Payment flow supports trial activation and USDT submissions
+- ✅ All features architect-reviewed and production-ready
+
 **October 21, 2025:**
 - ✅ Implemented complete email verification system (Option 3: CAPTCHA + Email Verification)
 - ✅ Fixed mobile app resend verification bug
