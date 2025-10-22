@@ -8,3 +8,4 @@
 {"timestamp": "2025-10-22T10:43:59.623744", "event_type": "login_failed", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {"reason": "invalid_password"}, "severity": "info"}
 {"timestamp": "2025-10-22T10:44:28.201341", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
 {"timestamp": "2025-10-22T10:57:50.572281", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "172.31.97.66", "details": {}, "severity": "info"}
+{"timestamp": "2025-10-22T14:56:54.211211", "event_type": "login_success", "user_id": "demo_verzektrader_com", "ip_address": "127.0.0.1", "details": {}, "severity": "info"}
