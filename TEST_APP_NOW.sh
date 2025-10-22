@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo ""
+echo "╔════════════════════════════════════════════════════════════════╗"
+echo "║                                                                ║"
+echo "║      📱 VERZEKAUTROTRADER MOBILE APP - EXPO GO TESTING        ║"
+echo "║                                                                ║"
+echo "╚════════════════════════════════════════════════════════════════╝"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🔑 TEST ACCOUNT CREDENTIALS"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "   Email:    demo@verzektrader.com"
+echo "   Password: Demo123!"
+echo ""
+echo "   Status: ✅ Email Verified"
+echo "           ✅ Pro Subscription Active"
+echo "           ✅ All Features Unlocked"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📲 STEP 1: INSTALL EXPO GO ON YOUR PHONE"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "   iOS:     https://apps.apple.com/app/expo-go/id982107779"
+echo "   Android: https://play.google.com/store/apps/details?id=host.exp.exponent"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 STEP 2: STARTING EXPO DEVELOPMENT SERVER..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+cd mobile_app/VerzekApp
+npx expo start
+
