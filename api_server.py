@@ -838,6 +838,51 @@ def handle_exchanges(user_id):
 
 
 # ============================
+# LEVERAGE SETTINGS PER EXCHANGE
+# ============================
+
+@app.route("/api/users/<user_id>/exchanges/<exchange>/leverage", methods=["GET", "PUT"])
+@token_required
+def handle_exchange_leverage(user_id, exchange):
+    """Get or update leverage settings for a specific exchange"""
+    user = user_manager.get_user(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if not hasattr(user, 'exchange_leverage_settings'):
+        user.exchange_leverage_settings = {}
+    
+    if request.method == "GET":
+        leverage = user.exchange_leverage_settings.get(exchange, 10)
+        return jsonify({
+            "exchange": exchange,
+            "leverage": leverage
+        })
+    
+    elif request.method == "PUT":
+        data = request.json
+        leverage = data.get("leverage", 10)
+        
+        if not isinstance(leverage, (int, float)) or leverage < 1 or leverage > 125:
+            return jsonify({"error": "Leverage must be between 1 and 125"}), 400
+        
+        if not hasattr(user, 'exchange_leverage_settings'):
+            user.exchange_leverage_settings = {}
+        
+        user.exchange_leverage_settings[exchange] = int(leverage)
+        user.updated_at = time.time()
+        user_manager._save_users()
+        
+        log_event("SETTINGS", f"💰 User {user_id} set {exchange} leverage to {leverage}x")
+        
+        return jsonify({
+            "message": f"Leverage set to {leverage}x for {exchange}",
+            "exchange": exchange,
+            "leverage": leverage
+        })
+
+
+# ============================
 # SUBSCRIPTION MANAGEMENT
 # ============================
 
