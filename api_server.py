@@ -725,15 +725,36 @@ def handle_strategy_settings(user_id):
 
 
 # ============================
-# DCA MARGIN CALL SETTINGS (VIP ONLY)
+# DCA MARGIN CALL SETTINGS (PREMIUM ONLY)
 # ============================
 
 @app.route("/api/users/<user_id>/dca", methods=["GET", "PUT"])
+@token_required
 def handle_dca_settings(user_id):
-    """Get or update user's DCA settings"""
+    """Get or update user's DCA settings (PREMIUM ONLY)"""
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # SECURITY: Check if subscription is expired
+    if user.is_subscription_expired():
+        return jsonify({
+            "error": "Subscription expired",
+            "message": "Your subscription has expired. Please renew to access auto-trading features.",
+            "plan": user.plan,
+            "expired_at": user.plan_expires_at
+        }), 403
+    
+    # SECURITY: DCA/Auto-trade is PREMIUM (vip) plan only
+    plan_features = user.get_plan_features()
+    if not plan_features.get("auto_trading", False):
+        return jsonify({
+            "error": "Unauthorized",
+            "message": "Auto-trading is available only for PREMIUM ($120/month) subscribers.",
+            "current_plan": user.plan,
+            "required_plan": "vip (PREMIUM)",
+            "upgrade_url": "/api/subscription/upgrade"
+        }), 403
     
     if request.method == "GET":
         return jsonify(user.dca_settings)
@@ -749,15 +770,38 @@ def handle_dca_settings(user_id):
 
 
 # ============================
-# EXCHANGE ACCOUNTS
+# EXCHANGE ACCOUNTS (PREMIUM ONLY)
 # ============================
 
 @app.route("/api/users/<user_id>/exchanges", methods=["GET", "POST", "DELETE"])
+@token_required
 def handle_exchanges(user_id):
-    """Get, add, or remove exchange accounts"""
+    """Get, add, or remove exchange accounts (PREMIUM ONLY)"""
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # SECURITY: Check if subscription is expired
+    if user.is_subscription_expired():
+        return jsonify({
+            "error": "Subscription expired",
+            "message": "Your subscription has expired. Please renew to manage exchange connections.",
+            "plan": user.plan,
+            "expired_at": user.plan_expires_at
+        }), 403
+    
+    # SECURITY: Exchange connections require PREMIUM plan
+    plan_features = user.get_plan_features()
+    max_exchanges = plan_features.get("max_exchanges", 0)
+    
+    if max_exchanges == 0:
+        return jsonify({
+            "error": "Unauthorized",
+            "message": "Exchange connections are available only for PREMIUM ($120/month) subscribers.",
+            "current_plan": user.plan,
+            "required_plan": "vip (PREMIUM)",
+            "upgrade_url": "/api/subscription/upgrade"
+        }), 403
     
     if request.method == "GET":
         # Return exchange accounts without exposing encrypted credentials
@@ -775,7 +819,8 @@ def handle_exchanges(user_id):
         
         return jsonify({
             "count": len(safe_exchanges),
-            "exchanges": safe_exchanges
+            "exchanges": safe_exchanges,
+            "max_exchanges": max_exchanges
         })
     
     elif request.method == "POST":
