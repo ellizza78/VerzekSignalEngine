@@ -2689,3 +2689,4 @@ Long 🚀 Lev x10 #Crypto
 Entry: 67500 - Stop Loss: 66800 
 
 Targets: 68000 - 68500 - 69000 - 69500 - 70000
+[2025-10-23 14:36:00] #BTC/USDT LONG - Entry: 68000, SL: 67500, TP: 68500/69000/69500
