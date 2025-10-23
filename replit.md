@@ -7,8 +7,15 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 23, 2025 - Sliding Puzzle CAPTCHA Implementation:**
+- ✅ Custom sliding puzzle CAPTCHA created with VZK logo (SliderCaptcha component)
+- ✅ Drag-to-verify mechanism requiring 90% slider completion
+- ✅ Integrated into both registration and login screens
+- ✅ Automatic reset on failed attempts (key-based remount pattern)
+- ✅ Visual feedback with teal/green branding and "✓ Verified!" confirmation
+- ✅ All changes architect-reviewed and production-ready
+
 **October 23, 2025 - User Feedback Implementation:**
-- ✅ CAPTCHA completely removed from registration/login (simpler UX)
 - ✅ Concurrent trades: Text input instead of slider (user preference)
 - ✅ Leverage settings: Moved to Settings > Capital Allocation (1-125x range)
 - ✅ Auto-logout: Already implemented (5 min inactivity, works app-wide)
@@ -75,7 +82,7 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering, broadcasting to internal bots and VIP/TRIAL Telegram groups (Broadcast Bot) with priority signal detection and auto-trading capabilities.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, position management, safety controls, and system status. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, and auth-based navigation.
-- **Security & Payments**: Includes a license key security system, USDT TRC20 payment processing with admin verification, automatic referral bonuses, HMAC signature verification, CAPTCHA system (required for web, optional for mobile apps), email verification system (Option 3: CAPTCHA + Email Verification), and a signal quality filter. API keys are encrypted at rest on the backend.
+- **Security & Payments**: Includes a license key security system, USDT TRC20 payment processing with admin verification, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA with VZK logo (drag-to-verify on mobile registration/login), email verification system (Option 3: CAPTCHA + Email Verification), and a signal quality filter. API keys are encrypted at rest on the backend.
 - **Email Verification System**: Secure token-based email verification with SMTP integration. Users must verify email before connecting exchange accounts or trading. Features 24-hour token expiration, rate-limited resend (60s cooldown), beautiful HTML emails with VZK branding, welcome emails after verification, and dev mode fallback for testing without SMTP.
 - **Advanced Features**: AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading (live chat, leaderboards, copy trading), Advanced Charting, Auto-Optimization (ML-powered), AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types (trailing stop loss, OCO), Push Notifications (FCM), Admin Dashboard, Automated Backups, TronScan Integration.
 
