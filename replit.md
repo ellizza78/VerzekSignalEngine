@@ -7,11 +7,13 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
-**October 22, 2025 - Phase 2 Features Completed:**
+**October 22, 2025 - Phase 2 Features Completed + Updates:**
 - ✅ Auto-logout after 5 minutes of inactivity implemented
-- ✅ Leverage settings per exchange (1x-125x slider in exchange detail)
+- ✅ Leverage settings per exchange (1x-25x slider in exchange detail) - UPDATED
+- ✅ Concurrent trades slider (1-20) in Settings screen - NEW
 - ✅ Admin wallet address updated (TBjfqimYNsPecGxsk9kcX8GboPyZcWHNzb)
-- ✅ All Phase 2 features architect-reviewed and production-ready
+- ✅ iOS distribution guide created (TestFlight/Ad-Hoc/Expo Go)
+- ✅ All features architect-reviewed and production-ready
 
 **October 22, 2025 - Phase 1 Critical Features Completed:**
 - ✅ Updated subscription pricing: TRIAL (4 days free), VIP ($50/month), PREMIUM ($120/month)
