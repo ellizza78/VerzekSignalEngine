@@ -7,6 +7,13 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 23, 2025 - In-App FAQ & Auto-Logout Update:**
+- ✅ In-app FAQ screen created with 5 sections (Getting Started, Subscription, Exchange Integration, Auto-Trading, Security)
+- ✅ Interactive features: tap-to-copy wallet address & IP whitelist, deep links to email/Telegram support
+- ✅ Accessible from Profile menu with ❓ FAQ icon
+- ✅ Auto-logout timeout reduced from 5 minutes to 3 minutes max inactivity
+- ✅ All changes production-ready
+
 **October 23, 2025 - Customer Support FAQ PDF:**
 - ✅ Comprehensive FAQ PDF generator created (generate_faq_pdf.py)
 - ✅ 61 Q&A pairs across 10 sections covering all platform features
