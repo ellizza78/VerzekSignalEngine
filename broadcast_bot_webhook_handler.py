@@ -154,17 +154,35 @@ def broadcast_admin_message(message, text):
     
     # Log priority status
     if is_priority:
-        logger.info("⚡ Processing PRIORITY signal (app-only distribution)")
+        logger.info("⚡ Processing PRIORITY signal (dual-channel: app + Telegram groups)")
     else:
-        logger.info("📡 Processing signal (app-only distribution)")
+        logger.info("📡 Processing signal (dual-channel: app + Telegram groups)")
 
-    # Log signal to file (this feeds the mobile app via /api/signals)
+    # Create branded header
+    header = "🔥 VERZEK TRADING SIGNALS 🔥\n\n"
+    formatted_message = header + cleaned_text
+
+    # 1. Broadcast to VIP Group
+    try:
+        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_message)
+        logger.info("✅ Broadcast to VIP group successful")
+    except Exception as e:
+        logger.error(f"Failed to send to VIP group: {e}")
+
+    # 2. Broadcast to TRIAL Group
+    try:
+        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_message)
+        logger.info("✅ Broadcast to TRIAL group successful")
+    except Exception as e:
+        logger.error(f"Failed to send to TRIAL group: {e}")
+
+    # 3. Log signal to file (this feeds the mobile app via /api/signals)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {text}\n")
     
     logger.info(f"✅ Signal logged to broadcast_log.txt for mobile app access")
 
-    # Trigger auto-trading for eligible users (PREMIUM plan only)
+    # 4. Trigger auto-trading for eligible users (PREMIUM plan only)
     try:
         auto_trade_result = signal_auto_trader.process_signal_for_auto_trading(text, provider="admin")
         if auto_trade_result.get("users_traded", 0) > 0:
@@ -175,12 +193,12 @@ def broadcast_admin_message(message, text):
 
     # Confirmation to admin
     try:
-        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Signal logged to app. Auto-trade processed for PREMIUM users.")
+        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Signal broadcast to VIP + TRIAL groups, mobile app, AND auto-traded!")
     except Exception:
         pass
 
 def auto_forward_signal(message, text):
-    """Process signals from monitored channels and distribute to mobile app only"""
+    """Process signals from monitored channels and distribute to both mobile app AND Telegram groups"""
     # Check if it's spam
     if is_spam(text):
         logger.info("📛 Ignored spam message from group")
@@ -192,19 +210,40 @@ def auto_forward_signal(message, text):
     # Check if this is a priority signal
     is_priority = is_priority_signal(text)
     
+    # Clean the signal
+    cleaned_text = clean_signal(text)
+    
     # Log priority status
     if is_priority:
-        logger.info(f"⚡ Processing PRIORITY signal from {source_chat} (app-only distribution)")
+        logger.info(f"⚡ Processing PRIORITY signal from {source_chat} (dual-channel: app + Telegram groups)")
     else:
-        logger.info(f"📡 Processing signal from {source_chat} (app-only distribution)")
+        logger.info(f"📡 Processing signal from {source_chat} (dual-channel: app + Telegram groups)")
     
-    # Log signal to file (this feeds the mobile app via /api/signals)
+    # Create branded header
+    header = f"🔥 VERZEK TRADING SIGNALS 🔥\n📡 Source: {source_chat}\n\n"
+    formatted_message = header + cleaned_text
+
+    # 1. Broadcast to VIP Group
+    try:
+        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_message)
+        logger.info(f"✅ Auto-forwarded to VIP group from {source_chat}")
+    except Exception as e:
+        logger.error(f"Failed to send to VIP group: {e}")
+
+    # 2. Broadcast to TRIAL Group
+    try:
+        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_message)
+        logger.info(f"✅ Auto-forwarded to TRIAL group from {source_chat}")
+    except Exception as e:
+        logger.error(f"Failed to send to TRIAL group: {e}")
+
+    # 3. Log signal to file (this feeds the mobile app via /api/signals)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
     
     logger.info(f"✅ Signal from {source_chat} logged to broadcast_log.txt for mobile app access")
     
-    # Trigger auto-trading for eligible users (PREMIUM plan only)
+    # 4. Trigger auto-trading for eligible users (PREMIUM plan only)
     try:
         auto_trade_result = signal_auto_trader.process_signal_for_auto_trading(text, provider=source_chat)
         if auto_trade_result.get("users_traded", 0) > 0:

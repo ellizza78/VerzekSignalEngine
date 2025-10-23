@@ -125,7 +125,7 @@ def process_message(update, context):
         auto_forward_signal(message, text)
 
 def broadcast_admin_message(message, text):
-    """Process admin signal and distribute to mobile app only"""
+    """Process admin signal and distribute to both mobile app AND Telegram groups"""
     # Check if this is a close/cancel signal
     close_signal = parse_close_signal(text)
     if close_signal and close_signal.get("symbol"):
@@ -144,9 +144,30 @@ def broadcast_admin_message(message, text):
         except Exception as e:
             logger.error(f"⚠️ Error auto-closing positions for {symbol}: {e}")
 
-    logger.info("📡 Processing admin signal (app-only distribution)")
+    logger.info("📡 Processing admin signal (dual-channel: app + Telegram groups)")
 
-    # Log signal to file (this feeds the mobile app via /api/signals)
+    # Clean the signal
+    cleaned_text = clean_signal(text)
+    
+    # Create branded header
+    header = "🔥 VERZEK TRADING SIGNALS 🔥\n\n"
+    formatted_message = header + cleaned_text
+
+    # 1. Broadcast to VIP Group
+    try:
+        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_message)
+        logger.info("✅ Broadcast to VIP group successful")
+    except Exception as e:
+        logger.error(f"Failed to send to VIP group: {e}")
+
+    # 2. Broadcast to TRIAL Group
+    try:
+        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_message)
+        logger.info("✅ Broadcast to TRIAL group successful")
+    except Exception as e:
+        logger.error(f"Failed to send to TRIAL group: {e}")
+
+    # 3. Log signal to file (this feeds the mobile app via /api/signals)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {text}\n")
     
@@ -154,18 +175,39 @@ def broadcast_admin_message(message, text):
 
     # Confirmation to admin
     try:
-        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Signal logged to app (app-only distribution enabled).")
+        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Signal broadcast to VIP + TRIAL groups AND mobile app!")
     except Exception:
         pass
 
 def auto_forward_signal(message, text):
-    """Process signals from monitored channels and distribute to mobile app only"""
+    """Process signals from monitored channels and distribute to both mobile app AND Telegram groups"""
     # Get source info
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
-    logger.info(f"📡 Processing signal from {source_chat} (app-only distribution)")
+    logger.info(f"📡 Processing signal from {source_chat} (dual-channel: app + Telegram groups)")
     
-    # Log signal to file (this feeds the mobile app via /api/signals)
+    # Clean the signal
+    cleaned_text = clean_signal(text)
+    
+    # Create branded header
+    header = f"🔥 VERZEK TRADING SIGNALS 🔥\n📡 Source: {source_chat}\n\n"
+    formatted_message = header + cleaned_text
+
+    # 1. Broadcast to VIP Group
+    try:
+        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_message)
+        logger.info(f"✅ Auto-forwarded to VIP group from {source_chat}")
+    except Exception as e:
+        logger.error(f"Failed to send to VIP group: {e}")
+
+    # 2. Broadcast to TRIAL Group
+    try:
+        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_message)
+        logger.info(f"✅ Auto-forwarded to TRIAL group from {source_chat}")
+    except Exception as e:
+        logger.error(f"Failed to send to TRIAL group: {e}")
+
+    # 3. Log signal to file (this feeds the mobile app via /api/signals)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
     
