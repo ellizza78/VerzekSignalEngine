@@ -7,6 +7,15 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 23, 2025 - Real-Time Signal Delivery Implementation:**
+- ✅ **Auto-polling system** - Mobile app automatically checks for new signals every 30 seconds (no manual refresh needed)
+- ✅ **Smart screen refresh** - Signals reload when navigating to screen or returning from background
+- ✅ **AppState monitoring** - Automatically fetches latest signals when app comes to foreground
+- ✅ **Memory leak prevention** - Polling intervals properly cleaned up on unmount/navigation
+- ✅ **Silent updates** - Background refresh doesn't disrupt user experience (no loading spinners)
+- ✅ **Critical UX fix** - Users no longer miss time-sensitive trading signals due to manual refresh requirement
+- ✅ All changes architect-reviewed and production-ready
+
 **October 23, 2025 - Dual-Channel Signal Distribution & Security Hardening:**
 - ✅ **Dual-channel signal distribution** - Signals broadcast to BOTH VIP/TRIAL Telegram groups AND mobile app
 - ✅ **Secured /api/signals endpoint** with JWT auth + subscription validation (blocks expired/unauthorized users)
