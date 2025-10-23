@@ -14,3 +14,4 @@ Flask-Limiter
 pyotp
 qrcode
 openai
+fpdf2
