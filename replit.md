@@ -7,6 +7,16 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 23, 2025 - App-Only Signal Distribution & Security Hardening:**
+- ✅ **Eliminated Telegram group signal broadcasting** - All signal access now app-only (Telegram = signal source backend only)
+- ✅ **Secured /api/signals endpoint** with JWT auth + subscription validation (blocks expired/unauthorized users)
+- ✅ **Protected premium features** - DCA/auto-trade and exchange connections require active PREMIUM subscription
+- ✅ **Server-side fraud protection** - Direct subscription activation blocked, payment verification required
+- ✅ **Expired user handling** - Users can login but are auto-blocked from premium features with clear upgrade messages
+- ✅ All signals logged to broadcast_log.txt for mobile app consumption via protected API
+- ✅ Subscription tiers enforced: TRIAL (free/4 days) signals only, VIP ($50) signals only, PREMIUM ($120) signals + auto-trade
+- ✅ Production-ready security implementation
+
 **October 23, 2025 - In-App FAQ & Auto-Logout Update:**
 - ✅ In-app FAQ screen created with 5 sections (Getting Started, Subscription, Exchange Integration, Auto-Trading, Security)
 - ✅ Interactive features: tap-to-copy wallet address & IP whitelist, deep links to email/Telegram support
@@ -94,10 +104,10 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Multi-User Management**: Supports multi-tenancy with per-user DCA configurations, risk settings, exchange account management, symbol whitelists/blacklists, daily stats, and subscription plans (free/pro/vip).
 - **Exchange Adapters**: Provides a unified interface for Binance, Bybit, Phemex, and Kraken, supporting both live and demo modes, with secure API key loading. Includes Cloudflare Workers Proxy for static IP egress (solves Binance IP whitelisting requirement).
 - **Cloudflare Workers Proxy**: Routes ALL exchange API calls through static IP address to satisfy Binance Futures IP whitelisting requirements (Replit Reserved VMs have dynamic IPs). Features HMAC SHA256 authentication, automatic fallback to direct connection, JSON signature preservation, and environment-based configuration (dev=disabled, prod=enabled).
-- **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering, broadcasting to internal bots and VIP/TRIAL Telegram groups (Broadcast Bot) with priority signal detection and auto-trading capabilities.
+- **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are logged to broadcast_log.txt for mobile app-only distribution (no Telegram group broadcasting). Priority signal detection triggers auto-trading for PREMIUM users only.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, position management, safety controls, and system status. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, and auth-based navigation.
-- **Security & Payments**: Includes a license key security system, USDT TRC20 payment processing with admin verification, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA with VZK logo (drag-to-verify on mobile registration/login), email verification system (Option 3: CAPTCHA + Email Verification), and a signal quality filter. API keys are encrypted at rest on the backend.
+- **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation (prevents fraud/manipulation), USDT TRC20 payment processing with admin verification, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA with VZK logo (drag-to-verify on mobile registration/login), email verification system (blocks trading until verified), and signal quality filter. All premium endpoints (@token_required + subscription checks) block expired/unauthorized users. API keys encrypted at rest. Direct subscription activation blocked - payment verification required.
 - **Email Verification System**: Secure token-based email verification with SMTP integration. Users must verify email before connecting exchange accounts or trading. Features 24-hour token expiration, rate-limited resend (60s cooldown), beautiful HTML emails with VZK branding, welcome emails after verification, and dev mode fallback for testing without SMTP.
 - **Advanced Features**: AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading (live chat, leaderboards, copy trading), Advanced Charting, Auto-Optimization (ML-powered), AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types (trailing stop loss, OCO), Push Notifications (FCM), Admin Dashboard, Automated Backups, TronScan Integration.
 
