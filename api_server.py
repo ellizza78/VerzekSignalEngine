@@ -944,8 +944,9 @@ def handle_exchange_leverage(user_id, exchange):
 # ============================
 
 @app.route("/api/users/<user_id>/subscription", methods=["GET", "POST"])
+@token_required
 def handle_subscription(user_id):
-    """Get subscription info or activate a plan"""
+    """Get subscription info or activate a plan (SERVER-SIDE VALIDATION REQUIRED)"""
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -965,26 +966,18 @@ def handle_subscription(user_id):
         })
     
     elif request.method == "POST":
-        data = request.json
-        plan = data.get("plan")  # free, pro, vip
-        
-        if plan not in ["free", "pro", "vip"]:
-            return jsonify({"error": "Invalid plan. Must be: free, pro, or vip"}), 400
-        
-        # Set duration based on plan
-        duration_map = {"free": 3, "pro": 30, "vip": 30}
-        duration = duration_map[plan]
-        
-        user.activate_subscription(plan, duration)
-        user_manager._save_users()
-        
+        # 🔒 ANTI-FRAUD: Direct plan activation is NOT allowed from client
+        # Plans must be activated through payment verification endpoints only
         return jsonify({
-            "message": f"{plan.upper()} plan activated successfully",
-            "plan": user.plan,
-            "plan_expires_at": user.plan_expires_at,
-            "group_access": user.telegram_group_access,
-            "features": user.get_plan_features()
-        }), 201
+            "error": "Unauthorized",
+            "message": "Subscriptions must be activated through payment verification only.",
+            "instructions": "Please submit payment via /api/payment/submit and wait for admin approval.",
+            "payment_methods": {
+                "TRIAL": "Automatic 4-day trial (one-time only)",
+                "VIP": "$50/month - Submit USDT payment",
+                "PREMIUM": "$120/month - Submit USDT payment"
+            }
+        }), 403
 # ============================
 # TRADING PREFERENCES
 # ============================
