@@ -7,14 +7,15 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
-**October 23, 2025 - App-Only Signal Distribution & Security Hardening:**
-- ✅ **Eliminated Telegram group signal broadcasting** - All signal access now app-only (Telegram = signal source backend only)
+**October 23, 2025 - Dual-Channel Signal Distribution & Security Hardening:**
+- ✅ **Dual-channel signal distribution** - Signals broadcast to BOTH VIP/TRIAL Telegram groups AND mobile app
 - ✅ **Secured /api/signals endpoint** with JWT auth + subscription validation (blocks expired/unauthorized users)
 - ✅ **Protected premium features** - DCA/auto-trade and exchange connections require active PREMIUM subscription
 - ✅ **Server-side fraud protection** - Direct subscription activation blocked, payment verification required
 - ✅ **Expired user handling** - Users can login but are auto-blocked from premium features with clear upgrade messages
 - ✅ All signals logged to broadcast_log.txt for mobile app consumption via protected API
 - ✅ Subscription tiers enforced: TRIAL (free/4 days) signals only, VIP ($50) signals only, PREMIUM ($120) signals + auto-trade
+- ✅ Telegram groups active until end of month (then app-only)
 - ✅ Production-ready security implementation
 
 **October 23, 2025 - In-App FAQ & Auto-Logout Update:**
@@ -104,7 +105,7 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Multi-User Management**: Supports multi-tenancy with per-user DCA configurations, risk settings, exchange account management, symbol whitelists/blacklists, daily stats, and subscription plans (free/pro/vip).
 - **Exchange Adapters**: Provides a unified interface for Binance, Bybit, Phemex, and Kraken, supporting both live and demo modes, with secure API key loading. Includes Cloudflare Workers Proxy for static IP egress (solves Binance IP whitelisting requirement).
 - **Cloudflare Workers Proxy**: Routes ALL exchange API calls through static IP address to satisfy Binance Futures IP whitelisting requirements (Replit Reserved VMs have dynamic IPs). Features HMAC SHA256 authentication, automatic fallback to direct connection, JSON signature preservation, and environment-based configuration (dev=disabled, prod=enabled).
-- **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are logged to broadcast_log.txt for mobile app-only distribution (no Telegram group broadcasting). Priority signal detection triggers auto-trading for PREMIUM users only.
+- **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are distributed via dual-channel: (1) VIP/TRIAL Telegram groups with Verzek-branded headers, and (2) broadcast_log.txt for mobile app access via protected /api/signals endpoint. Priority signal detection triggers auto-trading for PREMIUM users only.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, position management, safety controls, and system status. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, and auth-based navigation.
 - **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation (prevents fraud/manipulation), USDT TRC20 payment processing with admin verification, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA with VZK logo (drag-to-verify on mobile registration/login), email verification system (blocks trading until verified), and signal quality filter. All premium endpoints (@token_required + subscription checks) block expired/unauthorized users. API keys encrypted at rest. Direct subscription activation blocked - payment verification required.
