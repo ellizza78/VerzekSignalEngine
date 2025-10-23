@@ -300,6 +300,10 @@ def register():
     user.full_name = full_name
     user.password_hash = hash_password(password)
     
+    # Generate referral code for new user
+    user.referral_code = subscription_security.generate_referral_code(user_id)
+    payment_system.register_referral_code(user_id, user.referral_code)
+    
     # Generate email verification token
     user.verification_token = email_service.generate_verification_token()
     user.verification_token_expires = email_service.get_token_expiration()
@@ -327,7 +331,8 @@ def register():
             "email": email,
             "full_name": full_name,
             "plan": user.plan,
-            "email_verified": False
+            "email_verified": False,
+            "referral_code": user.referral_code
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -403,6 +408,12 @@ def login():
             ip_address=request.remote_addr
         )
     
+    # Ensure user has referral code (for existing users)
+    if not hasattr(user, 'referral_code') or not user.referral_code:
+        user.referral_code = subscription_security.generate_referral_code(user.user_id)
+        payment_system.register_referral_code(user.user_id, user.referral_code)
+        user_manager._save_users()
+    
     # Generate tokens
     access_token = create_access_token(user.user_id, email)
     refresh_token = create_refresh_token(user.user_id)
@@ -424,7 +435,8 @@ def login():
             "plan": user.plan,
             "plan_expires_at": user.plan_expires_at,
             "mfa_enabled": two_factor_auth.is_enabled(user.user_id),
-            "email_verified": user.email_verified
+            "email_verified": user.email_verified,
+            "referral_code": user.referral_code
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
