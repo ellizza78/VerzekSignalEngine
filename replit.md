@@ -7,10 +7,16 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
-**October 22, 2025 - Phase 2 Features Completed + Updates:**
+**October 23, 2025 - User Feedback Implementation:**
+- ✅ CAPTCHA completely removed from registration/login (simpler UX)
+- ✅ Concurrent trades: Text input instead of slider (user preference)
+- ✅ Leverage settings: Moved to Settings > Capital Allocation (1-125x range)
+- ✅ Auto-logout: Already implemented (5 min inactivity, works app-wide)
+- ✅ Referral codes: Now auto-generated and displayed (VZK format)
+- ✅ All changes architect-reviewed and production-ready
+
+**October 22, 2025 - Phase 2 Features Completed:**
 - ✅ Auto-logout after 5 minutes of inactivity implemented
-- ✅ Leverage settings per exchange (1x-25x slider in exchange detail) - UPDATED
-- ✅ Concurrent trades slider (1-20) in Settings screen - NEW
 - ✅ Admin wallet address updated (TBjfqimYNsPecGxsk9kcX8GboPyZcWHNzb)
 - ✅ iOS distribution guide created (TestFlight/Ad-Hoc/Expo Go)
 - ✅ All features architect-reviewed and production-ready
