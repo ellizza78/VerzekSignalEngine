@@ -970,12 +970,41 @@ def handle_trading_preferences(user_id):
 # ============================
 
 @app.route("/api/signals", methods=["GET"])
+@token_required
 def get_signals():
-    """Get recent trading signals from broadcast log"""
+    """Get recent trading signals from broadcast log (PROTECTED: requires active subscription)"""
     try:
+        # Get authenticated user from token
+        user_id = request.user_id
+        user = user_manager.get_user(user_id)
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        # SECURITY: Check if subscription is expired
+        if user.is_subscription_expired():
+            return jsonify({
+                "error": "Subscription expired",
+                "message": "Your subscription has expired. Please renew to access trading signals.",
+                "subscription_status": "expired",
+                "plan": user.plan,
+                "expired_at": user.plan_expires_at
+            }), 403
+        
+        # SECURITY: Check if user's plan includes signal access
+        plan_features = user.get_plan_features()
+        if not plan_features.get("signal_forwarding", False):
+            return jsonify({
+                "error": "Unauthorized",
+                "message": "Your current plan does not include signal access. Please upgrade your subscription.",
+                "plan": user.plan,
+                "required_plans": ["free (TRIAL)", "pro (VIP)", "vip (PREMIUM)"]
+            }), 403
+        
+        # User is authorized - return signals
         log_file = "database/broadcast_log.txt"
         if not os.path.exists(log_file):
-            return jsonify({"count": 0, "signals": []})
+            return jsonify({"count": 0, "signals": [], "subscription_status": "active"})
         
         # Read last 50 lines from log file
         with open(log_file, "r", encoding="utf-8") as f:
@@ -1001,7 +1030,10 @@ def get_signals():
         
         return jsonify({
             "count": len(signals),
-            "signals": signals
+            "signals": signals,
+            "subscription_status": "active",
+            "plan": user.plan,
+            "expires_at": user.plan_expires_at
         })
     except Exception as e:
         log_event("ERROR", f"Error reading signals: {e}")
