@@ -7,6 +7,14 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 23, 2025 - Customer Support FAQ PDF:**
+- ✅ Comprehensive FAQ PDF generator created (generate_faq_pdf.py)
+- ✅ 61 Q&A pairs across 10 sections covering all platform features
+- ✅ Professional formatting with VZK teal/gold branding
+- ✅ Sections: Getting Started, Account, Subscription, Payment, Exchange Integration, Auto-Trading, Security, Support, Referrals, Terms & Policies
+- ✅ Includes contact info, table of contents, legal disclaimer
+- ✅ Production-ready 19KB PDF for customer support distribution
+
 **October 23, 2025 - Sliding Puzzle CAPTCHA Implementation:**
 - ✅ Custom sliding puzzle CAPTCHA created with VZK logo (SliderCaptcha component)
 - ✅ Drag-to-verify mechanism requiring 90% slider completion
