@@ -863,8 +863,8 @@ def handle_exchange_leverage(user_id, exchange):
         data = request.json
         leverage = data.get("leverage", 10)
         
-        if not isinstance(leverage, (int, float)) or leverage < 1 or leverage > 125:
-            return jsonify({"error": "Leverage must be between 1 and 125"}), 400
+        if not isinstance(leverage, (int, float)) or leverage < 1 or leverage > 25:
+            return jsonify({"error": "Leverage must be between 1 and 25"}), 400
         
         if not hasattr(user, 'exchange_leverage_settings'):
             user.exchange_leverage_settings = {}
