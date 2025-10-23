@@ -125,7 +125,7 @@ def process_message(update, context):
         auto_forward_signal(message, text)
 
 def broadcast_admin_message(message, text):
-    """Broadcast message from admin"""
+    """Process admin signal and distribute to mobile app only"""
     # Check if this is a close/cancel signal
     close_signal = parse_close_signal(text)
     if close_signal and close_signal.get("symbol"):
@@ -144,53 +144,32 @@ def broadcast_admin_message(message, text):
         except Exception as e:
             logger.error(f"⚠️ Error auto-closing positions for {symbol}: {e}")
 
-    # Clean the signal (remove hashtags, leverage indicators, etc.)
-    cleaned_text = clean_signal(text)
-    
-    # Compose broadcast message with Verzek header
-    header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
-    msg = header + cleaned_text
+    logger.info("📡 Processing admin signal (app-only distribution)")
 
-    try:
-        bot.send_message(chat_id=VIP_GROUP_ID, text=msg)
-        bot.send_message(chat_id=TRIAL_GROUP_ID, text=msg)
-        logger.info(f"✅ Broadcast successful to VIP & TRIAL groups")
-    except Exception as e:
-        logger.error(f"⚠️ Broadcast send failed: {e}")
-
-    # Log it to file
+    # Log signal to file (this feeds the mobile app via /api/signals)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {text}\n")
+    
+    logger.info(f"✅ Signal logged to broadcast_log.txt for mobile app access")
 
     # Confirmation to admin
     try:
-        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Broadcast sent to VIP & TRIAL.")
+        bot.send_message(chat_id=ADMIN_CHAT_ID, text="✅ Signal logged to app (app-only distribution enabled).")
     except Exception:
         pass
 
 def auto_forward_signal(message, text):
-    """Auto-forward signals from monitored channels to VIP and TRIAL groups"""
+    """Process signals from monitored channels and distribute to mobile app only"""
     # Get source info
     source_chat = message.chat.title or message.chat.username or "Signal Source"
     
-    # Clean the signal (remove hashtags, leverage indicators, etc.)
-    cleaned_text = clean_signal(text)
+    logger.info(f"📡 Processing signal from {source_chat} (app-only distribution)")
     
-    # Format message with Verzek branding
-    header = "🔥 Signal Alert (Verzek Trading Signals)\n━━━━━━━━━━━━━━━━━━\n"
-    formatted_msg = header + cleaned_text
+    # Log signal to file (this feeds the mobile app via /api/signals)
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
     
-    # Broadcast to VIP and TRIAL groups
-    try:
-        bot.send_message(chat_id=VIP_GROUP_ID, text=formatted_msg)
-        bot.send_message(chat_id=TRIAL_GROUP_ID, text=formatted_msg)
-        logger.info(f"📡 Auto-forwarded signal from {source_chat}")
-        
-        # Log it
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] AUTO-FORWARD from {source_chat}: {text}\n")
-    except Exception as e:
-        logger.error(f"⚠️ Auto-forward failed: {e}")
+    logger.info(f"✅ Signal from {source_chat} logged to broadcast_log.txt for mobile app access")
 
 def setup_webhook():
     """Set up webhook with Telegram"""
