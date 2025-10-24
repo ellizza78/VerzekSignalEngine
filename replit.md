@@ -13,6 +13,8 @@ None specified yet.
 - ✅ **Signal logging now works** - broadcast_log.txt gets updated instantly when signals arrive
 - ✅ **Complete signal flow operational** - Telegram → Webhook → Log File → Mobile App API → Auto-Trading
 - ✅ **Instant signal delivery** - Signals logged and broadcast within 1 second of arrival
+- ✅ **Timezone fix** - Mobile app now correctly shows signal timestamps (server is UTC, app adjusts to local time)
+- ✅ **Dashboard stats** - Fixed field name mismatch (winning_trades/losing_trades instead of win_count/loss_count)
 - ✅ All changes tested and production-ready
 
 **October 23, 2025 - Compact UI & Near-Instant Signal Delivery:**
