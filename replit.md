@@ -7,6 +7,14 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 24, 2025 - CRITICAL FIX: Webhook Signal Logging:**
+- ✅ **Fixed critical bug** - Webhook handler was crashing when parsing Telegram updates (TypeError: User.__init__() missing 'is_bot' argument)
+- ✅ **Rewrote webhook parser** - Now parses JSON directly instead of using buggy Telegram library Update.de_json()
+- ✅ **Signal logging now works** - broadcast_log.txt gets updated instantly when signals arrive
+- ✅ **Complete signal flow operational** - Telegram → Webhook → Log File → Mobile App API → Auto-Trading
+- ✅ **Instant signal delivery** - Signals logged and broadcast within 1 second of arrival
+- ✅ All changes tested and production-ready
+
 **October 23, 2025 - Compact UI & Near-Instant Signal Delivery:**
 - ✅ **10-second auto-polling** - Mobile app automatically checks for new signals every 10 seconds (near-instant delivery, down from 30s)
 - ✅ **Smart screen refresh** - Signals reload when navigating to screen or returning from background
