@@ -255,21 +255,21 @@ def auto_forward_signal(message, text):
 def handle_webhook_update(update_data):
     """Process incoming webhook update from Telegram"""
     try:
-        # Create Update object from webhook data
-        update = Update.de_json(update_data, bot)
-        
-        if not update or not update.message:
+        # Parse webhook data directly (avoid Telegram library parsing issues)
+        if not update_data or 'message' not in update_data:
             logger.info("Webhook: No message in update")
             return
         
-        message = update.message
-        user_id = message.from_user.id if message.from_user else None
-        chat_id = message.chat_id
+        message_data = update_data['message']
         
-        # Get text from message or forwarded message
-        text = (message.text or message.caption or "").strip()
+        # Extract key fields directly from JSON
+        user_id = message_data.get('from', {}).get('id')
+        chat_id = message_data.get('chat', {}).get('id')
+        chat_type = message_data.get('chat', {}).get('type', 'private')
+        text = (message_data.get('text') or message_data.get('caption', '')).strip()
         
         if not text:
+            logger.info("Webhook: Empty message text")
             return
         
         logger.info(f"📥 Webhook received message from chat_id={chat_id}, user_id={user_id}")
@@ -289,15 +289,29 @@ def handle_webhook_update(update_data):
             logger.info("Ignored non-trading message")
             return
         
+        # Create a minimal message-like object for compatibility
+        class SimpleMessage:
+            def __init__(self, data):
+                self.text = text
+                self.chat_id = chat_id
+                self.chat = type('obj', (object,), {
+                    'type': chat_type,
+                    'title': data.get('chat', {}).get('title'),
+                    'username': data.get('chat', {}).get('username')
+                })()
+                self.from_user = type('obj', (object,), {'id': user_id})() if user_id else None
+        
+        simple_message = SimpleMessage(message_data)
+        
         # Handle private messages from admin (manual broadcast)
-        if message.chat.type == 'private' and user_id == ADMIN_CHAT_ID:
+        if chat_type == 'private' and user_id == ADMIN_CHAT_ID:
             logger.info("Processing admin broadcast")
-            broadcast_admin_message(message, text)
+            broadcast_admin_message(simple_message, text)
         
         # Handle group messages (auto-forward)
-        elif message.chat.type in ['group', 'supergroup']:
+        elif chat_type in ['group', 'supergroup']:
             logger.info("Processing auto-forward from group")
-            auto_forward_signal(message, text)
+            auto_forward_signal(simple_message, text)
         
     except Exception as e:
         logger.error(f"❌ Error handling webhook update: {e}")

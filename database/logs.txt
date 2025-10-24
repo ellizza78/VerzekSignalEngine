@@ -1977,3 +1977,27 @@ Updated working bot version from local PC
 [2025-10-24 07:00:36] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-24 07:00:36] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-24 07:00:50] [API] 🌐 Starting Flask API on port 5000
+[2025-10-24 07:44:34] [WEBHOOK] Received webhook update: {'update_id': 999999, 'message': {'message_id': 123, 'from': {'id': 572038606, 'first_name': 'Admin'}, 'chat': {'id': 572038606, 'type': 'private'}, 'date': 1729757000, 'text': '#SOL/USDT LONG\nEntry: 180\nStop Loss: 175\nTargets: 185 - 190 - 195'}}
+[2025-10-24 07:44:34] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:44:34] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-24 07:44:34] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:45:16] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:45:18] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-24 07:45:18] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-24 07:45:18] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:45:18] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-24 07:45:18] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-24 07:45:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:45:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:45:18] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-24 07:45:18] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-24 07:45:19] [API] 🌐 Starting Flask API on port 5000
+[2025-10-24 07:45:19] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:45:50] [WEBHOOK] Received webhook update: {'update_id': 999998, 'message': {'message_id': 124, 'from': {'id': 572038606, 'first_name': 'Admin', 'is_bot': False}, 'chat': {'id': 572038606, 'type': 'private'}, 'date': 1761291948, 'text': '#MATIC/USDT LONG\nEntry: 0.75\nStop Loss: 0.72\nTargets: 0.78 - 0.81 - 0.84\nLev x15'}}
+[2025-10-24 07:45:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:45:50] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-24 07:45:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:45:50] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'MATICUSDT', 'reason': 'stop_loss_hit', 'source_text': '#MATIC/USDT LONG\nEntry: 0.75\nStop Loss: 0.72\nTargets: 0.78 - 0.81 - 0.84\nLev x15'}
+[2025-10-24 07:45:50] [ORCHESTRATOR] ℹ️ No active positions found for MATICUSDT to close
+[2025-10-24 07:45:50] [AUTO_TRADER] Processing auto-trade signal: MATICUSDT
+[2025-10-24 07:45:50] [AUTO_TRADER] No users with auto-trading enabled
