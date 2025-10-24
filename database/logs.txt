@@ -2001,3 +2001,8 @@ Updated working bot version from local PC
 [2025-10-24 07:45:50] [ORCHESTRATOR] ℹ️ No active positions found for MATICUSDT to close
 [2025-10-24 07:45:50] [AUTO_TRADER] Processing auto-trade signal: MATICUSDT
 [2025-10-24 07:45:50] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-24 07:53:36] [WEBHOOK] Received webhook update: {'update_id': 999997, 'message': {'message_id': 125, 'from': {'id': 572038606, 'first_name': 'Admin', 'is_bot': False}, 'chat': {'id': 572038606, 'type': 'private'}, 'date': 1761292416, 'text': '#BNB/USDT SHORT\nEntry: 620\nStop Loss: 630\nTargets: 610 - 600 - 590'}}
+[2025-10-24 07:53:36] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'BNBUSDT', 'reason': 'stop_loss_hit', 'source_text': '#BNB/USDT SHORT\nEntry: 620\nStop Loss: 630\nTargets: 610 - 600 - 590'}
+[2025-10-24 07:53:36] [ORCHESTRATOR] ℹ️ No active positions found for BNBUSDT to close
+[2025-10-24 07:53:37] [AUTO_TRADER] Processing auto-trade signal: BNBUSDT
+[2025-10-24 07:53:37] [AUTO_TRADER] No users with auto-trading enabled

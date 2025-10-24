@@ -2696,3 +2696,7 @@ Entry: 0.75
 Stop Loss: 0.72
 Targets: 0.78 - 0.81 - 0.84
 Lev x15
+[2025-10-24 07:53:37] #BNB/USDT SHORT
+Entry: 620
+Stop Loss: 630
+Targets: 610 - 600 - 590
