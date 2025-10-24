@@ -16,8 +16,8 @@ from modules.dca_orchestrator import DCAOrchestrator
 from modules.signal_auto_trader import signal_auto_trader
 
 # Load sensitive values from environment variables
-BROADCAST_BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN")
-ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID"))
+BROADCAST_BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN") or ""
+ADMIN_CHAT_ID = int(os.getenv("ADMIN_CHAT_ID") or "0")
 
 # Group IDs
 VIP_GROUP_ID = -1002721581400
@@ -28,6 +28,9 @@ os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] [%(levelname)s] %(message)s")
 logger = logging.getLogger("BroadcastWebhookHandler")
+
+if not BROADCAST_BOT_TOKEN:
+    raise ValueError("BROADCAST_BOT_TOKEN environment variable is required")
 
 bot = Bot(token=BROADCAST_BOT_TOKEN)
 

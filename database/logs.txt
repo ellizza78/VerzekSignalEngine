@@ -2006,3 +2006,23 @@ Updated working bot version from local PC
 [2025-10-24 07:53:36] [ORCHESTRATOR] ℹ️ No active positions found for BNBUSDT to close
 [2025-10-24 07:53:37] [AUTO_TRADER] Processing auto-trade signal: BNBUSDT
 [2025-10-24 07:53:37] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-24 07:56:18] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:56:20] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:56:20] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-24 07:56:20] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-24 07:56:20] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:56:20] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-24 07:56:20] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-24 07:56:20] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-24 07:56:20] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-24 07:56:20] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:56:21] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-24 07:56:22] [API] 🌐 Starting Flask API on port 5000
+[2025-10-24 07:56:41] [WEBHOOK] Received webhook update: {'update_id': 999996, 'message': {'message_id': 126, 'from': {'id': 572038606, 'first_name': 'Admin', 'is_bot': False}, 'chat': {'id': 572038606, 'type': 'private'}, 'date': 1761292601, 'text': '#DOGE/USDT LONG\nEntry: 0.085\nStop Loss: 0.083\nTargets: 0.087 - 0.089 - 0.091'}}
+[2025-10-24 07:56:41] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:56:41] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-24 07:56:41] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-24 07:56:41] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'DOGEUSDT', 'reason': 'stop_loss_hit', 'source_text': '#DOGE/USDT LONG\nEntry: 0.085\nStop Loss: 0.083\nTargets: 0.087 - 0.089 - 0.091'}
+[2025-10-24 07:56:41] [ORCHESTRATOR] ℹ️ No active positions found for DOGEUSDT to close
+[2025-10-24 07:56:42] [AUTO_TRADER] Processing auto-trade signal: DOGEUSDT
+[2025-10-24 07:56:42] [AUTO_TRADER] No users with auto-trading enabled

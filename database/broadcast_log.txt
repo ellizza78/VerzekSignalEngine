@@ -2700,3 +2700,7 @@ Lev x15
 Entry: 620
 Stop Loss: 630
 Targets: 610 - 600 - 590
+[2025-10-24 07:56:42] #DOGE/USDT LONG
+Entry: 0.085
+Stop Loss: 0.083
+Targets: 0.087 - 0.089 - 0.091
