@@ -54,4 +54,4 @@ run = ["python", "run_all_bots.py"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc"]
+packages = ["cargo", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc", "nano"]
