@@ -636,6 +636,116 @@ def check_verification_status():
 
 
 # ============================
+# PASSWORD RESET
+# ============================
+
+@app.route("/api/auth/forgot-password", methods=["POST"])
+@limiter.limit("3 per hour")
+def forgot_password():
+    """Request password reset email (rate limited)"""
+    data = request.json
+    email = data.get('email', '').strip().lower()
+    
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    
+    # Find user by email
+    user = user_manager.get_user_by_email(email)
+    
+    # Always return success to prevent email enumeration attacks
+    if not user:
+        log_event("AUTH", f"Password reset requested for non-existent email: {email}")
+        return jsonify({
+            "success": True,
+            "message": "If an account exists with this email, you will receive a password reset link."
+        }), 200
+    
+    # Generate password reset token (reuse verification token fields)
+    reset_token = email_service.generate_verification_token()
+    reset_expires = email_service.get_token_expiration(hours=1)  # 1 hour expiration
+    
+    # Store reset token (reuse verification token fields temporarily)
+    user.password_reset_token = reset_token
+    user.password_reset_expires = reset_expires
+    user.updated_at = datetime.now().isoformat()
+    user_manager._save_users()
+    
+    # Send password reset email
+    email_result = email_service.send_password_reset_email(
+        email=user.email,
+        username=user.full_name or user.email.split('@')[0],
+        reset_token=reset_token
+    )
+    
+    log_event("AUTH", f"Password reset requested for: {user.email}")
+    
+    return jsonify({
+        "success": True,
+        "message": "If an account exists with this email, you will receive a password reset link.",
+        "dev_mode": email_result.get('dev_mode', False)
+    }), 200
+
+
+@app.route("/api/auth/reset-password/<token>", methods=["POST"])
+def reset_password(token):
+    """Reset password using token from email"""
+    data = request.json
+    new_password = data.get('password', '').strip()
+    
+    if not new_password:
+        return jsonify({"error": "New password is required"}), 400
+    
+    if len(new_password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+    
+    # Find user by reset token
+    users = user_manager.get_all_users()
+    user = None
+    for u in users:
+        if hasattr(u, 'password_reset_token') and u.password_reset_token == token:
+            user = u
+            break
+    
+    if not user:
+        return jsonify({"error": "Invalid or expired reset link"}), 400
+    
+    # Check if token expired
+    if hasattr(user, 'password_reset_expires') and not email_service.is_token_valid(user.password_reset_expires):
+        return jsonify({
+            "error": "Reset link expired. Please request a new one.",
+            "expired": True
+        }), 400
+    
+    # Reset password
+    user.password_hash = hash_password(new_password)
+    user.password_reset_token = ""  # Clear token
+    user.password_reset_expires = ""
+    user.updated_at = datetime.now().isoformat()
+    user_manager._save_users()
+    
+    log_event("AUTH", f"Password reset successful for: {user.email}")
+    
+    # Generate new tokens for auto-login
+    access_token = create_access_token(user.user_id, user.email)
+    refresh_token = create_refresh_token(user.user_id)
+    
+    return jsonify({
+        "success": True,
+        "message": "Password reset successful! You can now login with your new password.",
+        "user": {
+            "user_id": user.user_id,
+            "email": user.email,
+            "full_name": user.full_name,
+            "plan": user.plan,
+            "email_verified": user.email_verified,
+            "referral_code": user.referral_code
+        },
+        "access_token": access_token,
+        "refresh_token": refresh_token
+    }), 200
+
+
+# ============================
 # SUPPORT
 # ============================
 

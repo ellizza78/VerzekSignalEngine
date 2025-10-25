@@ -28,6 +28,10 @@ class User:
         self.verification_token: str = ""
         self.verification_token_expires: str = ""
         
+        # Password reset tokens
+        self.password_reset_token: str = ""
+        self.password_reset_expires: str = ""
+        
         # Subscription security
         self.license_key: str = ""
         self.referral_code: str = ""
