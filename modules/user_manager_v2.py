@@ -432,6 +432,14 @@ class UserManager:
                 return user
         return None
     
+    def get_user_by_email(self, email: str) -> Optional[User]:
+        """Get user by email address"""
+        email_lower = email.lower().strip()
+        for user in self.users.values():
+            if user.email.lower() == email_lower:
+                return user
+        return None
+    
     def update_user(self, user_id: str, updates: dict):
         """Update user settings"""
         user = self.users.get(user_id)

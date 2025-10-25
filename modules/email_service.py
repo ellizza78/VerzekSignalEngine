@@ -135,9 +135,15 @@ class EmailService:
         """Generate secure random verification token"""
         return secrets.token_urlsafe(32)
     
-    def get_token_expiration(self) -> str:
-        """Get token expiration timestamp (24 hours from now)"""
-        expiration = datetime.utcnow() + timedelta(hours=self.token_expiration_hours)
+    def get_token_expiration(self, hours: int = None) -> str:
+        """Get token expiration timestamp (24 hours from now by default)
+        
+        Args:
+            hours: Number of hours until expiration (defaults to self.token_expiration_hours)
+        """
+        if hours is None:
+            hours = self.token_expiration_hours
+        expiration = datetime.utcnow() + timedelta(hours=hours)
         return expiration.isoformat()
     
     def is_token_valid(self, token_expires: str) -> bool:

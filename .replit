@@ -72,6 +72,10 @@ externalPort = 3000
 localPort = 45361
 externalPort = 3003
 
+[[ports]]
+localPort = 46373
+externalPort = 4200
+
 [deployment]
 deploymentTarget = "vm"
 run = ["python", "run_all_bots.py"]
