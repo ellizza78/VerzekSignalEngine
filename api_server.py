@@ -3209,3 +3209,6 @@ if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     log_event("API", f"🌐 Starting Flask API on port {port}")
     app.run(host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
