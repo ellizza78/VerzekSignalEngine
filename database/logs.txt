@@ -2405,3 +2405,29 @@ Updated working bot version from local PC
 [2025-10-25 08:28:02] [AUTH] New user registered: workingtest@example.com (verification email sent: True)
 [2025-10-25 08:28:09] [REFERRAL] Referral code VZK0F4C99 and wallet initialized for user successtest_example_com
 [2025-10-25 08:28:15] [AUTH] New user registered: successtest@example.com (verification email sent: True)
+[2025-10-25 09:47:49] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:47:49] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 09:47:49] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 09:47:49] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 09:47:50] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 09:47:50] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 09:47:50] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 09:47:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 09:47:50] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 09:47:50] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:47:51] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:47:59] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 09:51:54] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:51:56] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 09:51:56] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 09:51:56] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:51:56] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 09:51:56] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 09:51:56] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 09:51:56] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 09:51:56] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 09:51:56] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 09:51:56] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 09:51:57] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 09:52:24] [REFERRAL] Referral code VZK24C74C and wallet initialized for user testfix_example_com
+[2025-10-25 09:52:31] [AUTH] New user registered: testfix@example.com (verification email sent: True)

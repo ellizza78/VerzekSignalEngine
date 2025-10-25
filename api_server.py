@@ -454,7 +454,7 @@ def login():
     if not hasattr(user, 'referral_code') or not user.referral_code:
         user.referral_code = subscription_security.generate_referral_code(user.user_id)
         payment_system.register_referral_code(user.user_id, user.referral_code)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
     
     # Generate tokens
     access_token = create_access_token(user.user_id, email)
@@ -559,7 +559,7 @@ def verify_email(token):
     user.verification_token = ""  # Clear token after verification
     user.verification_token_expires = ""
     user.updated_at = datetime.now().isoformat()
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     # Send welcome email
     email_service.send_welcome_email(user.email, user.full_name or user.email.split('@')[0])
@@ -594,7 +594,7 @@ def resend_verification():
     # Generate new verification token
     user.verification_token = email_service.generate_verification_token()
     user.verification_token_expires = email_service.get_token_expiration()
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     # Send verification email
     email_result = email_service.send_verification_email(
@@ -668,7 +668,7 @@ def forgot_password():
     user.password_reset_token = reset_token
     user.password_reset_expires = reset_expires
     user.updated_at = datetime.now().isoformat()
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     # Send password reset email
     email_result = email_service.send_password_reset_email(
@@ -721,7 +721,7 @@ def reset_password(token):
     user.password_reset_token = ""  # Clear token
     user.password_reset_expires = ""
     user.updated_at = datetime.now().isoformat()
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     log_event("AUTH", f"Password reset successful for: {user.email}")
     
@@ -872,7 +872,7 @@ def handle_general_settings(user_id):
     elif request.method == "PUT":
         updates = request.json
         user.update_general_settings(updates)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         return jsonify({
             "message": "General settings updated",
             "general_settings": user.general_settings
@@ -896,7 +896,7 @@ def handle_risk_settings(user_id):
     elif request.method == "PUT":
         updates = request.json
         user.update_risk_settings(updates)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         return jsonify({
             "message": "Risk settings updated",
             "risk_settings": user.risk_settings
@@ -920,7 +920,7 @@ def handle_strategy_settings(user_id):
     elif request.method == "PUT":
         updates = request.json
         user.update_strategy_settings(updates)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         return jsonify({
             "message": "Strategy settings updated",
             "strategy_settings": user.strategy_settings
@@ -965,7 +965,7 @@ def handle_dca_settings(user_id):
     elif request.method == "PUT":
         updates = request.json
         user.update_dca_settings(updates)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         return jsonify({
             "message": "DCA settings updated",
             "dca_settings": user.dca_settings
@@ -1072,7 +1072,7 @@ def handle_exchanges(user_id):
         }
         
         user.exchange_accounts.append(exchange_account)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         
         log_event("EXCHANGE", f"✅ Added encrypted {exchange} account for user {user_id}")
         
@@ -1091,7 +1091,7 @@ def handle_exchanges(user_id):
             acc for acc in user.exchange_accounts
             if acc.get("id") != account_id
         ]
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         
         log_event("EXCHANGE", f"🗑️ Removed exchange account {account_id} for user {user_id}")
         return jsonify({"message": "Exchange account removed"})
@@ -1131,7 +1131,7 @@ def handle_exchange_leverage(user_id, exchange):
         
         user.exchange_leverage_settings[exchange] = int(leverage)
         user.updated_at = time.time()
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         
         log_event("SETTINGS", f"💰 User {user_id} set {exchange} leverage to {leverage}x")
         
@@ -1157,7 +1157,7 @@ def handle_subscription(user_id):
     if request.method == "GET":
         # Check if subscription expired and lock if needed
         user.check_and_lock_expired_users()
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         
         return jsonify({
             "plan": user.plan,
@@ -1199,7 +1199,7 @@ def handle_trading_preferences(user_id):
         updates = request.json
         user.trading_preferences.update(updates)
         user.updated_at = time.time()
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         return jsonify({
             "message": "Trading preferences updated",
             "trading_preferences": user.trading_preferences
@@ -1492,7 +1492,7 @@ def confirm_payment_admin(current_user_id, payment_id):
         )
         target_user.license_key = license_key
         
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
         
         result['license_key'] = license_key
     
@@ -1512,7 +1512,7 @@ def get_referral_code(current_user_id):
     if not hasattr(user, 'referral_code') or not user.referral_code:
         user.referral_code = subscription_security.generate_referral_code(current_user_id)
         payment_system.register_referral_code(current_user_id, user.referral_code)
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
     
     return jsonify({
         'referral_code': user.referral_code,
@@ -1627,7 +1627,7 @@ def validate_subscription(current_user_id):
     
     if not is_valid and user.plan in ['pro', 'vip']:
         user.plan = 'free'
-        user_manager._save_users()
+        user_manager._save_user_to_db(user)
     
     return jsonify({
         'valid': is_valid,
@@ -1874,7 +1874,7 @@ def auto_verify_payment(current_user_id, payment_id):
             )
             target_user.license_key = license_key
             
-            user_manager._save_users()
+            user_manager._save_user_to_db(user)
             
             audit_logger.log_event(
                 AuditEventType.PAYMENT_CONFIRMED,
@@ -2448,7 +2448,7 @@ def set_position_limits(current_user_id):
     if 'max_position_size' in data:
         user.max_position_size = float(data['max_position_size'])
     
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     audit_logger.log_event(
         AuditEventType.SETTINGS_CHANGED,
