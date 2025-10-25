@@ -2386,3 +2386,22 @@ Updated working bot version from local PC
 [2025-10-25 08:06:43] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-25 08:06:44] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 08:06:54] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 08:26:31] [REFERRAL] Referral code VZKFBE894 and wallet initialized for user localtest_example_com
+[2025-10-25 08:27:19] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 08:27:21] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 08:27:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 08:27:21] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 08:27:21] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 08:27:21] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 08:27:21] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 08:27:21] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 08:27:21] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 08:27:21] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 08:27:22] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 08:27:22] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 08:27:46] [REFERRAL] Referral code VZK5356ED and wallet initialized for user fixedtest_example_com
+[2025-10-25 08:27:53] [AUTH] New user registered: fixedtest@example.com (verification email sent: True)
+[2025-10-25 08:28:01] [REFERRAL] Referral code VZK949788 and wallet initialized for user workingtest_example_com
+[2025-10-25 08:28:02] [AUTH] New user registered: workingtest@example.com (verification email sent: True)
+[2025-10-25 08:28:09] [REFERRAL] Referral code VZK0F4C99 and wallet initialized for user successtest_example_com
+[2025-10-25 08:28:15] [AUTH] New user registered: successtest@example.com (verification email sent: True)

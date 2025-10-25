@@ -341,7 +341,7 @@ def register():
     user.verification_token_expires = email_service.get_token_expiration()
     user.email_verified = False
     
-    user_manager._save_users()
+    user_manager._save_user_to_db(user)
     
     # Send verification email
     email_result = email_service.send_verification_email(
