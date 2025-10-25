@@ -33,7 +33,7 @@ from modules.push_notifications import push_service
 from modules.analytics_engine import analytics_engine
 from modules.advanced_orders import advanced_order_manager
 from modules.webhook_handler import webhook_handler
-from services.email_service import email_service
+from modules.email_service import email_service
 
 # Phase 4 Advanced Features
 from modules.portfolio_rebalancer import PortfolioRebalancer
@@ -187,6 +187,34 @@ def test():
         "status": "success",
         "message": "📡 Flask API connection successful!"
     })
+
+
+@app.route("/api/test/email", methods=["POST"])
+@token_required
+def test_email(current_user_id):
+    """Test SMTP email connection by sending a test email"""
+    data = request.json
+    test_email_address = data.get("email")
+    
+    if not test_email_address:
+        return jsonify({"error": "Email address is required"}), 400
+    
+    subject = "Verzek SMTP Connection Test"
+    html = """
+    <h3>SMTP Connected Successfully 🎉</h3>
+    <p>Emails from Verzek Innovative Solutions are now verified and secure.</p>
+    <p>Your VerzekAutoTrader platform is ready to send:</p>
+    <ul>
+        <li>✅ Email verifications</li>
+        <li>✅ Password resets</li>
+        <li>✅ Support notifications</li>
+        <li>✅ Trading alerts</li>
+    </ul>
+    """
+    
+    result = email_service.send_email(test_email_address, subject, html)
+    
+    return jsonify(result)
 
 
 @app.route("/api/system/ip")
