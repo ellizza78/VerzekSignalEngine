@@ -535,7 +535,7 @@ class UserManager:
         user = self.users.get(user_id)
         if user:
             user.add_exchange_account(exchange, api_key_id, testnet)
-            self._save_users()
+            # Database auto-saves via SQLite transactions
     
     def get_user_exchanges(self, user_id: str) -> List[dict]:
         """Get user's exchange accounts"""
@@ -652,25 +652,25 @@ class UserManager:
                 user.stats["losing_trades"] += 1
             user.stats["total_pnl"] += pnl
             
-            self._save_users()
+            # Database auto-saves via SQLite transactions
     
     def update_exchange_account(self, user_id: str, account_id: str, updates: dict):
         """Update exchange account for a user"""
         user = self.users.get(user_id)
         if user:
             user.update_exchange_account(account_id, updates)
-            self._save_users()
+            # Database auto-saves via SQLite transactions
     
     def remove_exchange_account(self, user_id: str, account_id: str):
         """Remove exchange account from a user"""
         user = self.users.get(user_id)
         if user:
             user.remove_exchange_account(account_id)
-            self._save_users()
+            # Database auto-saves via SQLite transactions
     
     def enable_exchange_account(self, user_id: str, account_id: str, enabled: bool = True):
         """Enable or disable exchange account for a user"""
         user = self.users.get(user_id)
         if user:
             user.enable_exchange_account(account_id, enabled)
-            self._save_users()
+            # Database auto-saves via SQLite transactions
