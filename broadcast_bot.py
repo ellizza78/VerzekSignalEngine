@@ -213,15 +213,15 @@ def auto_forward_signal(message, text):
     
     logger.info(f"✅ Signal from {source_chat} logged to broadcast_log.txt for mobile app access")
 
-def setup_webhook():
+async def setup_webhook():
     """Set up webhook with Telegram"""
     try:
         # Delete any existing webhook first
-        bot.delete_webhook()
+        await bot.delete_webhook()
         logger.info("🗑️ Deleted existing webhook")
         
         # Set new webhook
-        success = bot.set_webhook(
+        success = await bot.set_webhook(
             url=WEBHOOK_URL,
             drop_pending_updates=True  # Clear any pending updates
         )
@@ -230,7 +230,7 @@ def setup_webhook():
             logger.info(f"✅ Webhook set successfully: {WEBHOOK_URL}")
             
             # Verify webhook info
-            webhook_info = bot.get_webhook_info()
+            webhook_info = await bot.get_webhook_info()
             logger.info(f"📡 Webhook URL: {webhook_info.url}")
             logger.info(f"📡 Pending updates: {webhook_info.pending_update_count}")
             return True
@@ -241,12 +241,12 @@ def setup_webhook():
         logger.error(f"❌ Error setting up webhook: {e}")
         return False
 
-def main():
+async def main():
     """Initialize webhook-based bot"""
     logger.info("🚀 VerzekBroadcastBot v2.0 (Webhook Edition) starting...")
     
     # Set up webhook with Telegram
-    if setup_webhook():
+    if await setup_webhook():
         logger.info("✅ Webhook mode activated - no polling conflicts!")
         logger.info("📡 Listening for admin signals and monitoring signal sources...")
         logger.info("🔗 Webhook endpoint: /webhook/broadcast")
@@ -262,4 +262,5 @@ def main():
         logger.error("❌ Failed to set up webhook - bot will not receive messages")
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())

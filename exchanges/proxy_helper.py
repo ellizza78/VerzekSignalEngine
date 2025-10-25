@@ -7,7 +7,7 @@ import os
 import hmac
 import hashlib
 import requests
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from urllib.parse import urlparse, urlencode
 
 
@@ -44,7 +44,7 @@ class ProxyHelper:
         headers: Optional[Dict] = None,
         json_data: Optional[Dict] = None,
         timeout: int = 10
-    ) -> requests.Response:
+    ) -> Any:
         """
         Make HTTP request through proxy (if enabled) or directly
         

@@ -9,6 +9,16 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
+**October 25, 2025 - Email Service & Channel Monitoring:**
+- ✅ **Email verification system active** - Zoho SMTP configured (support@vezekinnovative.com)
+- ✅ **SMTP credentials secured** - SMTP_USER and SMTP_PASS in Replit Secrets
+- ✅ **Channel monitoring implemented** - Ai Golden Crypto (@aigoldencrypto) signals forwarded
+- ✅ **Spam filter optimized** - Removed "AI GOLDEN" keyword, added MONITORED_CHANNELS whitelist
+- ✅ **Broadcast bot async fixed** - Webhook setup now properly uses async/await
+- ✅ **Python dependencies resolved** - All missing packages installed (six, pytz, threadpoolctl, etc.)
+- ✅ **Type hint fixes** - requests.Response changed to Any for compatibility
+- ⚠️ **Telethon session pending** - Waiting for 24h flood limit cooldown (PhonePasswordFloodError)
+
 **October 25, 2025 - Production Readiness & Security Hardening:**
 - ✅ **JWT_SECRET_KEY secured** - Moved from hard-coded default to Replit Secrets (environment variable)
 - ✅ **Production WSGI server** - Configured Gunicorn with gevent workers for production deployment
