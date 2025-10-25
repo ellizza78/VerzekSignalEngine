@@ -74,7 +74,7 @@ externalPort = 3003
 
 [deployment]
 deploymentTarget = "vm"
-run = ["gunicorn", "--worker-class", "gevent", "--workers", "2", "--bind", "0.0.0.0:5000", "--timeout", "120", "--preload", "api_server:app"]
+run = ["gunicorn", "--worker-class", "gevent", "--workers", "1", "--bind", "0.0.0.0:5000", "--timeout", "120", "--preload", "api_server:app"]
 build = ["pip", "install", "-r", "requirements.txt"]
 
 [nix]
