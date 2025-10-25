@@ -4,7 +4,9 @@
 VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar Cost Averaging (DCA). It automates trading by monitoring Telegram for signals, broadcasting them to VIP/TRIAL groups, and executing DCA trades with advanced risk management across various exchanges. The platform features a robust subscription system, offering tiered access to automation and features. Key capabilities include progressive take-profit, auto-stop logic, and comprehensive user and position management. The project aims to provide a secure and reliable trading environment, with a strong focus on automation and user experience.
 
 ## User Preferences
-None specified yet.
+- **Production Safety**: Enterprise-grade database with ACID compliance required
+- **Security First**: No hard-coded secrets, all environment variables mandatory
+- **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
 **October 25, 2025 - Production Readiness & Security Hardening:**
