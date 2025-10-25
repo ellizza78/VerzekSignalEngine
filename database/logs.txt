@@ -2133,3 +2133,27 @@ Updated working bot version from local PC
 [2025-10-25 02:19:16] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-25 02:19:17] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 02:19:28] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 02:34:09] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 02:34:09] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 02:34:09] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 02:34:09] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 02:34:09] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 02:34:09] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 02:34:09] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 02:34:09] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 02:34:09] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 02:34:09] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 02:34:10] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 02:34:21] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 02:41:16] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 02:41:18] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 02:41:18] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 02:41:18] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 02:41:18] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 02:41:18] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 02:41:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 02:41:18] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 02:41:18] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 02:41:18] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 02:41:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 02:41:19] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)

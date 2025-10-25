@@ -58,8 +58,8 @@ class User:
         self.risk_settings = {
             "risk_per_trade": 0.005,  # 0.5% of total capital per trade
             "default_position_size": 5.0,  # $5 USDT base amount
-            "max_concurrent_trades": 3,  # 1-10 slider
-            "max_daily_trades": 5,  # Daily cap for safety
+            "max_concurrent_trades": 50,  # 1-50 slider (updated limit)
+            "max_daily_trades": 100,  # Daily cap for safety (increased)
             "leverage_cap": 25,  # Hard limit for futures leverage
             "cooldown_period": 300,  # 300 seconds pause between trades
             "max_daily_loss_percent": 5.0  # Legacy setting

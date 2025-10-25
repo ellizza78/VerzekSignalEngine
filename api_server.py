@@ -219,16 +219,20 @@ def test_email(current_user_id):
 
 @app.route("/api/system/ip")
 def get_server_ip():
-    """Get server IP for exchange API whitelisting (dynamically fetched from ipify.org)"""
-    import requests as req
-    try:
-        response = req.get('https://api.ipify.org?format=json', timeout=5)
-        server_ip = response.json().get('ip', 'Unable to fetch IP')
-    except:
-        server_ip = 'Unable to fetch IP'
+    """Get server IP for exchange API whitelisting - Returns Vultr static IPs"""
+    # ✅ Vultr Infrastructure Static IPs
+    static_ips = [
+        "45.76.90.149",      # Frankfurt (Europe) - Hub
+        "209.222.24.189",    # New Jersey (US) - Node 1
+        "45.76.158.152",     # Singapore (Asia) - Node 2
+        "207.148.80.196"     # Sydney (Australia) - Node 3
+    ]
+    
+    server_ip = ','.join(static_ips)  # Comma-separated for easy copying
     
     return jsonify({
         "server_ip": server_ip,
+        "ip_list": static_ips,  # Array format for mobile app
         "instructions": {
             "step_1": "Copy the IP address above",
             "step_2": "Go to your exchange (Binance, Bybit, etc.)",
@@ -408,6 +412,16 @@ def login():
             details={'reason': 'invalid_password'}
         )
         return jsonify({"error": "Invalid email or password"}), 401
+    
+    # ✅ ENFORCE EMAIL VERIFICATION
+    if not user.email_verified:
+        return jsonify({
+            "error": "Email verification required",
+            "message": "Please verify your email address before logging in. Check your inbox for the verification link.",
+            "email_verified": False,
+            "email": user.email,
+            "user_id": user.user_id
+        }), 403
     
     # Check if 2FA is enabled
     if two_factor_auth.is_enabled(user.user_id):
