@@ -2513,3 +2513,15 @@ Updated working bot version from local PC
 [2025-10-25 11:07:28] [AUTH] New user registered: userg@test.com (verification email sent: True)
 [2025-10-25 11:07:29] [REFERRAL] Referral code VZKD019AB and wallet initialized for user userh_test_com
 [2025-10-25 11:07:30] [AUTH] New user registered: userh@test.com (verification email sent: True)
+[2025-10-25 11:52:54] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 11:52:54] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 11:52:55] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 11:52:55] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 11:52:55] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 11:52:55] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 11:52:55] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 11:52:55] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 11:52:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 11:52:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 11:52:56] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 11:53:05] [API] 🌐 Starting Flask API on port 5000
