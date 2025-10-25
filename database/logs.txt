@@ -2026,3 +2026,15 @@ Updated working bot version from local PC
 [2025-10-24 07:56:41] [ORCHESTRATOR] ℹ️ No active positions found for DOGEUSDT to close
 [2025-10-24 07:56:42] [AUTO_TRADER] Processing auto-trade signal: DOGEUSDT
 [2025-10-24 07:56:42] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-25 00:04:25] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 00:04:25] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 00:04:25] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 00:04:25] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 00:04:25] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 00:04:25] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 00:04:25] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 00:04:25] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 00:04:26] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 00:04:26] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 00:04:26] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 00:04:41] [API] 🌐 Starting Flask API on port 5000
