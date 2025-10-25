@@ -1,42 +1,68 @@
 """
 Position Tracker - Manages trading positions and DCA levels
 Handles position storage, retrieval, and persistence
+Now using SQLite for production-grade ACID compliance
 """
 
 import json
 import os
 from typing import Dict, List, Optional
 from datetime import datetime
+from modules.database import get_database
 
 
 class PositionTracker:
-    """Tracks all trading positions across users and exchanges"""
+    """Tracks all trading positions across users and exchanges - SQLite backend"""
     
     def __init__(self, storage_path: str = "database/positions.json"):
-        self.storage_path = storage_path
+        self.db = get_database()
         self.positions: Dict[str, dict] = {}
-        self._load_positions()
+        self._load_positions_from_db()
     
-    def _load_positions(self):
-        """Load positions from storage"""
-        if os.path.exists(self.storage_path):
-            try:
-                with open(self.storage_path, 'r') as f:
-                    self.positions = json.load(f)
-            except Exception as e:
-                print(f"Error loading positions: {e}")
-                self.positions = {}
-        else:
-            os.makedirs(os.path.dirname(self.storage_path), exist_ok=True)
+    def _load_positions_from_db(self):
+        """Load positions from SQLite database"""
+        try:
+            db_positions = self.db.get_positions()
+            for db_pos in db_positions:
+                position_dict = dict(db_pos)
+                if position_dict.get('data'):
+                    position_dict.update(position_dict['data'])
+                self.positions[db_pos['position_id']] = position_dict
+        except Exception as e:
+            print(f"Error loading positions from database: {e}")
             self.positions = {}
     
-    def _save_positions(self):
-        """Save positions to storage"""
+    def _save_position_to_db(self, position_data: dict):
+        """Save single position to database"""
         try:
-            with open(self.storage_path, 'w') as f:
-                json.dump(self.positions, f, indent=2)
+            position_id = position_data.get("position_id")
+            existing = self.db.get_positions()
+            position_exists = any(p['position_id'] == position_id for p in existing)
+            
+            if position_exists:
+                self.db.update_position(
+                    position_id,
+                    status=position_data.get('status', 'OPEN'),
+                    pnl=position_data.get('pnl', 0.0),
+                    data=position_data
+                )
+            else:
+                self.db.create_position(
+                    position_id=position_id,
+                    user_id=position_data.get('user_id', ''),
+                    symbol=position_data.get('symbol', ''),
+                    exchange=position_data.get('exchange', ''),
+                    side=position_data.get('side', ''),
+                    entry_price=position_data.get('entry_price', 0.0),
+                    quantity=position_data.get('quantity', 0.0),
+                    leverage=position_data.get('leverage'),
+                    stop_loss=position_data.get('stop_loss'),
+                    take_profit_levels=position_data.get('take_profit_levels', []),
+                    status=position_data.get('status', 'OPEN'),
+                    data=position_data
+                )
         except Exception as e:
-            print(f"Error saving positions: {e}")
+            print(f"Error saving position to database: {e}")
     
     def add_position(self, position_data: dict) -> str:
         """Add a new position"""
@@ -46,14 +72,14 @@ class PositionTracker:
             position_data["position_id"] = position_id
         
         self.positions[position_id] = position_data
-        self._save_positions()
+        self._save_position_to_db(position_data)
         return position_id
     
     def update_position(self, position_id: str, updates: dict):
         """Update an existing position"""
         if position_id in self.positions:
             self.positions[position_id].update(updates)
-            self._save_positions()
+            self._save_position_to_db(self.positions[position_id])
     
     def get_position(self, position_id: str) -> Optional[dict]:
         """Get a specific position"""
@@ -81,13 +107,18 @@ class PositionTracker:
                 "closed_at": datetime.now().isoformat(),
                 **close_data
             })
-            self._save_positions()
+            self._save_position_to_db(self.positions[position_id])
     
     def delete_position(self, position_id: str):
         """Delete a position (use sparingly, prefer closing)"""
         if position_id in self.positions:
             del self.positions[position_id]
-            self._save_positions()
+        try:
+            conn = self.db._get_connection()
+            conn.execute("DELETE FROM positions WHERE position_id = ?", (position_id,))
+            conn.commit()
+        except Exception as e:
+            print(f"Error deleting position: {e}")
     
     def get_position_count(self, user_id: str, status: str = "active") -> int:
         """Get count of positions for a user"""

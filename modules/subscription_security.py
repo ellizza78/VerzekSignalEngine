@@ -1,6 +1,7 @@
 """
 Subscription Security Module
 Protects against hacking and fake subscriptions with license key validation
+Now using SQLite for production-grade ACID compliance
 """
 
 import hashlib
@@ -10,30 +11,54 @@ from datetime import datetime, timedelta
 from typing import Optional, Tuple
 import json
 import os
+from modules.database import get_database
 
 
 class SubscriptionSecurity:
     """
-    Multi-layer security for subscription validation
+    Multi-layer security for subscription validation - SQLite backend
     """
     
     def __init__(self):
-        self.secret_key = os.environ.get('SUBSCRIPTION_SECRET_KEY', 'VerzekAutoTrader2025SecureSubscriptions!@#')
-        self.licenses_file = "database/licenses.json"
-        self.licenses = self._load_licenses()
+        # PRODUCTION: Secret key MUST be set in environment variables
+        self.secret_key = os.environ.get('SUBSCRIPTION_SECRET_KEY')
+        if not self.secret_key:
+            raise ValueError("CRITICAL: SUBSCRIPTION_SECRET_KEY environment variable must be set for production!")
+        
+        self.db = get_database()
+        self.licenses = {}
+        self._load_licenses_from_db()
     
-    def _load_licenses(self) -> dict:
-        """Load issued license keys from persistent storage"""
-        if os.path.exists(self.licenses_file):
-            with open(self.licenses_file, 'r') as f:
-                return json.load(f)
-        return {}
+    def _load_licenses_from_db(self) -> dict:
+        """Load issued license keys from SQLite database"""
+        try:
+            all_users = self.db.get_all_users()
+            for user in all_users:
+                user_licenses = self.db.get_user_licenses(user['user_id'])
+                for lic in user_licenses:
+                    self.licenses[lic['license_key']] = {
+                        'user_id': lic['user_id'],
+                        'plan': lic['plan'],
+                        'expiry': lic['expires_at'],
+                        'created_at': lic['issued_at']
+                    }
+        except Exception as e:
+            print(f"Error loading licenses from database: {e}")
+            self.licenses = {}
+        return self.licenses
     
-    def _save_licenses(self):
-        """Save license keys to persistent storage"""
-        os.makedirs(os.path.dirname(self.licenses_file), exist_ok=True)
-        with open(self.licenses_file, 'w') as f:
-            json.dump(self.licenses, f, indent=2)
+    def _save_license_to_db(self, license_key: str, license_data: dict):
+        """Save license key to SQLite database"""
+        try:
+            self.db.create_license(
+                license_key=license_key,
+                user_id=license_data['user_id'],
+                plan=license_data['plan'],
+                issued_at=int(datetime.now().timestamp()),
+                expires_at=license_data['expiry']
+            )
+        except Exception as e:
+            print(f"Error saving license to database: {e}")
     
     def generate_license_key(self, user_id: str, plan: str, duration_days: int) -> str:
         """
@@ -60,14 +85,14 @@ class SubscriptionSecurity:
         
         license_key = f"VZK-{user_hash}-{plan_code}-{expiry_b64}-{checksum}"
         
-        self.licenses[license_key] = {
+        license_data = {
             'user_id': user_id,
             'plan': plan,
             'expiry': expiry_timestamp,
             'created_at': datetime.now().isoformat()
         }
-        
-        self._save_licenses()
+        self.licenses[license_key] = license_data
+        self._save_license_to_db(license_key, license_data)
         
         return license_key
     

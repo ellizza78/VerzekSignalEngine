@@ -130,7 +130,7 @@ if __name__ == "__main__":
     print("📊 Advanced Orders Monitor tracking trailing stops & OCO orders...")
     print("📡 Price Feed Service streaming live market data...")
     print("🌐 API Server running on port 5000")
-    print("📧 Support: Users can contact via email (support@vezekinnovative.com) or in-app form")
+    print("📧 Support: Contact @VerzekSupport on Telegram for assistance")
     
     # Keep the main thread alive
     try:
