@@ -859,13 +859,18 @@ def handle_single_user(user_id):
 # GENERAL MODE SETTINGS
 # ============================
 
-@token_required
 @app.route("/api/users/<user_id>/general", methods=["GET", "PUT"])
-def handle_general_settings(current_user_id, user_id):
+@token_required
+def handle_general_settings(user_id):
     """Get or update user's general mode settings"""
+    current_user_id = request.user_id
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # Authorization: Verify user can only modify their own settings
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
     
     if request.method == "GET":
         return jsonify(user.general_settings)
@@ -884,13 +889,18 @@ def handle_general_settings(current_user_id, user_id):
 # CAPITAL & RISK SETTINGS
 # ============================
 
-@token_required
 @app.route("/api/users/<user_id>/risk", methods=["GET", "PUT"])
-def handle_risk_settings(current_user_id, user_id):
+@token_required
+def handle_risk_settings(user_id):
     """Get or update user's risk settings"""
+    current_user_id = request.user_id
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # Authorization: Verify user can only modify their own settings
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
     
     if request.method == "GET":
         return jsonify(user.risk_settings)
@@ -909,13 +919,18 @@ def handle_risk_settings(current_user_id, user_id):
 # STRATEGY PARAMETERS
 # ============================
 
-@token_required
 @app.route("/api/users/<user_id>/strategy", methods=["GET", "PUT"])
-def handle_strategy_settings(current_user_id, user_id):
+@token_required
+def handle_strategy_settings(user_id):
     """Get or update user's strategy parameters"""
+    current_user_id = request.user_id
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # Authorization: Verify user can only modify their own settings
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
     
     if request.method == "GET":
         return jsonify(user.strategy_settings)
@@ -1188,13 +1203,19 @@ def handle_subscription(user_id):
 # TRADING PREFERENCES
 # ============================
 
-@token_required
 @app.route("/api/users/<user_id>/preferences", methods=["GET", "PUT"])
-def handle_trading_preferences(current_user_id, user_id):
-    """Get or update user's trading preferences (notifications, symbols, etc)"""
+@token_required
+def handle_trading_preferences(user_id):
+    """Get or update user's trading preferences
+    current_user_id = request.user_id (notifications, symbols, etc)"""
+    current_user_id = request.user_id
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    
+    # Authorization: Verify user can only modify their own settings
+    if current_user_id != user_id:
+        return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
     
     if request.method == "GET":
         return jsonify(user.trading_preferences)
