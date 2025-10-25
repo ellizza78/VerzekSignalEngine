@@ -7,6 +7,18 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 None specified yet.
 
 ## Recent Changes
+**October 25, 2025 - Vultr Infrastructure for Static IP Proxy:**
+- ✅ **Automated deployment orchestrator** - Python script to deploy entire infrastructure across Vultr nodes
+- ✅ **FastAPI mesh service** - HMAC-authenticated proxy with exchange whitelist enforcement
+- ✅ **WireGuard VPN mesh** - Encrypted network connecting all nodes (10.10.0.0/24)
+- ✅ **HAProxy load balancer** - Round-robin distribution with health checks and automatic failover
+- ✅ **Nginx + Let's Encrypt SSL** - HTTPS reverse proxy with automatic certificate renewal
+- ✅ **Static IP solution** - Frankfurt hub (45.76.90.149) for Binance API key whitelisting
+- ✅ **Shell scripts** - Automated setup for WireGuard, HAProxy, Nginx, and FastAPI deployment
+- ✅ **Comprehensive documentation** - README, deployment guide, quick start, and Replit configuration
+- ✅ **No code changes needed** - Existing ProxyHelper already compatible with Vultr infrastructure
+- ✅ **Security hardened** - HMAC signatures, HTTPS, UFW firewall, VPN encryption, exchange whitelist
+
 **October 25, 2025 - Complete Support System (In-App + Zoho SMTP + Telegram Bot):**
 - ✅ **In-app support screen** - Created SupportScreen.js allowing users to send support messages directly from mobile app
 - ✅ **Support API endpoint** - Added POST /api/support/message with rate limiting (5 messages per hour)
@@ -29,7 +41,7 @@ The mobile application, built with React Native and Expo, features a modern dark
 - **Core Trading Modules**: Manages Dollar Cost Averaging (DCA Engine), risk (Safety Manager, auto-stop logic), signal execution (DCA Orchestrator), and position tracking (Position Tracker) with a target-based take-profit system.
 - **Multi-User Management**: Supports multi-tenancy with per-user DCA configurations, risk settings, exchange account management, symbol whitelists/blacklists, daily stats, and subscription plans (free/pro/vip).
 - **Exchange Adapters**: Provides a unified interface for Binance, Bybit, Phemex, and Kraken, supporting both live and demo modes, with secure API key loading.
-- **Cloudflare Workers Proxy**: Routes all exchange API calls through a static IP address to satisfy Binance Futures IP whitelisting requirements. Features HMAC SHA256 authentication and environment-based configuration.
+- **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy load balancing and Nginx SSL termination. Routes all exchange API calls through a static IP (45.76.90.149) to satisfy Binance Futures IP whitelisting requirements. Features HMAC SHA256 authentication, automatic failover, and health monitoring. Alternative to Cloudflare Workers with greater control and reliability.
 - **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are distributed via dual-channel: VIP/TRIAL Telegram groups and `broadcast_log.txt` for mobile app access via a protected `/api/signals` endpoint. Priority signal detection triggers auto-trading for PREMIUM users.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, position management, safety controls, and system status. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, and auth-based navigation. It includes an in-app FAQ, auto-polling for near-instant signal delivery, and a compact UI.
