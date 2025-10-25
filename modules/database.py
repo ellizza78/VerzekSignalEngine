@@ -27,30 +27,50 @@ class Database:
         self._initialize_database()
     
     def _get_connection(self) -> sqlite3.Connection:
-        """Get thread-local database connection"""
+        """Get thread-local database connection with production-safe settings"""
         if not hasattr(_thread_local, 'connection'):
             _thread_local.connection = sqlite3.connect(
                 self.db_path,
                 check_same_thread=False,
-                isolation_level=None  # Autocommit off for manual transactions
+                timeout=30.0  # 30 second busy timeout for concurrent writes
             )
             _thread_local.connection.row_factory = sqlite3.Row
             # Enable WAL mode for better concurrent performance
             _thread_local.connection.execute("PRAGMA journal_mode=WAL")
             _thread_local.connection.execute("PRAGMA synchronous=NORMAL")
+            _thread_local.connection.execute("PRAGMA busy_timeout=30000")  # 30 seconds
         return _thread_local.connection
     
     @contextmanager
-    def transaction(self):
-        """Context manager for database transactions with automatic rollback"""
+    def transaction(self, immediate=True):
+        """Context manager for database transactions with automatic rollback and retry logic"""
         conn = self._get_connection()
-        try:
-            conn.execute("BEGIN")
-            yield conn
-            conn.commit()
-        except Exception:
-            conn.rollback()
-            raise
+        max_retries = 5
+        retry_delay = 0.1  # Start with 100ms
+        
+        for attempt in range(max_retries):
+            try:
+                # Use IMMEDIATE to lock database immediately and prevent conflicts
+                if immediate:
+                    conn.execute("BEGIN IMMEDIATE")
+                else:
+                    conn.execute("BEGIN")
+                yield conn
+                conn.commit()
+                return  # Success
+            except sqlite3.OperationalError as e:
+                conn.rollback()
+                if "database is locked" in str(e) and attempt < max_retries - 1:
+                    # Exponential backoff
+                    import time
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Double delay each retry
+                    continue
+                else:
+                    raise  # Give up after max retries
+            except Exception:
+                conn.rollback()
+                raise
     
     def _initialize_database(self):
         """Create database schema if it doesn't exist"""
@@ -170,9 +190,9 @@ class Database:
     
     # User operations
     def create_user(self, user_id: str, username: str, email: str, password_hash: str, **kwargs) -> bool:
-        """Create a new user"""
-        with self.transaction() as conn:
-            try:
+        """Create a new user with retry logic"""
+        try:
+            with self.transaction(immediate=True) as conn:
                 import time
                 created_at = int(time.time())
                 data = json.dumps(kwargs.get('data', {}))
@@ -182,8 +202,11 @@ class Database:
                     VALUES (?, ?, ?, ?, ?, ?)
                 """, (user_id, username, email, password_hash, created_at, data))
                 return True
-            except sqlite3.IntegrityError:
-                return False
+        except sqlite3.IntegrityError:
+            return False
+        except sqlite3.OperationalError as e:
+            print(f"Database error creating user: {e}")
+            return False
     
     def get_user(self, user_id: str) -> Optional[Dict]:
         """Get user by ID"""
@@ -208,20 +231,24 @@ class Database:
         return None
     
     def update_user(self, user_id: str, **updates) -> bool:
-        """Update user fields"""
+        """Update user fields with retry logic"""
         if not updates:
             return False
         
-        # Handle JSON data field
-        if 'data' in updates:
-            updates['data'] = json.dumps(updates['data'])
-        
-        set_clause = ", ".join(f"{k} = ?" for k in updates.keys())
-        values = list(updates.values()) + [user_id]
-        
-        with self.transaction() as conn:
-            conn.execute(f"UPDATE users SET {set_clause} WHERE user_id = ?", values)
-            return conn.execute("SELECT changes()").fetchone()[0] > 0
+        try:
+            # Handle JSON data field
+            if 'data' in updates:
+                updates['data'] = json.dumps(updates['data'])
+            
+            set_clause = ", ".join(f"{k} = ?" for k in updates.keys())
+            values = list(updates.values()) + [user_id]
+            
+            with self.transaction(immediate=True) as conn:
+                conn.execute(f"UPDATE users SET {set_clause} WHERE user_id = ?", values)
+                return conn.execute("SELECT changes()").fetchone()[0] > 0
+        except sqlite3.OperationalError as e:
+            print(f"Database error updating user: {e}")
+            return False
     
     def get_all_users(self) -> List[Dict]:
         """Get all users"""
@@ -238,22 +265,26 @@ class Database:
     # Position operations
     def create_position(self, position_id: str, user_id: str, symbol: str, exchange: str, 
                        side: str, entry_price: float, quantity: float, **kwargs) -> bool:
-        """Create a new position"""
-        with self.transaction() as conn:
-            import time
-            created_at = int(time.time())
-            data = json.dumps(kwargs.get('data', {}))
-            tp_levels = json.dumps(kwargs.get('take_profit_levels', []))
-            
-            conn.execute("""
-                INSERT INTO positions 
-                (position_id, user_id, symbol, exchange, side, entry_price, quantity, 
-                 leverage, stop_loss, take_profit_levels, status, created_at, data)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (position_id, user_id, symbol, exchange, side, entry_price, quantity,
-                  kwargs.get('leverage'), kwargs.get('stop_loss'), tp_levels,
-                  kwargs.get('status', 'OPEN'), created_at, data))
-            return True
+        """Create a new position with retry logic"""
+        try:
+            with self.transaction(immediate=True) as conn:
+                import time
+                created_at = int(time.time())
+                data = json.dumps(kwargs.get('data', {}))
+                tp_levels = json.dumps(kwargs.get('take_profit_levels', []))
+                
+                conn.execute("""
+                    INSERT INTO positions 
+                    (position_id, user_id, symbol, exchange, side, entry_price, quantity, 
+                     leverage, stop_loss, take_profit_levels, status, created_at, data)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (position_id, user_id, symbol, exchange, side, entry_price, quantity,
+                      kwargs.get('leverage'), kwargs.get('stop_loss'), tp_levels,
+                      kwargs.get('status', 'OPEN'), created_at, data))
+                return True
+        except sqlite3.OperationalError as e:
+            print(f"Database error creating position: {e}")
+            return False
     
     def get_positions(self, user_id: Optional[str] = None, status: Optional[str] = None) -> List[Dict]:
         """Get positions with optional filters"""
@@ -280,34 +311,41 @@ class Database:
         return positions
     
     def update_position(self, position_id: str, **updates) -> bool:
-        """Update position fields"""
+        """Update position fields with retry logic"""
         if not updates:
             return False
         
-        if 'data' in updates:
-            updates['data'] = json.dumps(updates['data'])
-        if 'take_profit_levels' in updates:
-            updates['take_profit_levels'] = json.dumps(updates['take_profit_levels'])
-        
-        set_clause = ", ".join(f"{k} = ?" for k in updates.keys())
-        values = list(updates.values()) + [position_id]
-        
-        with self.transaction() as conn:
-            conn.execute(f"UPDATE positions SET {set_clause} WHERE position_id = ?", values)
-            return True
+        try:
+            if 'data' in updates:
+                updates['data'] = json.dumps(updates['data'])
+            if 'take_profit_levels' in updates:
+                updates['take_profit_levels'] = json.dumps(updates['take_profit_levels'])
+            
+            set_clause = ", ".join(f"{k} = ?" for k in updates.keys())
+            values = list(updates.values()) + [position_id]
+            
+            with self.transaction(immediate=True) as conn:
+                conn.execute(f"UPDATE positions SET {set_clause} WHERE position_id = ?", values)
+                return True
+        except sqlite3.OperationalError as e:
+            print(f"Database error updating position: {e}")
+            return False
     
     # License operations
     def create_license(self, license_key: str, user_id: str, plan: str, issued_at: int, expires_at: int) -> bool:
-        """Create a new license"""
-        with self.transaction() as conn:
-            try:
+        """Create a new license with retry logic"""
+        try:
+            with self.transaction(immediate=True) as conn:
                 conn.execute("""
                     INSERT INTO licenses (license_key, user_id, plan, issued_at, expires_at)
                     VALUES (?, ?, ?, ?, ?)
                 """, (license_key, user_id, plan, issued_at, expires_at))
                 return True
-            except sqlite3.IntegrityError:
-                return False
+        except sqlite3.IntegrityError:
+            return False
+        except sqlite3.OperationalError as e:
+            print(f"Database error creating license: {e}")
+            return False
     
     def get_license(self, license_key: str) -> Optional[Dict]:
         """Get license by key"""

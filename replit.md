@@ -31,19 +31,18 @@ None specified yet.
 - ✅ **No code changes needed** - Existing ProxyHelper already compatible with Vultr infrastructure
 - ✅ **Security hardened** - HMAC signatures, HTTPS, UFW firewall, VPN encryption, exchange whitelist
 
-**October 25, 2025 - Complete Support System (In-App + Zoho SMTP + Telegram Bot):**
-- ✅ **In-app support screen** - Created SupportScreen.js allowing users to send support messages directly from mobile app
-- ✅ **Support API endpoint** - Added POST /api/support/message with rate limiting (5 messages per hour)
-- ✅ **Profile integration** - Added "Contact Support" button to Profile screen menu and highlighted support section
-- ✅ **Navigation setup** - Registered Support screen in AppNavigator for easy access
-- ✅ **Email forwarding** - In-app messages automatically forwarded to support@vezekinnovative.com via Zoho SMTP
-- ✅ **Support form** - Clean UI with subject + message fields, validation, loading states, and success alerts
-- ✅ **Multiple contact methods** - Users can choose: in-app form, direct email, or Telegram bot (@VerzekSupportBot)
-- ✅ **Zoho Mail SMTP integrated** - All emails sent via support@vezekinnovative.com (verified sender)
-- ✅ **Telegram support bot** - @VerzekSupportBot with auto-reply, email forwarding, and admin notifications
-- ✅ **Support bot commands** - /start (welcome) and /info (contact details) commands available
-- ✅ **Reusable email service** - modules/email_service.py with send_email() utility for all email operations
-- ✅ **Email logging** - All email sends logged to logs/email_logs.txt with success/failure tracking
+**October 25, 2025 - SQLite Migration & Production Database (CRITICAL):**
+- ✅ **SQLite database** - Migrated from JSON files to SQLite for ACID compliance and data integrity
+- ✅ **Concurrent write safety** - Implemented BEGIN IMMEDIATE transactions with exponential backoff retry (5 attempts)
+- ✅ **WAL mode** - Enabled Write-Ahead Logging for better concurrent read/write performance
+- ✅ **Busy timeout** - 30-second timeout prevents database lock errors under production load
+- ✅ **Error handling** - All write operations catch and handle OperationalError gracefully
+- ✅ **Data migration** - Successfully migrated 2 existing users from users_v2.json to SQLite
+- ✅ **Thread-safe connections** - Per-thread database connections for multi-threaded bot architecture
+- ✅ **Production-safe** - Architect-verified: No data corruption or race condition risks
+- ✅ **Support updated** - Changed to @VerzekSupport on Telegram for human support (bot removed)
+- ✅ **Security hardened** - SUBSCRIPTION_SECRET_KEY and CAPTCHA_SECRET_KEY now required (no fallbacks)
+- ⚠️ **BREAKING**: App will not start without SUBSCRIPTION_SECRET_KEY and CAPTCHA_SECRET_KEY in environment variables
 
 ## System Architecture
 ### UI/UX Decisions
@@ -64,8 +63,8 @@ The mobile application, built with React Native and Expo, features a modern dark
 ### System Design Choices
 - **Multi-tenancy**: Isolated configurations and strategies per user.
 - **Microservices-like Components**: Separation of concerns into distinct modules.
-- **Persistent Local Storage**: JSON files in the `database/` folder for user data, positions, and safety state.
-- **Environment Variables**: For sensitive information like API tokens.
+- **Production Database**: SQLite with ACID compliance, WAL mode, and concurrent write safety (replaces JSON files).
+- **Environment Variables**: For sensitive information like API tokens and secret keys (all required, no hard-coded fallbacks).
 - **24/7 Operation**: Configured for continuous uptime.
 - **Subscription Model**: Free, Pro, and VIP tiers controlling feature access.
 - **Authentication**: JWT-based with secure password hashing and token refresh.
