@@ -2431,3 +2431,17 @@ Updated working bot version from local PC
 [2025-10-25 09:51:57] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 09:52:24] [REFERRAL] Referral code VZK24C74C and wallet initialized for user testfix_example_com
 [2025-10-25 09:52:31] [AUTH] New user registered: testfix@example.com (verification email sent: True)
+[2025-10-25 10:52:27] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 10:52:29] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 10:52:29] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 10:52:29] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 10:52:29] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 10:52:29] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 10:52:29] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 10:52:29] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 10:52:29] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 10:52:29] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 10:52:30] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 10:52:30] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 10:53:51] [REFERRAL] Referral code VZK77EFA5 and wallet initialized for user apitest1761389630_example_com
+[2025-10-25 10:53:55] [AUTH] New user registered: apitest1761389630@example.com (verification email sent: True)
