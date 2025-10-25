@@ -62,7 +62,7 @@ telegram_message_handler = None
 
 # Configure CAPTCHA
 CAPTCHA_CONFIG = {
-    'SECRET_CAPTCHA_KEY': os.environ.get('CAPTCHA_SECRET_KEY', 'VerzekAutoTrader2025SecureKey!@#'),
+    'SECRET_CAPTCHA_KEY': os.environ.get('CAPTCHA_SECRET_KEY'),
     'CAPTCHA_LENGTH': 6,
     'CAPTCHA_DIGITS': True,
     'EXPIRE_SECONDS': 600,

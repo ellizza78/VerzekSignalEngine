@@ -13,10 +13,12 @@ import time
 
 def migrate_users():
     """Migrate users from JSON to SQLite"""
-    json_path = "database/users.json"
+    json_path = "database/users_v2.json"
     if not os.path.exists(json_path):
-        print("⏭️  No users.json found, skipping user migration")
-        return
+        json_path = "database/users.json"
+        if not os.path.exists(json_path):
+            print("⏭️  No users.json found, skipping user migration")
+            return
     
     print("📦 Migrating users from JSON to SQLite...")
     db = get_database()

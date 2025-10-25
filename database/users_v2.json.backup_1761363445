@@ -1,0 +1,208 @@
+{
+  "test_verzek_com": {
+    "user_id": "test_verzek_com",
+    "telegram_id": null,
+    "email": "test@verzek.com",
+    "full_name": "Test User",
+    "created_at": "2025-10-16T12:59:08.342332",
+    "updated_at": "2025-10-16T12:59:08.342332",
+    "plan": "free",
+    "plan_started_at": null,
+    "plan_expires_at": null,
+    "telegram_group_access": {
+      "trial_group": false,
+      "vip_group": false,
+      "locked_out": false
+    },
+    "exchange_accounts": [],
+    "general_settings": {
+      "mode": "demo",
+      "default_exchange": "bybit",
+      "api_mode": "demo",
+      "logging_enabled": true
+    },
+    "risk_settings": {
+      "risk_per_trade": 0.005,
+      "default_position_size": 5.0,
+      "max_concurrent_trades": 3,
+      "max_daily_trades": 5,
+      "leverage_cap": 25,
+      "cooldown_period": 300,
+      "max_daily_loss_percent": 5.0
+    },
+    "strategy_settings": {
+      "auto_follow": true,
+      "target_based_tp": true,
+      "auto_stop_on_signals": true,
+      "targets": {
+        "enabled": true,
+        "take_profit_on_each": true
+      }
+    },
+    "dca_settings": {
+      "enabled": false,
+      "base_order": 5.0,
+      "max_investment": 100.0,
+      "tp_pct": 1.2,
+      "tp_mode": "whole",
+      "partial_tp_schema": [
+        30,
+        30,
+        40
+      ],
+      "sl_pct": 3.0,
+      "trailing": {
+        "enabled": false,
+        "callback_pct": 0.5
+      },
+      "levels": [
+        {
+          "drop_pct": 1.5,
+          "multiplier": 1.0
+        },
+        {
+          "drop_pct": 2.0,
+          "multiplier": 1.2
+        },
+        {
+          "drop_pct": 3.0,
+          "multiplier": 1.5
+        }
+      ],
+      "cooldown_sec": 300
+    },
+    "trading_preferences": {
+      "auto_trade_enabled": false,
+      "default_exchange": "binance",
+      "signal_sources": [],
+      "symbol_whitelist": [],
+      "symbol_blacklist": [],
+      "notification_enabled": true,
+      "notify_on_entry": true,
+      "notify_on_tp": true,
+      "notify_on_sl": true,
+      "notify_on_dca": true
+    },
+    "stats": {
+      "total_trades": 0,
+      "winning_trades": 0,
+      "losing_trades": 0,
+      "total_pnl": 0.0,
+      "total_volume": 0.0,
+      "active_positions": 0
+    },
+    "daily_stats": {
+      "date": "2025-10-16",
+      "trades_count": 0,
+      "total_pnl": 0.0
+    },
+    "password_hash": "$2b$12$uvtvsjIAR92xZPXMZk3oiOqkMF.K9CUes3k2z0DiqyiUMvZogg/v6",
+    "email_verified": false,
+    "verification_token": "",
+    "verification_token_expires": ""
+  },
+  "demo_verzektrader_com": {
+    "user_id": "demo_verzektrader_com",
+    "telegram_id": null,
+    "email": "demo@verzektrader.com",
+    "full_name": "Demo User",
+    "created_at": "2025-10-21T18:34:17.401050",
+    "updated_at": "2025-10-22T16:46:25.818788",
+    "plan": "pro",
+    "plan_started_at": "2025-10-22T14:57:31.574066",
+    "plan_expires_at": "2025-11-21T14:57:31.574077",
+    "telegram_group_access": {
+      "trial_group": false,
+      "vip_group": true,
+      "locked_out": false
+    },
+    "exchange_accounts": [],
+    "general_settings": {
+      "mode": "live",
+      "default_exchange": "bybit",
+      "api_mode": "demo",
+      "logging_enabled": true
+    },
+    "risk_settings": {
+      "risk_per_trade": 0.005,
+      "default_position_size": 5.0,
+      "max_concurrent_trades": 3,
+      "max_daily_trades": 5,
+      "leverage_cap": 25,
+      "cooldown_period": 300,
+      "max_daily_loss_percent": 5.0
+    },
+    "strategy_settings": {
+      "auto_follow": true,
+      "target_based_tp": true,
+      "auto_stop_on_signals": true,
+      "signal_quality_filter": true,
+      "signal_quality_threshold": 60.0,
+      "targets": {
+        "enabled": true,
+        "take_profit_on_each": true
+      }
+    },
+    "dca_settings": {
+      "enabled": false,
+      "base_order": 5.0,
+      "max_investment": 100.0,
+      "tp_pct": 1.2,
+      "tp_mode": "whole",
+      "partial_tp_schema": [
+        30,
+        30,
+        40
+      ],
+      "sl_pct": 3.0,
+      "trailing": {
+        "enabled": false,
+        "callback_pct": 0.5
+      },
+      "levels": [
+        {
+          "drop_pct": 1.5,
+          "multiplier": 1.0
+        },
+        {
+          "drop_pct": 2.0,
+          "multiplier": 1.2
+        },
+        {
+          "drop_pct": 3.0,
+          "multiplier": 1.5
+        }
+      ],
+      "cooldown_sec": 300
+    },
+    "trading_preferences": {
+      "auto_trade_enabled": false,
+      "default_exchange": "binance",
+      "signal_sources": [],
+      "symbol_whitelist": [],
+      "symbol_blacklist": [],
+      "notification_enabled": true,
+      "notify_on_entry": true,
+      "notify_on_tp": true,
+      "notify_on_sl": true,
+      "notify_on_dca": true
+    },
+    "stats": {
+      "total_trades": 0,
+      "winning_trades": 0,
+      "losing_trades": 0,
+      "total_pnl": 0.0,
+      "total_volume": 0.0,
+      "active_positions": 0
+    },
+    "daily_stats": {
+      "date": "2025-10-21",
+      "trades_count": 0,
+      "total_pnl": 0.0
+    },
+    "password_hash": "$2b$12$/HZDPWA9ALfN7lKSZZD8JeezWuWP8LQfuS7/nBnLr5/I0zx4Z.xY6",
+    "email_verified": true,
+    "verification_token": "",
+    "verification_token_expires": ""
+  }
+}
