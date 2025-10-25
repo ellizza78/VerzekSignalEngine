@@ -137,7 +137,7 @@ def home():
             "/api/safety/pause": "Pause trading (POST)",
             "/api/safety/resume": "Resume trading (POST)"
         },
-        "message": "VerzekAutoTrader is running smoothly! 🚀"
+        "message": "VerzekAutoTrader is running smoothly! ðŸš€"
     })
 
 
@@ -148,7 +148,7 @@ def get_status():
         "bot": "VerzekAutoTrader",
         "status": "online",
         "uptime_seconds": uptime,
-        "message": "Bot is running smoothly 🚀"
+        "message": "Bot is running smoothly ðŸš€"
     })
 
 
@@ -185,7 +185,7 @@ def latest_trade():
 def test():
     return jsonify({
         "status": "success",
-        "message": "📡 Flask API connection successful!"
+        "message": "ðŸ“¡ Flask API connection successful!"
     })
 
 
@@ -195,41 +195,41 @@ def test_email(current_user_id):
     """Test SMTP email connection by sending a test email"""
     data = request.json
     test_email_address = data.get("email")
-    
+
     if not test_email_address:
         return jsonify({"error": "Email address is required"}), 400
-    
+
     subject = "Verzek SMTP Connection Test"
     html = """
-    <h3>SMTP Connected Successfully 🎉</h3>
+    <h3>SMTP Connected Successfully ðŸŽ‰</h3>
     <p>Emails from Verzek Innovative Solutions are now verified and secure.</p>
     <p>Your VerzekAutoTrader platform is ready to send:</p>
     <ul>
-        <li>✅ Email verifications</li>
-        <li>✅ Password resets</li>
-        <li>✅ Support notifications</li>
-        <li>✅ Trading alerts</li>
+        <li>âœ… Email verifications</li>
+        <li>âœ… Password resets</li>
+        <li>âœ… Support notifications</li>
+        <li>âœ… Trading alerts</li>
     </ul>
     """
-    
+
     result = email_service.send_email(test_email_address, subject, html)
-    
+
     return jsonify(result)
 
 
 @app.route("/api/system/ip")
 def get_server_ip():
     """Get server IP for exchange API whitelisting - Returns Vultr static IPs"""
-    # ✅ Vultr Infrastructure Static IPs
+    # âœ… Vultr Infrastructure Static IPs
     static_ips = [
         "45.76.90.149",      # Frankfurt (Europe) - Hub
         "209.222.24.189",    # New Jersey (US) - Node 1
         "45.76.158.152",     # Singapore (Asia) - Node 2
         "207.148.80.196"     # Sydney (Australia) - Node 3
     ]
-    
+
     server_ip = ','.join(static_ips)  # Comma-separated for easy copying
-    
+
     return jsonify({
         "server_ip": server_ip,
         "ip_list": static_ips,  # Array format for mobile app
@@ -240,7 +240,7 @@ def get_server_ip():
             "step_4": "Add this IP address to the whitelist",
             "step_5": "Enable 'Enable Futures' permission",
             "step_6": "Enable 'Enable Reading' permission",
-            "important": "⚠️ ALWAYS use ISOLATED MARGIN on your exchange, NOT Cross Margin"
+            "important": "âš ï¸ ALWAYS use ISOLATED MARGIN on your exchange, NOT Cross Margin"
         },
         "supported_exchanges": [
             {
@@ -283,7 +283,7 @@ def verify_captcha():
     data = request.json
     c_hash = data.get('captcha_hash')
     c_text = data.get('captcha_text')
-    
+
     if SIMPLE_CAPTCHA.verify(c_text, c_hash):
         return jsonify({'status': 'success', 'message': 'CAPTCHA verified'}), 200
     else:
@@ -299,63 +299,63 @@ def verify_captcha():
 def register():
     """Register a new user with rate limiting"""
     data = request.json
-    
+
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     full_name = data.get("full_name", "")
-    
+
     # Validation
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
-    
+
     # Email format validation
     email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(email_regex, email):
         return jsonify({"error": "Invalid email format"}), 400
-    
+
     # Password strength
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
-    
+
     # Check if user already exists
     users = user_manager.get_all_users()
     for user in users:
         if user.email == email:
             return jsonify({"error": "User with this email already exists"}), 409
-    
+
     # Create user with email as user_id
     user_id = email.replace("@", "_").replace(".", "_")
     user = user_manager.create_user(user_id)
-    
+
     # Set user credentials
     user.email = email
     user.full_name = full_name
     user.password_hash = hash_password(password)
-    
+
     # Generate referral code for new user
     user.referral_code = subscription_security.generate_referral_code(user_id)
     payment_system.register_referral_code(user_id, user.referral_code)
-    
+
     # Generate email verification token
     user.verification_token = email_service.generate_verification_token()
     user.verification_token_expires = email_service.get_token_expiration()
     user.email_verified = False
-    
+
     user_manager._save_user_to_db(user)
-    
+
     # Send verification email
     email_result = email_service.send_verification_email(
         email=email,
         username=full_name or email.split('@')[0],
         token=user.verification_token
     )
-    
+
     # Generate tokens
     access_token = create_access_token(user_id, email)
     refresh_token = create_refresh_token(user_id)
-    
+
     log_event("AUTH", f"New user registered: {email} (verification email sent: {email_result.get('success')})")
-    
+
     return jsonify({
         "message": "Registration successful. Please check your email to verify your account.",
         "user": {
@@ -379,14 +379,14 @@ def register():
 def login():
     """Login user with 2FA support and rate limiting"""
     data = request.json
-    
+
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     mfa_token = data.get("mfa_token")  # Optional 2FA token
-    
+
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
-    
+
     # Find user by email
     users = user_manager.get_all_users()
     user = None
@@ -394,7 +394,7 @@ def login():
         if u.email == email:
             user = u
             break
-    
+
     if not user:
         audit_logger.log_event(
             AuditEventType.LOGIN_FAILED,
@@ -402,7 +402,7 @@ def login():
             details={'reason': 'user_not_found', 'email': email}
         )
         return jsonify({"error": "Invalid email or password"}), 401
-    
+
     # Verify password
     if not user.password_hash or not verify_password(password, user.password_hash):
         audit_logger.log_event(
@@ -412,8 +412,8 @@ def login():
             details={'reason': 'invalid_password'}
         )
         return jsonify({"error": "Invalid email or password"}), 401
-    
-    # ✅ ENFORCE EMAIL VERIFICATION
+
+    # âœ… ENFORCE EMAIL VERIFICATION
     if not user.email_verified:
         return jsonify({
             "error": "Email verification required",
@@ -422,7 +422,7 @@ def login():
             "email": user.email,
             "user_id": user.user_id
         }), 403
-    
+
     # Check if 2FA is enabled
     if two_factor_auth.is_enabled(user.user_id):
         if not mfa_token:
@@ -432,10 +432,10 @@ def login():
                 "message": "2FA verification required",
                 "user_id": user.user_id
             }), 200
-        
+
         # Verify 2FA token
         is_valid, message = two_factor_auth.verify_token(user.user_id, mfa_token)
-        
+
         if not is_valid:
             audit_logger.log_event(
                 AuditEventType.MFA_FAILED,
@@ -443,31 +443,31 @@ def login():
                 ip_address=request.remote_addr
             )
             return jsonify({"error": f"Invalid 2FA code: {message}"}), 401
-        
+
         audit_logger.log_event(
             AuditEventType.MFA_VERIFIED,
             user_id=user.user_id,
             ip_address=request.remote_addr
         )
-    
+
     # Ensure user has referral code (for existing users)
     if not hasattr(user, 'referral_code') or not user.referral_code:
         user.referral_code = subscription_security.generate_referral_code(user.user_id)
         payment_system.register_referral_code(user.user_id, user.referral_code)
         user_manager._save_user_to_db(user)
-    
+
     # Generate tokens
     access_token = create_access_token(user.user_id, email)
     refresh_token = create_refresh_token(user.user_id)
-    
+
     audit_logger.log_event(
         AuditEventType.LOGIN_SUCCESS,
         user_id=user.user_id,
         ip_address=request.remote_addr
     )
-    
+
     log_event("AUTH", f"User logged in: {email}")
-    
+
     return jsonify({
         "message": "Login successful",
         "user": {
@@ -493,13 +493,13 @@ def refresh():
     """Refresh access token using refresh token"""
     user_id = request.user_id
     user = user_manager.get_user(user_id)
-    
+
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Generate new access token
     access_token = create_access_token(user_id, user.email)
-    
+
     return jsonify({
         "access_token": access_token,
         "token_type": "Bearer"
@@ -512,10 +512,10 @@ def get_current_user():
     """Get current authenticated user info"""
     user_id = request.user_id
     user = user_manager.get_user(user_id)
-    
+
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     return jsonify({
         "user": user.to_dict()
     })
@@ -524,7 +524,7 @@ def get_current_user():
 @app.route("/api/auth/verify-email/<token>", methods=["GET", "POST"])
 def verify_email(token):
     """Verify user email address via verification token
-    
+
     Can be called via:
     - GET: Direct link from email (redirects to success page)
     - POST: API call from mobile app
@@ -536,36 +536,36 @@ def verify_email(token):
         if u.verification_token == token:
             user = u
             break
-    
+
     if not user:
         return jsonify({"error": "Invalid or expired verification link"}), 400
-    
+
     # Check if already verified
     if user.email_verified:
         return jsonify({
             "message": "Email already verified",
             "email_verified": True
         }), 200
-    
+
     # Check if token expired
     if not email_service.is_token_valid(user.verification_token_expires):
         return jsonify({
             "error": "Verification link expired. Please request a new one.",
             "expired": True
         }), 400
-    
+
     # Verify email
     user.email_verified = True
     user.verification_token = ""  # Clear token after verification
     user.verification_token_expires = ""
     user.updated_at = datetime.now().isoformat()
     user_manager._save_user_to_db(user)
-    
+
     # Send welcome email
     email_service.send_welcome_email(user.email, user.full_name or user.email.split('@')[0])
-    
+
     log_event("AUTH", f"Email verified for user: {user.email}")
-    
+
     return jsonify({
         "message": "Email verified successfully! You can now access all features.",
         "email_verified": True,
@@ -581,36 +581,36 @@ def resend_verification():
     """Resend email verification link"""
     user_id = request.user_id
     user = user_manager.get_user(user_id)
-    
+
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     if user.email_verified:
         return jsonify({
             "message": "Email already verified",
             "email_verified": True
         }), 200
-    
+
     # Generate new verification token
     user.verification_token = email_service.generate_verification_token()
     user.verification_token_expires = email_service.get_token_expiration()
     user_manager._save_user_to_db(user)
-    
+
     # Send verification email
     email_result = email_service.send_verification_email(
         email=user.email,
         username=user.full_name or user.email.split('@')[0],
         token=user.verification_token
     )
-    
+
     if not email_result.get('success'):
         return jsonify({
             "error": "Failed to send verification email. Please try again later.",
             "details": email_result.get('message')
         }), 500
-    
+
     log_event("AUTH", f"Verification email resent to: {user.email}")
-    
+
     return jsonify({
         "message": "Verification email sent. Please check your inbox.",
         "email": user.email,
@@ -624,10 +624,10 @@ def check_verification_status():
     """Check if user's email is verified"""
     user_id = request.user_id
     user = user_manager.get_user(user_id)
-    
+
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     return jsonify({
         "email": user.email,
         "email_verified": user.email_verified,
@@ -636,113 +636,81 @@ def check_verification_status():
 
 
 # ============================
-# PASSWORD RESET
+# PASSWORD RESET (FORGOT + RESET)
 # ============================
 
 @app.route("/api/auth/forgot-password", methods=["POST"])
 @limiter.limit("3 per hour")
 def forgot_password():
-    """Request password reset email (rate limited)"""
-    data = request.json
-    email = data.get('email', '').strip().lower()
-    
+    """Request a password reset link via email"""
+    data = request.get_json()
+    email = data.get("email", "").strip().lower()
+
     if not email:
         return jsonify({"error": "Email is required"}), 400
-    
-    # Find user by email
-    user = user_manager.get_user_by_email(email)
-    
-    # Always return success to prevent email enumeration attacks
+
+    # Find user
+    users = user_manager.get_all_users()
+    user = next((u for u in users if u.email == email), None)
+
     if not user:
-        log_event("AUTH", f"Password reset requested for non-existent email: {email}")
-        return jsonify({
-            "success": True,
-            "message": "If an account exists with this email, you will receive a password reset link."
-        }), 200
-    
-    # Generate password reset token (reuse verification token fields)
+        return jsonify({"error": "No account found with that email"}), 404
+
+    # Generate reset token (valid 15 min)
     reset_token = email_service.generate_verification_token()
-    reset_expires = email_service.get_token_expiration(hours=1)  # 1 hour expiration
-    
-    # Store reset token (reuse verification token fields temporarily)
-    user.password_reset_token = reset_token
-    user.password_reset_expires = reset_expires
-    user.updated_at = datetime.now().isoformat()
+    reset_expires = (datetime.utcnow() + timedelta(minutes=15)).isoformat()
+
+    user.reset_token = reset_token
+    user.reset_token_expires = reset_expires
     user_manager._save_user_to_db(user)
-    
+
     # Send password reset email
     email_result = email_service.send_password_reset_email(
         email=user.email,
         username=user.full_name or user.email.split('@')[0],
-        reset_token=reset_token
+        token=reset_token
     )
-    
-    log_event("AUTH", f"Password reset requested for: {user.email}")
-    
+
+    log_event("AUTH", f"Password reset email sent to {email}")
     return jsonify({
-        "success": True,
-        "message": "If an account exists with this email, you will receive a password reset link.",
-        "dev_mode": email_result.get('dev_mode', False)
+        "message": "Password reset email sent. Check your inbox.",
+        "email": email,
+        "sent": email_result.get("success", False)
     }), 200
 
 
 @app.route("/api/auth/reset-password/<token>", methods=["POST"])
+@limiter.limit("5 per hour")
 def reset_password(token):
-    """Reset password using token from email"""
-    data = request.json
-    new_password = data.get('password', '').strip()
-    
-    if not new_password:
-        return jsonify({"error": "New password is required"}), 400
-    
-    if len(new_password) < 6:
+    """Reset password using a valid reset token"""
+    data = request.get_json()
+    new_password = data.get("new_password")
+
+    if not new_password or len(new_password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
-    
-    # Find user by reset token
+
+    # Find user by token
     users = user_manager.get_all_users()
-    user = None
-    for u in users:
-        if hasattr(u, 'password_reset_token') and u.password_reset_token == token:
-            user = u
-            break
-    
+    user = next((u for u in users if getattr(u, "reset_token", None) == token), None)
+
     if not user:
         return jsonify({"error": "Invalid or expired reset link"}), 400
-    
-    # Check if token expired
-    if hasattr(user, 'password_reset_expires') and not email_service.is_token_valid(user.password_reset_expires):
-        return jsonify({
-            "error": "Reset link expired. Please request a new one.",
-            "expired": True
-        }), 400
-    
-    # Reset password
+
+    # Check token expiry
+    if not email_service.is_token_valid(user.reset_token_expires):
+        return jsonify({"error": "Reset link expired. Request a new one."}), 400
+
+    # Update password securely
     user.password_hash = hash_password(new_password)
-    user.password_reset_token = ""  # Clear token
-    user.password_reset_expires = ""
-    user.updated_at = datetime.now().isoformat()
+    user.reset_token = ""
+    user.reset_token_expires = ""
     user_manager._save_user_to_db(user)
-    
-    log_event("AUTH", f"Password reset successful for: {user.email}")
-    
-    # Generate new tokens for auto-login
-    access_token = create_access_token(user.user_id, user.email)
-    refresh_token = create_refresh_token(user.user_id)
-    
-    return jsonify({
-        "success": True,
-        "message": "Password reset successful! You can now login with your new password.",
-        "user": {
-            "user_id": user.user_id,
-            "email": user.email,
-            "full_name": user.full_name,
-            "plan": user.plan,
-            "email_verified": user.email_verified,
-            "referral_code": user.referral_code
-        },
-        "access_token": access_token,
-        "refresh_token": refresh_token
-    }), 200
+
+    # Send confirmation email
+    email_service.send_password_reset_success_email(user.email, user.full_name)
+
+    log_event("AUTH", f"Password reset successful for {user.email}")
+    return jsonify({"message": "Password reset successful"}), 200
 
 
 # ============================
@@ -757,17 +725,17 @@ def send_support_message(current_user_id):
     data = request.json
     message = data.get("message", "").strip()
     subject = data.get("subject", "Support Request").strip()
-    
+
     if not message:
         return jsonify({"error": "Message is required"}), 400
-    
+
     # Get user info
     user = user_manager.get_user(current_user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     user_display = user.full_name or user.email or current_user_id
-    
+
     # Send support email
     try:
         email_result = email_service.send_support_notification(
@@ -775,7 +743,7 @@ def send_support_message(current_user_id):
             message=f"Subject: {subject}\n\n{message}",
             telegram_username=None
         )
-        
+
         if email_result['success']:
             log_event("SUPPORT", f"Support message sent from user: {user.email}")
             return jsonify({
@@ -787,7 +755,7 @@ def send_support_message(current_user_id):
                 "error": "Failed to send support message. Please try again later.",
                 "details": email_result.get('error')
             }), 500
-            
+
     except Exception as e:
         log_event("SUPPORT", f"Error sending support message from {user.email}: {str(e)}")
         return jsonify({
@@ -809,15 +777,15 @@ def handle_users():
             "count": len(users),
             "users": [user.to_dict() for user in users]
         })
-    
+
     elif request.method == "POST":
         data = request.json
         user_id = data.get("user_id")
         telegram_id = data.get("telegram_id")
-        
+
         if not user_id:
             return jsonify({"error": "user_id is required"}), 400
-        
+
         user = user_manager.create_user(user_id, telegram_id)
         return jsonify({
             "message": "User created successfully",
@@ -833,24 +801,24 @@ def handle_single_user(user_id):
         if not user:
             return jsonify({"error": "User not found"}), 404
         return jsonify(user.to_dict())
-    
+
     elif request.method == "PUT":
         user = user_manager.get_user(user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
-        
+
         updates = request.json
         user_manager.update_user(user_id, updates)
         return jsonify({
             "message": "User updated successfully",
             "user": user_manager.get_user(user_id).to_dict()
         })
-    
+
     elif request.method == "DELETE":
         user = user_manager.get_user(user_id)
         if not user:
             return jsonify({"error": "User not found"}), 404
-        
+
         user_manager.delete_user(user_id)
         return jsonify({"message": "User deleted successfully"})
 
@@ -867,14 +835,14 @@ def handle_general_settings(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Authorization: Verify user can only modify their own settings
     if current_user_id != user_id:
         return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
-    
+
     if request.method == "GET":
         return jsonify(user.general_settings)
-    
+
     elif request.method == "PUT":
         updates = request.json
         user.update_general_settings(updates)
@@ -897,14 +865,14 @@ def handle_risk_settings(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Authorization: Verify user can only modify their own settings
     if current_user_id != user_id:
         return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
-    
+
     if request.method == "GET":
         return jsonify(user.risk_settings)
-    
+
     elif request.method == "PUT":
         updates = request.json
         user.update_risk_settings(updates)
@@ -927,14 +895,14 @@ def handle_strategy_settings(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Authorization: Verify user can only modify their own settings
     if current_user_id != user_id:
         return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
-    
+
     if request.method == "GET":
         return jsonify(user.strategy_settings)
-    
+
     elif request.method == "PUT":
         updates = request.json
         user.update_strategy_settings(updates)
@@ -956,7 +924,7 @@ def handle_dca_settings(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # SECURITY: Check if subscription is expired
     if user.is_subscription_expired():
         return jsonify({
@@ -965,7 +933,7 @@ def handle_dca_settings(user_id):
             "plan": user.plan,
             "expired_at": user.plan_expires_at
         }), 403
-    
+
     # SECURITY: DCA/Auto-trade is PREMIUM (vip) plan only
     plan_features = user.get_plan_features()
     if not plan_features.get("auto_trading", False):
@@ -976,10 +944,10 @@ def handle_dca_settings(user_id):
             "required_plan": "vip (PREMIUM)",
             "upgrade_url": "/api/subscription/upgrade"
         }), 403
-    
+
     if request.method == "GET":
         return jsonify(user.dca_settings)
-    
+
     elif request.method == "PUT":
         updates = request.json
         user.update_dca_settings(updates)
@@ -1001,7 +969,7 @@ def handle_exchanges(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # SECURITY: Check if subscription is expired
     if user.is_subscription_expired():
         return jsonify({
@@ -1010,11 +978,11 @@ def handle_exchanges(user_id):
             "plan": user.plan,
             "expired_at": user.plan_expires_at
         }), 403
-    
+
     # SECURITY: Exchange connections require PREMIUM plan
     plan_features = user.get_plan_features()
     max_exchanges = plan_features.get("max_exchanges", 0)
-    
+
     if max_exchanges == 0:
         return jsonify({
             "error": "Unauthorized",
@@ -1023,7 +991,7 @@ def handle_exchanges(user_id):
             "required_plan": "vip (PREMIUM)",
             "upgrade_url": "/api/subscription/upgrade"
         }), 403
-    
+
     if request.method == "GET":
         # Return exchange accounts without exposing encrypted credentials
         safe_exchanges = []
@@ -1037,15 +1005,15 @@ def handle_exchanges(user_id):
                 "encrypted": exc.get("encrypted", False)
             }
             safe_exchanges.append(safe_exc)
-        
+
         return jsonify({
             "count": len(safe_exchanges),
             "exchanges": safe_exchanges,
             "max_exchanges": max_exchanges
         })
-    
+
     elif request.method == "POST":
-        # ✅ REQUIRE EMAIL VERIFICATION for trading features
+        # âœ… REQUIRE EMAIL VERIFICATION for trading features
         if not user.email_verified:
             return jsonify({
                 "error": "Email verification required",
@@ -1053,31 +1021,31 @@ def handle_exchanges(user_id):
                 "email_verified": False,
                 "email": user.email
             }), 403
-        
+
         data = request.json
         exchange = data.get("exchange")
         api_key = data.get("api_key")
         api_secret = data.get("api_secret")
         testnet = data.get("testnet", False)
         enabled = data.get("enabled", True)
-        
+
         if not exchange or not api_key or not api_secret:
             return jsonify({"error": "exchange, api_key, and api_secret required"}), 400
-        
+
         # Encrypt API credentials before storing
         from modules.encryption_service import EncryptionService
         encryption_service = EncryptionService()
-        
+
         try:
             encrypted_creds = encryption_service.encrypt_api_credentials(api_key, api_secret)
         except Exception as e:
             log_event("ERROR", f"Encryption failed for user {user_id}: {e}")
             return jsonify({"error": "Failed to encrypt credentials"}), 500
-        
+
         # Create exchange account with encrypted credentials
         import time
         account_id = f"{exchange}_{int(time.time())}"
-        
+
         exchange_account = {
             "id": account_id,
             "exchange": exchange,
@@ -1088,30 +1056,30 @@ def handle_exchanges(user_id):
             "enabled": enabled,
             "added_at": __import__('datetime').datetime.now().isoformat()
         }
-        
+
         user.exchange_accounts.append(exchange_account)
         user_manager._save_user_to_db(user)
-        
-        log_event("EXCHANGE", f"✅ Added encrypted {exchange} account for user {user_id}")
-        
+
+        log_event("EXCHANGE", f"âœ… Added encrypted {exchange} account for user {user_id}")
+
         return jsonify({
             "message": "Exchange account added successfully",
             "account_id": account_id,
             "exchange": exchange
         }), 201
-    
+
     elif request.method == "DELETE":
         account_id = request.json.get("account_id")
         if not account_id:
             return jsonify({"error": "account_id required"}), 400
-        
+
         user.exchange_accounts = [
             acc for acc in user.exchange_accounts
             if acc.get("id") != account_id
         ]
         user_manager._save_user_to_db(user)
-        
-        log_event("EXCHANGE", f"🗑️ Removed exchange account {account_id} for user {user_id}")
+
+        log_event("EXCHANGE", f"ðŸ—‘ï¸ Removed exchange account {account_id} for user {user_id}")
         return jsonify({"message": "Exchange account removed"})
 
 
@@ -1126,33 +1094,33 @@ def handle_exchange_leverage(user_id, exchange):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     if not hasattr(user, 'exchange_leverage_settings'):
         user.exchange_leverage_settings = {}
-    
+
     if request.method == "GET":
         leverage = user.exchange_leverage_settings.get(exchange, 10)
         return jsonify({
             "exchange": exchange,
             "leverage": leverage
         })
-    
+
     elif request.method == "PUT":
         data = request.json
         leverage = data.get("leverage", 10)
-        
+
         if not isinstance(leverage, (int, float)) or leverage < 1 or leverage > 25:
             return jsonify({"error": "Leverage must be between 1 and 25"}), 400
-        
+
         if not hasattr(user, 'exchange_leverage_settings'):
             user.exchange_leverage_settings = {}
-        
+
         user.exchange_leverage_settings[exchange] = int(leverage)
         user.updated_at = time.time()
         user_manager._save_user_to_db(user)
-        
-        log_event("SETTINGS", f"💰 User {user_id} set {exchange} leverage to {leverage}x")
-        
+
+        log_event("SETTINGS", f"ðŸ’° User {user_id} set {exchange} leverage to {leverage}x")
+
         return jsonify({
             "message": f"Leverage set to {leverage}x for {exchange}",
             "exchange": exchange,
@@ -1171,12 +1139,12 @@ def handle_subscription(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     if request.method == "GET":
         # Check if subscription expired and lock if needed
         user.check_and_lock_expired_users()
         user_manager._save_user_to_db(user)
-        
+
         return jsonify({
             "plan": user.plan,
             "plan_started_at": user.plan_started_at,
@@ -1185,9 +1153,9 @@ def handle_subscription(user_id):
             "group_access": user.telegram_group_access,
             "features": user.get_plan_features()
         })
-    
+
     elif request.method == "POST":
-        # 🔒 ANTI-FRAUD: Direct plan activation is NOT allowed from client
+        # ðŸ”’ ANTI-FRAUD: Direct plan activation is NOT allowed from client
         # Plans must be activated through payment verification endpoints only
         return jsonify({
             "error": "Unauthorized",
@@ -1212,14 +1180,14 @@ def handle_trading_preferences(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Authorization: Verify user can only modify their own settings
     if current_user_id != user_id:
         return jsonify({"error": "Unauthorized: You can only modify your own settings"}), 403
-    
+
     if request.method == "GET":
         return jsonify(user.trading_preferences)
-    
+
     elif request.method == "PUT":
         updates = request.json
         user.trading_preferences.update(updates)
@@ -1243,10 +1211,10 @@ def get_signals():
         # Get authenticated user from token
         user_id = request.user_id
         user = user_manager.get_user(user_id)
-        
+
         if not user:
             return jsonify({"error": "User not found"}), 404
-        
+
         # SECURITY: Check if subscription is expired
         if user.is_subscription_expired():
             return jsonify({
@@ -1256,7 +1224,7 @@ def get_signals():
                 "plan": user.plan,
                 "expired_at": user.plan_expires_at
             }), 403
-        
+
         # SECURITY: Check if user's plan includes signal access
         plan_features = user.get_plan_features()
         if not plan_features.get("signal_forwarding", False):
@@ -1266,23 +1234,23 @@ def get_signals():
                 "plan": user.plan,
                 "required_plans": ["free (TRIAL)", "pro (VIP)", "vip (PREMIUM)"]
             }), 403
-        
+
         # User is authorized - return signals
         log_file = "database/broadcast_log.txt"
         if not os.path.exists(log_file):
             return jsonify({"count": 0, "signals": [], "subscription_status": "active"})
-        
+
         # Read last 50 lines from log file
         with open(log_file, "r", encoding="utf-8") as f:
             lines = f.readlines()[-50:]
-        
+
         signals = []
         for line in lines:
             # Parse timestamp and text
             match = re.match(r'\[(.*?)\] (.*)', line.strip())
             if match:
                 timestamp, text = match.groups()
-                
+
                 # Only include lines that look like signals (contain trading keywords)
                 if any(kw in text.upper() for kw in ["LONG", "SHORT", "ENTRY", "TARGET", "USDT"]):
                     signals.append({
@@ -1290,10 +1258,10 @@ def get_signals():
                         "text": text,
                         "id": f"{timestamp}_{len(signals)}"
                     })
-        
+
         # Reverse to show newest first
         signals.reverse()
-        
+
         return jsonify({
             "count": len(signals),
             "signals": signals,
@@ -1326,7 +1294,7 @@ def get_user_positions(user_id):
     # Filter positions by user_id
     all_positions = position_tracker.get_all_positions()
     user_positions = [p for p in all_positions if p.get("user_id") == user_id]
-    
+
     return jsonify({
         "user_id": user_id,
         "count": len(user_positions),
@@ -1344,7 +1312,7 @@ def get_user_stats(user_id):
     user = user_manager.get_user(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    
+
     return jsonify({
         "stats": user.stats,
         "daily_stats": user.daily_stats
@@ -1367,7 +1335,7 @@ def control_killswitch():
     data = request.json or {}
     action = data.get("action")  # "activate" or "deactivate"
     reason = data.get("reason", "Manual activation")
-    
+
     if action == "activate":
         result = safety_manager.activate_kill_switch(reason)
         return jsonify(result)
@@ -1384,7 +1352,7 @@ def pause_trading():
     data = request.json or {}
     duration = data.get("duration_minutes", 60)
     reason = data.get("reason", "Manual pause")
-    
+
     result = safety_manager.pause_trading(duration, reason)
     return jsonify(result)
 
@@ -1402,7 +1370,7 @@ def control_circuit_breaker():
     data = request.json or {}
     action = data.get("action")
     reason = data.get("reason", "Manual activation")
-    
+
     if action == "activate":
         result = safety_manager.activate_circuit_breaker(reason)
         return jsonify(result)
@@ -1423,10 +1391,10 @@ def create_payment_request(current_user_id):
     """Create payment request for subscription upgrade"""
     data = request.json
     plan = data.get('plan')
-    
+
     if not plan or plan not in ['pro', 'vip']:
         return jsonify({'error': 'Invalid plan. Choose pro or vip'}), 400
-    
+
     result = payment_system.create_payment_request(current_user_id, plan)
     return jsonify(result)
 
@@ -1436,27 +1404,27 @@ def create_payment_request(current_user_id):
 def submit_payment_verification(current_user_id):
     """Submit payment for verification with TX hash and MANDATORY HMAC signature"""
     data = request.json
-    
+
     payment_id = data.get('payment_id')
     tx_hash = data.get('tx_hash')
     referral_code = data.get('referral_code')
     signature = request.headers.get('X-Payment-Signature')
-    
+
     if not payment_id or not tx_hash:
         return jsonify({'error': 'payment_id and tx_hash required'}), 400
-    
+
     if not signature:
         return jsonify({'error': 'X-Payment-Signature header required for security'}), 401
-    
+
     payment_data = {
         'payment_id': payment_id,
         'tx_hash': tx_hash,
         'user_id': current_user_id
     }
-    
+
     if not subscription_security.verify_payment_signature(payment_data, signature):
         return jsonify({'error': 'Invalid payment signature'}), 403
-    
+
     result = payment_system.verify_usdt_payment(
         payment_id, tx_hash, current_user_id, referral_code
     )
@@ -1468,10 +1436,10 @@ def submit_payment_verification(current_user_id):
 def get_pending_payments_admin(current_user_id):
     """Admin: Get pending payment verifications"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     pending = payment_system.get_pending_payments()
     return jsonify({'count': len(pending), 'payments': pending})
 
@@ -1481,46 +1449,46 @@ def get_pending_payments_admin(current_user_id):
 def confirm_payment_admin(current_user_id, payment_id):
     """Admin: Confirm payment and activate subscription with MANDATORY HMAC signature"""
     from datetime import datetime, timedelta
-    
+
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     data = request.json
     is_valid = data.get('is_valid', False)
     signature = request.headers.get('X-Admin-Signature')
-    
+
     if not signature:
         return jsonify({'error': 'X-Admin-Signature header required for security'}), 401
-    
+
     admin_action = {
         'payment_id': payment_id,
         'admin_id': current_user_id,
         'is_valid': is_valid,
         'timestamp': int(datetime.now().timestamp())
     }
-    
+
     if not subscription_security.verify_payment_signature(admin_action, signature):
         return jsonify({'error': 'Invalid admin signature'}), 403
-    
+
     result = payment_system.admin_confirm_payment(payment_id, is_valid)
-    
+
     if result['success'] and is_valid:
         target_user = user_manager.get_user(result['user_id'])
         target_user.plan = result['plan']
         target_user.plan_started_at = datetime.now().isoformat()
         target_user.plan_expires_at = (datetime.now() + timedelta(days=30)).isoformat()
-        
+
         license_key = subscription_security.generate_license_key(
             result['user_id'], result['plan'], 30
         )
         target_user.license_key = license_key
-        
+
         user_manager._save_user_to_db(user)
-        
+
         result['license_key'] = license_key
-    
+
     return jsonify(result)
 
 
@@ -1533,12 +1501,12 @@ def confirm_payment_admin(current_user_id, payment_id):
 def get_referral_code(current_user_id):
     """Get user's referral code"""
     user = user_manager.get_user(current_user_id)
-    
+
     if not hasattr(user, 'referral_code') or not user.referral_code:
         user.referral_code = subscription_security.generate_referral_code(current_user_id)
         payment_system.register_referral_code(current_user_id, user.referral_code)
         user_manager._save_user_to_db(user)
-    
+
     return jsonify({
         'referral_code': user.referral_code,
         'referral_link': f"https://verzek.app/register?ref={user.referral_code}"
@@ -1572,10 +1540,10 @@ def request_referral_payout_endpoint(current_user_id):
     """Request payout of referral earnings"""
     data = request.json
     wallet_address = data.get('wallet_address')
-    
+
     if not wallet_address:
         return jsonify({'error': 'wallet_address required'}), 400
-    
+
     result = payment_system.request_referral_payout(current_user_id, wallet_address)
     return jsonify(result)
 
@@ -1585,10 +1553,10 @@ def request_referral_payout_endpoint(current_user_id):
 def get_pending_payouts_admin(current_user_id):
     """Admin: Get pending referral payouts"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     pending = payment_system.get_pending_payouts()
     return jsonify({'count': len(pending), 'payouts': pending})
 
@@ -1598,21 +1566,21 @@ def get_pending_payouts_admin(current_user_id):
 def complete_payout_admin(current_user_id, payout_id):
     """Admin: Mark payout as completed after sending USDT"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     data = request.json
     tx_hash = data.get('tx_hash')
-    
+
     if not tx_hash:
         return jsonify({'error': 'tx_hash required (transaction hash of sent USDT)'}), 400
-    
+
     # Import admin dashboard utilities
     from utils.admin_dashboard import process_payout
-    
+
     result = process_payout(payout_id, tx_hash, current_user_id)
-    
+
     if result.get('success'):
         audit_logger.log_event(
             AuditEventType.ADMIN_ACTION,
@@ -1625,7 +1593,7 @@ def complete_payout_admin(current_user_id, payout_id):
                 'tx_hash': tx_hash
             }
         )
-    
+
     return jsonify(result)
 
 
@@ -1638,22 +1606,22 @@ def complete_payout_admin(current_user_id, payout_id):
 def validate_subscription(current_user_id):
     """Validate user's subscription and license key"""
     user = user_manager.get_user(current_user_id)
-    
+
     if not hasattr(user, 'license_key') or not user.license_key:
         return jsonify({
             'valid': False,
             'plan': user.plan,
             'message': 'No license key found'
         })
-    
+
     is_valid, message = subscription_security.validate_license_key(
         user.license_key, current_user_id
     )
-    
+
     if not is_valid and user.plan in ['pro', 'vip']:
         user.plan = 'free'
         user_manager._save_user_to_db(user)
-    
+
     return jsonify({
         'valid': is_valid,
         'plan': user.plan,
@@ -1670,15 +1638,15 @@ def validate_subscription(current_user_id):
 def enroll_2fa(current_user_id):
     """Enroll user in 2FA"""
     user = user_manager.get_user(current_user_id)
-    
+
     enrollment_data = two_factor_auth.enroll_user(current_user_id, user.email)
-    
+
     audit_logger.log_event(
         AuditEventType.MFA_ENROLLED,
         user_id=current_user_id,
         ip_address=request.remote_addr
     )
-    
+
     return jsonify({
         'success': True,
         'qr_code': enrollment_data['qr_code'],
@@ -1694,19 +1662,19 @@ def verify_2fa_enable(current_user_id):
     """Verify and enable 2FA for user"""
     data = request.json
     token = data.get('token')
-    
+
     if not token:
         return jsonify({'error': 'Verification token required'}), 400
-    
+
     is_valid, message = two_factor_auth.verify_and_enable(current_user_id, token)
-    
+
     if is_valid:
         audit_logger.log_event(
             AuditEventType.MFA_ENABLED,
             user_id=current_user_id,
             ip_address=request.remote_addr
         )
-    
+
     return jsonify({
         'success': is_valid,
         'message': message
@@ -1719,24 +1687,24 @@ def disable_2fa(current_user_id):
     """Disable 2FA for user (requires password)"""
     data = request.json
     password = data.get('password')
-    
+
     if not password:
         return jsonify({'error': 'Password required to disable 2FA'}), 400
-    
+
     user = user_manager.get_user(current_user_id)
-    
+
     if not verify_password(password, user.password_hash):
         return jsonify({'error': 'Invalid password'}), 403
-    
+
     is_success, message = two_factor_auth.disable_2fa(current_user_id, password)
-    
+
     if is_success:
         audit_logger.log_event(
             AuditEventType.MFA_DISABLED,
             user_id=current_user_id,
             ip_address=request.remote_addr
         )
-    
+
     return jsonify({
         'success': is_success,
         'message': message
@@ -1749,14 +1717,14 @@ def regenerate_backup_codes(current_user_id):
     """Regenerate 2FA backup codes"""
     try:
         backup_codes = two_factor_auth.regenerate_backup_codes(current_user_id)
-        
+
         audit_logger.log_event(
             AuditEventType.ADMIN_ACTION,
             user_id=current_user_id,
             ip_address=request.remote_addr,
             details={'action': 'regenerate_backup_codes'}
         )
-        
+
         return jsonify({
             'success': True,
             'backup_codes': backup_codes
@@ -1782,20 +1750,20 @@ def get_2fa_status(current_user_id):
 def create_backup(current_user_id):
     """Create system backup (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     try:
         backup_path = backup_system.create_backup()
-        
+
         audit_logger.log_event(
             AuditEventType.BACKUP_CREATED,
             user_id=current_user_id,
             ip_address=request.remote_addr,
             details={'backup_path': backup_path}
         )
-        
+
         return jsonify({
             'success': True,
             'backup_path': backup_path,
@@ -1810,13 +1778,13 @@ def create_backup(current_user_id):
 def list_backups(current_user_id):
     """List all available backups (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     backups = backup_system.list_backups()
     stats = backup_system.get_backup_stats()
-    
+
     return jsonify({
         'backups': backups,
         'stats': stats
@@ -1828,19 +1796,19 @@ def list_backups(current_user_id):
 def restore_backup(current_user_id, backup_name):
     """Restore from backup (admin only, DANGEROUS)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     # Require password confirmation
     data = request.json
     password = data.get('password')
-    
+
     if not password or not verify_password(password, user.password_hash):
         return jsonify({'error': 'Password confirmation required'}), 403
-    
+
     success = backup_system.restore_backup(backup_name)
-    
+
     if success:
         audit_logger.log_event(
             AuditEventType.BACKUP_RESTORED,
@@ -1849,7 +1817,7 @@ def restore_backup(current_user_id, backup_name):
             details={'backup_name': backup_name},
             severity='critical'
         )
-    
+
     return jsonify({
         'success': success,
         'message': 'Backup restored successfully' if success else 'Restore failed'
@@ -1865,42 +1833,42 @@ def restore_backup(current_user_id, backup_name):
 def auto_verify_payment(current_user_id, payment_id):
     """Auto-verify payment using TronScan API (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     # Get payment details
     payment = next((p for p in payment_system.payments if p['payment_id'] == payment_id), None)
-    
+
     if not payment:
         return jsonify({'error': 'Payment not found'}), 404
-    
+
     if 'tx_hash' not in payment:
         return jsonify({'error': 'Transaction hash not submitted yet'}), 400
-    
+
     # Verify with TronScan
     verification = tronscan_client.verify_transaction(
         payment['tx_hash'],
         payment['amount_usdt']
     )
-    
+
     if verification.get('verified'):
         # Auto-confirm payment
         result = payment_system.admin_confirm_payment(payment_id, True)
-        
+
         if result['success']:
             target_user = user_manager.get_user(result['user_id'])
             target_user.plan = result['plan']
             target_user.plan_started_at = datetime.now().isoformat()
             target_user.plan_expires_at = (datetime.now() + timedelta(days=30)).isoformat()
-            
+
             license_key = subscription_security.generate_license_key(
                 result['user_id'], result['plan'], 30
             )
             target_user.license_key = license_key
-            
+
             user_manager._save_user_to_db(user)
-            
+
             audit_logger.log_event(
                 AuditEventType.PAYMENT_CONFIRMED,
                 user_id=current_user_id,
@@ -1911,7 +1879,7 @@ def auto_verify_payment(current_user_id, payment_id):
                     'amount': verification['amount']
                 }
             )
-            
+
             return jsonify({
                 'success': True,
                 'verified': True,
@@ -1919,7 +1887,7 @@ def auto_verify_payment(current_user_id, payment_id):
                 'license_key': license_key,
                 'verification_details': verification
             })
-    
+
     return jsonify({
         'success': False,
         'verified': False,
@@ -1937,14 +1905,14 @@ def auto_verify_payment(current_user_id, payment_id):
 def get_user_audit_logs(current_user_id, user_id):
     """Get audit logs for a user (admin or self)"""
     user = user_manager.get_user(current_user_id)
-    
+
     # Can only view own logs unless admin
     if user.plan != 'admin' and current_user_id != user_id:
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
     limit = request.args.get('limit', 50, type=int)
     events = audit_logger.get_user_activity(user_id, limit)
-    
+
     return jsonify({
         'user_id': user_id,
         'event_count': len(events),
@@ -1957,13 +1925,13 @@ def get_user_audit_logs(current_user_id, user_id):
 def get_suspicious_activity(current_user_id):
     """Get suspicious activity (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     limit = request.args.get('limit', 20, type=int)
     events = audit_logger.get_suspicious_activity(limit)
-    
+
     return jsonify({
         'event_count': len(events),
         'events': events
@@ -1975,16 +1943,16 @@ def get_suspicious_activity(current_user_id):
 def get_security_alerts(current_user_id):
     """Get security alerts (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     resolved = request.args.get('resolved')
     if resolved is not None:
         resolved = resolved.lower() == 'true'
-    
+
     alerts = audit_logger.get_alerts(resolved)
-    
+
     return jsonify({
         'alert_count': len(alerts),
         'alerts': alerts
@@ -2006,19 +1974,19 @@ def admin_dashboard_view():
 def admin_overview(current_user_id):
     """Get system overview dashboard (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     overview = admin_dashboard.get_system_overview()
-    
+
     audit_logger.log_event(
         AuditEventType.ADMIN_ACTION,
         user_id=current_user_id,
         ip_address=request.remote_addr,
         details={'action': 'view_dashboard_overview'}
     )
-    
+
     return jsonify(overview)
 
 
@@ -2027,15 +1995,15 @@ def admin_overview(current_user_id):
 def admin_users_list(current_user_id):
     """Get user list with filtering (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     plan_filter = request.args.get('plan')
     search = request.args.get('search')
-    
+
     users = admin_dashboard.get_user_list(plan_filter, search)
-    
+
     return jsonify({
         'total': len(users),
         'users': users
@@ -2047,12 +2015,12 @@ def admin_users_list(current_user_id):
 def admin_pending_payments(current_user_id):
     """Get pending payment verifications (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     pending = admin_dashboard.get_pending_payments()
-    
+
     return jsonify({
         'total': len(pending),
         'payments': pending
@@ -2064,13 +2032,13 @@ def admin_pending_payments(current_user_id):
 def admin_recent_activity(current_user_id):
     """Get recent system activity (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     limit = request.args.get('limit', 50, type=int)
     activities = admin_dashboard.get_recent_activity(limit)
-    
+
     return jsonify({
         'total': len(activities),
         'activities': activities
@@ -2082,12 +2050,12 @@ def admin_recent_activity(current_user_id):
 def admin_system_health(current_user_id):
     """Get system health metrics (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     health = admin_dashboard.get_system_health()
-    
+
     return jsonify(health)
 
 
@@ -2096,13 +2064,13 @@ def admin_system_health(current_user_id):
 def admin_revenue_analytics(current_user_id):
     """Get revenue analytics (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     days = request.args.get('days', 30, type=int)
     analytics = admin_dashboard.get_revenue_analytics(days)
-    
+
     return jsonify(analytics)
 
 
@@ -2111,12 +2079,12 @@ def admin_revenue_analytics(current_user_id):
 def admin_trading_performance(current_user_id):
     """Get trading performance metrics (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     performance = admin_dashboard.get_trading_performance()
-    
+
     return jsonify(performance)
 
 
@@ -2130,19 +2098,19 @@ def register_device_token(current_user_id):
     """Register device for push notifications"""
     data = request.json
     device_token = data.get('device_token')
-    
+
     if not device_token:
         return jsonify({'error': 'device_token is required'}), 400
-    
+
     success = push_service.register_device(current_user_id, device_token)
-    
+
     audit_logger.log_event(
         AuditEventType.SETTINGS_CHANGED,
         user_id=current_user_id,
         ip_address=request.remote_addr,
         details={'action': 'register_push_token'}
     )
-    
+
     return jsonify({
         'success': success,
         'message': 'Device registered for notifications' if success else 'Device already registered'
@@ -2155,12 +2123,12 @@ def unregister_device_token(current_user_id):
     """Unregister device from push notifications"""
     data = request.json
     device_token = data.get('device_token')
-    
+
     if not device_token:
         return jsonify({'error': 'device_token is required'}), 400
-    
+
     success = push_service.unregister_device(current_user_id, device_token)
-    
+
     return jsonify({
         'success': success,
         'message': 'Device unregistered' if success else 'Device not found'
@@ -2173,10 +2141,10 @@ def test_notification(current_user_id):
     """Send test notification"""
     result = push_service.send_notification(
         current_user_id,
-        "🔔 Test Notification",
+        "ðŸ”” Test Notification",
         "VerzekAutoTrader push notifications are working!"
     )
-    
+
     return jsonify(result)
 
 
@@ -2190,7 +2158,7 @@ def user_performance_analytics(current_user_id):
     """Get user performance analytics"""
     days = request.args.get('days', 30, type=int)
     performance = analytics_engine.get_user_performance(current_user_id, days)
-    
+
     return jsonify(performance)
 
 
@@ -2199,7 +2167,7 @@ def user_performance_analytics(current_user_id):
 def user_risk_metrics(current_user_id):
     """Get user risk metrics"""
     risk_metrics = analytics_engine.get_risk_metrics(current_user_id)
-    
+
     return jsonify(risk_metrics)
 
 
@@ -2208,13 +2176,13 @@ def user_risk_metrics(current_user_id):
 def platform_analytics(current_user_id):
     """Get platform-wide analytics (admin only)"""
     user = user_manager.get_user(current_user_id)
-    
+
     if user.plan != 'admin':
         return jsonify({'error': 'Admin access required'}), 403
-    
+
     days = request.args.get('days', 30, type=int)
     analytics = analytics_engine.get_platform_analytics(days)
-    
+
     return jsonify(analytics)
 
 
@@ -2227,15 +2195,15 @@ def platform_analytics(current_user_id):
 def create_trailing_stop(current_user_id):
     """Create a trailing stop loss order"""
     data = request.json
-    
+
     position_id = data.get('position_id')
     trail_percent = data.get('trail_percent', 0)
     trail_amount = data.get('trail_amount', 0)
     activation_price = data.get('activation_price')
-    
+
     if not position_id:
         return jsonify({'error': 'position_id is required'}), 400
-    
+
     result = advanced_order_manager.create_trailing_stop(
         current_user_id,
         position_id,
@@ -2243,7 +2211,7 @@ def create_trailing_stop(current_user_id):
         trail_amount,
         activation_price
     )
-    
+
     if result['success']:
         audit_logger.log_event(
             AuditEventType.TRADE_EXECUTED,
@@ -2251,7 +2219,7 @@ def create_trailing_stop(current_user_id):
             ip_address=request.remote_addr,
             details={'action': 'create_trailing_stop', 'position_id': position_id}
         )
-    
+
     return jsonify(result)
 
 
@@ -2260,15 +2228,15 @@ def create_trailing_stop(current_user_id):
 def create_oco_order(current_user_id):
     """Create a One-Cancels-Other order"""
     data = request.json
-    
+
     position_id = data.get('position_id')
     take_profit_price = data.get('take_profit_price')
     stop_loss_price = data.get('stop_loss_price')
     quantity = data.get('quantity')
-    
+
     if not all([position_id, take_profit_price, stop_loss_price]):
         return jsonify({'error': 'position_id, take_profit_price, and stop_loss_price are required'}), 400
-    
+
     result = advanced_order_manager.create_oco_order(
         current_user_id,
         position_id,
@@ -2276,7 +2244,7 @@ def create_oco_order(current_user_id):
         float(stop_loss_price),
         float(quantity) if quantity else None
     )
-    
+
     if result['success']:
         audit_logger.log_event(
             AuditEventType.TRADE_EXECUTED,
@@ -2284,7 +2252,7 @@ def create_oco_order(current_user_id):
             ip_address=request.remote_addr,
             details={'action': 'create_oco_order', 'position_id': position_id}
         )
-    
+
     return jsonify(result)
 
 
@@ -2293,7 +2261,7 @@ def create_oco_order(current_user_id):
 def cancel_oco_order(current_user_id, oco_id):
     """Cancel an OCO order"""
     result = advanced_order_manager.cancel_oco_order(current_user_id, oco_id)
-    
+
     if result['success']:
         audit_logger.log_event(
             AuditEventType.TRADE_EXECUTED,
@@ -2301,7 +2269,7 @@ def cancel_oco_order(current_user_id, oco_id):
             ip_address=request.remote_addr,
             details={'action': 'cancel_oco_order', 'oco_id': oco_id}
         )
-    
+
     return jsonify(result)
 
 
@@ -2310,7 +2278,7 @@ def cancel_oco_order(current_user_id, oco_id):
 def get_advanced_orders(current_user_id):
     """Get all advanced orders for user"""
     orders = advanced_order_manager.get_user_advanced_orders(current_user_id)
-    
+
     return jsonify(orders)
 
 
@@ -2323,22 +2291,22 @@ def get_advanced_orders(current_user_id):
 def create_webhook(current_user_id):
     """Create a new webhook endpoint"""
     data = request.json
-    
+
     name = data.get('name')
     source = data.get('source', 'custom')
-    
+
     if not name:
         return jsonify({'error': 'name is required'}), 400
-    
+
     result = webhook_handler.create_webhook(current_user_id, name, source)
-    
+
     audit_logger.log_event(
         AuditEventType.SETTINGS_CHANGED,
         user_id=current_user_id,
         ip_address=request.remote_addr,
         details={'action': 'create_webhook', 'name': name}
     )
-    
+
     return jsonify(result), 201
 
 
@@ -2347,7 +2315,7 @@ def create_webhook(current_user_id):
 def get_user_webhooks(current_user_id):
     """Get user's webhooks"""
     webhooks = webhook_handler.get_user_webhooks(current_user_id)
-    
+
     return jsonify({'webhooks': webhooks})
 
 
@@ -2357,9 +2325,9 @@ def toggle_webhook(current_user_id, webhook_id):
     """Enable/disable webhook"""
     data = request.json
     enabled = data.get('enabled', True)
-    
+
     result = webhook_handler.toggle_webhook(current_user_id, webhook_id, enabled)
-    
+
     return jsonify(result)
 
 
@@ -2368,7 +2336,7 @@ def toggle_webhook(current_user_id, webhook_id):
 def delete_webhook(current_user_id, webhook_id):
     """Delete webhook"""
     result = webhook_handler.delete_webhook(current_user_id, webhook_id)
-    
+
     return jsonify(result)
 
 
@@ -2377,9 +2345,9 @@ def receive_webhook_signal(webhook_id):
     """Receive signal from external webhook (no auth required)"""
     data = request.json
     signature = request.headers.get('X-Webhook-Signature')
-    
+
     result = webhook_handler.process_webhook_signal(webhook_id, data, signature)
-    
+
     if result['success']:
         return jsonify(result), 200
     else:
@@ -2396,10 +2364,10 @@ def bulk_close_positions(current_user_id):
     """Close multiple positions at once"""
     data = request.json
     position_ids = data.get('position_ids', [])
-    
+
     if not position_ids:
         return jsonify({'error': 'position_ids is required'}), 400
-    
+
     results = []
     for pos_id in position_ids:
         position = position_tracker.get_position(pos_id)
@@ -2407,16 +2375,16 @@ def bulk_close_positions(current_user_id):
             # Mark for closure
             position.status = 'pending_close'
             results.append({'position_id': pos_id, 'status': 'pending_close'})
-    
+
     position_tracker.save_positions()
-    
+
     audit_logger.log_event(
         AuditEventType.TRADE_EXECUTED,
         user_id=current_user_id,
         ip_address=request.remote_addr,
         details={'action': 'bulk_close', 'count': len(results)}
     )
-    
+
     return jsonify({
         'success': True,
         'closed': len(results),
@@ -2430,14 +2398,14 @@ def emergency_exit(current_user_id):
     """Emergency exit - close ALL active positions"""
     positions = position_tracker.load_positions()
     closed_count = 0
-    
+
     for position in positions:
         if position.user_id == current_user_id and position.status == 'active':
             position.status = 'emergency_close'
             closed_count += 1
-    
+
     position_tracker.save_positions()
-    
+
     audit_logger.log_event(
         AuditEventType.TRADE_EXECUTED,
         user_id=current_user_id,
@@ -2445,9 +2413,9 @@ def emergency_exit(current_user_id):
         details={'action': 'emergency_exit', 'count': closed_count},
         severity='critical'
     )
-    
-    log_event("POSITION_MGMT", f"⚠️ EMERGENCY EXIT triggered by user {current_user_id}: {closed_count} positions")
-    
+
+    log_event("POSITION_MGMT", f"âš ï¸ EMERGENCY EXIT triggered by user {current_user_id}: {closed_count} positions")
+
     return jsonify({
         'success': True,
         'message': f'Emergency exit initiated for {closed_count} positions',
@@ -2460,11 +2428,11 @@ def emergency_exit(current_user_id):
 def set_position_limits(current_user_id):
     """Set position limits for user"""
     data = request.json
-    
+
     user = user_manager.get_user(current_user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
+
     # Set position limits
     if 'max_positions' in data:
         user.max_positions = int(data['max_positions'])
@@ -2472,16 +2440,16 @@ def set_position_limits(current_user_id):
         user.max_exposure = float(data['max_exposure'])
     if 'max_position_size' in data:
         user.max_position_size = float(data['max_position_size'])
-    
+
     user_manager._save_user_to_db(user)
-    
+
     audit_logger.log_event(
         AuditEventType.SETTINGS_CHANGED,
         user_id=current_user_id,
         ip_address=request.remote_addr,
         details={'action': 'set_position_limits', 'limits': data}
     )
-    
+
     return jsonify({
         'success': True,
         'limits': {
@@ -2499,7 +2467,7 @@ def get_position_limits(current_user_id):
     user = user_manager.get_user(current_user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404
-    
+
     return jsonify({
         'limits': {
             'max_positions': getattr(user, 'max_positions', None),
@@ -2519,7 +2487,7 @@ def set_portfolio_allocation(current_user_id):
     """Set target portfolio allocation"""
     data = request.json
     allocations = data.get('allocations', {})
-    
+
     result = portfolio_rebalancer.set_allocation(current_user_id, allocations)
     return jsonify(result)
 
@@ -2530,7 +2498,7 @@ def get_portfolio_allocation(current_user_id):
     """Get current and target portfolio allocation"""
     current = portfolio_rebalancer.get_current_allocation(current_user_id)
     drift = portfolio_rebalancer.get_allocation_drift(current_user_id)
-    
+
     return jsonify({
         'current_allocation': current,
         'drift': drift
@@ -2543,7 +2511,7 @@ def rebalance_portfolio(current_user_id):
     """Execute portfolio rebalancing"""
     data = request.json
     dry_run = data.get('dry_run', True)
-    
+
     result = portfolio_rebalancer.execute_rebalance(current_user_id, dry_run=dry_run)
     return jsonify(result)
 
@@ -2554,7 +2522,7 @@ def enable_auto_rebalance(current_user_id):
     """Enable automatic rebalancing"""
     data = request.json
     threshold = data.get('threshold', 5.0)
-    
+
     result = portfolio_rebalancer.enable_auto_rebalance(current_user_id, threshold)
     return jsonify(result)
 
@@ -2587,7 +2555,7 @@ def calculate_win_probability(current_user_id):
     data = request.json
     symbol = data.get('symbol')
     side = data.get('side')
-    
+
     result = advanced_analytics.calculate_win_probability(current_user_id, symbol, side)
     return jsonify(result)
 
@@ -2619,7 +2587,7 @@ def get_top_masters(current_user_id):
     """Get top performing master traders"""
     limit = request.args.get('limit', 10, type=int)
     sort_by = request.args.get('sort_by', 'pnl')
-    
+
     masters = social_trading.get_top_masters(limit, sort_by)
     return jsonify({'masters': masters})
 
@@ -2631,7 +2599,7 @@ def copy_master(current_user_id):
     data = request.json
     master_id = data.get('master_id')
     settings = data.get('settings', {})
-    
+
     result = social_trading.copy_trader(current_user_id, master_id, settings)
     return jsonify(result)
 
@@ -2642,7 +2610,7 @@ def stop_copy(current_user_id):
     """Stop copying a master trader"""
     data = request.json
     copy_id = data.get('copy_id')
-    
+
     result = social_trading.stop_copying(current_user_id, copy_id)
     return jsonify(result)
 
@@ -2683,7 +2651,7 @@ def toggle_strategy(current_user_id, strategy_id):
     """Enable/disable a strategy"""
     data = request.json
     enabled = data.get('enabled', True)
-    
+
     result = custom_indicators.toggle_strategy(current_user_id, strategy_id, enabled)
     return jsonify(result)
 
@@ -2702,7 +2670,7 @@ def evaluate_strategy(current_user_id, strategy_id):
     """Evaluate strategy against current market data"""
     data = request.json
     market_data = data.get('market_data', {})
-    
+
     result = custom_indicators.evaluate_strategy(strategy_id, market_data)
     return jsonify(result)
 
@@ -2719,7 +2687,7 @@ def run_backtest(current_user_id):
     strategy_config = data.get('strategy')
     symbol = data.get('symbol', 'BTCUSDT')
     days = data.get('days', 30)
-    
+
     result = backtesting_engine.backtest_strategy(strategy_config, symbol, days)
     return jsonify(result)
 
@@ -3150,17 +3118,17 @@ def telegram_webhook():
     """Webhook endpoint for Telegram broadcast bot"""
     try:
         update_data = request.get_json()
-        
+
         if not update_data:
             log_event("WEBHOOK", "No JSON data received")
             return jsonify({"ok": False, "error": "No data"}), 400
-        
+
         log_event("WEBHOOK", f"Received webhook update: {update_data}")
-        
+
         # Import and process the update using the broadcast bot handler
         import broadcast_bot_webhook_handler
         broadcast_bot_webhook_handler.handle_webhook_update(update_data)
-        
+
         return jsonify({"ok": True})
     except Exception as e:
         log_event("WEBHOOK", f"Error processing webhook: {e}")
@@ -3187,7 +3155,7 @@ def health_check():
                 "auth": "operational"
             }
         }
-        
+
         # Test database connectivity
         try:
             users = UserManager()
@@ -3195,7 +3163,7 @@ def health_check():
         except Exception as e:
             health_status["status"] = "degraded"
             health_status["services"]["database"] = f"error: {str(e)}"
-        
+
         return jsonify(health_status), 200 if health_status["status"] == "healthy" else 503
     except Exception as e:
         return jsonify({
@@ -3205,34 +3173,10 @@ def health_check():
         }), 503
 
 
-# ============================
-# GLOBAL ERROR HANDLER
-# ============================
-
-@app.errorhandler(Exception)
-def handle_error(e):
-    """Global error handler with full traceback logging"""
-    import traceback
-    
-    # Print full traceback to console
-    print("\n" + "="*80)
-    print("🚨 EXCEPTION OCCURRED IN FLASK APP")
-    print("="*80)
-    traceback.print_exc()
-    print("="*80 + "\n")
-    
-    # Log to file
-    log_event("ERROR", f"Exception: {str(e)}\n{traceback.format_exc()}")
-    
-    # Return JSON error response
-    return jsonify({
-        "error": "Internal Server Error",
-        "message": str(e),
-        "type": type(e).__name__
-    }), 500
-
-
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    log_event("API", f"🌐 Starting Flask API on port {port}")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    log_event("API", f"ðŸŒ Starting Flask API on port {port}")
+    app.run(host="0.0.0.0", port=port)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
