@@ -11,9 +11,9 @@ import os
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 
-# --- YOUR TELEGRAM CREDENTIALS ---
-api_id = 26395582
-api_hash = "a32cb77b68ad84fb0dd60531d83698dc"
+# --- YOUR TELEGRAM CREDENTIALS (from environment variables) ---
+api_id = int(os.getenv("TELEGRAM_API_ID", "26395582"))
+api_hash = os.getenv("TELEGRAM_API_HASH", "a32cb77b68ad84fb0dd60531d83698dc")
 
 # --- BROADCAST BOT USERNAME (change this to your actual bot username) ---
 BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot username

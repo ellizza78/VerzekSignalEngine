@@ -15,9 +15,9 @@ import sys
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 
-# Your Telegram API credentials
-api_id = 26395582
-api_hash = "a32cb77b68ad84fb0dd60531d83698dc"
+# Your Telegram API credentials (from environment variables)
+api_id = int(os.getenv("TELEGRAM_API_ID", "26395582"))
+api_hash = os.getenv("TELEGRAM_API_HASH", "a32cb77b68ad84fb0dd60531d83698dc")
 
 print("🔧 Telethon Session Recovery")
 print("=" * 60)
