@@ -34,6 +34,7 @@ from modules.analytics_engine import analytics_engine
 from modules.advanced_orders import advanced_order_manager
 from modules.webhook_handler import webhook_handler
 from modules.email_service import email_service
+from services.admin_notifications import admin_notifier
 
 # Phase 4 Advanced Features
 from modules.portfolio_rebalancer import PortfolioRebalancer
@@ -679,6 +680,12 @@ def forgot_password():
     }), 200
 
 
+@app.route("/reset-password/<token>", methods=["GET"])
+def show_reset_form(token):
+    """Display the password reset form in browser"""
+    return render_template("reset_password.html", token=token)
+
+
 @app.route("/api/auth/reset-password/<token>", methods=["POST"])
 @limiter.limit("5 per hour")
 def reset_password(token):
@@ -710,6 +717,19 @@ def reset_password(token):
     email_service.send_password_reset_success_email(user.email, user.full_name)
 
     log_event("AUTH", f"Password reset successful for {user.email}")
+    
+    # Telegram admin notification
+    try:
+        admin_notifier.send_telegram(
+            f"🔐 <b>PASSWORD RESET ALERT</b>\n\n"
+            f"👤 User: {user.email}\n"
+            f"✅ Password successfully reset\n"
+            f"🕒 Time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}\n"
+            f"📱 Platform: VerzekAutoTrader"
+        )
+    except Exception as notify_error:
+        log_event("WARN", f"Telegram password reset alert failed: {notify_error}")
+    
     return jsonify({"message": "Password reset successful"}), 200
 
 
@@ -2086,6 +2106,72 @@ def admin_trading_performance(current_user_id):
     performance = admin_dashboard.get_trading_performance()
 
     return jsonify(performance)
+
+
+@app.route("/api/admin/audit", methods=["GET"])
+@token_required
+def get_audit_log(current_user_id):
+    """
+    Secure admin endpoint to retrieve system audit events.
+    Returns audit log entries for monitoring authentication and system events.
+    """
+    try:
+        user = user_manager.get_user(current_user_id)
+
+        # Restrict access to admin users only
+        if not user or user.plan != 'admin':
+            return jsonify({"error": "Admin access required"}), 403
+
+        # Get limit from query params (default 200)
+        limit = request.args.get('limit', 200, type=int)
+        event_type = request.args.get('event_type')  # Optional filter
+
+        # Read audit log file
+        audit_file = "database/security_audit.jsonl"
+        events = []
+        
+        if os.path.exists(audit_file):
+            with open(audit_file, 'r') as f:
+                lines = f.readlines()
+                
+            # Parse and filter events
+            for line in reversed(lines[-limit*2:]):  # Read more than needed for filtering
+                try:
+                    event = json_module.loads(line.strip())
+                    
+                    # Apply event type filter if specified
+                    if event_type and event.get('event_type') != event_type:
+                        continue
+                    
+                    events.append(event)
+                    
+                    if len(events) >= limit:
+                        break
+                except json_module.JSONDecodeError:
+                    continue
+
+        return jsonify({
+            "count": len(events),
+            "events": events,
+            "message": "Audit log retrieved successfully."
+        }), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+
+
+@app.route("/admin/audit", methods=["GET"])
+@token_required
+def show_audit_dashboard(current_user_id):
+    """Render visual admin audit dashboard (Chart.js view)"""
+    user = user_manager.get_user(current_user_id)
+    
+    if not user or user.plan != 'admin':
+        return jsonify({"error": "Admin access required"}), 403
+    
+    return render_template("admin_audit.html")
 
 
 # ============================

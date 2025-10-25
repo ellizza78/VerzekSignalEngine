@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VerzekAutoTrader • Admin Audit Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #0A4A5C, #1B9AAA);
+      color: #fff;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg, #1B9AAA, #F9C74F);
+      color: #000;
+      padding: 20px;
+      font-weight: 700;
+      text-align: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: rgba(20, 22, 37, 0.9);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(27, 154, 170, 0.3);
+      text-align: center;
+    }
+    .stat-card .label {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #1B9AAA, #F9C74F);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .chart-container {
+      background: rgba(20, 22, 37, 0.9);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid rgba(27, 154, 170, 0.3);
+    }
+    canvas {
+      max-height: 300px;
+    }
+    h2 {
+      color: #F9C74F;
+      margin: 25px 0 15px 0;
+      font-size: 1.3rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: rgba(20, 22, 37, 0.9);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(27, 154, 170, 0.3);
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(42, 45, 58, 0.5);
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    th {
+      background: rgba(27, 154, 170, 0.2);
+      font-weight: 600;
+      color: #F9C74F;
+    }
+    td {
+      color: #ddd;
+    }
+    tr:hover {
+      background: rgba(27, 154, 170, 0.1);
+    }
+    .event-type {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .event-login_success { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+    .event-login_failed { background: rgba(244, 67, 54, 0.3); color: #f44336; }
+    .event-password_reset { background: rgba(249, 199, 79, 0.3); color: #F9C74F; }
+    .event-payment_verified { background: rgba(33, 150, 243, 0.3); color: #2196F3; }
+    .event-trade_executed { background: rgba(156, 39, 176, 0.3); color: #9C27B0; }
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 20px;
+      color: #aaa;
+      margin-top: 40px;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2rem;
+      color: #F9C74F;
+    }
+    .error {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.1rem;
+      color: #f44336;
+      background: rgba(244, 67, 54, 0.1);
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .filter-controls {
+      background: rgba(20, 22, 37, 0.9);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      border: 1px solid rgba(27, 154, 170, 0.3);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-controls select, .filter-controls input {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(27, 154, 170, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .filter-controls button {
+      padding: 8px 16px;
+      background: linear-gradient(90deg, #1B9AAA, #F9C74F);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-controls button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <header>🔐 VerzekAutoTrader • Admin Audit Dashboard</header>
+  
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Total Events</div>
+        <div class="value" id="totalEvents">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Login Attempts</div>
+        <div class="value" id="loginEvents">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Password Resets</div>
+        <div class="value" id="resetEvents">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Failed Logins</div>
+        <div class="value" id="failedLogins">-</div>
+      </div>
+    </div>
+
+    <h2>📊 Event Distribution</h2>
+    <div class="chart-container">
+      <canvas id="eventTypeChart"></canvas>
+    </div>
+
+    <h2>📈 Activity Timeline (Last 7 Days)</h2>
+    <div class="chart-container">
+      <canvas id="timelineChart"></canvas>
+    </div>
+
+    <div class="filter-controls">
+      <select id="eventFilter">
+        <option value="">All Event Types</option>
+        <option value="login_success">Login Success</option>
+        <option value="login_failed">Login Failed</option>
+        <option value="password_reset">Password Reset</option>
+        <option value="payment_verified">Payment Verified</option>
+        <option value="trade_executed">Trade Executed</option>
+      </select>
+      <input type="number" id="limitInput" placeholder="Limit (default 200)" min="10" max="1000" value="200" />
+      <button onclick="loadAudit()">🔄 Refresh</button>
+    </div>
+
+    <h2>📋 Recent Audit Events</h2>
+    <div id="loadingMessage" class="loading">Loading audit data...</div>
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    <table id="auditTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Time (UTC)</th>
+          <th>Type</th>
+          <th>User</th>
+          <th>Severity</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  
+  <footer>© 2025 Verzek Innovative Solutions Ltd | Secure Audit System</footer>
+
+  <script>
+    let eventTypeChart, timelineChart;
+
+    async function loadAudit() {
+      const loadingEl = document.getElementById('loadingMessage');
+      const errorEl = document.getElementById('errorMessage');
+      const tableEl = document.getElementById('auditTable');
+      
+      loadingEl.style.display = 'block';
+      errorEl.style.display = 'none';
+      tableEl.style.display = 'none';
+
+      try {
+        const eventType = document.getElementById('eventFilter').value;
+        const limit = document.getElementById('limitInput').value || 200;
+        
+        let url = `/api/admin/audit?limit=${limit}`;
+        if (eventType) url += `&event_type=${eventType}`;
+
+        const res = await fetch(url, {
+          headers: { "Authorization": localStorage.getItem("admin_token") || "" }
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Access denied. Please log in as admin.');
+        }
+
+        const events = data.events || [];
+        
+        // Update stats
+        document.getElementById('totalEvents').textContent = events.length;
+        document.getElementById('loginEvents').textContent = 
+          events.filter(e => e.event_type === 'login_success').length;
+        document.getElementById('resetEvents').textContent = 
+          events.filter(e => e.event_type === 'password_reset').length;
+        document.getElementById('failedLogins').textContent = 
+          events.filter(e => e.event_type === 'login_failed').length;
+
+        // Populate table
+        const tbody = document.querySelector("#auditTable tbody");
+        tbody.innerHTML = "";
+        
+        events.forEach(ev => {
+          const tr = document.createElement("tr");
+          const typeClass = `event-${ev.event_type || 'unknown'}`;
+          tr.innerHTML = `
+            <td>${ev.timestamp || 'N/A'}</td>
+            <td><span class="event-type ${typeClass}">${ev.event_type || 'unknown'}</span></td>
+            <td>${ev.user_id || 'System'}</td>
+            <td>${ev.severity || 'info'}</td>
+            <td>${JSON.stringify(ev.details || {}).substring(0, 100)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Update charts
+        updateEventTypeChart(events);
+        updateTimelineChart(events);
+
+        loadingEl.style.display = 'none';
+        tableEl.style.display = 'table';
+
+      } catch (err) {
+        console.error(err);
+        loadingEl.style.display = 'none';
+        errorEl.textContent = `❌ ${err.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
+
+    function updateEventTypeChart(events) {
+      const counts = {};
+      events.forEach(e => { 
+        const type = e.event_type || 'unknown';
+        counts[type] = (counts[type] || 0) + 1; 
+      });
+
+      const ctx = document.getElementById("eventTypeChart");
+      
+      if (eventTypeChart) {
+        eventTypeChart.destroy();
+      }
+
+      eventTypeChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: Object.keys(counts),
+          datasets: [{
+            label: "Event Count",
+            data: Object.values(counts),
+            backgroundColor: [
+              '#4CAF50', '#f44336', '#F9C74F', '#2196F3', 
+              '#9C27B0', '#FF9800', '#00BCD4', '#E91E63'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { 
+              display: true,
+              position: 'right',
+              labels: { color: '#fff' }
+            }
+          }
+        }
+      });
+    }
+
+    function updateTimelineChart(events) {
+      // Group events by date
+      const dateGroups = {};
+      events.forEach(e => {
+        if (!e.timestamp) return;
+        const date = e.timestamp.split(' ')[0]; // Get date part
+        dateGroups[date] = (dateGroups[date] || 0) + 1;
+      });
+
+      // Get last 7 days
+      const dates = Object.keys(dateGroups).sort().slice(-7);
+      const counts = dates.map(d => dateGroups[d]);
+
+      const ctx = document.getElementById("timelineChart");
+      
+      if (timelineChart) {
+        timelineChart.destroy();
+      }
+
+      timelineChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: dates,
+          datasets: [{
+            label: "Events per Day",
+            data: counts,
+            borderColor: '#1B9AAA',
+            backgroundColor: 'rgba(27, 154, 170, 0.2)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            x: { ticks: { color: '#fff' } },
+            y: { 
+              ticks: { color: '#fff' },
+              beginAtZero: true
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#fff' } }
+          }
+        }
+      });
+    }
+
+    // Load data on page load
+    loadAudit();
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadAudit, 30000);
+  </script>
+</body>
+</html>
