@@ -2777,3 +2777,17 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-25 16:52:27] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-25 16:52:28] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 16:52:47] [AUTH] Password reset email sent to newuser8@gmail.com
+[2025-10-25 16:55:04] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:55:06] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:38:46] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 17:38:46] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 17:38:46] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 17:38:46] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:38:46] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 17:38:46] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:38:46] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 17:38:46] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 17:38:46] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:38:47] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:38:48] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:38:57] [API] ðŸŒ Starting Flask API on port 5000
