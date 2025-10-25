@@ -80,10 +80,7 @@ def run_price_feed_service():
     print("📡 Starting Price Feed Service...")
     subprocess.run([sys.executable, "price_feed_service.py"])
 
-def run_support_bot():
-    """Run Telegram Support Bot"""
-    print("🆘 Starting Telegram Support Bot...")
-    subprocess.run([sys.executable, "telegram_support_bot.py"])
+# Support bot removed - users can contact via email: support@vezekinnovative.com
 
 if __name__ == "__main__":
     print("🚀 VerzekAutoTrader - Starting All Services...")
@@ -119,9 +116,7 @@ if __name__ == "__main__":
     price_feed_thread = Thread(target=run_price_feed_service, daemon=True)
     price_feed_thread.start()
     
-    # Start Support Bot in a thread
-    support_bot_thread = Thread(target=run_support_bot, daemon=True)
-    support_bot_thread.start()
+    # Support bot removed - users contact via email or in-app support
     
     # Uncomment below if you want to run the main signal bot too
     # main_thread = Thread(target=run_main_bot, daemon=True)
@@ -130,12 +125,12 @@ if __name__ == "__main__":
     print("✅ All services started successfully!")
     print("🔄 Auto-Forwarder monitoring your personal chats...")
     print("📡 Broadcast Bot is listening and ready to broadcast...")
-    print("🆘 Support Bot (@VerzekSupportBot) forwarding messages to support@vezekinnovative.com...")
     print("🎯 Target Monitor checking for take profit levels...")
     print("💰 Recurring Payments processing monthly commissions...")
     print("📊 Advanced Orders Monitor tracking trailing stops & OCO orders...")
     print("📡 Price Feed Service streaming live market data...")
     print("🌐 API Server running on port 5000")
+    print("📧 Support: Users can contact via email (support@vezekinnovative.com) or in-app form")
     
     # Keep the main thread alive
     try:
