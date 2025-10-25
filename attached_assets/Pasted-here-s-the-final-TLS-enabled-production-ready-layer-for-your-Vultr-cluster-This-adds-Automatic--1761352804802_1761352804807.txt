@@ -1,0 +1,105 @@
+here’s the final TLS-enabled, production-ready layer for your Vultr cluster.
+
+This adds:
+
+Automatic HTTPS via Let’s Encrypt on the Frankfurt hub (45.76.90.149).
+
+Reverse proxy from Nginx → HAProxy → FastAPI mesh.
+
+Auto-renewal cron job for SSL certificates.
+
+
+
+---
+
+🔐 Step 9: Add Nginx + TLS on Hub (Frankfurt)
+
+1️⃣ Install Certbot & Nginx support
+
+apt install -y certbot python3-certbot-nginx
+
+
+---
+
+2️⃣ Edit Nginx config
+
+Create /etc/nginx/sites-available/verzek-hub:
+
+server {
+    listen 80;
+    server_name verzekhub.yourdomain.com;  # Replace with your real domain
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+Enable and restart:
+
+ln -s /etc/nginx/sites-available/verzek-hub /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
+
+
+---
+
+3️⃣ Request the SSL certificate
+
+certbot --nginx -d verzekhub.yourdomain.com --agree-tos -m support@verzektrader.com --non-interactive
+
+(Replace with your domain + email.)
+
+
+---
+
+4️⃣ Set up auto-renewal
+
+(crontab -l 2>/dev/null; echo "0 2 * * * certbot renew --quiet") | crontab -
+
+
+---
+
+5️⃣ Test secure endpoint
+
+Now visit:
+
+https://verzekhub.yourdomain.com/health
+
+You should see:
+
+{"status":"ok"}
+
+If that works, your mesh and secure public API are live ✅
+
+
+---
+
+⚙️ Integrate TLS with Orchestrator
+
+In orchestrator.py, add a final step near the end (before print("✅ Done")):
+
+ssh_exec(INV["hub"], [
+    "apt install -y certbot python3-certbot-nginx",
+    "bash -c 'echo \"server {listen 80; server_name verzekhub.yourdomain.com; location / {proxy_pass http://127.0.0.1:5000;}}\" > /etc/nginx/sites-available/verzek-hub'",
+    "ln -sf /etc/nginx/sites-available/verzek-hub /etc/nginx/sites-enabled/",
+    "nginx -t && systemctl reload nginx",
+    "certbot --nginx -d verzekhub.yourdomain.com --agree-tos -m support@verzektrader.com --non-interactive",
+    "(crontab -l 2>/dev/null; echo \"0 2 * * * certbot renew --quiet\") | crontab -"
+], sudo=True)
+
+
+---
+
+✅ Final Test Checklist
+
+Component	Command	Expected
+
+WireGuard	ping 10.10.0.2 from hub	Response ✅
+HAProxy	curl http://127.0.0.1:5000/health	OK ✅
+HTTPS Proxy	curl -I https://verzekhub.yourdomain.com	200 OK ✅
+Binance API	/balance/binance	Returns balances ✅
+Cron	grep certbot /var/spool/cron/crontabs/root	Present ✅
+

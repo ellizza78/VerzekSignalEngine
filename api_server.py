@@ -622,6 +622,57 @@ def check_verification_status():
 
 
 # ============================
+# SUPPORT
+# ============================
+
+@app.route("/api/support/message", methods=["POST"])
+@limiter.limit("5 per hour")
+@token_required
+def send_support_message(current_user_id):
+    """Send support message from mobile app (with rate limiting)"""
+    data = request.json
+    message = data.get("message", "").strip()
+    subject = data.get("subject", "Support Request").strip()
+    
+    if not message:
+        return jsonify({"error": "Message is required"}), 400
+    
+    # Get user info
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    user_display = user.full_name or user.email or current_user_id
+    
+    # Send support email
+    try:
+        email_result = email_service.send_support_notification(
+            from_user=f"{user_display} ({user.email})",
+            message=f"Subject: {subject}\n\n{message}",
+            telegram_username=None
+        )
+        
+        if email_result['success']:
+            log_event("SUPPORT", f"Support message sent from user: {user.email}")
+            return jsonify({
+                "success": True,
+                "message": "Support message sent successfully! We'll respond within 24 hours."
+            }), 200
+        else:
+            return jsonify({
+                "error": "Failed to send support message. Please try again later.",
+                "details": email_result.get('error')
+            }), 500
+            
+    except Exception as e:
+        log_event("SUPPORT", f"Error sending support message from {user.email}: {str(e)}")
+        return jsonify({
+            "error": "Failed to send support message",
+            "details": str(e)
+        }), 500
+
+
+# ============================
 # USER MANAGEMENT
 # ============================
 

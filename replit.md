@@ -6,6 +6,21 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 ## User Preferences
 None specified yet.
 
+## Recent Changes
+**October 25, 2025 - Complete Support System (In-App + Zoho SMTP + Telegram Bot):**
+- ✅ **In-app support screen** - Created SupportScreen.js allowing users to send support messages directly from mobile app
+- ✅ **Support API endpoint** - Added POST /api/support/message with rate limiting (5 messages per hour)
+- ✅ **Profile integration** - Added "Contact Support" button to Profile screen menu and highlighted support section
+- ✅ **Navigation setup** - Registered Support screen in AppNavigator for easy access
+- ✅ **Email forwarding** - In-app messages automatically forwarded to support@vezekinnovative.com via Zoho SMTP
+- ✅ **Support form** - Clean UI with subject + message fields, validation, loading states, and success alerts
+- ✅ **Multiple contact methods** - Users can choose: in-app form, direct email, or Telegram bot (@VerzekSupportBot)
+- ✅ **Zoho Mail SMTP integrated** - All emails sent via support@vezekinnovative.com (verified sender)
+- ✅ **Telegram support bot** - @VerzekSupportBot with auto-reply, email forwarding, and admin notifications
+- ✅ **Support bot commands** - /start (welcome) and /info (contact details) commands available
+- ✅ **Reusable email service** - modules/email_service.py with send_email() utility for all email operations
+- ✅ **Email logging** - All email sends logged to logs/email_logs.txt with success/failure tracking
+
 ## System Architecture
 ### UI/UX Decisions
 The mobile application, built with React Native and Expo, features a modern dark theme with a consistent visual design using Teal/Gold gradients (`#0A4A5C` → `#1B9AAA`, `#F9C74F`) for branding. Colors are managed via centralized constants, and an onboarding modal provides critical setup instructions. The UI is designed to be compact, with reduced padding and margins across all screens for better content visibility.
