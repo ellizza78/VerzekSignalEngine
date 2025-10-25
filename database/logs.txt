@@ -2791,3 +2791,52 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-25 17:38:47] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-25 17:38:48] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 17:38:57] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:44:52] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:44:53] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:44:54] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 17:44:54] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 17:44:54] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 17:44:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:44:54] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:44:54] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 17:44:54] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 17:44:54] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 17:44:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:44:55] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:45:34] [AUTH] Password reset email sent to newuser8@gmail.com
+[2025-10-25 17:49:40] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:49:41] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:49:41] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 17:49:41] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:49:42] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:49:42] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 17:49:42] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 17:49:42] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 17:49:42] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 17:49:42] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 17:49:42] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:49:43] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:53:02] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:53:03] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:53:03] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 17:53:03] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 17:53:03] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 17:53:03] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:53:04] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:53:04] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 17:53:04] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 17:53:04] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 17:53:04] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:53:05] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:55:53] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:55:54] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-25 17:55:54] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 17:55:54] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:55:54] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 17:55:54] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 17:55:54] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 17:55:54] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 17:55:54] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 17:55:54] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 17:55:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 17:55:56] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)

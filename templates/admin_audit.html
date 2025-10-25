@@ -167,7 +167,26 @@
 <body>
   <header>🔐 VerzekAutoTrader • Admin Audit Dashboard</header>
   
-  <div class="container">
+  <!-- Login Form (shown when not authenticated) -->
+  <div id="loginContainer" class="container" style="display: none;">
+    <div class="chart-container" style="max-width: 400px; margin: 50px auto; text-align: center;">
+      <h2>🔐 Admin Login Required</h2>
+      <p style="color: #aaa; margin-bottom: 20px;">Please log in to access the audit dashboard</p>
+      <div id="credentialsForm">
+        <input type="email" id="loginEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(27, 154, 170, 0.3); background: rgba(255, 255, 255, 0.1); color: #fff; box-sizing: border-box;" />
+        <input type="password" id="loginPassword" placeholder="Password" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(27, 154, 170, 0.3); background: rgba(255, 255, 255, 0.1); color: #fff; box-sizing: border-box;" />
+      </div>
+      <div id="mfaForm" style="display: none;">
+        <p style="color: #F9C74F; margin: 15px 0;">🔐 2FA Verification Required</p>
+        <input type="text" id="mfaCode" placeholder="Enter 6-digit code" maxlength="6" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid rgba(27, 154, 170, 0.3); background: rgba(255, 255, 255, 0.1); color: #fff; box-sizing: border-box; text-align: center; font-size: 1.2rem; letter-spacing: 0.5rem;" />
+      </div>
+      <button onclick="adminLogin()" style="width: 100%; padding: 14px; background: linear-gradient(90deg, #1B9AAA, #F9C74F); color: #000; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">Log In</button>
+      <p id="loginError" style="color: #f44336; margin-top: 15px; display: none;"></p>
+    </div>
+  </div>
+  
+  <!-- Dashboard Content (shown when authenticated) -->
+  <div id="dashboardContainer" class="container" style="display: none;">
     <div class="stats-grid">
       <div class="stat-card">
         <div class="label">Total Events</div>
@@ -232,6 +251,107 @@
   <script>
     let eventTypeChart, timelineChart;
 
+    // Check authentication on page load
+    function checkAuth() {
+      const token = localStorage.getItem('admin_token');
+      if (token && token.startsWith('Bearer ')) {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboardContainer').style.display = 'block';
+        loadAudit();
+      } else {
+        document.getElementById('loginContainer').style.display = 'block';
+        document.getElementById('dashboardContainer').style.display = 'none';
+      }
+    }
+
+    // Admin login function
+    async function adminLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const mfaCode = document.getElementById('mfaCode').value.trim();
+      const errorEl = document.getElementById('loginError');
+      
+      errorEl.style.display = 'none';
+      
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter both email and password';
+        errorEl.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const loginData = {email, password};
+        
+        // Include MFA token if provided
+        if (mfaCode) {
+          loginData.mfa_token = mfaCode;
+        }
+        
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(loginData)
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+        
+        // Check if 2FA is required
+        if (data.requires_2fa) {
+          document.getElementById('credentialsForm').style.display = 'none';
+          document.getElementById('mfaForm').style.display = 'block';
+          document.getElementById('mfaCode').focus();
+          return;
+        }
+        
+        // Check if user is admin (plan is in data.user.plan)
+        if (!data.user || data.user.plan !== 'admin') {
+          throw new Error('Admin access required. Your account does not have admin privileges.');
+        }
+        
+        // Store token only if admin
+        localStorage.setItem('admin_token', `Bearer ${data.access_token}`);
+        
+        // Load dashboard
+        checkAuth();
+        
+      } catch (err) {
+        console.error(err);
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      }
+    }
+    
+    // Allow Enter key to submit login
+    document.addEventListener('DOMContentLoaded', function() {
+      const emailInput = document.getElementById('loginEmail');
+      const passwordInput = document.getElementById('loginPassword');
+      
+      if (emailInput) {
+        emailInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') adminLogin();
+        });
+      }
+      
+      if (passwordInput) {
+        passwordInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') adminLogin();
+        });
+      }
+      
+      const mfaInput = document.getElementById('mfaCode');
+      if (mfaInput) {
+        mfaInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') adminLogin();
+        });
+      }
+      
+      checkAuth();
+    });
+
     async function loadAudit() {
       const loadingEl = document.getElementById('loadingMessage');
       const errorEl = document.getElementById('errorMessage');
@@ -255,6 +375,12 @@
         const data = await res.json();
         
         if (!res.ok) {
+          // If 401/403, clear token and show login
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('admin_token');
+            checkAuth();
+            return;
+          }
           throw new Error(data.error || 'Access denied. Please log in as admin.');
         }
 
@@ -390,11 +516,13 @@
       });
     }
 
-    // Load data on page load
-    loadAudit();
-
-    // Auto-refresh every 30 seconds
-    setInterval(loadAudit, 30000);
+    // Auto-refresh every 30 seconds (only if authenticated)
+    setInterval(function() {
+      const token = localStorage.getItem('admin_token');
+      if (token && token.startsWith('Bearer ')) {
+        loadAudit();
+      }
+    }, 30000);
   </script>
 </body>
 </html>

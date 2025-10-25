@@ -2163,14 +2163,11 @@ def get_audit_log(current_user_id):
 
 
 @app.route("/admin/audit", methods=["GET"])
-@token_required
-def show_audit_dashboard(current_user_id):
-    """Render visual admin audit dashboard (Chart.js view)"""
-    user = user_manager.get_user(current_user_id)
-    
-    if not user or user.plan != 'admin':
-        return jsonify({"error": "Admin access required"}), 403
-    
+def show_audit_dashboard():
+    """
+    Render visual admin audit dashboard.
+    Authentication is handled client-side via login form.
+    """
     return render_template("admin_audit.html")
 
 
