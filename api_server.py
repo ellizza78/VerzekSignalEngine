@@ -3205,10 +3205,34 @@ def health_check():
         }), 503
 
 
+# ============================
+# GLOBAL ERROR HANDLER
+# ============================
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    """Global error handler with full traceback logging"""
+    import traceback
+    
+    # Print full traceback to console
+    print("\n" + "="*80)
+    print("🚨 EXCEPTION OCCURRED IN FLASK APP")
+    print("="*80)
+    traceback.print_exc()
+    print("="*80 + "\n")
+    
+    # Log to file
+    log_event("ERROR", f"Exception: {str(e)}\n{traceback.format_exc()}")
+    
+    # Return JSON error response
+    return jsonify({
+        "error": "Internal Server Error",
+        "message": str(e),
+        "type": type(e).__name__
+    }), 500
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     log_event("API", f"🌐 Starting Flask API on port {port}")
-    app.run(host="0.0.0.0", port=port)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)

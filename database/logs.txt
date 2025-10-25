@@ -2648,3 +2648,88 @@ Updated working bot version from local PC
 [2025-10-25 15:28:54] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 15:29:25] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-25 15:29:27] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 16:14:00] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:14:02] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:14:02] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 16:14:02] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 16:14:02] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 16:14:02] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 16:14:02] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 16:14:02] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 16:14:02] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 16:14:02] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 16:14:02] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 16:14:03] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:14:03] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:14:06] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 16:14:31] [ERROR] Exception: module 'bcrypt' has no attribute 'gensalt'
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask_limiter/_limits.py", line 326, in __inner
+    return cast(R, flask.current_app.ensure_sync(obj)(*a, **k))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/api_server.py", line 333, in register
+    user.password_hash = hash_password(password)
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/modules/auth.py", line 23, in hash_password
+    salt = bcrypt.gensalt()
+           ^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute 'gensalt'
+
+[2025-10-25 16:15:48] [ERROR] Exception: module 'bcrypt' has no attribute 'gensalt'
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask_limiter/_limits.py", line 326, in __inner
+    return cast(R, flask.current_app.ensure_sync(obj)(*a, **k))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/api_server.py", line 333, in register
+    user.password_hash = hash_password(password)
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/modules/auth.py", line 23, in hash_password
+    salt = bcrypt.gensalt()
+           ^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute 'gensalt'
+
+[2025-10-25 16:15:56] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:15:58] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:15:58] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-25 16:15:58] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-25 16:15:58] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-25 16:15:58] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-25 16:15:58] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 16:15:58] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-25 16:15:58] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-25 16:15:59] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-25 16:15:59] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 16:15:59] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:15:59] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-25 16:16:03] [API] 🌐 Starting Flask API on port 5000
+[2025-10-25 16:16:03] [ERROR] Exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+[2025-10-25 16:16:25] [REFERRAL] Referral code VZK13B676 and wallet initialized for user newuser8_gmail_com
+[2025-10-25 16:16:26] [AUTH] New user registered: newuser8@gmail.com (verification email sent: True)
