@@ -79,4 +79,4 @@ build = ["pip", "install", "-r", "requirements.txt"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "libiconv", "libxcrypt", "nano", "openssl", "pkg-config", "rustc"]
+packages = ["cargo", "libev", "libiconv", "libxcrypt", "nano", "openssl", "pkg-config", "rustc"]

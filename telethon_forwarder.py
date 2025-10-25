@@ -11,9 +11,20 @@ import os
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 
-# --- YOUR TELEGRAM CREDENTIALS (from environment variables) ---
-api_id = int(os.getenv("TELEGRAM_API_ID", "26395582"))
-api_hash = os.getenv("TELEGRAM_API_HASH", "a32cb77b68ad84fb0dd60531d83698dc")
+# --- YOUR TELEGRAM CREDENTIALS (REQUIRED from environment variables) ---
+api_id = os.getenv("TELEGRAM_API_ID")
+api_hash = os.getenv("TELEGRAM_API_HASH")
+
+if not api_id or not api_hash:
+    print("\n❌ ERROR: Missing Telegram API credentials!")
+    print("Please set the following environment variables in Replit Secrets:")
+    print("  - TELEGRAM_API_ID")
+    print("  - TELEGRAM_API_HASH")
+    print("\nGet your credentials from: https://my.telegram.org/apps")
+    import sys
+    sys.exit(1)
+
+api_id = int(api_id)
 
 # --- BROADCAST BOT USERNAME (change this to your actual bot username) ---
 BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot username

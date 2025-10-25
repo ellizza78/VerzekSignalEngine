@@ -164,6 +164,14 @@ def main():
     
     logger.info("🤖 Starting Verzek Support Bot...")
     
+    # Delete any existing webhook to enable polling mode
+    try:
+        bot = Bot(token=TELEGRAM_BOT_TOKEN)
+        bot.delete_webhook()
+        logger.info("✅ Deleted existing webhook (if any) to enable polling mode")
+    except Exception as e:
+        logger.warning(f"⚠️ Could not delete webhook: {e}")
+    
     # Create updater and dispatcher
     updater = Updater(token=TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher

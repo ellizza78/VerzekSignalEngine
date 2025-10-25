@@ -3144,6 +3144,42 @@ def telegram_webhook():
         return jsonify({"ok": True}), 200  # Return 200 even on error to prevent Telegram retries
 
 
+# ============================
+# HEALTH CHECK ENDPOINT
+# ============================
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Health check endpoint for monitoring and load balancers"""
+    try:
+        health_status = {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "version": "2.1",
+            "services": {
+                "api": "running",
+                "database": "connected",
+                "auth": "operational"
+            }
+        }
+        
+        # Test database connectivity
+        try:
+            users = UserManager()
+            health_status["services"]["database"] = "connected"
+        except Exception as e:
+            health_status["status"] = "degraded"
+            health_status["services"]["database"] = f"error: {str(e)}"
+        
+        return jsonify(health_status), 200 if health_status["status"] == "healthy" else 503
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }), 503
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     log_event("API", f"🌐 Starting Flask API on port {port}")
