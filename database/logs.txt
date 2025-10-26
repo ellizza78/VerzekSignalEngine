@@ -3015,3 +3015,7 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-26 19:48:18] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'TRXUSDT', 'reason': 'stop_loss_hit', 'source_text': '#TRXUSDT - Stop Loss ⛔️\nLoss: 22.5451%'}
 [2025-10-26 19:48:18] [ORCHESTRATOR] ℹ️ No active positions found for TRXUSDT to close
 [2025-10-26 19:48:19] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 20:02:20] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 20:02:20] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'HBARUSDT', 'reason': 'stop_loss_hit', 'source_text': '#HBARUSDT - Stop Loss ⛔️\nLoss: 30.0128%'}
+[2025-10-26 20:02:20] [ORCHESTRATOR] ℹ️ No active positions found for HBARUSDT to close
+[2025-10-26 20:02:21] [AUTO_TRADER] Failed to parse signal - invalid format

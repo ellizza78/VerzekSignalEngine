@@ -65,3 +65,5 @@ New #Crypto #Signal Open
 📈 Leverage, Risk Management
 [2025-10-26 19:48:19] #TRXUSDT - Stop Loss ⛔️
 Loss: 22.5451%
+[2025-10-26 20:02:21] #HBARUSDT - Stop Loss ⛔️
+Loss: 30.0128%
