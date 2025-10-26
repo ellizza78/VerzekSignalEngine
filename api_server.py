@@ -3220,6 +3220,51 @@ def telegram_webhook():
         return jsonify({"ok": True}), 200  # Return 200 even on error to prevent Telegram retries
 
 
+@app.route("/api/broadcast/signal", methods=["POST"])
+def receive_signal_from_telethon():
+    """Direct signal receiver from Telethon forwarder (faster than Telegram webhooks)"""
+    try:
+        data = request.get_json()
+        
+        if not data or 'text' not in data:
+            return jsonify({"ok": False, "error": "No signal text provided"}), 400
+        
+        text = data.get('text', '').strip()
+        source = data.get('source', 'Unknown')
+        source_type = data.get('source_type', 'unknown')
+        
+        if not text:
+            return jsonify({"ok": False, "error": "Empty signal text"}), 400
+        
+        log_event("SIGNAL", f"Received signal from Telethon: {source} ({source_type})")
+        
+        # Import and process using broadcast handler
+        import broadcast_bot_webhook_handler
+        
+        # Create a minimal message structure for compatibility
+        fake_message_data = {
+            'message': {
+                'text': text,
+                'from': {'id': int(os.getenv("ADMIN_CHAT_ID", "0"))},
+                'chat': {
+                    'id': int(os.getenv("ADMIN_CHAT_ID", "0")),
+                    'type': 'private' if source_type == 'personal_chat' else 'supergroup',
+                    'title': source,
+                    'username': source
+                }
+            }
+        }
+        
+        broadcast_bot_webhook_handler.handle_webhook_update(fake_message_data)
+        
+        return jsonify({"ok": True, "message": "Signal processed"})
+    except Exception as e:
+        log_event("SIGNAL", f"Error processing signal from Telethon: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 # ============================
 # HEALTH CHECK ENDPOINT
 # ============================

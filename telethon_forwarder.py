@@ -178,11 +178,35 @@ async def auto_forward(event):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 9) Send RAW signal to broadcast bot (bot will add header)
+    # 9) Send RAW signal to broadcast bot via direct HTTP POST (faster than Telegram messaging)
     try:
-        await client.send_message(BROADCAST_BOT_USERNAME, text)
-        source_type = "CHANNEL" if from_monitored_channel else "PERSONAL CHAT"
-        print(f"✅ [{source_type}] Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
+        import requests
+        import json
+        
+        # Send directly to our webhook handler via HTTP
+        webhook_url = "http://127.0.0.1:5000/api/broadcast/signal"
+        
+        # Get source info
+        try:
+            chat = await event.get_chat()
+            source_name = getattr(chat, 'title', None) or getattr(chat, 'username', None) or "Unknown"
+        except:
+            source_name = "Unknown"
+        
+        payload = {
+            "text": text,
+            "source": source_name,
+            "source_type": "channel" if from_monitored_channel else "personal_chat",
+            "chat_id": event.chat_id
+        }
+        
+        response = requests.post(webhook_url, json=payload, timeout=5)
+        
+        if response.status_code == 200:
+            source_type = "CHANNEL" if from_monitored_channel else "PERSONAL CHAT"
+            print(f"✅ [{source_type}] Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
+        else:
+            print(f"⚠️ Failed to send to broadcast bot: HTTP {response.status_code}")
     except Exception as e:
         print(f"⚠️ Failed to send to broadcast bot: {e}")
 
