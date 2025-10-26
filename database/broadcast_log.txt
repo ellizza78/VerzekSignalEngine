@@ -20,3 +20,32 @@ Target 2: 150
 Target 3: 152
 Stop Loss: 142
 Leverage: 20x
+[2025-10-26 09:20:08] #Signal #RENDER/USDT $RENDER 
+Long 🚀 Lev x10 #Crypto 
+
+Entry: 2.501 - Stop Loss: 2.424 
+
+Targets: 2.5395 - 2.578 - 2.6165 - 2.655 - 2.6935
+[2025-10-26 09:20:11] #RENDERUSDT - Signal Cancelled ❎
+Closed due to opposite direction signal
+[2025-10-26 09:20:17] #Signal #VET/USDT $VET 
+Long 🚀 Lev x25 #Crypto 
+
+Entry: 0.01741 - Stop Loss: 0.0172 
+
+Targets: 0.017515 - 0.01762 - 0.017725 - 0.01783 - 0.017935
+[2025-10-26 09:20:18] #RENDER/USDT / $RENDER 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-26 09:20:42] #VET/USDT / $VET 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-26 09:22:24] #BTCUSDT - Stop Loss ⛔️
+Loss: 29.9988%
+[2025-10-26 16:47:55] AUTO-FORWARD from Test Source: TEST SIGNAL BTC/USDT LONG Entry: 67000 TP: 68000 SL: 66500

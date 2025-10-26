@@ -8,6 +8,8 @@ Fixed: Database locking issues with StringSession
 
 import hashlib
 import os
+import requests
+import json
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 
@@ -91,8 +93,12 @@ async def auto_forward(event):
     if not text:
         return
 
+    # DEBUG: Log ALL incoming messages
+    print(f"🔔 Received message from chat {event.chat_id}: {text[:50]}...")
+
     # 1) Do not process messages you SENT (outgoing)
     if event.out:
+        print(f"⏭️ Skipped outgoing message")
         return
 
     # 2) Do not process messages already in VIP/TRIAL groups (loop prevention)
@@ -180,25 +186,25 @@ async def auto_forward(event):
 
     # 9) Send RAW signal to broadcast bot via direct HTTP POST (faster than Telegram messaging)
     try:
-        import requests
-        import json
-        
-        # Send directly to our webhook handler via HTTP
-        webhook_url = "http://127.0.0.1:5000/api/broadcast/signal"
-        
         # Get source info
         try:
             chat = await event.get_chat()
             source_name = getattr(chat, 'title', None) or getattr(chat, 'username', None) or "Unknown"
-        except:
+        except Exception as chat_err:
             source_name = "Unknown"
+            print(f"⚠️ Could not get chat info: {chat_err}")
+        
+        # Send directly to our webhook handler via HTTP
+        webhook_url = "http://127.0.0.1:5000/api/broadcast/signal"
         
         payload = {
             "text": text,
             "source": source_name,
             "source_type": "channel" if from_monitored_channel else "personal_chat",
-            "chat_id": event.chat_id
+            "chat_id": str(event.chat_id)
         }
+        
+        print(f"📤 Sending signal to Flask API: {source_name} ({payload['source_type']})")
         
         response = requests.post(webhook_url, json=payload, timeout=5)
         
@@ -206,9 +212,11 @@ async def auto_forward(event):
             source_type = "CHANNEL" if from_monitored_channel else "PERSONAL CHAT"
             print(f"✅ [{source_type}] Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
         else:
-            print(f"⚠️ Failed to send to broadcast bot: HTTP {response.status_code}")
+            print(f"⚠️ Failed to send to broadcast bot: HTTP {response.status_code} - {response.text}")
     except Exception as e:
-        print(f"⚠️ Failed to send to broadcast bot: {e}")
+        print(f"❌ Failed to send to broadcast bot: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
 
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
 print(f"📢 Monitored channels: {', '.join('@' + c for c in MONITORED_CHANNELS) if MONITORED_CHANNELS else 'None'}")

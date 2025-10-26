@@ -2933,3 +2933,56 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-26 08:49:39] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-26 08:49:39] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-26 08:49:39] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-26 09:20:07] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 09:20:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 09:20:07] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-26 09:20:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 09:20:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ENDERUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #RENDER/USDT $RENDER \nLong 🚀 Lev x10 #Crypto \n\nEntry: 2.501 - Stop Loss: 2.424 \n\nTargets: 2.5395 - 2.578 - 2.6165 - 2.655 - 2.6935'}
+[2025-10-26 09:20:07] [ORCHESTRATOR] ℹ️ No active positions found for ENDERUSDT to close
+[2025-10-26 09:20:08] [AUTO_TRADER] Processing auto-trade signal: RENDERUSDT
+[2025-10-26 09:20:08] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-26 09:20:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 09:20:10] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'ENDERUSDT', 'reason': 'signal_cancelled', 'source_text': '#RENDERUSDT - Signal Cancelled ❎\nClosed due to opposite direction signal'}
+[2025-10-26 09:20:10] [ORCHESTRATOR] ℹ️ No active positions found for ENDERUSDT to close
+[2025-10-26 09:20:11] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 09:20:17] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 09:20:17] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'VETUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #VET/USDT $VET \nLong 🚀 Lev x25 #Crypto \n\nEntry: 0.01741 - Stop Loss: 0.0172 \n\nTargets: 0.017515 - 0.01762 - 0.017725 - 0.01783 - 0.017935'}
+[2025-10-26 09:20:17] [ORCHESTRATOR] ℹ️ No active positions found for VETUSDT to close
+[2025-10-26 09:20:17] [AUTO_TRADER] Processing auto-trade signal: VETUSDT
+[2025-10-26 09:20:17] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-26 09:20:18] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-26 09:20:18] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 09:20:42] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-26 09:20:42] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 09:22:23] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 09:22:23] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'BTCUSDT', 'reason': 'stop_loss_hit', 'source_text': '#BTCUSDT - Stop Loss ⛔️\nLoss: 29.9988%'}
+[2025-10-26 09:22:23] [ORCHESTRATOR] ℹ️ No active positions found for BTCUSDT to close
+[2025-10-26 09:22:24] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 16:30:08] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 16:30:08] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-26 16:30:08] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-26 16:30:08] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-26 16:30:08] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-26 16:30:08] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-26 16:30:08] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:30:08] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-26 16:30:09] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 16:30:09] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:30:21] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-26 16:47:20] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 16:47:22] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-26 16:47:22] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:47:22] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-26 16:47:22] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 16:47:22] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-26 16:47:22] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-26 16:47:22] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-26 16:47:22] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:47:22] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-26 16:47:22] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-26 16:47:55] [SIGNAL] Received signal from Telethon: Test Source (channel)
+[2025-10-26 16:47:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:47:55] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-26 16:47:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 16:47:55] [AUTO_TRADER] Processing auto-trade signal: BTCUSDT
+[2025-10-26 16:47:55] [AUTO_TRADER] No users with auto-trading enabled
