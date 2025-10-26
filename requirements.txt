@@ -16,3 +16,4 @@ fpdf2
 fpdf
 gunicorn
 gevent
+telethon

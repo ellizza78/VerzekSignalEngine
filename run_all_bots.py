@@ -26,7 +26,7 @@ def run_telethon_forwarder():
     # Replit automatically sets REPLIT_DEPLOYMENT=1 in published apps
     # This prevents dual-IP session conflicts between dev and production
     is_production = os.getenv("REPLIT_DEPLOYMENT") == "1"
-    manual_override = os.getenv("ENABLE_TELETHON", "").lower() == "true"
+    manual_override = os.getenv("ENABLE_TELETHON", "").strip().lower() == "true"
     
     if not (is_production or manual_override):
         print("⏭️ Telethon disabled in development (prevents dual-IP conflicts)")
