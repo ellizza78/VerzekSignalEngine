@@ -49,3 +49,17 @@ New #Crypto #Signal Open
 [2025-10-26 09:22:24] #BTCUSDT - Stop Loss ⛔️
 Loss: 29.9988%
 [2025-10-26 16:47:55] AUTO-FORWARD from Test Source: TEST SIGNAL BTC/USDT LONG Entry: 67000 TP: 68000 SL: 66500
+[2025-10-26 17:02:15] #HBARUSDT - Stop Loss ⛔️
+Loss: 29.9132%
+[2025-10-26 18:57:08] #Signal #HBAR/USDT $HBAR 
+Long 🚀 Lev x68 #Crypto 
+
+Entry: 0.17899 - Stop Loss: 0.1782 
+
+Targets: 0.179385 - 0.17978 - 0.180175 - 0.18057 - 0.180965
+[2025-10-26 18:57:25] #HBAR/USDT / $HBAR 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management

@@ -2986,3 +2986,28 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-26 16:47:55] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-26 16:47:55] [AUTO_TRADER] Processing auto-trade signal: BTCUSDT
 [2025-10-26 16:47:55] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-26 17:02:14] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 17:02:14] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'HBARUSDT', 'reason': 'stop_loss_hit', 'source_text': '#HBARUSDT - Stop Loss ⛔️\nLoss: 29.9132%'}
+[2025-10-26 17:02:14] [ORCHESTRATOR] ℹ️ No active positions found for HBARUSDT to close
+[2025-10-26 17:02:15] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 18:39:15] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-26 18:39:15] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 18:39:15] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-26 18:39:15] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-26 18:39:15] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-26 18:39:15] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 18:39:15] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-26 18:39:15] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-26 18:39:19] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-26 18:39:22] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 18:39:55] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-26 18:57:07] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 18:57:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 18:57:07] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-26 18:57:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-26 18:57:07] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'HBARUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #HBAR/USDT $HBAR \nLong 🚀 Lev x68 #Crypto \n\nEntry: 0.17899 - Stop Loss: 0.1782 \n\nTargets: 0.179385 - 0.17978 - 0.180175 - 0.18057 - 0.180965'}
+[2025-10-26 18:57:07] [ORCHESTRATOR] ℹ️ No active positions found for HBARUSDT to close
+[2025-10-26 18:57:08] [AUTO_TRADER] Processing auto-trade signal: HBARUSDT
+[2025-10-26 18:57:08] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-26 18:57:25] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-26 18:57:25] [AUTO_TRADER] Failed to parse signal - invalid format
