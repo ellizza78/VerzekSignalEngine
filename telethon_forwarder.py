@@ -34,7 +34,8 @@ BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot user
 # --- MONITORED CHANNELS (signals from these channels will be forwarded) ---
 # Add channel usernames or IDs here (without @)
 MONITORED_CHANNELS = [
-    "aigoldencrypto",  # Ai Golden Crypto channel
+    "CryptoSignalsGolden",  # Ai Golden Crypto (ACTIVE channel)
+    1448000337,  # Ai Golden Crypto channel ID (backup)
     # Add more channels as needed
 ]
 
@@ -132,10 +133,21 @@ async def auto_forward(event):
     from_monitored_channel = False
     try:
         chat = await event.get_chat()
+        chat_id = getattr(chat, 'id', None)
         chat_username = (getattr(chat, 'username', None) or "").lower()
-        if chat_username in [c.lower() for c in MONITORED_CHANNELS]:
-            from_monitored_channel = True
-            print(f"📢 Message from monitored channel: @{chat_username}")
+        
+        # Check both username and ID
+        for monitored in MONITORED_CHANNELS:
+            if isinstance(monitored, int):
+                if chat_id == monitored:
+                    from_monitored_channel = True
+                    print(f"📢 Message from monitored channel ID: {chat_id}")
+                    break
+            elif isinstance(monitored, str):
+                if chat_username and chat_username == monitored.lower():
+                    from_monitored_channel = True
+                    print(f"📢 Message from monitored channel: @{chat_username}")
+                    break
     except Exception as e:
         pass
     
@@ -219,7 +231,13 @@ async def auto_forward(event):
         traceback.print_exc()
 
 print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
-print(f"📢 Monitored channels: {', '.join('@' + c for c in MONITORED_CHANNELS) if MONITORED_CHANNELS else 'None'}")
+channel_list = []
+for c in MONITORED_CHANNELS:
+    if isinstance(c, str):
+        channel_list.append(f'@{c}')
+    else:
+        channel_list.append(f'ID:{c}')
+print(f"📢 Monitored channels: {', '.join(channel_list) if channel_list else 'None'}")
 print(f"💬 Also monitoring personal chats for signals...")
 client.start()
 

@@ -3019,3 +3019,99 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-26 20:02:20] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'HBARUSDT', 'reason': 'stop_loss_hit', 'source_text': '#HBARUSDT - Stop Loss ⛔️\nLoss: 30.0128%'}
 [2025-10-26 20:02:20] [ORCHESTRATOR] ℹ️ No active positions found for HBARUSDT to close
 [2025-10-26 20:02:21] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 20:41:08] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 20:41:08] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'JUPUSDT', 'reason': 'closed', 'source_text': '#JUPUSDT - Signal Closed ❎'}
+[2025-10-26 20:41:08] [ORCHESTRATOR] ℹ️ No active positions found for JUPUSDT to close
+[2025-10-26 20:41:09] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 20:41:50] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 20:41:50] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'STXUSDT', 'reason': 'closed', 'source_text': '#STXUSDT - Signal Closed ❎'}
+[2025-10-26 20:41:50] [ORCHESTRATOR] ℹ️ No active positions found for STXUSDT to close
+[2025-10-26 20:41:51] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:11:23] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:11:23] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'FILUSDT', 'reason': 'closed', 'source_text': '#FILUSDT - Closed! 🔘\nTrade closed with 14.2579% profit.'}
+[2025-10-26 22:11:23] [ORCHESTRATOR] ℹ️ No active positions found for FILUSDT to close
+[2025-10-26 22:11:24] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:12:21] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:12:22] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:13:20] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:13:20] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:13:22] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:13:22] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:13:24] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:13:25] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:14:30] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:14:31] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-26 22:24:05] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (personal_chat)
+[2025-10-26 22:24:05] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'XRPUSDT', 'reason': 'stop_loss_hit', 'source_text': '#Signal #XRP/USDT $XRP \nLong 🚀 Lev x20 #Crypto \n\nEntry: 2.637 - Stop Loss: 2.5975 \n\nTargets: 2.65675 - 2.6765 - 2.69625 - 2.716 - 2.73575'}
+[2025-10-26 22:24:05] [ORCHESTRATOR] ℹ️ No active positions found for XRPUSDT to close
+[2025-10-26 22:24:05] [AUTO_TRADER] Processing auto-trade signal: XRPUSDT
+[2025-10-26 22:24:05] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-26 22:24:28] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-26 22:24:29] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 06:58:51] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 06:58:51] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 06:58:51] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 06:58:51] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 06:58:51] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 06:58:51] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 06:58:51] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 06:58:51] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 06:58:52] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 06:58:52] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 06:59:04] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:02:34] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:02:36] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:02:36] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:02:36] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:02:36] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:02:36] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:02:36] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:02:36] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:02:36] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:02:36] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:02:36] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:03:30] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:03:32] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:03:32] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:03:32] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:03:32] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:03:32] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:03:32] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:03:32] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:32] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:32] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:03:32] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:03:45] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (channel)
+[2025-10-27 07:03:45] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:45] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-27 07:03:45] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:45] [AUTO_TRADER] Processing auto-trade signal: BTCUSDT
+[2025-10-27 07:03:45] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 07:03:53] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:03:55] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:03:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:55] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:03:55] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:03:55] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:03:55] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:03:55] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:03:55] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:03:55] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:03:56] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:04:29] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:04:30] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:04:30] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:04:30] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:04:30] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:04:30] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:04:30] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:04:30] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:04:30] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:04:31] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:04:43] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:05:01] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (channel)
+[2025-10-27 07:05:01] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:05:01] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-27 07:05:01] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:05:02] [AUTO_TRADER] Processing auto-trade signal: SOLUSDT
+[2025-10-27 07:05:02] [AUTO_TRADER] No users with auto-trading enabled

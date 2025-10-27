@@ -67,3 +67,45 @@ New #Crypto #Signal Open
 Loss: 22.5451%
 [2025-10-26 20:02:21] #HBARUSDT - Stop Loss ⛔️
 Loss: 30.0128%
+[2025-10-26 20:41:09] #JUPUSDT - Signal Closed ❎
+[2025-10-26 20:41:51] #STXUSDT - Signal Closed ❎
+[2025-10-26 22:11:24] #FILUSDT - Closed! 🔘
+Trade closed with 14.2579% profit.
+[2025-10-26 22:12:22] #VETUSDT - 🚨 Target 3 reached
+💸 Profit collected 29.3233%
+⏰ Posted: 3 Days 5 Hours 24 Minutes Ago
+[2025-10-26 22:13:20] #SUIUSDT - 🚨 Target 4 reached
+💸 Profit collected 39.9951%
+⏰ Posted: 3 Days 14 Hours 42 Minutes Ago
+[2025-10-26 22:13:22] #RENDERUSDT - 🚨 Target 2 reached
+💸 Profit collected 22.9908%
+⏰ Posted: 12 Hours 53 Minutes Ago
+[2025-10-26 22:13:25] 🏋🏻‍♀️ Gained Profit on #VETUSDT in #VIP
+
+All take-profit targets achieved 😎
+
+Profit: 45.2326% 📈
+Period: 12 Hours 53 Minutes ⏰
+[2025-10-26 22:14:31] #ETHUSDT - 🚨 Target 3 reached
+💸 Profit collected 31.2435%
+⏰ Posted: 3 Days 14 Hours 24 Minutes Ago
+[2025-10-26 22:24:05] #Signal #XRP/USDT $XRP 
+Long 🚀 Lev x20 #Crypto 
+
+Entry: 2.637 - Stop Loss: 2.5975 
+
+Targets: 2.65675 - 2.6765 - 2.69625 - 2.716 - 2.73575
+[2025-10-26 22:24:29] #XRP/USDT / $XRP 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-27 07:03:45] AUTO-FORWARD from Ai Golden Crypto: #Signal #BTC/USDT Long Entry: 68500 TP1: 69000 TP2: 69500 SL: 68000 Leverage: 10x
+[2025-10-27 07:05:02] AUTO-FORWARD from Ai Golden Crypto: #Signal #SOL/USDT Long
+Entry: 185.50
+TP1: 187.00
+TP2: 188.50
+TP3: 190.00
+SL: 184.00
+Leverage: 15x
