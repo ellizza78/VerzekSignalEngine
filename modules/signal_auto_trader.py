@@ -110,6 +110,44 @@ class SignalAutoTrader:
             "targets": targets if targets else None
         }
     
+    def detect_close_signal(self, text: str) -> Optional[Dict]:
+        """
+        Detect if this is a signal to close/cancel a trade
+        
+        Returns:
+            Dict with symbol and reason, or None if not a close signal
+        """
+        text_upper = text.upper()
+        
+        # Extract symbol
+        symbol_match = re.search(r'#?([A-Z]{2,10})[/]?USDT', text_upper)
+        if not symbol_match:
+            return None
+        
+        symbol = symbol_match.group(1) + "USDT"
+        
+        # Check for close/cancel keywords
+        close_keywords = [
+            ("CLOSED", "signal_closed"),
+            ("CANCELLED", "signal_cancelled"),
+            ("CANCELED", "signal_cancelled"),
+            ("STOPPED", "signal_stopped"),
+            ("STOP LOSS HIT", "stop_loss_hit"),
+            ("SL HIT", "stop_loss_hit"),
+            ("CLOSE THIS TRADE", "manual_close"),
+            ("EXIT", "manual_exit")
+        ]
+        
+        for keyword, reason in close_keywords:
+            if keyword in text_upper:
+                return {
+                    "symbol": symbol,
+                    "reason": reason,
+                    "keyword": keyword
+                }
+        
+        return None
+    
     def process_signal_for_auto_trading(self, signal_text: str, provider: str = "telegram") -> Dict:
         """
         Process signal and auto-execute for all eligible users
@@ -121,6 +159,26 @@ class SignalAutoTrader:
         Returns:
             Summary of execution results
         """
+        # First, check if this is a CLOSE/CANCEL signal
+        close_signal = self.detect_close_signal(signal_text)
+        if close_signal:
+            log_event("AUTO_TRADER", f"🛑 Detected CLOSE signal for {close_signal['symbol']}: {close_signal['reason']}")
+            
+            # Auto-close all active positions for this symbol
+            close_result = self.orchestrator.auto_close_positions(
+                symbol=close_signal['symbol'],
+                reason=close_signal['reason']
+            )
+            
+            return {
+                "success": True,
+                "action": "close_positions",
+                "symbol": close_signal['symbol'],
+                "reason": close_signal['reason'],
+                "closed_count": close_result.get("closed_count", 0),
+                "total_pnl": close_result.get("total_pnl", 0)
+            }
+        
         # Parse signal
         signal_data = self.parse_signal(signal_text)
         if not signal_data:

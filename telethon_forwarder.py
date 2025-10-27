@@ -161,6 +161,10 @@ async def auto_forward(event):
             ("TARGET" in upper and "REACHED" in upper),
             ("PROFIT COLLECTED" in upper),
             ("CLOSED" in upper and "PROFIT" in upper),
+            # Trade close/cancel signals (CRITICAL for auto-stop)
+            ("CLOSED" in upper and "USDT" in upper),
+            ("CANCELLED" in upper and "USDT" in upper),
+            ("STOPPED" in upper and "USDT" in upper),
             # Signal format markers
             ("#SIGNAL" in upper and ("/USDT" in upper or "USDT" in upper)),
         ])
