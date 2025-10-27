@@ -9,26 +9,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy files to Vultr via SSH
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.VULTR_IP }}
-          username: ${{ secrets.VULTR_USER }}
-          key: ${{ secrets.VULTR_SSH_KEY }}
-          source: "."
-          target: ${{ secrets.APP_PATH }}
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VULTR_IP }} >> ~/.ssh/known_hosts
 
-      - name: Restart VerzekBot service
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VULTR_IP }}
-          username: ${{ secrets.VULTR_USER }}
-          key: ${{ secrets.VULTR_SSH_KEY }}
-          script: |
-            cd ${{ secrets.APP_PATH }}
-            source venv/bin/activate
-            pkill -f main.py || true
-            nohup python3 main.py > logs.txt 2>&1 &
+      - name: Deploy to Vultr
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VULTR_USER }}@${{ secrets.VULTR_IP }} << 'EOF'
+          cd ${{ secrets.APP_PATH }}
+          git pull origin main
+          source venv/bin/activate
+          pip install -r requirements.txt
+          nohup python main.py > logs.txt 2>&1 &
+          EOF

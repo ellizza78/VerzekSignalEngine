@@ -3247,3 +3247,8 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 12:00:10] [AUTO_TRADER] Signal Auto-Trader initialized
 [2025-10-27 12:00:10] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-27 12:00:11] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 12:40:09] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 12:40:09] [AUTO_TRADER] Processing auto-trade signal: FILUSDT
+[2025-10-27 12:40:09] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 12:43:11] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 12:43:11] [AUTO_TRADER] Failed to parse signal - invalid format
