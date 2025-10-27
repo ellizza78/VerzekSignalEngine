@@ -165,6 +165,8 @@ async def auto_forward(event):
             ("CLOSED" in upper and "USDT" in upper),
             ("CANCELLED" in upper and "USDT" in upper),
             ("STOPPED" in upper and "USDT" in upper),
+            ("STOP LOSS" in upper and "USDT" in upper),
+            ("SL HIT" in upper),
             # Signal format markers
             ("#SIGNAL" in upper and ("/USDT" in upper or "USDT" in upper)),
         ])

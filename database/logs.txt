@@ -3231,3 +3231,14 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 10:25:06] [AUTO_TRADER] No users with auto-trading enabled
 [2025-10-27 10:25:22] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
 [2025-10-27 10:25:23] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 11:48:50] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 11:48:52] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 11:48:52] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 11:48:53] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 11:48:53] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 11:48:53] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 11:48:53] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 11:48:53] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 11:48:53] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 11:48:53] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 11:48:53] [API] ðŸŒ Starting Flask API on port 5000

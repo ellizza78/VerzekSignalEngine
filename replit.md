@@ -11,12 +11,13 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 ## Recent Changes
 **October 27, 2025 - VIP Channel Integration & Smart Filtering:**
 - ✅ **VIP channel monitoring active** - Ai Golden Crypto (🔱VIP) channel ID: 2249790469 (15 subscribers)
-- ✅ **Smart signal filtering** - Only forwards real trading signals (Entry/TP/SL) and trade updates (Target reached, Profit %)
+- ✅ **Smart signal filtering** - Only forwards real trading signals (Entry/TP/SL) and trade updates (Target reached, Profit %, Stop Loss hit)
 - ✅ **Promotional content blocked** - Filters out ads, setup guides, claim bonus, invite links from monitored channels
-- ✅ **Signal detection criteria** - Entry+Targets, Entry+SL, Target Reached, Profit Collected, #Signal format
+- ✅ **Signal detection criteria** - Entry+Targets, Entry+SL, Target Reached, Profit Collected, Stop Loss hit, SL HIT, #Signal format
+- ✅ **Stop Loss notifications** - Fixed bug: Stop Loss hit messages now properly forwarded (previously filtered incorrectly)
 - ✅ **Clean broadcast feed** - VIP/TRIAL groups receive only actionable trading signals, no spam/ads
 - ✅ **Auto-close on cancel/stop** - System automatically closes all positions when signal provider cancels or stops a trade
-- ✅ **Close signal detection** - Detects CLOSED, CANCELLED, STOPPED keywords and auto-closes positions
+- ✅ **Close signal detection** - Detects CLOSED, CANCELLED, STOPPED, STOP LOSS keywords and auto-closes positions
 - ✅ **GitHub Actions auto-deployment** - Configured CI/CD pipeline for Vultr server deployment (pushes to main branch trigger auto-deploy)
 - 🎯 **Multi-channel ready** - Architecture supports adding more signal sources easily
 
