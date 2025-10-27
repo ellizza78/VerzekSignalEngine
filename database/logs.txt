@@ -3165,3 +3165,14 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 07:28:25] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-27 07:28:26] [API] ðŸŒ Starting Flask API on port 5000
 [2025-10-27 07:28:26] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:32:25] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:32:28] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:32:28] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:32:28] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:32:28] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:32:28] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:32:28] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:32:28] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:32:28] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:32:28] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:32:28] [API] ðŸŒ Starting Flask API on port 5000

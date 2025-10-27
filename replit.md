@@ -9,15 +9,20 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
+**October 27, 2025 - VIP Channel Integration & Smart Filtering:**
+- ✅ **VIP channel monitoring active** - Ai Golden Crypto (🔱VIP) channel ID: 2249790469 (15 subscribers)
+- ✅ **Smart signal filtering** - Only forwards real trading signals (Entry/TP/SL) and trade updates (Target reached, Profit %)
+- ✅ **Promotional content blocked** - Filters out ads, setup guides, claim bonus, invite links from monitored channels
+- ✅ **Signal detection criteria** - Entry+Targets, Entry+SL, Target Reached, Profit Collected, #Signal format
+- ✅ **Clean broadcast feed** - VIP/TRIAL groups receive only actionable trading signals, no spam/ads
+- 🎯 **Multi-channel ready** - Architecture supports adding more signal sources easily
+
 **October 25, 2025 - Email Service & Channel Monitoring:**
 - ✅ **Email verification system active** - Zoho SMTP configured (support@vezekinnovative.com)
 - ✅ **SMTP credentials secured** - SMTP_USER and SMTP_PASS in Replit Secrets
-- ✅ **Channel monitoring implemented** - Ai Golden Crypto (@aigoldencrypto) signals forwarded
-- ✅ **Spam filter optimized** - Removed "AI GOLDEN" keyword, added MONITORED_CHANNELS whitelist
 - ✅ **Broadcast bot async fixed** - Webhook setup now properly uses async/await
 - ✅ **Python dependencies resolved** - All missing packages installed (six, pytz, threadpoolctl, etc.)
 - ✅ **Type hint fixes** - requests.Response changed to Any for compatibility
-- ⚠️ **Telethon session pending** - Waiting for 24h flood limit cooldown (PhonePasswordFloodError)
 
 **October 25, 2025 - Production Readiness & Security Hardening:**
 - ✅ **JWT_SECRET_KEY secured** - Moved from hard-coded default to Replit Secrets (environment variable)

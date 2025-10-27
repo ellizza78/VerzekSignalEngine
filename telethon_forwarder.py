@@ -150,7 +150,49 @@ async def auto_forward(event):
     except Exception as e:
         pass
     
-    # 6) Block spam/promotional messages (only if NOT from monitored channel)
+    # 6) Smart filtering for MONITORED CHANNELS - only allow real signals and updates
+    if from_monitored_channel:
+        # Check if this is a REAL signal (has trading details)
+        is_real_signal = any([
+            # New signal with entry/targets
+            ("ENTRY" in upper and "TARGET" in upper),
+            ("ENTRY" in upper and "STOP LOSS" in upper),
+            # Trade update notifications
+            ("TARGET" in upper and "REACHED" in upper),
+            ("PROFIT COLLECTED" in upper),
+            ("CLOSED" in upper and "PROFIT" in upper),
+            # Signal format markers
+            ("#SIGNAL" in upper and ("/USDT" in upper or "USDT" in upper)),
+        ])
+        
+        # Block promotional content even from monitored channels
+        PROMO_KEYWORDS = [
+            "SETUP AUTO-TRADE",
+            "CLAIM BONUS",
+            "EXCLUSIVE BENEFIT",
+            "PINNED MESSAGE",
+            "INVITE LINK",
+            "T.ME/",
+            "JOIN",
+            "SUBSCRIBE",
+            "GUIDE",
+            "TUTORIAL",
+            "HOW TO",
+            "CLICK HERE",
+            "TAP HERE",
+        ]
+        
+        is_promotional = any(keyword in upper for keyword in PROMO_KEYWORDS)
+        
+        if is_promotional and not is_real_signal:
+            print(f"🚫 Blocked promotional content from monitored channel")
+            return
+        
+        if not is_real_signal:
+            print(f"⏭️ Skipped non-signal message from monitored channel")
+            return
+    
+    # 7) Block spam/promotional messages (for non-monitored channels)
     if not from_monitored_channel:
         SPAM_KEYWORDS = (
             "HOW TO", "GUIDE", "MANUAL", "TUTORIAL", "INSTRUCTIONS",
@@ -179,23 +221,25 @@ async def auto_forward(event):
             print(f"⛔ Blocked spam/promotional message")
             return
         
-        # 6.5) Block obvious invite link spam (single keyword match for these)
+        # 7.5) Block obvious invite link spam (single keyword match for these)
         INVITE_SPAM_PATTERNS = ["T.ME/", "INVITE LINK"]
         if any(pattern in upper for pattern in INVITE_SPAM_PATTERNS):
             print(f"🚫 Blocked invite link spam")
             return
     
-    # 7) Only act on signal-like content (>= 2 keywords) OR from monitored channel
-    hits = sum(k in upper for k in KEYWORDS)
-    if hits < 2 and not from_monitored_channel:
-        return
+    # 8) Only act on signal-like content (>= 2 keywords) for non-monitored channels
+    # Monitored channels already passed smart filtering above
+    if not from_monitored_channel:
+        hits = sum(k in upper for k in KEYWORDS)
+        if hits < 2:
+            return
 
-    # 8) De-duplicate exact same text
+    # 9) De-duplicate exact same text
     if seen_before(text):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 9) Send RAW signal to broadcast bot via direct HTTP POST (faster than Telegram messaging)
+    # 10) Send RAW signal to broadcast bot via direct HTTP POST (faster than Telegram messaging)
     try:
         # Get source info
         try:
