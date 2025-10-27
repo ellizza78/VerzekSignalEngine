@@ -3187,3 +3187,47 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 07:35:52] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
 [2025-10-27 07:35:52] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-27 07:35:52] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:52:18] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 07:52:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:52:18] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-27 07:52:18] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:52:19] [AUTO_TRADER] Processing auto-trade signal: MANAUSDT
+[2025-10-27 07:52:19] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 07:52:25] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 07:52:25] [AUTO_TRADER] Processing auto-trade signal: QNTUSDT
+[2025-10-27 07:52:25] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 07:52:41] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 07:52:41] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 07:52:41] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 07:52:42] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 08:28:36] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 08:28:37] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 08:29:21] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 08:29:21] [AUTO_TRADER] 🛑 Detected CLOSE signal for JUPUSDT: signal_closed
+[2025-10-27 08:29:21] [ORCHESTRATOR] ℹ️ No active positions found for JUPUSDT to close
+[2025-10-27 08:35:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 08:35:11] [AUTO_TRADER] Processing auto-trade signal: GRTUSDT
+[2025-10-27 08:35:11] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 08:46:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 08:46:10] [AUTO_TRADER] Processing auto-trade signal: JUPUSDT
+[2025-10-27 08:46:10] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 08:46:32] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 08:46:32] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 09:03:46] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 09:03:47] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 09:03:59] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 09:03:59] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 09:32:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 09:32:11] [AUTO_TRADER] Processing auto-trade signal: SEIUSDT
+[2025-10-27 09:32:11] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 09:32:36] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 09:32:37] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 09:47:19] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 09:47:19] [INFO] 🛑 Detected close signal: {'action': 'close', 'symbol': 'GRTUSDT', 'reason': 'stop_loss_hit', 'source_text': '#GRTUSDT - Stop Loss ⛔️\nLoss: 29.2859%'}
+[2025-10-27 09:47:19] [ORCHESTRATOR] ℹ️ No active positions found for GRTUSDT to close
+[2025-10-27 09:47:20] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 10:25:06] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 10:25:06] [AUTO_TRADER] Processing auto-trade signal: NEARUSDT
+[2025-10-27 10:25:06] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 10:25:22] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 10:25:23] [AUTO_TRADER] Failed to parse signal - invalid format

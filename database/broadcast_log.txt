@@ -115,3 +115,82 @@ TP1: 2650
 TP2: 2620
 SL: 2710
 Leverage: 12x
+[2025-10-27 07:52:19] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #MANA/USDT $MANA 
+Short 🩸 Lev x17 #Crypto 
+
+Entry: 0.2479 - Stop Loss: 0.2524 
+
+Targets: 0.24565 - 0.2434 - 0.24115 - 0.2389 - 0.23665
+[2025-10-27 07:52:25] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #QNT/USDT $QNT 
+Short 🩸 Lev x19 #Crypto 
+
+Entry: 83.45 - Stop Loss: 84.76 
+
+Targets: 82.795 - 82.14 - 81.485 - 80.83 - 80.175
+[2025-10-27 07:52:41] #MANA/USDT / $MANA 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-27 07:52:42] #QNT/USDT / $QNT 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-27 08:28:37] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #MANAUSDT - 🚨 Target 1 reached
+💸 Profit collected 15.0867%
+⏰ Posted: 36 Minutes Ago
+[2025-10-27 08:29:21] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #JUPUSDT - Closed! 🔘
+Trade closed with 22.1968% profit.
+[2025-10-27 08:35:11] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #GRT/USDT $GRT 
+Long 🚀 Lev x18 #Crypto 
+
+Entry: 0.06638 - Stop Loss: 0.0653 
+
+Targets: 0.06692 - 0.06746 - 0.068 - 0.06854 - 0.06908
+[2025-10-27 08:46:10] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #JUP/USDT $JUP 
+Short 🩸 Lev x26 #Crypto 
+
+Entry: 0.4372 - Stop Loss: 0.4422 
+
+Targets: 0.4347 - 0.4322 - 0.4297 - 0.4272 - 0.4247
+[2025-10-27 08:46:32] #JUP/USDT / $JUP 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-27 09:03:47] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #MANAUSDT - 🚨 Target 2 reached
+💸 Profit collected 22.973%
+⏰ Posted: 1 Hours 11 Minutes Ago
+[2025-10-27 09:03:59] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #QNTUSDT - 🚨 Target 1 reached
+💸 Profit collected 14.7993%
+⏰ Posted: 1 Hours 11 Minutes Ago
+[2025-10-27 09:32:11] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #SEI/USDT $SEI 
+Short 🩸 Lev x8 #Crypto 
+
+Entry: 0.2036 - Stop Loss: 0.2114 
+
+Targets: 0.1997 - 0.1958 - 0.1919 - 0.188 - 0.1841
+[2025-10-27 09:32:37] #SEI/USDT / $SEI 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management
+[2025-10-27 09:47:20] #GRTUSDT - Stop Loss ⛔️
+Loss: 29.2859%
+[2025-10-27 10:25:06] AUTO-FORWARD from Ai Golden Crypto (🔱VIP): #Signal #NEAR/USDT $NEAR 
+Short 🩸 Lev x13 #Crypto 
+
+Entry: 2.366 - Stop Loss: 2.419 
+
+Targets: 2.3395 - 2.313 - 2.2865 - 2.26 - 2.2335
+[2025-10-27 10:25:23] #NEAR/USDT / $NEAR 
+New #Crypto #Signal Open
+🔑 Details visible for #VIP members
+📡 10+ Signals/Day
+🎯 Entry Price, Stop Lost, Targets
+📈 Leverage, Risk Management

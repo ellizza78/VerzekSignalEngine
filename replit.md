@@ -17,6 +17,7 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - ✅ **Clean broadcast feed** - VIP/TRIAL groups receive only actionable trading signals, no spam/ads
 - ✅ **Auto-close on cancel/stop** - System automatically closes all positions when signal provider cancels or stops a trade
 - ✅ **Close signal detection** - Detects CLOSED, CANCELLED, STOPPED keywords and auto-closes positions
+- ✅ **GitHub Actions auto-deployment** - Configured CI/CD pipeline for Vultr server deployment (pushes to main branch trigger auto-deploy)
 - 🎯 **Multi-channel ready** - Architecture supports adding more signal sources easily
 
 **October 25, 2025 - Email Service & Channel Monitoring:**
