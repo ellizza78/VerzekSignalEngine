@@ -15,13 +15,13 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/github_vultr
+          chmod 600 ~/.ssh/github_vultr
           ssh-keyscan -H ${{ secrets.VULTR_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Vultr
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.VULTR_USER }}@${{ secrets.VULTR_IP }} << 'EOF'
+          ssh -i ~/.ssh/github_vultr -o StrictHostKeyChecking=no ${{ secrets.VULTR_USER }}@${{ secrets.VULTR_IP }} << 'EOF'
           cd ${{ secrets.APP_PATH }}
           git pull origin main
           source venv/bin/activate
