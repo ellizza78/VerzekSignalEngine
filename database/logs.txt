@@ -3242,3 +3242,8 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 11:48:53] [PRICE_FEED] ✅ Price Feed Service running...
 [2025-10-27 11:48:53] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-27 11:48:53] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 12:00:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 12:00:10] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 12:00:10] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-27 12:00:10] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 12:00:11] [AUTO_TRADER] Failed to parse signal - invalid format

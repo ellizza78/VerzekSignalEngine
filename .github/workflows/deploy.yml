@@ -1,4 +1,5 @@
 name: Auto Deploy to Vultr
+
 on:
   push:
     branches:
@@ -8,11 +9,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Copy files to Vultr server
-        uses: appleboy/scp-action@v0.1.7
+      - name: Copy files to Vultr via SSH
+        uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.VULTR_IP }}
           username: ${{ secrets.VULTR_USER }}
@@ -21,11 +22,13 @@ jobs:
           target: ${{ secrets.APP_PATH }}
 
       - name: Restart VerzekBot service
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VULTR_IP }}
           username: ${{ secrets.VULTR_USER }}
           key: ${{ secrets.VULTR_SSH_KEY }}
           script: |
-            cd /opt/VerzekAutoTrader
-            systemctl restart verzekbot
+            cd ${{ secrets.APP_PATH }}
+            source venv/bin/activate
+            pkill -f main.py || true
+            nohup python3 main.py > logs.txt 2>&1 &
