@@ -1,3 +1,4 @@
+# test auto deploy
 """
 VerzekAutoTrader - Main Bot Application
 ---------------------------------------
