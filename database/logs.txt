@@ -3115,3 +3115,20 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 07:05:01] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-27 07:05:02] [AUTO_TRADER] Processing auto-trade signal: SOLUSDT
 [2025-10-27 07:05:02] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 07:09:00] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:09:02] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-27 07:09:02] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-27 07:09:02] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-27 07:09:03] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-27 07:09:03] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:09:03] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-27 07:09:03] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-27 07:09:03] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-27 07:09:03] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-27 07:09:03] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:09:17] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (channel)
+[2025-10-27 07:09:17] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:09:17] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-27 07:09:17] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-27 07:09:18] [AUTO_TRADER] Processing auto-trade signal: ETHUSDT
+[2025-10-27 07:09:18] [AUTO_TRADER] No users with auto-trading enabled

@@ -109,3 +109,9 @@ TP2: 188.50
 TP3: 190.00
 SL: 184.00
 Leverage: 15x
+[2025-10-27 07:09:18] AUTO-FORWARD from Ai Golden Crypto: #Signal #ETH/USDT Short
+Entry: 2680
+TP1: 2650
+TP2: 2620
+SL: 2710
+Leverage: 12x

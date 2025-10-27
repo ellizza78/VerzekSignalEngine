@@ -223,7 +223,7 @@ def auto_forward_signal(message, text):
         logger.info(f"📡 Processing signal from {source_chat} (dual-channel: app + Telegram groups)")
     
     # Create branded header
-    header = f"🔥 VERZEK TRADING SIGNALS 🔥\n📡 Source: {source_chat}\n\n"
+    header = "🔥 VERZEK TRADING SIGNALS 🔥\n\n"
     formatted_message = header + cleaned_text
 
     # 1. Broadcast to VIP Group
