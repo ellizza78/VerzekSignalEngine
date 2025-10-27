@@ -34,8 +34,7 @@ BROADCAST_BOT_USERNAME = "broadnews_bot"  # Replace with your broadcast bot user
 # --- MONITORED CHANNELS (signals from these channels will be forwarded) ---
 # Add channel usernames or IDs here (without @)
 MONITORED_CHANNELS = [
-    "CryptoSignalsGolden",  # Ai Golden Crypto - PRIMARY SIGNAL SOURCE (9,177 subscribers)
-    1448000337,  # Ai Golden Crypto channel ID (backup)
+    2249790469,  # Ai Golden Crypto (🔱VIP) - PAID VIP CHANNEL - PRIMARY SIGNAL SOURCE (15 subscribers)
     # Add more signal channels below as needed
 ]
 
