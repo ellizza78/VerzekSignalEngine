@@ -3252,3 +3252,162 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-27 12:40:09] [AUTO_TRADER] No users with auto-trading enabled
 [2025-10-27 12:43:11] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
 [2025-10-27 12:43:11] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 13:39:12] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 13:39:13] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 13:39:17] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 13:39:18] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 13:42:20] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 13:42:21] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 16:03:15] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 16:03:16] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 16:30:14] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 16:30:15] [AUTO_TRADER] Processing auto-trade signal: RENDERUSDT
+[2025-10-27 16:30:15] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 16:30:31] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 16:30:31] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 16:52:00] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 16:52:01] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 17:12:09] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 17:12:09] [AUTO_TRADER] Processing auto-trade signal: APTUSDT
+[2025-10-27 17:12:09] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 17:12:35] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 17:12:35] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 17:30:14] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 17:30:15] [AUTO_TRADER] Processing auto-trade signal: TIAUSDT
+[2025-10-27 17:30:15] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 17:30:29] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 17:30:29] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 17:48:08] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 17:48:09] [AUTO_TRADER] Processing auto-trade signal: KASUSDT
+[2025-10-27 17:48:09] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 18:00:48] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 18:00:49] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 19:34:19] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 19:34:20] [AUTO_TRADER] Processing auto-trade signal: JUPUSDT
+[2025-10-27 19:34:20] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 19:34:23] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 19:34:24] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 19:34:24] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 19:34:24] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 19:34:39] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 19:34:40] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 19:40:18] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 19:40:18] [AUTO_TRADER] Processing auto-trade signal: GRTUSDT
+[2025-10-27 19:40:18] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 19:40:38] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 19:40:39] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 19:48:06] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 19:48:06] [AUTO_TRADER] Processing auto-trade signal: SUIUSDT
+[2025-10-27 19:48:06] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 19:49:01] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 19:49:01] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 20:02:22] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:02:23] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 20:03:18] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:03:18] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 20:10:27] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:10:27] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 20:15:41] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:15:42] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 20:42:05] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:42:06] [AUTO_TRADER] Processing auto-trade signal: XRPUSDT
+[2025-10-27 20:42:06] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 20:52:09] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 20:52:09] [AUTO_TRADER] Processing auto-trade signal: MOVEUSDT
+[2025-10-27 20:52:09] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 20:53:08] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 20:53:09] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 22:04:11] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 22:04:12] [AUTO_TRADER] Processing auto-trade signal: ROSEUSDT
+[2025-10-27 22:04:12] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 22:04:39] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 22:04:39] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 22:44:05] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 22:44:06] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 22:44:57] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 22:44:57] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 22:45:01] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 22:45:01] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:01:27] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:01:28] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:07:05] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:07:05] [AUTO_TRADER] Processing auto-trade signal: HBARUSDT
+[2025-10-27 23:07:05] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 23:07:37] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-27 23:07:38] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:16:46] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:16:46] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:34:39] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:34:40] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:45:06] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:45:07] [AUTO_TRADER] Processing auto-trade signal: HBARUSDT
+[2025-10-27 23:45:07] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-27 23:46:38] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:46:38] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-27 23:53:47] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-27 23:53:48] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 00:00:20] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 00:00:20] [AUTO_TRADER] Processing auto-trade signal: ALGOUSDT
+[2025-10-28 00:00:20] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 00:01:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-28 00:01:11] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 00:09:53] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 00:09:54] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 00:22:07] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 00:22:07] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 00:24:03] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 00:24:03] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 00:33:58] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-28 00:33:58] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 02:48:10] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 02:48:10] [AUTO_TRADER] Processing auto-trade signal: MOVEUSDT
+[2025-10-28 02:48:10] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 02:48:13] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 02:48:14] [AUTO_TRADER] 🛑 Detected CLOSE signal for MOVEUSDT: signal_closed
+[2025-10-28 02:48:14] [ORCHESTRATOR] ℹ️ No active positions found for MOVEUSDT to close
+[2025-10-28 02:50:01] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 02:50:02] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 02:50:37] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 02:50:37] [AUTO_TRADER] 🛑 Detected CLOSE signal for RENDERUSDT: signal_closed
+[2025-10-28 02:50:37] [ORCHESTRATOR] ℹ️ No active positions found for RENDERUSDT to close
+[2025-10-28 05:18:22] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:18:23] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 05:45:41] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:45:42] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 05:45:55] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:45:55] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 05:45:55] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:45:55] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 05:46:23] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:46:23] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 05:46:23] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 05:46:23] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 06:39:05] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 06:39:06] [AUTO_TRADER] Processing auto-trade signal: SOLUSDT
+[2025-10-28 06:39:06] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 06:39:33] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-28 06:39:33] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 07:09:50] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 07:09:51] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 07:45:08] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 07:45:09] [AUTO_TRADER] Processing auto-trade signal: RENDERUSDT
+[2025-10-28 07:45:09] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 07:57:07] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 07:57:08] [AUTO_TRADER] Processing auto-trade signal: SOLUSDT
+[2025-10-28 07:57:08] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 07:58:25] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (🔱VIP) (channel)
+[2025-10-28 07:58:26] [AUTO_TRADER] Processing auto-trade signal: UNIUSDT
+[2025-10-28 07:58:26] [AUTO_TRADER] No users with auto-trading enabled
+[2025-10-28 07:58:35] [SIGNAL] Received signal from Telethon: Ai Golden Crypto (personal_chat)
+[2025-10-28 07:58:35] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 10:01:07] [PRICE_FEED] 📡 Starting Real-Time Price Feed Service...
+[2025-10-28 10:01:07] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-28 10:01:07] [RECURRING] 💰 Recurring Payments Service started
+[2025-10-28 10:01:07] [TARGET_MONITOR] 🎯 Target Monitor started
+[2025-10-28 10:01:07] [ADVANCED_ORDERS] 🎯 Advanced Orders Monitor initialized
+[2025-10-28 10:01:07] [ADVANCED_ORDERS] 🚀 Advanced Orders Monitor started
+[2025-10-28 10:01:07] [PRICE_FEED] ✅ Price Feed Service running...
+[2025-10-28 10:01:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-28 10:01:07] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+[2025-10-28 10:01:07] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-28 10:01:21] [API] ðŸŒ Starting Flask API on port 5000
