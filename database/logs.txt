@@ -3411,3 +3411,12 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 [2025-10-28 10:01:07] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
 [2025-10-28 10:01:07] [ORCHESTRATOR] DCA Orchestrator initialized
 [2025-10-28 10:01:21] [API] ðŸŒ Starting Flask API on port 5000
+[2025-10-28 10:11:12] [SIGNAL] Received signal from Telethon: Ultimate Trading-Scripts💸 (personal_chat)
+[2025-10-28 10:11:12] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-28 10:11:12] [AUTO_TRADER] Signal Auto-Trader initialized
+[2025-10-28 10:11:12] [ORCHESTRATOR] DCA Orchestrator initialized
+[2025-10-28 10:11:13] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 10:11:13] [SIGNAL] Received signal from Telethon: Ultimate Trading-Scripts💸 (personal_chat)
+[2025-10-28 10:11:14] [AUTO_TRADER] Failed to parse signal - invalid format
+[2025-10-28 10:11:14] [SIGNAL] Received signal from Telethon: Ultimate Trading-Scripts💸 (personal_chat)
+[2025-10-28 10:11:14] [AUTO_TRADER] Failed to parse signal - invalid format

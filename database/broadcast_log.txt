@@ -511,3 +511,48 @@ New #Crypto #Signal Open
 📡 10+ Signals/Day
 🎯 Entry Price, Stop Lost, Targets
 📈 Leverage, Risk Management
+[2025-10-28 10:11:13] 🤖 Gap_Rush EA | iFVG Edition — This Week’s Trade Setups
+
+What it does
+👉The EA hunts classic FVGs (3-bar displacement gaps), auto-draws the zone, tracks invalidations, then waits for the tap-back to trigger a precision entry. Clean, rules-based, and chart-visible.
+
+👉What’s NEW — Micro-Gap Cleaner
+Filter out the tiny, low-quality gaps that add noise:
+
+👉 New slider: InpMinPtsBoostPct
+
+👉Suggestion (XAUUSD): +20–40%
+
+👉Outcome: fewer micro-fills → cleaner entries, better PF, steadier equity
+
+Why it matters
+👉Removing micro-gaps focuses the EA on true displacement. That means fewer chops, tighter execution, and more credible momentum retests.
+
+Quick tips for this week.
+
+👉Start with InpMinPtsBoostPct = 30
+
+👉Keep your preferred session window (London/NY overlap works great - But Takes Long Before Setup Happens)
+
+👉Trail smartly; consider EOD flat to avoid rollover noise.
+
+⬇️
+[2025-10-28 10:11:14] 📈 The Quasimodo Pattern Indicator for MetaTrader 5 is a powerful tool designed to detect and display one of the most significant price action structures used in Read The Market (RTM) methodology: the QM pattern and its inverse, the Reverse QM.
+
+📈 This indicator leverages ZigZag-based structure analysis to automatically highlight these reversal patterns on the chart—red for the bearish QM and green for the bullish Reverse QM—making it easier for traders to visualize market shifts and plan their entries with precision.
+
+📈 Modified For Boom & Crash Index Markets 5-Minutes & 15 minutes timeframe. 
+
+👇
+[2025-10-28 10:11:14] 📈 Invisible Support & Resistance MT5 Indicator. 
+
+📈 The Invisible Support & Resistance MT5 indicator is designed to identify and mark on the chart:-
+
+1. Buy Points and Sell Points based on Key support and resistance Levels.
+
+2. Dynamic support and resistance levels.
+3. Market tops and bottoms.
+
+👉 It is recommended to test the indicator on different markets and timeframes to validate its effectiveness. Use Extra Technical Analysis to Filter Out Bad Signals. 
+
+⬇️
