@@ -1,0 +1,13 @@
+[Unit]
+Description=Verzek Auto Trader Watchdog
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/verzek_watchdog.sh
+Restart=always
+RestartSec=10
+User=root
+
+[Install]
+WantedBy=multi-user.target

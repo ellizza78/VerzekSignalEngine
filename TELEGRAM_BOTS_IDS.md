@@ -1,177 +1,135 @@
-# VerzekAutoTrader - Telegram Bots & IDs (ACTUAL VALUES)
+# 📱 Telegram Bots & IDs Reference
 
-**Generated:** October 27, 2025
-
----
-
-## 🤖 **Your Telegram Bots**
-
-### **1️⃣ Broadcast Bot (Signal Broadcasting)**
-
-| Property | Value |
-|----------|-------|
-| **Bot Name** | VerzekBroadcaster |
-| **Username** | `@broadnews_bot` |
-| **Bot ID** | **8479454611** |
-| **Token Variable** | `BROADCAST_BOT_TOKEN` |
-| **Purpose** | Broadcasts trading signals to VIP/TRIAL groups |
-
-**Responsibilities:**
-- Broadcasts signals to VIP Group (ID: -1002721581400)
-- Broadcasts signals to TRIAL Group (ID: -1002726167386)
-- Adds "VERZEK TRADING SIGNALS" branding
-- Triggers auto-trading for PREMIUM users
-- Logs signals for mobile app access
+Complete reference for all Telegram bot tokens and chat IDs used in VerzekAutoTrader.
 
 ---
 
-### **2️⃣ Admin Notification Bot (Private Admin Alerts)**
+## 🤖 Bot Tokens
 
-| Property | Value |
-|----------|-------|
-| **Bot Name** | Verzek Finances |
-| **Username** | `@verzekpayflowbot` |
-| **Bot ID** | **8351047055** |
-| **Token Variable** | `TELEGRAM_BOT_TOKEN` |
-| **Purpose** | Sends admin notifications, payout requests, financial summaries |
+### **1. Admin Bot (Payment & Management)**
+- **Bot Username:** `@verzekpayflowbot`
+- **Bot ID:** `8351047055`
+- **Token:** `8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE`
+- **Purpose:** Payment processing, subscription management, admin alerts
+- **Environment Variable:** `TELEGRAM_BOT_TOKEN`
 
-**Responsibilities:**
-- Payout request notifications
-- Large payment alerts ($100+ USDT)
-- Daily/hourly financial summaries
-- System alerts and critical events
-
----
-
-### **👤 Your Admin Chat ID**
-
-| Property | Value |
-|----------|-------|
-| **Admin Chat ID** | **572038606** |
-| **Variable Name** | `ADMIN_CHAT_ID` |
-| **Purpose** | Receives all admin notifications from @verzekpayflowbot |
+### **2. Broadcast Bot (Signal Distribution)**
+- **Bot Username:** `@broadnews_bot`
+- **Bot ID:** `8479454611`
+- **Token:** `7888348351:AAGQwdP0Bg5xFOQjxF6p5OPDZTLbUnp5IbU`
+- **Purpose:** Broadcasting signals to VIP and TRIAL groups
+- **Environment Variable:** `BROADCAST_BOT_TOKEN`
 
 ---
 
-## 📋 **Complete Bot Configuration Summary**
+## 👤 Admin Chat IDs
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Bot #1: BROADCAST BOT                                       │
-├──────────────────────────────────────────────────────────────┤
-│  Name:     VerzekBroadcaster                                 │
-│  Username: @broadnews_bot                                    │
-│  Bot ID:   8479454611                                        │
-│  Role:     Public signal broadcasting to VIP/TRIAL groups    │
-└──────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────┐
-│  Bot #2: ADMIN NOTIFICATION BOT                              │
-├──────────────────────────────────────────────────────────────┤
-│  Name:     Verzek Finances                                   │
-│  Username: @verzekpayflowbot                                 │
-│  Bot ID:   8351047055                                        │
-│  Role:     Private admin alerts and financial notifications  │
-└──────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────────────────────────────────┐
-│  ADMIN CONFIGURATION                                         │
-├──────────────────────────────────────────────────────────────┤
-│  Admin Chat ID: 572038606                                    │
-│  Receives notifications from: @verzekpayflowbot              │
-└──────────────────────────────────────────────────────────────┘
-```
+### **Primary Admin**
+- **Chat ID:** `572038606`
+- **Environment Variable:** `ADMIN_CHAT_ID`
+- **Receives:** Watchdog alerts, payment notifications, system errors
 
 ---
 
-## 🔗 **Direct Bot Links**
+## 📢 Telegram Groups
 
-- **Broadcast Bot:** https://t.me/broadnews_bot
-- **Admin Bot:** https://t.me/verzekpayflowbot
+### **VIP Group**
+- **Group Name:** 🔥 VERZEK TRADING SIGNALS 🔥 (VIP)
+- **Chat ID:** `-1002721581400`
+- **Purpose:** Premium trading signals for VIP subscribers
+- **Members:** Paid VIP subscribers only
 
----
-
-## 📱 **How to Use These IDs**
-
-### **For Webhook Configuration:**
-```bash
-# Set webhook for Broadcast Bot
-curl -X POST "https://api.telegram.org/bot${BROADCAST_BOT_TOKEN}/setWebhook" \
-  -d "url=https://verzek-auto-trader.replit.app/webhook/broadcast"
-```
-
-### **For Sending Messages:**
-```python
-# Send message via Broadcast Bot
-import requests
-
-bot_id = 8479454611
-chat_id = -1002721581400  # VIP Group
-
-requests.post(f"https://api.telegram.org/bot{BROADCAST_BOT_TOKEN}/sendMessage", 
-  json={"chat_id": chat_id, "text": "Test message"})
-```
-
-### **For Admin Notifications:**
-```python
-# Send admin notification
-import requests
-
-admin_chat_id = 572038606
-
-requests.post(f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
-  json={"chat_id": admin_chat_id, "text": "Admin alert!"})
-```
+### **TRIAL Group**
+- **Group Name:** 🔥 VERZEK TRADING SIGNALS 🔥 (TRIAL)
+- **Chat ID:** `-1002726167386`
+- **Purpose:** Demo signals for trial users
+- **Members:** Trial users (limited access)
 
 ---
 
-## 🎯 **Target Groups (VIP/TRIAL)**
+## 📡 Monitored Signal Channels
 
-| Group | Chat ID | Purpose |
-|-------|---------|---------|
-| **VIP Group** | `-1002721581400` | Paid VIP subscribers - Full signal details |
-| **TRIAL Group** | `-1002726167386` | Trial users - Limited access |
+### **Ai Golden Crypto (🔱VIP)**
+- **Channel ID:** `-1002249790469`
+- **Numeric ID:** `2249790469`
+- **Purpose:** Primary signal source
+- **Subscribers:** 15
+- **Auto-forward:** ✅ Enabled (forwards to VIP + TRIAL groups)
 
 ---
 
-## ⚙️ **Environment Variables (Reference)**
+## ⚙️ Environment Variables Setup
+
+Add these to your `.env` file or Replit Secrets:
 
 ```bash
-# Broadcast Bot
-BROADCAST_BOT_TOKEN=<your_token_here>
+# Admin Bot (Payment Processing)
+TELEGRAM_BOT_TOKEN="8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE"
 
-# Admin Notification Bot
-TELEGRAM_BOT_TOKEN=<your_token_here>
+# Broadcast Bot (Signal Distribution)
+BROADCAST_BOT_TOKEN="7888348351:AAGQwdP0Bg5xFOQjxF6p5OPDZTLbUnp5IbU"
 
-# Admin Chat ID
-ADMIN_CHAT_ID=572038606
-
-# Telethon Forwarder
-TELEGRAM_API_ID=<your_api_id>
-TELEGRAM_API_HASH=<your_api_hash>
+# Admin Chat ID (Alert Recipient)
+ADMIN_CHAT_ID="572038606"
 ```
 
 ---
 
-## 🔍 **Verification**
+## 🔔 Watchdog Alert Configuration
 
-You can verify these IDs anytime by running:
-
+The watchdog script uses:
 ```bash
-# Check Broadcast Bot
-curl "https://api.telegram.org/bot${BROADCAST_BOT_TOKEN}/getMe"
+ADMIN_CHAT_ID="572038606"
+TELEGRAM_BOT_TOKEN="8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE"
+```
 
-# Check Admin Bot
-curl "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe"
+When a service crashes, you receive:
+> ⚠️ Watchdog Alert: Service verzekapi was restarted on vultr-server at 2025-10-28 14:30:00
 
-# Check your Chat ID (send /start to @userinfobot on Telegram)
+---
+
+## 🧪 Testing Bot Connectivity
+
+### **Test Admin Bot:**
+```bash
+curl -X POST "https://api.telegram.org/bot8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE/sendMessage" \
+  -d chat_id="572038606" \
+  -d text="✅ Admin Bot Test Message"
+```
+
+### **Test Broadcast Bot:**
+```bash
+curl -X POST "https://api.telegram.org/bot7888348351:AAGQwdP0Bg5xFOQjxF6p5OPDZTLbUnp5IbU/sendMessage" \
+  -d chat_id="-1002721581400" \
+  -d text="✅ Broadcast Bot Test Message"
 ```
 
 ---
 
-**🔒 SECURITY NOTE:** Keep these IDs and tokens secure. Never commit them to public repositories.
+## 📋 Bot Permissions
+
+### **Admin Bot Permissions:**
+- ✅ Send messages to admin
+- ✅ Receive payment confirmations
+- ✅ Handle subscription commands
+- ✅ Process /start, /subscribe, /cancel
+
+### **Broadcast Bot Permissions:**
+- ✅ Send messages to VIP group
+- ✅ Send messages to TRIAL group
+- ✅ Post signals automatically
+- ✅ No user interaction needed
 
 ---
 
-**Last Updated:** October 27, 2025  
-**Project:** VerzekAutoTrader v2.0
+## 🔒 Security Notes
+
+- **Never commit bot tokens to Git** - Use environment variables only
+- **Tokens stored in:** Replit Secrets + Vultr server `.env`
+- **Admin Chat ID is public** (not sensitive)
+- **Bot tokens are sensitive** - Never expose in logs or frontend
+
+---
+
+**Last Updated:** October 28, 2025  
+**Status:** All bots verified and operational

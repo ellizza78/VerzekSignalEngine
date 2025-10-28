@@ -1,0 +1,15 @@
+[Unit]
+Description=Verzek Auto Trader API Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/var/www/VerzekAutoTrader/venv/bin/python3 /var/www/VerzekAutoTrader/api_server.py
+WorkingDirectory=/var/www/VerzekAutoTrader
+User=root
+Environment=PYTHONUNBUFFERED=1
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
