@@ -9,13 +9,19 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
-**October 28, 2025 - CRITICAL FIX: Channel ID Corrected:**
-- 🔴 **ROOT CAUSE IDENTIFIED** - Channel ID was missing -100 prefix (2249790469 vs -1002249790469)
-- ✅ **Channel ID fixed** - Updated MONITORED_CHANNELS from 2249790469 to -1002249790469
-- ✅ **FIX_CHANNEL_ID_VULTR.sh created** - Automated script to deploy fix to Vultr server
-- ✅ **Diagnostic completed** - Telethon can now access "Ai Golden Crypto (🔱VIP)" channel
-- 📋 **User action required** - Deploy fix to Vultr with FIX_CHANNEL_ID_VULTR.sh
-- 🎯 **Impact** - Signals will be detected and forwarded immediately after fix is deployed
+**October 28, 2025 - CRITICAL FIX: Event Handler Scoped to Monitored Channels:**
+- 🔴 **ROOT CAUSE IDENTIFIED** - Event handler listening to ALL messages causes channel posts to be skipped after restart
+- ✅ **Event handler fixed** - Changed from `incoming=True` to `chats=MONITORED_CHANNELS, incoming=True`
+- ✅ **FIX_EVENT_HANDLER_VULTR.sh created** - Automated deployment script for Vultr
+- ✅ **Architect diagnosis** - Confirmed restricted channel requires explicit listener registration
+- 📋 **User action required** - Deploy fix to Vultr with FIX_EVENT_HANDLER_VULTR.sh
+- 🎯 **Impact** - Telethon will now receive ALL messages from channel -1002249790469
+
+**October 28, 2025 - Channel ID Corrected:**
+- ✅ **Channel ID fixed** - Updated MONITORED_CHANNELS from 2249790469 to -1002249790469 (added -100 prefix)
+- ✅ **FIX_CHANNEL_ID_VULTR.sh created** - Automated script to deploy channel ID fix
+- ✅ **Diagnostic completed** - Telethon can access "Ai Golden Crypto (🔱VIP)" channel entity
+- ✅ **Session validated** - Phone +2348142865413 has access to channel
 
 **October 28, 2025 - Backend Connection & Signal Monitoring Fixes:**
 - ✅ **Backend bug fixed** - Removed duplicate `if __name__ == "__main__":` blocks in api_server.py causing connection refused

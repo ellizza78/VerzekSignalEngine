@@ -87,7 +87,7 @@ def seen_before(text: str) -> bool:
         _recent_set.discard(old)
     return False
 
-@client.on(events.NewMessage(incoming=True))
+@client.on(events.NewMessage(chats=MONITORED_CHANNELS, incoming=True))
 async def auto_forward(event):
     text = (event.message.message or "").strip()
     if not text:
