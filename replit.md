@@ -9,6 +9,14 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
+**October 28, 2025 - Backend Connection & Signal Monitoring Fixes:**
+- ✅ **Backend bug fixed** - Removed duplicate `if __name__ == "__main__":` blocks in api_server.py causing connection refused
+- ✅ **FIX_BACKEND.sh created** - Automated script to apply backend fix on Vultr server
+- ✅ **DIAGNOSE_ISSUES.sh created** - Comprehensive diagnostic tool for all services and connectivity
+- ✅ **TROUBLESHOOTING_GUIDE.md** - Complete manual for resolving backend and signal monitoring issues
+- 📋 **User action required** - Run `bash /tmp/FIX_BACKEND.sh` on Vultr to fix port 5000 connection
+- 📋 **Signal monitoring diagnosis** - Run `bash /tmp/DIAGNOSE_ISSUES.sh` to check verzekbot service status
+
 **October 28, 2025 - Complete Phases 1-5 Implementation:**
 - ✅ **Replit Bridge deployed** - HTTPS proxy at https://verzek-auto-trader.replit.app forwards all requests to Vultr (80.240.29.142:5000)
 - ✅ **VerzekBridge workflow** - Running on port 5000, replacing local VerzekAutoTrader workflow
