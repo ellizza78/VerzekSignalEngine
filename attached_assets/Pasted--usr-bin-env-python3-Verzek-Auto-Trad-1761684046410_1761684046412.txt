@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+"""
+========================================================
+Verzek Auto Trader – Unified Main Backend (Vultr Build)
+========================================================
+Handles:
+  - Telegram signal forwarding (Telethon user client)
+  - Auto-trading simulation and monitoring
+  - Flask API integration with Replit bridge
+  - Watchdog-compatible logging
+Author: Verzek Innovative Solutions Ltd.
+========================================================
+"""
+
+import os
+import json
+import asyncio
+from datetime import datetime
+from threading import Thread
+from telegram.ext import Updater, CommandHandler
+from telethon import TelegramClient, events
+from flask import Flask, jsonify
+
+# ============================
+# CONFIGURATION
+# ============================
+CONFIG_PATH = "config/config.json"
+
+def load_config():
+    with open(CONFIG_PATH, "r") as f:
+        return json.load(f)
+
+CFG = load_config()
+
+# ============================
+# LOGGER
+# ============================
+def log_event(message: str):
+    """Write logs to file + print with timestamps"""
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    log_message = f"[{ts}] {message}"
+    print(log_message)
+    try:
+        log_file = CFG["logging"]["log_file"]
+        os.makedirs(os.path.dirname(log_file), exist_ok=True)
+        with open(log_file, "a") as f:
+            f.write(log_message + "\n")
+    except Exception:
+        pass
+
+# ============================
+# BROADCAST FUNCTION
+# ============================
+def broadcast_signal(message: str):
+    """Send message to all configured groups via broadcast bot"""
+    from telegram import Bot
+    try:
+        bot_token = os.getenv("BROADCAST_BOT_TOKEN")
+        bot = Bot(token=bot_token)
+        for gid in CFG["signal_group_ids"]:
+            bot.send_message(chat_id=gid, text=message)
+        log_event(f"[BROADCAST] ✅ Signal sent to {len(CFG['signal_group_ids'])} groups.")
+    except Exception as e:
+        log_event(f"[ERROR] Broadcast failed: {e}")
+
+# ============================
+# TELETHON CLIENT (FORWARDER)
+# ============================
+API_ID = int(os.getenv("TELEGRAM_API_ID", "0"))
+API_HASH = os.getenv("TELEGRAM_API_HASH", "")
+telethon_client = TelegramClient("session", API_ID, API_HASH)
+
+@telethon_client.on(events.NewMessage(chats=CFG["watched_signal_sources"]))
+async def signal_listener(event):
+    """Listen for new signals and forward valid ones"""
+    try:
+        text = (event.raw_text or "").strip()
+        if any(x in text.upper() for x in ["BUY", "SELL", "ENTRY", "TARGET", "STOP"]):
+            log_event(f"[SIGNAL] New signal detected: {text[:50]}...")
+            broadcast_signal(text)
+    except Exception as e:
+        log_event(f"[ERROR] Signal listener error: {e}")
+
+def run_telethon():
+    """Start Telethon client safely with its own event loop"""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(telethon_client.start())
+        log_event("[INFO] 🤖 Telethon forwarder started successfully.")
+        telethon_client.run_until_disconnected()
+    except Exception as e:
+        log_event(f"[ERROR] ❌ Telethon startup failed: {e}")
+    finally:
+        loop.close()
+
+# ============================
+# TELEGRAM ADMIN BOT
+# ============================
+def start_command(update, context):
+    update.message.reply_text("✅ Verzek Auto Trader Backend is running.")
+
+def init_admin_bot():
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    updater = Updater(token=token, use_context=True)
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start_command))
+    Thread(target=updater.start_polling, daemon=True).start()
+    log_event("[ADMIN BOT] 🟢 Admin bot started successfully.")
+
+# ============================
+# FLASK API SERVER
+# ============================
+app = Flask(__name__)
+
+@app.route("/api/status")
+def api_status():
+    return jsonify({
+        "status": "running",
+        "message": "✅ Verzek Auto Trader Backend is active",
+        "bridge_ready": True,
+        "timestamp": datetime.utcnow().isoformat()
+    })
+
+@app.route("/api/ping")
+def ping():
+    return jsonify({"pong": True, "status": "ok"})
+
+def run_flask():
+    """Run Flask on port 5000 for Replit bridge"""
+    log_event("[FLASK] 🌐 Starting API server on port 5000...")
+    app.run(host="0.0.0.0", port=5000, debug=False)
+
+# ============================
+# MAIN
+# ============================
+def main():
+    log_event("[SYSTEM] 🚀 Launching Verzek Auto Trader backend...")
+
+    # Start background components
+    Thread(target=run_telethon, daemon=True).start()
+    Thread(target=run_flask, daemon=True).start()
+    init_admin_bot()
+
+    log_event("[READY] ✅ All systems initialized and running.")
+    while True:
+        asyncio.sleep(30)
+
+if __name__ == "__main__":
+    main()
