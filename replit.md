@@ -9,6 +9,16 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 
 ## Recent Changes
+**October 28, 2025 - Replit Bridge to Vultr Backend:**
+- ✅ **Replit Bridge configured** - HTTPS proxy forwards all requests to Vultr backend (http://80.240.29.142:5000)
+- ✅ **Public HTTPS endpoint** - https://verzek-auto-trader.replit.app now acts as secure bridge
+- ✅ **Full API forwarding** - All /api/* endpoints forwarded with GET, POST, PUT, DELETE, PATCH support
+- ✅ **Timeout protection** - 10s timeout for API calls, 6s for health checks
+- ✅ **Error handling** - Proper 502/504 status codes for backend errors/timeouts
+- ✅ **Workflow optimized** - Removed local VerzekAutoTrader workflow, running only bridge + Expo Dev Server
+- ⚠️ **Signal broadcasting disabled on Replit** - Telethon/Broadcast bot should run on Vultr instead
+- 📄 **Documentation** - Created BRIDGE_SETUP.md with complete setup and troubleshooting guide
+
 **October 27, 2025 - VIP Channel Integration & Smart Filtering:**
 - ✅ **VIP channel monitoring active** - Ai Golden Crypto (🔱VIP) channel ID: 2249790469 (15 subscribers)
 - ✅ **Smart signal filtering** - Only forwards real trading signals (Entry/TP/SL) and trade updates (Target reached, Profit %, Stop Loss hit)
