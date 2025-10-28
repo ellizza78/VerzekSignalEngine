@@ -47,28 +47,25 @@ curl https://verzek-auto-trader.replit.app/ping
 
 ---
 
-### **Fix #2: Check Signal Monitoring (3 minutes)**
+### **Fix #2: Fix Signal Monitoring (2 minutes)** ⚠️ CRITICAL
 
 ```bash
-# 1. Run comprehensive diagnostics
-bash /tmp/DIAGNOSE_ISSUES.sh
+# Signal at 6:31 was NOT forwarded because verzekbot is not running!
 
-# This will check:
-# - Is verzekbot service running?
-# - Does Telethon session file exist?
-# - Are environment variables set?
-# - Are there any errors in logs?
+# 1. Quick fix - restart verzekbot service
+bash /tmp/FIX_SIGNAL_MONITORING.sh
 
-# 2. If verzekbot is not running:
-sudo systemctl start verzekbot
-sudo systemctl enable verzekbot
-
-# 3. Watch logs for activity
+# 2. Watch logs for activity (IMPORTANT!)
 journalctl -u verzekbot -f
 
 # You should see:
 # "[TELETHON] Connected successfully"
 # "🔔 Received message from chat 2249790469" (when signals are posted)
+# "[SIGNAL] Forwarding signal to broadcast bot"
+# "✅ Signal forwarded successfully"
+
+# If you see NOTHING in logs, verzekbot is not running or session is invalid.
+# Read SIGNAL_MONITORING_FIX.md for detailed troubleshooting.
 ```
 
 ---

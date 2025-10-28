@@ -11,11 +11,14 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 ## Recent Changes
 **October 28, 2025 - Backend Connection & Signal Monitoring Fixes:**
 - ✅ **Backend bug fixed** - Removed duplicate `if __name__ == "__main__":` blocks in api_server.py causing connection refused
+- ✅ **Signal monitoring diagnosed** - verzekbot service not running on Vultr (Telethon client never connects to Telegram)
 - ✅ **FIX_BACKEND.sh created** - Automated script to apply backend fix on Vultr server
+- ✅ **FIX_SIGNAL_MONITORING.sh created** - Restarts verzekbot service and verifies connection
+- ✅ **CHECK_SIGNAL_MONITORING.sh created** - Live monitoring tool to watch signals in real-time
 - ✅ **DIAGNOSE_ISSUES.sh created** - Comprehensive diagnostic tool for all services and connectivity
-- ✅ **TROUBLESHOOTING_GUIDE.md** - Complete manual for resolving backend and signal monitoring issues
+- ✅ **SIGNAL_MONITORING_FIX.md** - Complete guide explaining why signals aren't forwarded and how to fix
 - 📋 **User action required** - Run `bash /tmp/FIX_BACKEND.sh` on Vultr to fix port 5000 connection
-- 📋 **Signal monitoring diagnosis** - Run `bash /tmp/DIAGNOSE_ISSUES.sh` to check verzekbot service status
+- 📋 **User action required** - Run `bash /tmp/FIX_SIGNAL_MONITORING.sh` to start verzekbot and enable signal forwarding
 
 **October 28, 2025 - Complete Phases 1-5 Implementation:**
 - ✅ **Replit Bridge deployed** - HTTPS proxy at https://verzek-auto-trader.replit.app forwards all requests to Vultr (80.240.29.142:5000)
