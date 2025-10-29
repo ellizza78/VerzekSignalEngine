@@ -19,7 +19,7 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy load balancing and Nginx SSL termination. All exchange API calls are routed through a static IP (45.76.90.149) for IP whitelisting, featuring HMAC SHA256 authentication and automatic failover.
 - **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are distributed to VIP/TRIAL Telegram groups and a protected `/api/signals` endpoint for the mobile app, with priority signals triggering auto-trading for PREMIUM users.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, and position management. Includes rate limiting, 2FA, and audit logging.
-- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, auth-based navigation, in-app FAQ, and auto-polling for signal delivery.
+- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, auth-based navigation, in-app FAQ, auto-polling for signal delivery, and comprehensive Help & Resources screen with links to exchange setup guides, video tutorials, security best practices, and support contact.
 - **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA, and email verification. API keys are encrypted at rest.
 - **Email Verification System**: Secure token-based email verification with SMTP integration, requiring users to verify email before connecting exchange accounts or trading.
 - **Advanced Features**: Includes an AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, Auto-Optimization (ML-powered), AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
@@ -33,6 +33,11 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Subscription Model**: Free, Pro, and VIP tiers controlling feature access.
 - **Authentication**: JWT-based with secure password hashing and token refresh.
 - **Encryption**: Fernet (AES-128 CBC mode) for API keys, with master key stored in Replit Secrets.
+
+### Recent Additions (October 2025)
+- **Exchange Connection Documentation**: Complete user-facing guides for connecting Binance, Bybit, Phemex, and Kraken with step-by-step API key creation instructions, security best practices, IP whitelisting setup (45.76.90.149), troubleshooting guides, and video tutorial scripts. Deployed to Vultr at `/guides/exchange-setup.html`.
+- **Help & Resources Screen**: In-app screen accessible from Settings providing users with 8 quick links to exchange setup guides, security documentation, FAQ, video tutorials (coming soon), troubleshooting help, and support contact. Features beautiful card-based UI matching app theme.
+- **Connection Test Tool**: Python script (`tools/test_binance_connection.py`) for validating user API keys, testing Spot/Futures access, verifying permissions, and troubleshooting connection issues.
 
 ## External Dependencies
 - **Telegram API**: For signal monitoring and broadcasting (`telethon` and `python-telegram-bot`).
