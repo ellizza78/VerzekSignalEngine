@@ -39,6 +39,22 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Help & Resources Screen**: In-app screen accessible from Settings providing users with 8 quick links to exchange setup guides, security documentation, FAQ, video tutorials (coming soon), troubleshooting help, and support contact. Features beautiful card-based UI matching app theme.
 - **Connection Test Tool**: Python script (`tools/test_binance_connection.py`) for validating user API keys, testing Spot/Futures access, verifying permissions, and troubleshooting connection issues.
 
+### Mobile App Version History
+- **v1.0.0-1.0.2**: Early versions had OTA updates enabled, causing backend connection issues (app downloaded stale code from Expo servers)
+- **v1.0.3**: Fixed backend connection by removing OTA updates (`updates.url`) and hardcoding API_BASE_URL to Replit bridge; confirmed working (duplicate registration detection functional)
+- **v1.0.4**: Updated IP whitelisting display to show all 4 redundant IPs (45.76.90.149, 209.222.24.189, 45.76.158.152, 207.148.80.196); added Telegram support link (@VerzekSupport) for trial users
+
+### Security & UX Features
+- **Auto-Logout**: 3-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
+- **IP Whitelisting**: 4 whitelisted IPs for redundancy (primary: 45.76.90.149); supported by Binance, Bybit, Phemex; Kraken uses alternative security (master key + trading key model)
+- **Subscription Tiers**: TRIAL (free, 4 days, contact @VerzekSupport for activation) → VIP ($50/month, signals only) → PREMIUM ($120/month, full auto-trading with DCA, progressive TP, multi-exchange)
+- **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
+
+### Known Issues & Limitations
+- **Email Service**: Email verification and password reset emails not sending (Vultr backend configuration issue, not mobile app)
+- **Remember Me**: Not yet implemented (planned for future release)
+- **Kraken IP Whitelisting**: Kraken Futures doesn't support IP whitelisting but uses master key + trading key security model instead
+
 ## External Dependencies
 - **Telegram API**: For signal monitoring and broadcasting (`telethon` and `python-telegram-bot`).
 - **Binance API**: For trading operations.
