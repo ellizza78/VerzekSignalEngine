@@ -51,9 +51,15 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
 
 ### Known Issues & Limitations
-- **Email Service**: Email verification and password reset emails not sending (Vultr backend configuration issue, not mobile app)
-- **Remember Me**: Not yet implemented (planned for future release)
+- **Email Service**: Email verification and password reset emails not sending (Vultr backend configuration issue, not mobile app) - Complete fix guide available in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/QUICK_START_EMAIL_FIX.md`
 - **Kraken IP Whitelisting**: Kraken Futures doesn't support IP whitelisting but uses master key + trading key security model instead
+
+### Email Service Setup (Vultr Backend)
+- **Issue**: SMTP ports may be blocked by Vultr by default for spam prevention
+- **Fix**: Request port access via Vultr support ticket (24-48 hour approval)
+- **Configuration**: Microsoft 365 SMTP with app password authentication
+- **Diagnostic Tool**: `tools/test_email_service.py` for automated testing
+- **Documentation**: Complete guides in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/EMAIL_SERVICE_DIAGNOSTIC.md`
 
 ## External Dependencies
 - **Telegram API**: For signal monitoring and broadcasting (`telethon` and `python-telegram-bot`).
