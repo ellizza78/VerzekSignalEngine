@@ -12,32 +12,28 @@ import sys
 import time
 from exchanges.binance_client import BinanceClient
 from exchanges.exchange_interface import ExchangeFactory
-from colorama import init, Fore, Style
-
-# Initialize colorama for colored terminal output
-init(autoreset=True)
 
 def print_header(text):
     """Print formatted header"""
-    print(f"\n{Fore.CYAN}{'='*60}")
-    print(f"{Fore.CYAN}{text:^60}")
-    print(f"{Fore.CYAN}{'='*60}\n")
+    print(f"\n{'='*60}")
+    print(f"{text:^60}")
+    print(f"{'='*60}\n")
 
 def print_success(text):
     """Print success message"""
-    print(f"{Fore.GREEN}✅ {text}")
+    print(f"✅ {text}")
 
 def print_error(text):
     """Print error message"""
-    print(f"{Fore.RED}❌ {text}")
+    print(f"❌ {text}")
 
 def print_info(text):
     """Print info message"""
-    print(f"{Fore.YELLOW}ℹ️  {text}")
+    print(f"ℹ️  {text}")
 
 def print_step(step_num, text):
     """Print step message"""
-    print(f"{Fore.MAGENTA}[Step {step_num}] {text}")
+    print(f"[Step {step_num}] {text}")
 
 def test_binance_spot(api_key, api_secret):
     """Test Binance Spot API connection"""
@@ -238,33 +234,33 @@ def check_api_permissions(api_key, api_secret):
         print_info("Note: You need to enable Futures on your Binance account first!")
     
     # Summary
-    print("\n" + Fore.CYAN + "Permission Summary:")
-    print(f"  Reading: {Fore.GREEN if permissions['reading'] else Fore.RED}{'✓' if permissions['reading'] else '✗'}")
-    print(f"  Spot Trading: {Fore.GREEN if permissions['spot_trading'] else Fore.RED}{'✓' if permissions['spot_trading'] else '✗'}")
-    print(f"  Futures Trading: {Fore.GREEN if permissions['futures_trading'] else Fore.RED}{'✓' if permissions['futures_trading'] else '✗'}")
+    print("\nPermission Summary:")
+    print(f"  Reading: {'✓' if permissions['reading'] else '✗'}")
+    print(f"  Spot Trading: {'✓' if permissions['spot_trading'] else '✗'}")
+    print(f"  Futures Trading: {'✓' if permissions['futures_trading'] else '✗'}")
     
     return permissions
 
 def main():
     """Main test function"""
-    print(f"\n{Fore.YELLOW}{'*'*60}")
-    print(f"{Fore.YELLOW}Binance API Connection Test".center(60))
-    print(f"{Fore.YELLOW}VerzekAutoTrader - Exchange Integration".center(60))
-    print(f"{Fore.YELLOW}{'*'*60}\n")
+    print(f"\n{'*'*60}")
+    print(f"{'Binance API Connection Test':^60}")
+    print(f"{'VerzekAutoTrader - Exchange Integration':^60}")
+    print(f"{'*'*60}\n")
     
     # Get API credentials
-    print(f"{Fore.CYAN}Please enter your Binance API credentials:")
-    print(f"{Fore.RED}⚠️  NEVER share these with anyone!")
-    print(f"{Fore.YELLOW}(These will only be used for testing and not stored)\n")
+    print("Please enter your Binance API credentials:")
+    print("⚠️  NEVER share these with anyone!")
+    print("(These will only be used for testing and not stored)\n")
     
-    api_key = input(f"{Fore.GREEN}API Key: {Style.RESET_ALL}").strip()
-    api_secret = input(f"{Fore.GREEN}Secret Key: {Style.RESET_ALL}").strip()
+    api_key = input("API Key: ").strip()
+    api_secret = input("Secret Key: ").strip()
     
     if not api_key or not api_secret:
         print_error("API Key and Secret Key are required!")
         sys.exit(1)
     
-    print(f"\n{Fore.CYAN}Starting tests...\n")
+    print("\nStarting tests...\n")
     
     # Run tests
     results = {
@@ -291,40 +287,40 @@ def main():
     
     all_passed = all([results["spot"], results["factory"]])
     
-    print(f"Permissions Check: {Fore.GREEN if results['permissions'] else Fore.RED}{'PASSED' if results['permissions'] else 'FAILED'}")
-    print(f"Spot API Test: {Fore.GREEN if results['spot'] else Fore.RED}{'PASSED' if results['spot'] else 'FAILED'}")
-    print(f"Futures API Test: {Fore.GREEN if results['futures'] else Fore.RED}{'PASSED' if results['futures'] else 'FAILED'}")
-    print(f"Exchange Factory: {Fore.GREEN if results['factory'] else Fore.RED}{'PASSED' if results['factory'] else 'FAILED'}")
+    print(f"Permissions Check: {'PASSED ✓' if results['permissions'] else 'FAILED ✗'}")
+    print(f"Spot API Test: {'PASSED ✓' if results['spot'] else 'FAILED ✗'}")
+    print(f"Futures API Test: {'PASSED ✓' if results['futures'] else 'FAILED ✗'}")
+    print(f"Exchange Factory: {'PASSED ✓' if results['factory'] else 'FAILED ✗'}")
     
     print()
     
     if all_passed:
-        print(f"{Fore.GREEN}{'='*60}")
-        print(f"{Fore.GREEN}✅ ALL TESTS PASSED! ✅".center(60))
-        print(f"{Fore.GREEN}{'='*60}")
-        print(f"\n{Fore.CYAN}Your API keys are working correctly!")
-        print(f"{Fore.CYAN}You can now use them in VerzekAutoTrader mobile app.")
+        print("="*60)
+        print("✅ ALL TESTS PASSED! ✅".center(60))
+        print("="*60)
+        print("\nYour API keys are working correctly!")
+        print("You can now use them in VerzekAutoTrader mobile app.")
         
         if not results["futures"]:
-            print(f"\n{Fore.YELLOW}⚠️  Note: Futures trading is not enabled.")
-            print(f"{Fore.YELLOW}To enable Futures:")
-            print(f"{Fore.YELLOW}1. Log into Binance website")
-            print(f"{Fore.YELLOW}2. Go to Derivatives → USDⓈ-M Futures")
-            print(f"{Fore.YELLOW}3. Complete Futures account activation")
-            print(f"{Fore.YELLOW}4. Create new API key AFTER enabling Futures")
+            print("\n⚠️  Note: Futures trading is not enabled.")
+            print("To enable Futures:")
+            print("1. Log into Binance website")
+            print("2. Go to Derivatives → USDⓈ-M Futures")
+            print("3. Complete Futures account activation")
+            print("4. Create new API key AFTER enabling Futures")
     else:
-        print(f"{Fore.RED}{'='*60}")
-        print(f"{Fore.RED}❌ SOME TESTS FAILED ❌".center(60))
-        print(f"{Fore.RED}{'='*60}")
-        print(f"\n{Fore.YELLOW}Common Issues:")
-        print(f"{Fore.YELLOW}1. API key doesn't have correct permissions")
-        print(f"{Fore.YELLOW}   → Enable 'Spot & Margin Trading' in Binance API settings")
-        print(f"{Fore.YELLOW}2. API key created before Futures activation")
-        print(f"{Fore.YELLOW}   → Create a NEW API key after enabling Futures")
-        print(f"{Fore.YELLOW}3. IP whitelisting enabled without our server IP")
-        print(f"{Fore.YELLOW}   → Add 45.76.90.149 to Binance API whitelist")
-        print(f"{Fore.YELLOW}4. Timestamp issues")
-        print(f"{Fore.YELLOW}   → Check system time is synced correctly")
+        print("="*60)
+        print("❌ SOME TESTS FAILED ❌".center(60))
+        print("="*60)
+        print("\nCommon Issues:")
+        print("1. API key doesn't have correct permissions")
+        print("   → Enable 'Spot & Margin Trading' in Binance API settings")
+        print("2. API key created before Futures activation")
+        print("   → Create a NEW API key after enabling Futures")
+        print("3. IP whitelisting enabled without our server IP")
+        print("   → Add 45.76.90.149 to Binance API whitelist")
+        print("4. Timestamp issues")
+        print("   → Check system time is synced correctly")
     
     print()
 
@@ -332,8 +328,8 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print(f"\n\n{Fore.YELLOW}Test cancelled by user.")
+        print("\n\nTest cancelled by user.")
         sys.exit(0)
     except Exception as e:
-        print(f"\n{Fore.RED}Unexpected error: {str(e)}")
+        print(f"\nUnexpected error: {str(e)}")
         sys.exit(1)
