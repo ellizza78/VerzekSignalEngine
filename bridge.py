@@ -73,6 +73,80 @@ def signals():
         logger.error(f"Error forwarding /signals: {str(e)}")
         return jsonify({"error": str(e)}), 502
 
+@app.route("/health/mail", methods=["GET"])
+def health_mail():
+    """Check email service health"""
+    logger.info("Email service health check")
+    import os
+    has_email_config = bool(os.getenv("EMAIL_USER") and os.getenv("EMAIL_PASS"))
+    return jsonify({
+        "email_service": "Microsoft 365 SMTP",
+        "configured": has_email_config,
+        "smtp_host": os.getenv("EMAIL_HOST", "smtp.office365.com"),
+        "smtp_port": int(os.getenv("EMAIL_PORT", "587")),
+        "from_email": os.getenv("EMAIL_FROM", os.getenv("EMAIL_USER", "support@verzekinnovative.com"))
+    })
+
+@app.route("/send-test", methods=["POST"])
+def send_test():
+    """Send test email via Microsoft 365"""
+    logger.info("Test email request received")
+    try:
+        from mail_sender import send_email
+        
+        data = request.get_json(force=True)
+        to = data.get("to")
+        if not to:
+            return jsonify({"ok": False, "error": "missing 'to' parameter"}), 400
+        
+        html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #0A4A5C, #1B9AAA); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+                .success { background: #d4edda; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🔧 Email Test Successful!</h1>
+                </div>
+                <div class="content">
+                    <div class="success">
+                        <strong>✅ Microsoft 365 SMTP is working correctly!</strong>
+                    </div>
+                    <p>This is a test email from <strong>Verzek Auto Trader</strong> running on Replit.</p>
+                    <p>Email service: <code>smtp.office365.com:587</code></p>
+                    <p>From: <code>support@verzekinnovative.com</code></p>
+                    <p>If you received this email, your email integration is fully operational!</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        send_email(to, "Replit SMTP Test", html)
+        logger.info(f"Test email sent successfully to {to}")
+        
+        return jsonify({
+            "ok": True,
+            "sent_to": to,
+            "message": "Test email sent successfully via Microsoft 365"
+        })
+        
+    except Exception as e:
+        logger.error(f"Test email failed: {str(e)}")
+        return jsonify({
+            "ok": False,
+            "error": str(e),
+            "message": "Make sure EMAIL_USER and EMAIL_PASS are set in Replit Secrets"
+        }), 500
+
 @app.route("/api/<path:endpoint>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def api_proxy(endpoint):
     """Forward all /api/* requests to Vultr backend"""

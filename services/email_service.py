@@ -18,12 +18,13 @@ class EmailService:
     
     def __init__(self):
         """Initialize email service with SMTP configuration"""
-        self.smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-        self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
-        self.smtp_username = os.getenv('SMTP_USERNAME', '')
-        self.smtp_password = os.getenv('SMTP_PASSWORD', '')
-        self.from_email = os.getenv('FROM_EMAIL', 'noreply@verzektrader.com')
-        self.from_name = os.getenv('FROM_NAME', 'VerzekAutoTrader')
+        # Microsoft 365 SMTP configuration
+        self.smtp_server = os.getenv('EMAIL_HOST', os.getenv('SMTP_SERVER', 'smtp.office365.com'))
+        self.smtp_port = int(os.getenv('EMAIL_PORT', os.getenv('SMTP_PORT', '587')))
+        self.smtp_username = os.getenv('EMAIL_USER', os.getenv('SMTP_USER', os.getenv('SMTP_USERNAME', '')))
+        self.smtp_password = os.getenv('EMAIL_PASS', os.getenv('SMTP_PASS', os.getenv('SMTP_PASSWORD', '')))
+        self.from_email = os.getenv('EMAIL_FROM', os.getenv('FROM_EMAIL', 'support@verzekinnovative.com'))
+        self.from_name = os.getenv('APP_NAME', os.getenv('FROM_NAME', 'Verzek Auto Trader'))
         
         # Base URL for verification links
         self.base_url = os.getenv('BASE_URL', 'https://verzek-auto-trader.replit.app')
