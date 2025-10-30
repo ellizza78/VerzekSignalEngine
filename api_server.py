@@ -1476,6 +1476,19 @@ def control_circuit_breaker():
 @token_required
 def create_payment_request(current_user_id):
     """Create payment request for subscription upgrade"""
+    # ✅ ENFORCE EMAIL VERIFICATION for PREMIUM ($120) payments
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if not user.email_verified:
+        return jsonify({
+            "error": "Email verification required",
+            "message": "Please verify your email address before making subscription payments. Check your inbox for the verification link.",
+            "email_verified": False,
+            "email": user.email
+        }), 403
+    
     data = request.json
     plan = data.get('plan')
 
@@ -1496,6 +1509,19 @@ def create_payment_request(current_user_id):
 @token_required
 def submit_payment_verification(current_user_id):
     """Submit payment for verification with TX hash (signature optional for mobile app)"""
+    # ✅ ENFORCE EMAIL VERIFICATION before confirming PREMIUM ($120) payments
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if not user.email_verified:
+        return jsonify({
+            "error": "Email verification required",
+            "message": "Please verify your email address before confirming subscription payments. This is required for $120 PREMIUM payments.",
+            "email_verified": False,
+            "email": user.email
+        }), 403
+    
     data = request.json
 
     payment_id = data.get('payment_id')

@@ -42,6 +42,7 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Signature Security**: Made X-Payment-Signature header optional for mobile clients (TronScan provides blockchain verification)
 - **Backward Compatibility**: Added comprehensive support for legacy 'pro'/'PRO' plan users - auto-converts to 'premium' with $120 pricing, maintains auto-trading access, included in analytics/revenue reporting
 - **Case-Insensitive Handling**: All plan processing now normalizes to lowercase before comparison
+- **Email Verification for Payments**: STRICTLY enforced Gmail verification before creating/confirming PREMIUM ($120) subscription payments - users cannot pay without verified email
 - **Files Updated**: api_server.py, payment_system.py, user_manager_v2.py, recurring_payments.py, subscription_security.py, admin_dashboard.py, analytics_engine.py, api.js
 
 ### Recent Additions (October 2025)
@@ -59,10 +60,11 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 ### Security & UX Features
 - **Auto-Logout**: 2-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
 - **IP Whitelisting**: Primary IP 45.76.90.149 (Binance-verified); supported by Binance, Bybit, Phemex; Kraken uses alternative security (master key + trading key model)
+- **Email Verification Enforcement**: Users CANNOT login, make PREMIUM ($120) payments, connect exchanges, or access auto-trading without verifying Gmail address (strict 403 enforcement)
 - **Subscription Tiers**: 
   - **TRIAL** (automatic 4 days on registration): Manual Telegram group access via button (contact @VerzekSupport)
   - **VIP ($50/month)**: Signals only in mobile app, NO Telegram group, NO exchange connections
-  - **PREMIUM ($120/month)**: Signals in app + exchange connections + full auto-trading (DCA, progressive TP, multi-exchange)
+  - **PREMIUM ($120/month)**: Signals in app + exchange connections + full auto-trading (DCA, progressive TP, multi-exchange) - REQUIRES verified email
 - **Trial Activation**: New users automatically get 4-day trial. Telegram group access requires manual request via app button
 - **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
 
