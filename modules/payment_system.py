@@ -24,8 +24,9 @@ class PaymentSystem:
         
         self.PLAN_PRICES = {
             'free': 0,
-            'pro': 29.99,  # USDT monthly
-            'vip': 99.99   # USDT monthly
+            'trial': 0,
+            'vip': 50,      # $50 USDT monthly - Signals only
+            'premium': 120  # $120 USDT monthly - Full auto-trading
         }
         
         self.REFERRAL_BONUS_PERCENT = 10  # 10% recurring commission

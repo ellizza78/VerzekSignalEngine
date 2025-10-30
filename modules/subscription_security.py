@@ -129,7 +129,7 @@ class SubscriptionSecurity:
                 stored_license = self.licenses[license_key]
                 plan = stored_license['plan']
             else:
-                plan_map = {'PRO': 'pro', 'VIP': 'vip', 'FRE': 'free'}
+                plan_map = {'PRE': 'premium', 'VIP': 'vip', 'FRE': 'free', 'TRI': 'trial'}
                 plan = plan_map.get(plan_code, plan_code.lower())
             
             payload = f"{user_id}|{plan}|{expiry_timestamp}"

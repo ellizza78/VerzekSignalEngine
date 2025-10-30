@@ -25,10 +25,10 @@ class AdminDashboard:
         
         # User statistics
         total_users = len(users)
-        active_users = len([u for u in users if u.plan != 'FREE'])
-        free_users = len([u for u in users if u.plan == 'FREE'])
-        pro_users = len([u for u in users if u.plan == 'PRO'])
-        vip_users = len([u for u in users if u.plan == 'VIP'])
+        active_users = len([u for u in users if u.plan not in ['FREE', 'free']])
+        free_users = len([u for u in users if u.plan in ['FREE', 'free', 'trial']])
+        vip_users = len([u for u in users if u.plan in ['VIP', 'vip']])
+        premium_users = len([u for u in users if u.plan in ['PREMIUM', 'premium']])
         
         # Position statistics
         active_positions = len([p for p in positions if p.status == 'active'])
@@ -48,8 +48,8 @@ class AdminDashboard:
                 'total': total_users,
                 'active': active_users,
                 'free': free_users,
-                'pro': pro_users,
-                'vip': vip_users
+                'vip': vip_users,
+                'premium': premium_users
             },
             'positions': {
                 'active': active_positions,
@@ -221,15 +221,15 @@ class AdminDashboard:
         
         total_revenue = sum([p['amount'] for p in approved])
         
-        # Revenue by plan
-        pro_revenue = sum([p['amount'] for p in approved if p['plan'] == 'PRO'])
-        vip_revenue = sum([p['amount'] for p in approved if p['plan'] == 'VIP'])
+        # Revenue by plan (case-insensitive)
+        vip_revenue = sum([p['amount'] for p in approved if p['plan'].lower() == 'vip'])
+        premium_revenue = sum([p['amount'] for p in approved if p['plan'].lower() == 'premium'])
         
         return {
             'period_days': days,
             'total_revenue': round(total_revenue, 2),
-            'pro_revenue': round(pro_revenue, 2),
             'vip_revenue': round(vip_revenue, 2),
+            'premium_revenue': round(premium_revenue, 2),
             'payments': {
                 'approved': len(approved),
                 'rejected': len(rejected),

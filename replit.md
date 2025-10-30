@@ -30,9 +30,17 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Production Database**: SQLite with ACID compliance, WAL mode, and concurrent write safety.
 - **Environment Variables**: All sensitive information is stored in environment variables; no hard-coded fallbacks.
 - **24/7 Operation**: Designed for continuous uptime.
-- **Subscription Model**: Free, Pro, and VIP tiers controlling feature access.
+- **Subscription Model**: FREE/TRIAL → VIP ($50/month, signals only) → PREMIUM ($120/month, full auto-trading).
 - **Authentication**: JWT-based with secure password hashing and token refresh.
 - **Encryption**: Fernet (AES-128 CBC mode) for API keys, with master key stored in Replit Secrets.
+
+### Payment System Fixes (October 30, 2025)
+- **Critical Bug Fix**: Fixed payment verification system mismatch between mobile app and backend
+- **Plan Name Standardization**: Changed 'pro' to 'premium' across entire codebase for consistency
+- **Corrected Pricing**: Updated PLAN_PRICES - VIP=$50 (signals only), PREMIUM=$120 (full auto-trading)
+- **Two-Step Payment Flow**: Mobile app now properly calls /api/payments/create → /api/payments/verify
+- **Signature Security**: Made X-Payment-Signature header optional for mobile clients (TronScan provides blockchain verification)
+- **Files Updated**: api_server.py, payment_system.py, user_manager_v2.py, recurring_payments.py, subscription_security.py, admin_dashboard.py, analytics_engine.py, api.js
 
 ### Recent Additions (October 2025)
 - **Exchange Connection Documentation**: Complete user-facing guides for connecting Binance, Bybit, Phemex, and Kraken with step-by-step API key creation instructions, security best practices, IP whitelisting setup (45.76.90.149), troubleshooting guides, and video tutorial scripts. Deployed to Vultr at `/guides/exchange-setup.html`.

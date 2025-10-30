@@ -101,7 +101,7 @@ class RecurringPaymentHandler:
                 return None
         
         # Return subscription details
-        amount = 29.99 if plan == 'pro' else 99.99 if plan == 'vip' else 0
+        amount = 50 if plan == 'vip' else 120 if plan == 'premium' else 0
         
         return {
             'user_id': user_id,

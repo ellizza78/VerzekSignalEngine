@@ -1412,8 +1412,8 @@ def create_payment_request(current_user_id):
     data = request.json
     plan = data.get('plan')
 
-    if not plan or plan not in ['pro', 'vip']:
-        return jsonify({'error': 'Invalid plan. Choose pro or vip'}), 400
+    if not plan or plan not in ['premium', 'vip']:
+        return jsonify({'error': 'Invalid plan. Choose premium or vip'}), 400
 
     result = payment_system.create_payment_request(current_user_id, plan)
     return jsonify(result)
@@ -1644,7 +1644,7 @@ def validate_subscription(current_user_id):
         user.license_key, current_user_id
     )
 
-    if not is_valid and user.plan in ['pro', 'vip']:
+    if not is_valid and user.plan in ['premium', 'vip']:
         user.plan = 'free'
         user_manager._save_user_to_db(user)
 

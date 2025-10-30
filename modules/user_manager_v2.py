@@ -233,22 +233,24 @@ class User:
         self.plan_expires_at = (datetime.now() + timedelta(days=duration_days)).isoformat()
         
         # Set group access and features based on plan
-        if plan == "free":
+        if plan in ["free", "trial"]:
             self.telegram_group_access["trial_group"] = True
             self.telegram_group_access["vip_group"] = False
             self.dca_settings["enabled"] = False  # Disable auto-trade
             self.strategy_settings["auto_follow"] = False  # Disable auto-trading
             self.trading_preferences["auto_trade_enabled"] = False  # Disable legacy flag
-        elif plan == "pro":
+        elif plan == "vip":
+            # VIP: Signals only, no auto-trading ($50/month)
             self.telegram_group_access["trial_group"] = False
             self.telegram_group_access["vip_group"] = True
-            self.dca_settings["enabled"] = False  # Pro doesn't get auto-trade
+            self.dca_settings["enabled"] = False  # VIP doesn't get auto-trade
             self.strategy_settings["auto_follow"] = False  # No auto-trading
             self.trading_preferences["auto_trade_enabled"] = False  # Disable legacy flag
-        elif plan == "vip":
+        elif plan == "premium":
+            # PREMIUM: Full auto-trading with DCA ($120/month)
             self.telegram_group_access["trial_group"] = False
             self.telegram_group_access["vip_group"] = True
-            self.dca_settings["enabled"] = True  # VIP gets auto-trade with DCA
+            self.dca_settings["enabled"] = True  # PREMIUM gets auto-trade with DCA
             self.strategy_settings["auto_follow"] = True  # Enable auto-trading
             self.trading_preferences["auto_trade_enabled"] = True  # Enable legacy flag
         
