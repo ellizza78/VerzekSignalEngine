@@ -215,11 +215,11 @@ class AnalyticsEngine:
         platform_pnl = sum([p.realized_pnl for p in closed])
         platform_win_rate = (len(profitable) / len(closed) * 100) if closed else 0
         
-        # User distribution (case-insensitive)
+        # User distribution (case-insensitive, with legacy 'pro' as 'premium')
         user_distribution = {
             'free': len([u for u in all_users if u.plan.lower() in ['free', 'trial']]),
             'vip': len([u for u in all_users if u.plan.lower() == 'vip']),
-            'premium': len([u for u in all_users if u.plan.lower() == 'premium'])
+            'premium': len([u for u in all_users if u.plan.lower() in ['premium', 'pro']])
         }
         
         # Most active traders

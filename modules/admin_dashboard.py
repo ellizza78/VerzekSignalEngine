@@ -23,12 +23,12 @@ class AdminDashboard:
         users = self.user_manager.get_all_users()
         positions = self.position_tracker.load_positions()
         
-        # User statistics
+        # User statistics (with backward compatibility for legacy 'PRO' plan)
         total_users = len(users)
         active_users = len([u for u in users if u.plan not in ['FREE', 'free']])
         free_users = len([u for u in users if u.plan in ['FREE', 'free', 'trial']])
         vip_users = len([u for u in users if u.plan in ['VIP', 'vip']])
-        premium_users = len([u for u in users if u.plan in ['PREMIUM', 'premium']])
+        premium_users = len([u for u in users if u.plan in ['PREMIUM', 'premium', 'PRO', 'pro']])
         
         # Position statistics
         active_positions = len([p for p in positions if p.status == 'active'])
@@ -221,9 +221,9 @@ class AdminDashboard:
         
         total_revenue = sum([p['amount'] for p in approved])
         
-        # Revenue by plan (case-insensitive)
+        # Revenue by plan (case-insensitive, with legacy 'pro' support)
         vip_revenue = sum([p['amount'] for p in approved if p['plan'].lower() == 'vip'])
-        premium_revenue = sum([p['amount'] for p in approved if p['plan'].lower() == 'premium'])
+        premium_revenue = sum([p['amount'] for p in approved if p['plan'].lower() in ['premium', 'pro']])
         
         return {
             'period_days': days,

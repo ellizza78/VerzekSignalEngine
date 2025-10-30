@@ -1412,6 +1412,12 @@ def create_payment_request(current_user_id):
     data = request.json
     plan = data.get('plan')
 
+    # Normalize plan name to lowercase and handle legacy 'pro' (case-insensitive)
+    if plan:
+        plan = plan.lower()
+        if plan == 'pro':
+            plan = 'premium'
+    
     if not plan or plan not in ['premium', 'vip']:
         return jsonify({'error': 'Invalid plan. Choose premium or vip'}), 400
 
@@ -1644,7 +1650,8 @@ def validate_subscription(current_user_id):
         user.license_key, current_user_id
     )
 
-    if not is_valid and user.plan in ['premium', 'vip']:
+    # Downgrade to free if license invalid (include legacy 'pro' plan)
+    if not is_valid and user.plan in ['premium', 'vip', 'pro']:
         user.plan = 'free'
         user_manager._save_user_to_db(user)
 

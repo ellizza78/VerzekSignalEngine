@@ -228,6 +228,13 @@ class User:
         # Store previous plan to handle downgrades
         previous_plan = self.plan
         
+        # Normalize plan to lowercase for consistency
+        if isinstance(plan, str):
+            plan = plan.lower()
+            # Map legacy 'pro' to 'premium'
+            if plan == 'pro':
+                plan = 'premium'
+        
         self.plan = plan
         self.plan_started_at = datetime.now().isoformat()
         self.plan_expires_at = (datetime.now() + timedelta(days=duration_days)).isoformat()
@@ -246,8 +253,8 @@ class User:
             self.dca_settings["enabled"] = False  # VIP doesn't get auto-trade
             self.strategy_settings["auto_follow"] = False  # No auto-trading
             self.trading_preferences["auto_trade_enabled"] = False  # Disable legacy flag
-        elif plan == "premium":
-            # PREMIUM: Full auto-trading with DCA ($120/month)
+        elif plan in ["premium", "pro"]:
+            # PREMIUM (or legacy PRO): Full auto-trading with DCA ($120/month)
             self.telegram_group_access["trial_group"] = False
             self.telegram_group_access["vip_group"] = True
             self.dca_settings["enabled"] = True  # PREMIUM gets auto-trade with DCA

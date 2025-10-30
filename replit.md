@@ -40,6 +40,8 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Corrected Pricing**: Updated PLAN_PRICES - VIP=$50 (signals only), PREMIUM=$120 (full auto-trading)
 - **Two-Step Payment Flow**: Mobile app now properly calls /api/payments/create → /api/payments/verify
 - **Signature Security**: Made X-Payment-Signature header optional for mobile clients (TronScan provides blockchain verification)
+- **Backward Compatibility**: Added comprehensive support for legacy 'pro'/'PRO' plan users - auto-converts to 'premium' with $120 pricing, maintains auto-trading access, included in analytics/revenue reporting
+- **Case-Insensitive Handling**: All plan processing now normalizes to lowercase before comparison
 - **Files Updated**: api_server.py, payment_system.py, user_manager_v2.py, recurring_payments.py, subscription_security.py, admin_dashboard.py, analytics_engine.py, api.js
 
 ### Recent Additions (October 2025)

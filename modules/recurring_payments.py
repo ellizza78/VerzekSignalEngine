@@ -100,8 +100,15 @@ class RecurringPaymentHandler:
             if datetime.now() > expiry_date:
                 return None
         
-        # Return subscription details
-        amount = 50 if plan == 'vip' else 120 if plan == 'premium' else 0
+        # Return subscription details (case-insensitive with legacy 'pro'/'PRO' support)
+        plan_lower = plan.lower() if isinstance(plan, str) else ''
+        
+        if plan_lower == 'vip':
+            amount = 50
+        elif plan_lower in ['premium', 'pro']:  # 'pro' is legacy, treat as 'premium'
+            amount = 120
+        else:
+            amount = 0
         
         return {
             'user_id': user_id,
