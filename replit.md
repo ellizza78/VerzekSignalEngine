@@ -51,13 +51,14 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
 
 ### Known Issues & Limitations
-- **Email Service**: Email verification and password reset emails not sending (Vultr backend configuration issue, not mobile app) - Complete fix guide available in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/QUICK_START_EMAIL_FIX.md`
 - **Kraken IP Whitelisting**: Kraken Futures doesn't support IP whitelisting but uses master key + trading key security model instead
 
 ### Email Service Setup (Vultr Backend)
-- **Issue**: SMTP ports may be blocked by Vultr by default for spam prevention
-- **Fix**: Request port access via Vultr support ticket (24-48 hour approval)
-- **Configuration**: Microsoft 365 SMTP with app password authentication
+- **Status**: ✅ Fully operational with Gmail SMTP
+- **Configuration**: Gmail SMTP (smtp.gmail.com:587) with app password authentication
+- **Email Address**: verzekinnovativesolutionsltd@gmail.com
+- **Automated Welcome Emails**: VIP and PREMIUM subscribers automatically receive personalized welcome emails upon subscription with signal access instructions, User ID for Telegram verification, and feature guides
+- **Integration**: Welcome emails trigger automatically in `api_server.py` via `notify_subscription_upgrade()` function after successful subscription payment
 - **Diagnostic Tool**: `tools/test_email_service.py` for automated testing
 - **Documentation**: Complete guides in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/EMAIL_SERVICE_DIAGNOSTIC.md`
 
@@ -75,4 +76,4 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **OpenAI API**: For AI Trade Assistant (GPT-4o-mini).
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
-- **Microsoft 365 SMTP**: For sending emails (support@verzekinnovative.com).
+- **Gmail SMTP**: For transactional emails (verzekinnovativesolutionsltd@gmail.com).
