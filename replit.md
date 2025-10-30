@@ -53,6 +53,7 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **v1.0.0-1.0.2**: Early versions had OTA updates enabled, causing backend connection issues (app downloaded stale code from Expo servers)
 - **v1.0.3**: Fixed backend connection by removing OTA updates (`updates.url`) and hardcoding API_BASE_URL to Replit bridge; confirmed working (duplicate registration detection functional)
 - **v1.0.4**: Updated IP whitelisting display to show all 4 redundant IPs (45.76.90.149, 209.222.24.189, 45.76.158.152, 207.148.80.196); added Telegram support link (@VerzekSupport) for trial users; implemented secure "Remember Me" feature (stores only email in SecureStore, never passwords)
+- **v1.0.6**: Added username field to registration (alphanumeric, 3-20 chars) with validation; fixed IP display to show only working IP (45.76.90.149) that Binance accepts; enhanced Telegram payment notifications to include payer username (@username); improved error messaging for exchange connection failures (now shows detailed message from backend about plan/email verification requirements)
 
 ### Security & UX Features
 - **Auto-Logout**: 3-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
