@@ -304,10 +304,16 @@ def register():
     email = data.get("email", "").strip().lower()
     password = data.get("password")
     full_name = data.get("full_name", "")
+    username = data.get("username", "").strip()
 
     # Validation
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
+    
+    # Username validation (alphanumeric, 3-20 chars)
+    if username:
+        if not re.match(r'^[a-zA-Z0-9]{3,20}$', username):
+            return jsonify({"error": "Username must be 3-20 characters (letters and numbers only)"}), 400
 
     # Email format validation
     email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -331,6 +337,7 @@ def register():
     # Set user credentials
     user.email = email
     user.full_name = full_name
+    user.username = username or email.split('@')[0]  # Use username or fallback to email prefix
     user.password_hash = hash_password(password)
 
     # Generate referral code for new user
@@ -363,6 +370,7 @@ def register():
             "user_id": user_id,
             "email": email,
             "full_name": full_name,
+            "username": user.username,
             "plan": user.plan,
             "email_verified": False,
             "referral_code": user.referral_code

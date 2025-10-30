@@ -202,9 +202,16 @@ class PaymentSystem:
                 'referral_bonus': referral_bonus
             })
             
+            # Get user details for notification
+            from modules import UserManager
+            user_mgr = UserManager()
+            user_obj = user_mgr.get_user(user_id)
+            
             # Notify admin of successful payment with financial summary
             admin_notifier.notify_payment_received({
                 'user_id': user_id,
+                'username': getattr(user_obj, 'username', user_id),
+                'full_name': getattr(user_obj, 'full_name', ''),
                 'plan': plan,
                 'amount_usdt': amount,
                 'tx_hash': payment.get('tx_hash', 'N/A'),

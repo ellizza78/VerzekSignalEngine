@@ -176,6 +176,8 @@ Total Paid Out: ${total_out:.2f}
         Args:
             payment_data: {
                 'user_id': str,
+                'username': str (optional),
+                'full_name': str (optional),
                 'plan': str,
                 'amount_usdt': float,
                 'tx_hash': str,
@@ -184,16 +186,24 @@ Total Paid Out: ${total_out:.2f}
             financial_summary: Financial tracker data (optional)
         """
         user_id = payment_data.get('user_id', 'Unknown')
+        username = payment_data.get('username', user_id)
+        full_name = payment_data.get('full_name', '')
         plan = payment_data.get('plan', 'N/A').upper()
         amount = payment_data.get('amount_usdt', 0)
         tx_hash = payment_data.get('tx_hash', 'N/A')
         bonus = payment_data.get('referral_bonus', 0)
         net_revenue = amount - bonus
         
+        # Build user display with username and full name
+        user_display = f"@{username}"
+        if full_name:
+            user_display += f" ({full_name})"
+        
         message = f"""
 ✅ <b>PAYMENT RECEIVED</b>
 
-<b>User:</b> {user_id}
+<b>User:</b> {user_display}
+<b>User ID:</b> {user_id}
 <b>Plan:</b> {plan}
 <b>Amount:</b> ${amount:.2f} USDT
 """
