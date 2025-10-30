@@ -1422,7 +1422,7 @@ def create_payment_request(current_user_id):
 @app.route("/api/payments/verify", methods=["POST"])
 @token_required
 def submit_payment_verification(current_user_id):
-    """Submit payment for verification with TX hash and MANDATORY HMAC signature"""
+    """Submit payment for verification with TX hash (signature optional for mobile app)"""
     data = request.json
 
     payment_id = data.get('payment_id')
@@ -1433,17 +1433,23 @@ def submit_payment_verification(current_user_id):
     if not payment_id or not tx_hash:
         return jsonify({'error': 'payment_id and tx_hash required'}), 400
 
-    if not signature:
-        return jsonify({'error': 'X-Payment-Signature header required for security'}), 401
+    # Signature verification is OPTIONAL (mobile app doesn't send it)
+    # If signature is provided (admin/internal calls), verify it
+    if signature:
+        payment_data = {
+            'payment_id': payment_id,
+            'tx_hash': tx_hash,
+            'user_id': current_user_id
+        }
 
-    payment_data = {
-        'payment_id': payment_id,
-        'tx_hash': tx_hash,
-        'user_id': current_user_id
-    }
-
-    if not subscription_security.verify_payment_signature(payment_data, signature):
-        return jsonify({'error': 'Invalid payment signature'}), 403
+        if not subscription_security.verify_payment_signature(payment_data, signature):
+            return jsonify({'error': 'Invalid payment signature'}), 403
+        
+        log_event("PAYMENT", f"Payment verification with valid signature from user {current_user_id}")
+    else:
+        # No signature provided - mobile app client call
+        # TronScan verification will handle authenticity check
+        log_event("PAYMENT", f"Payment verification without signature (mobile client) from user {current_user_id}")
 
     result = payment_system.verify_usdt_payment(
         payment_id, tx_hash, current_user_id, referral_code
