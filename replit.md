@@ -54,11 +54,13 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **v1.0.3**: Fixed backend connection by removing OTA updates (`updates.url`) and hardcoding API_BASE_URL to Replit bridge; confirmed working (duplicate registration detection functional)
 - **v1.0.4**: Updated IP whitelisting display to show all 4 redundant IPs (45.76.90.149, 209.222.24.189, 45.76.158.152, 207.148.80.196); added Telegram support link (@VerzekSupport) for trial users; implemented secure "Remember Me" feature (stores only email in SecureStore, never passwords)
 - **v1.0.6**: Added username field to registration (alphanumeric, 3-20 chars) with validation; fixed IP display to show only working IP (45.76.90.149) that Binance accepts; enhanced Telegram payment notifications to include payer username (@username); improved error messaging for exchange connection failures (now shows detailed message from backend about plan/email verification requirements)
+- **v1.0.7**: Implemented automatic 4-day trial on registration with TRIAL Telegram group access; reduced auto-logout timeout from 3 minutes to 2 minutes; registration response now includes Telegram group invite link and trial expiration details
 
 ### Security & UX Features
-- **Auto-Logout**: 3-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
-- **IP Whitelisting**: 4 whitelisted IPs for redundancy (primary: 45.76.90.149); supported by Binance, Bybit, Phemex; Kraken uses alternative security (master key + trading key model)
-- **Subscription Tiers**: TRIAL (free, 4 days, contact @VerzekSupport for activation) → VIP ($50/month, signals only) → PREMIUM ($120/month, full auto-trading with DCA, progressive TP, multi-exchange)
+- **Auto-Logout**: 2-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
+- **IP Whitelisting**: Primary IP 45.76.90.149 (Binance-verified); supported by Binance, Bybit, Phemex; Kraken uses alternative security (master key + trading key model)
+- **Subscription Tiers**: TRIAL (automatic 4 days on registration, includes Telegram group access) → VIP ($50/month, signals only) → PREMIUM ($120/month, full auto-trading with DCA, progressive TP, multi-exchange)
+- **Trial Activation**: New users automatically receive 4-day trial with TRIAL Telegram group invite link upon registration
 - **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
 
 ### Known Issues & Limitations

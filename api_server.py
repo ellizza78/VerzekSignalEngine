@@ -339,6 +339,13 @@ def register():
     user.full_name = full_name
     user.username = username or email.split('@')[0]  # Use username or fallback to email prefix
     user.password_hash = hash_password(password)
+    
+    # ✅ AUTOMATIC 4-DAY TRIAL on registration
+    user.plan = "trial"
+    user.plan_started_at = datetime.now().isoformat()
+    user.plan_expires_at = (datetime.now() + timedelta(days=4)).isoformat()
+    user.telegram_group_access["trial_group"] = True
+    user.telegram_group_access["vip_group"] = False
 
     # Generate referral code for new user
     user.referral_code = subscription_security.generate_referral_code(user_id)
@@ -362,18 +369,28 @@ def register():
     access_token = create_access_token(user_id, email)
     refresh_token = create_refresh_token(user_id)
 
-    log_event("AUTH", f"New user registered: {email} (verification email sent: {email_result.get('success')})")
+    log_event("AUTH", f"New user registered: {email} with 4-day TRIAL (verification email sent: {email_result.get('success')})")
+
+    # Telegram group links
+    TRIAL_GROUP_LINK = "https://t.me/+bVg4hWcZo5A3NTBk"  # Replace with actual invite link
+    VIP_GROUP_LINK = "https://t.me/+vzk_vip_signals"  # Replace with actual invite link
 
     return jsonify({
-        "message": "Registration successful. Please check your email to verify your account.",
+        "message": "Registration successful! You have 4 days of FREE trial access. Please verify your email.",
         "user": {
             "user_id": user_id,
             "email": email,
             "full_name": full_name,
             "username": user.username,
             "plan": user.plan,
+            "plan_expires_at": user.plan_expires_at,
             "email_verified": False,
-            "referral_code": user.referral_code
+            "referral_code": user.referral_code,
+            "trial_days_remaining": 4
+        },
+        "telegram_access": {
+            "trial_group": TRIAL_GROUP_LINK,
+            "message": f"Welcome! Join our TRIAL Telegram group for trading signals. Your trial expires in 4 days. Your User ID: {user_id}"
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
