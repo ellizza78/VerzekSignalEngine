@@ -371,10 +371,6 @@ def register():
 
     log_event("AUTH", f"New user registered: {email} with 4-day TRIAL (verification email sent: {email_result.get('success')})")
 
-    # Telegram group links
-    TRIAL_GROUP_LINK = "https://t.me/+bVg4hWcZo5A3NTBk"  # Replace with actual invite link
-    VIP_GROUP_LINK = "https://t.me/+vzk_vip_signals"  # Replace with actual invite link
-
     return jsonify({
         "message": "Registration successful! You have 4 days of FREE trial access. Please verify your email.",
         "user": {
@@ -387,10 +383,6 @@ def register():
             "email_verified": False,
             "referral_code": user.referral_code,
             "trial_days_remaining": 4
-        },
-        "telegram_access": {
-            "trial_group": TRIAL_GROUP_LINK,
-            "message": f"Welcome! Join our TRIAL Telegram group for trading signals. Your trial expires in 4 days. Your User ID: {user_id}"
         },
         "access_token": access_token,
         "refresh_token": refresh_token,
@@ -761,6 +753,56 @@ def reset_password(token):
 # ============================
 # SUPPORT
 # ============================
+
+@app.route("/api/telegram/request-access", methods=["POST"])
+@limiter.limit("3 per hour")
+@token_required
+def request_telegram_access(current_user_id):
+    """Request manual Telegram group access (TRIAL users only)"""
+    user = user_manager.get_user(current_user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Only TRIAL plan users can request Telegram access
+    if user.plan.lower() != "trial":
+        return jsonify({
+            "error": "This feature is only for TRIAL users",
+            "message": "VIP ($50) users receive signals in the app. PREMIUM ($120) users get full auto-trading access."
+        }), 403
+    
+    # Send notification to @VerzekSupport
+    telegram_message = f"""
+🔔 <b>TELEGRAM GROUP ACCESS REQUEST</b>
+
+👤 <b>User:</b> @{user.username} ({user.full_name})
+📧 <b>Email:</b> {user.email}
+🆔 <b>User ID:</b> {current_user_id}
+📋 <b>Plan:</b> {user.plan.upper()}
+⏰ <b>Trial Expires:</b> {user.plan_expires_at}
+
+<b>Action Required:</b>
+Add user to TRIAL Telegram group: -1002726167386
+"""
+    
+    try:
+        admin_notifier.send_telegram(telegram_message)
+        
+        log_event("TELEGRAM", f"User {current_user_id} requested Telegram group access")
+        
+        return jsonify({
+            "success": True,
+            "message": "Request sent! Contact @VerzekSupport on Telegram with your User ID to confirm.",
+            "instructions": f"Message @VerzekSupport:\n\nHi! Please add me to the TRIAL group.\nUser ID: {current_user_id}\nEmail: {user.email}",
+            "user_id": current_user_id,
+            "telegram_support": "@VerzekSupport"
+        })
+    except Exception as e:
+        log_event("ERROR", f"Failed to send Telegram access request: {e}")
+        return jsonify({
+            "error": "Failed to send request",
+            "message": "Please contact @VerzekSupport directly on Telegram"
+        }), 500
+
 
 @app.route("/api/support/message", methods=["POST"])
 @limiter.limit("5 per hour")
