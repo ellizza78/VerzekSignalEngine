@@ -212,3 +212,190 @@ def send_welcome_email(to, user_name):
     """
     
     return send_email(to, "Welcome to Verzek Auto Trader", html)
+
+
+def send_vip_welcome_email(to, user_name, user_id):
+    """
+    Send VIP subscription welcome email with signal access instructions
+    
+    Args:
+        to: User's email address
+        user_name: User's name
+        user_id: User's ID for Telegram group verification
+    """
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: linear-gradient(135deg, #0A4A5C, #1B9AAA); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }}
+            .vip-badge {{ background: #F9C74F; color: #0A4A5C; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; margin-top: 10px; }}
+            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }}
+            .option-box {{ background: white; padding: 25px; margin: 20px 0; border-radius: 8px; border-left: 5px solid #1B9AAA; }}
+            .option-title {{ color: #0A4A5C; font-size: 18px; font-weight: bold; margin-bottom: 10px; }}
+            .step {{ background: #f0f0f0; padding: 10px 15px; margin: 10px 0; border-radius: 4px; }}
+            .user-id {{ background: #F9C74F; color: #0A4A5C; padding: 10px; text-align: center; font-size: 20px; font-weight: bold; border-radius: 6px; margin: 15px 0; letter-spacing: 2px; }}
+            .highlight {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+            .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 12px; }}
+            .btn {{ background: #1B9AAA; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 10px 0; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎉 Welcome to VIP!</h1>
+                <div class="vip-badge">VIP MEMBER</div>
+            </div>
+            <div class="content">
+                <p>Hi {user_name},</p>
+                <p><strong>Congratulations!</strong> Your VIP subscription is now active. You now have exclusive access to our premium trading signals!</p>
+                
+                <h2 style="color: #0A4A5C; margin-top: 30px;">🔔 How to Receive Signals:</h2>
+                
+                <div class="option-box">
+                    <div class="option-title">📱 OPTION 1: Mobile App (Automatic - Already Active!)</div>
+                    <p>Your VIP access has been automatically activated in the mobile app.</p>
+                    <div class="step">1️⃣ Open the Verzek Auto Trader app</div>
+                    <div class="step">2️⃣ Tap the "Signals" tab at the bottom</div>
+                    <div class="step">3️⃣ View all premium trading signals in real-time!</div>
+                    <p style="color: #28a745; font-weight: bold; margin-top: 15px;">✅ Already activated - no action needed!</p>
+                </div>
+                
+                <div class="option-box">
+                    <div class="option-title">💬 OPTION 2: VIP Telegram Group (Manual Setup)</div>
+                    <p>Get signals directly on Telegram with real-time notifications.</p>
+                    <div class="step">1️⃣ Open Telegram app</div>
+                    <div class="step">2️⃣ Search for <strong>@VerzekSupport</strong></div>
+                    <div class="step">3️⃣ Send this message:</div>
+                    <div class="highlight">
+                        "Hi! Please add me to the VIP Telegram group.<br>
+                        <strong>User ID: {user_id}</strong><br>
+                        <strong>Email: {to}</strong>"
+                    </div>
+                    <div class="step">4️⃣ We'll add you within 24 hours</div>
+                    
+                    <p style="margin-top: 15px;"><strong>Your User ID for verification:</strong></p>
+                    <div class="user-id">{user_id}</div>
+                    <p style="font-size: 12px; color: #666;">Keep this ID safe - you'll need it to verify your VIP status</p>
+                </div>
+                
+                <h2 style="color: #0A4A5C; margin-top: 30px;">🎯 What's Included in VIP:</h2>
+                <div class="option-box">
+                    <div class="step">✅ Premium trading signals (buy/sell alerts)</div>
+                    <div class="step">✅ Entry points and target prices</div>
+                    <div class="step">✅ Stop-loss recommendations</div>
+                    <div class="step">✅ Real-time market analysis</div>
+                    <div class="step">✅ Priority support via @VerzekSupport</div>
+                </div>
+                
+                <div class="highlight">
+                    <strong>💡 Pro Tip:</strong> Use both methods! View signals in the app while you're actively trading, and get Telegram notifications when you're away from the app.
+                </div>
+                
+                <p style="margin-top: 30px;">Need help or have questions? Contact our support team at:</p>
+                <p><strong>📧 Email:</strong> support@verzekinnovative.com</p>
+                <p><strong>💬 Telegram:</strong> @VerzekSupport</p>
+                
+                <p style="margin-top: 30px;">Happy trading!</p>
+                <p><strong>The Verzek Team</strong></p>
+            </div>
+            <div class="footer">
+                <p>© 2025 Verzek Innovative. All rights reserved.</p>
+                <p>This email was sent because you subscribed to VIP ($50/month)</p>
+                <p>verzekinnovativesolutionsltd@gmail.com</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return send_email(to, "Welcome to VIP - Your Signal Access Guide", html)
+
+
+def send_premium_welcome_email(to, user_name, user_id):
+    """
+    Send PREMIUM subscription welcome email with auto-trading access instructions
+    
+    Args:
+        to: User's email address
+        user_name: User's name
+        user_id: User's ID for verification
+    """
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: linear-gradient(135deg, #0A4A5C, #1B9AAA); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }}
+            .premium-badge {{ background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 10px 20px; border-radius: 20px; display: inline-block; font-weight: bold; margin-top: 10px; }}
+            .content {{ background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }}
+            .option-box {{ background: white; padding: 25px; margin: 20px 0; border-radius: 8px; border-left: 5px solid #FFD700; }}
+            .option-title {{ color: #0A4A5C; font-size: 18px; font-weight: bold; margin-bottom: 10px; }}
+            .step {{ background: #f0f0f0; padding: 10px 15px; margin: 10px 0; border-radius: 4px; }}
+            .user-id {{ background: #F9C74F; color: #0A4A5C; padding: 10px; text-align: center; font-size: 20px; font-weight: bold; border-radius: 6px; margin: 15px 0; letter-spacing: 2px; }}
+            .highlight {{ background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }}
+            .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 12px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🚀 Welcome to PREMIUM!</h1>
+                <div class="premium-badge">⭐ PREMIUM MEMBER ⭐</div>
+            </div>
+            <div class="content">
+                <p>Hi {user_name},</p>
+                <p><strong>Congratulations!</strong> You're now a PREMIUM member with full access to automated DCA trading!</p>
+                
+                <h2 style="color: #0A4A5C; margin-top: 30px;">🎯 What's Included in PREMIUM:</h2>
+                <div class="option-box">
+                    <div class="step">✅ All VIP features (premium signals)</div>
+                    <div class="step">✅ Automated DCA trading</div>
+                    <div class="step">✅ Progressive take-profit</div>
+                    <div class="step">✅ Auto stop-loss protection</div>
+                    <div class="step">✅ Multi-exchange support (Binance, Bybit, Phemex, Kraken)</div>
+                    <div class="step">✅ Up to 50 concurrent positions</div>
+                    <div class="step">✅ 24/7 automated trading</div>
+                    <div class="step">✅ VIP Telegram group access</div>
+                    <div class="step">✅ Priority support</div>
+                </div>
+                
+                <h2 style="color: #0A4A5C; margin-top: 30px;">📱 Getting Started:</h2>
+                <div class="option-box">
+                    <div class="step">1️⃣ Connect your exchange API keys in app Settings</div>
+                    <div class="step">2️⃣ Configure your DCA strategy and risk settings</div>
+                    <div class="step">3️⃣ Enable auto-trading in the app</div>
+                    <div class="step">4️⃣ Sit back and let the bot trade for you!</div>
+                </div>
+                
+                <h2 style="color: #0A4A5C; margin-top: 30px;">💬 Join VIP Telegram Group:</h2>
+                <div class="highlight">
+                    <p>Message <strong>@VerzekSupport</strong> on Telegram with:</p>
+                    <p>"Hi! Please add me to the VIP Telegram group.<br>
+                    <strong>User ID: {user_id}</strong><br>
+                    <strong>Email: {to}</strong>"</p>
+                    <div class="user-id">{user_id}</div>
+                </div>
+                
+                <p style="margin-top: 30px;"><strong>Need help?</strong> Our team is here for you:</p>
+                <p><strong>📧 Email:</strong> support@verzekinnovative.com</p>
+                <p><strong>💬 Telegram:</strong> @VerzekSupport</p>
+                
+                <p style="margin-top: 30px;">Happy automated trading!</p>
+                <p><strong>The Verzek Team</strong></p>
+            </div>
+            <div class="footer">
+                <p>© 2025 Verzek Innovative. All rights reserved.</p>
+                <p>This email was sent because you subscribed to PREMIUM ($120/month)</p>
+                <p>verzekinnovativesolutionsltd@gmail.com</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return send_email(to, "Welcome to PREMIUM - Full Auto-Trading Access", html)
