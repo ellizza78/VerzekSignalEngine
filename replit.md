@@ -80,6 +80,27 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **Diagnostic Tool**: `tools/test_email_service.py` for automated testing
 - **Documentation**: Complete guides in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/EMAIL_SERVICE_DIAGNOSTIC.md`
 
+### Health Monitoring System (October 31, 2025)
+- **Status**: ✅ Deployed to Vultr production (80.240.29.142)
+- **Phase 1+2 Features**: Heartbeat monitoring (updates every 30s), watchdog auto-restart (checks every 60s), Telegram admin alerts on freeze/restart, systemd service management
+- **Root Cause Fixed**: Resolved Telegram forwarder freeze issue (Python output buffering + event loop starvation); deployed unbuffered Python output (`python3 -u`)
+- **Broadcast Bot Token**: Updated with new working token (8479454611:AAFOzT8sDJD4RIPMokIsu1f08hBAvEdSeo4) after previous token revocation
+- **Files Deployed**: telethon_forwarder.py v2.2 (with heartbeat), forwarder_watchdog.py, telethon-forwarder.service, forwarder-watchdog.service, forwarder-watchdog.timer
+- **Deployment Method**: Single installation script (`install_health_monitoring.sh`) for mobile deployment via Termius
+- **Auto-Recovery**: Forwarder auto-restarts within 1-2 minutes if frozen (heartbeat >90s old) or crashed
+- **Monitoring Commands**: 
+  - Check forwarder: `systemctl status telethon-forwarder`
+  - Check watchdog: `systemctl status forwarder-watchdog.timer`
+  - View heartbeat: `cat /tmp/forwarder_heartbeat.json`
+  - View logs: `journalctl -u telethon-forwarder -f`
+
+### Pending Deployments
+- **Full Backend Code Sync** (Option B): Requires PC access for comprehensive deployment of latest Replit codebase to Vultr
+  - Includes: Latest api_server.py with all Phase 1-5 endpoints, updated modules (payment_system.py, email_service.py, advanced features), requirements.txt updates
+  - Script ready: `deploy_backend_to_vultr.sh` (complex file transfer, better suited for PC with SCP/Git)
+  - Current workaround: Simple backend restart via Termius maintains service continuity
+  - Priority: Medium (health monitoring is critical fix; full sync enhances features but not urgent)
+
 ## External Dependencies
 - **Telegram API**: For signal monitoring and broadcasting (`telethon` and `python-telegram-bot`).
 - **Binance API**: For trading operations.
