@@ -1,0 +1,104 @@
+C:\Users\user>cd C:\users\user\Downloads\VerzekAutoTrader
+
+C:\Users\user\Downloads\VerzekAutoTrader>ssh root@80.240.29.142
+root@80.240.29.142's password:
+Permission denied, please try again.
+root@80.240.29.142's password:
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.15.0-153-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Fri Oct 31 05:01:58 PM UTC 2025
+
+  System load:  0.0                Processes:               155
+  Usage of /:   40.2% of 22.88GB   Users logged in:         1
+  Memory usage: 41%                IPv4 address for enp1s0: 80.240.29.142
+  Swap usage:   2%
+
+ * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s
+   just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+   https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+9 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+New release '24.04.3 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Fri Oct 31 08:47:12 2025 from 80.240.29.142
+root@vultr:~# cd /root
+root@vultr:~# pip3 install -r requirements.txt
+Requirement already satisfied: requests in /usr/lib/python3/dist-packages (from -r requirements.txt (line 1)) (2.25.1)
+Collecting python-telegram-bot==13.15
+  Using cached python_telegram_bot-13.15-py3-none-any.whl (519 kB)
+Requirement already satisfied: schedule in /usr/local/lib/python3.10/dist-packages (from -r requirements.txt (line 3)) (1.2.2)
+Requirement already satisfied: flask in /usr/local/lib/python3.10/dist-packages (from -r requirements.txt (line 4)) (3.1.2)
+Collecting telegram
+  Using cached telegram-0.0.1.tar.gz (879 bytes)
+  Preparing metadata (setup.py) ... error
+  error: subprocess-exited-with-error
+
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [40 lines of output]
+      Warning: 'keywords' should be a list, got type 'tuple'
+      running egg_info
+      creating /tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info
+      writing /tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info/PKG-INFO
+      writing dependency_links to /tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info/dependency_links.txt
+      writing top-level names to /tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info/top_level.txt
+      writing manifest file '/tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info/SOURCES.txt'
+      reading manifest file '/tmp/pip-pip-egg-info-2uo8cykt/telegram.egg-info/SOURCES.txt'
+      Traceback (most recent call last):
+        File "<string>", line 2, in <module>
+        File "<pip-setuptools-caller>", line 34, in <module>
+        File "/tmp/pip-install-xarcaj2p/telegram_9318ab07f7d040508aad728176c5df74/setup.py", line 6, in <module>
+          setup(name='telegram',
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/__init__.py", line 115, in setup
+          return distutils.core.setup(**attrs)
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/core.py", line 186, in setup
+          return run_commands(dist)
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/core.py", line 202, in run_commands
+          dist.run_commands()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/dist.py", line 1002, in run_commands
+          self.run_command(cmd)
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/dist.py", line 1102, in run_command
+          super().run_command(command)
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/dist.py", line 1021, in run_command
+          cmd_obj.run()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/command/egg_info.py", line 312, in run
+          self.find_sources()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/command/egg_info.py", line 320, in find_sources
+          mm.run()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/command/egg_info.py", line 548, in run
+          self.prune_file_list()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/command/sdist.py", line 162, in prune_file_list
+          super().prune_file_list()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_distutils/command/sdist.py", line 386, in prune_file_list
+          base_dir = self.distribution.get_fullname()
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_core_metadata.py", line 275, in get_fullname
+          return _distribution_fullname(self.get_name(), self.get_version())
+        File "/usr/local/lib/python3.10/dist-packages/setuptools/_core_metadata.py", line 293, in _distribution_fullname
+          canonicalize_version(version, strip_trailing_zero=False),
+      TypeError: canonicalize_version() got an unexpected keyword argument 'strip_trailing_zero'
+      [end of output]
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> See above for output.
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+root@vultr:~#
