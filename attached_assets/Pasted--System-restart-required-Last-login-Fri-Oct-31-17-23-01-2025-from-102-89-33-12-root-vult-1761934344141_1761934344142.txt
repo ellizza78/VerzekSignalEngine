@@ -1,0 +1,63 @@
+
+*** System restart required ***
+Last login: Fri Oct 31 17:23:01 2025 from 102.89.33.12
+root@vultr:~# nohup python3 api_server.py > flask.log 2>&1 &
+[1] 81297
+root@vultr:~# tail -50 flask.log
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/root/api_server.py", line 11, in <module>
+    from modules import UserManager, PositionTracker, SafetyManager
+  File "/root/modules/__init__.py", line 9, in <module>
+    from .dca_orchestrator import DCAOrchestrator
+  File "/root/modules/dca_orchestrator.py", line 11, in <module>
+    from exchanges import ExchangeFactory
+ModuleNotFoundError: No module named 'exchanges'
+[1]+  Exit 1                  nohup python3 api_server.py > flask.log 2>&1
+root@vultr:~# nohup python3 api_server.py> flask.log 2>&1 &
+[1] 81429
+root@vultr:~# tail -50 flask.log
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/root/api_server.py", line 17, in <module>
+    from modules.subscription_security import subscription_security
+  File "/root/modules/subscription_security.py", line 226, in <module>
+    subscription_security = SubscriptionSecurity()
+  File "/root/modules/subscription_security.py", line 26, in __init__
+    raise ValueError("CRITICAL: SUBSCRIPTION_SECRET_KEY environment variable must be set for production!")
+ValueError: CRITICAL: SUBSCRIPTION_SECRET_KEY environment variable must be set for production!
+[1]+  Exit 1                  nohup python3 api_server.py > flask.log 2>&1
+root@vultr:~# nano /root/.env
+root@vultr:~# nohup python3 api_server.py > flask.log 2>&1 &
+[1] 82124
+root@vultr:~# tail -50 flask.log
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/root/api_server.py", line 17, in <module>
+    from modules.subscription_security import subscription_security
+  File "/root/modules/subscription_security.py", line 226, in <module>
+    subscription_security = SubscriptionSecurity()
+  File "/root/modules/subscription_security.py", line 26, in __init__
+    raise ValueError("CRITICAL: SUBSCRIPTION_SECRET_KEY environment variable must be set for production!")
+ValueError: CRITICAL: SUBSCRIPTION_SECRET_KEY environment variable must be set for production!
+[1]+  Exit 1                  nohup python3 api_server.py > flask.log 2>&1
+root@vultr:~# export $(cat /root/.env | grep -v '^#' | xargs)
+root@vultr:~# nohup python3 api_server.py > flask.log 2>&1 &
+[1] 82356
+root@vultr:~# tail -50 flask.log
+nohup: ignoring input
+[2025-10-31 18:10:29] [NOTIFICATIONS] ✅ Admin notifications enabled (Telegram)
+📧 Email Service Initialized:
+   Host: smtp.gmail.com:587
+   User: verzekinno...
+   From: verzekinnovativesolutionsltd@gmail.com
+[AI_ASSISTANT] Warning: OpenAI AI Integrations not configured. AI features will be disabled.
+[2025-10-31 18:10:31] [API] Starting Flask API on port 5000
+ * Serving Flask app 'api_server'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://80.240.29.142:5000
+Press CTRL+C to quit
+root@vultr:~#
