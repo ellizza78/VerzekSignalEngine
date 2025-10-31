@@ -1,0 +1,25 @@
+[Unit]
+Description=VerzekAutoTrader Telegram Signal Forwarder
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/VerzekAutoTrader
+Environment="TELEGRAM_API_ID=26395582"
+Environment="TELEGRAM_API_HASH=a32cb77b68ad84fb0dd60531d83698dc"
+EnvironmentFile=/var/www/VerzekAutoTrader/.env
+ExecStart=/usr/bin/python3 -u /var/www/VerzekAutoTrader/telethon_forwarder.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/var/www/VerzekAutoTrader/telethon_forwarder.log
+StandardError=append:/var/www/VerzekAutoTrader/telethon_forwarder.log
+
+# Restart if crashes
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

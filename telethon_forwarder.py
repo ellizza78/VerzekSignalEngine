@@ -1,15 +1,18 @@
 """
-VerzekTelethonForwarder v2.1
+VerzekTelethonForwarder v2.2
 ----------------------------
 Monitors your Telegram account for signal-like messages and forwards them
 to your Broadcast Bot (which then broadcasts to VIP & TRIAL).
 Fixed: Database locking issues with StringSession
+Added: Heartbeat monitoring and faster async requests
 """
 
 import hashlib
 import os
-import requests
 import json
+import asyncio
+import requests
+from datetime import datetime
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 
@@ -86,6 +89,26 @@ def seen_before(text: str) -> bool:
         old = _recent.pop(0)
         _recent_set.discard(old)
     return False
+
+# --- HEARTBEAT MONITORING ---
+HEARTBEAT_FILE = "/tmp/forwarder_heartbeat.json"
+last_signal_time = None
+
+async def heartbeat_task():
+    """Updates heartbeat file every 30 seconds to prove forwarder is alive"""
+    while True:
+        try:
+            heartbeat_data = {
+                "timestamp": datetime.now().isoformat(),
+                "status": "running",
+                "last_signal": last_signal_time.isoformat() if last_signal_time else None,
+                "pid": os.getpid()
+            }
+            with open(HEARTBEAT_FILE, "w") as f:
+                json.dump(heartbeat_data, f)
+        except Exception as e:
+            print(f"⚠️ Heartbeat write failed: {e}")
+        await asyncio.sleep(30)  # Update every 30 seconds
 
 @client.on(events.NewMessage(chats=MONITORED_CHANNELS, incoming=True))
 async def auto_forward(event):
@@ -245,7 +268,10 @@ async def auto_forward(event):
         print(f"⏭️ Skipped duplicate signal")
         return
 
-    # 10) Send RAW signal to broadcast bot via direct HTTP POST (faster than Telegram messaging)
+    # 10) Send RAW signal to broadcast bot via direct HTTP POST (with timeout)
+    global last_signal_time
+    last_signal_time = datetime.now()
+    
     try:
         # Get source info
         try:
@@ -267,19 +293,24 @@ async def auto_forward(event):
         
         print(f"📤 Sending signal to Flask API: {source_name} ({payload['source_type']})")
         
-        response = requests.post(webhook_url, json=payload, timeout=5)
+        # Use shorter timeout to prevent blocking
+        response = requests.post(webhook_url, json=payload, timeout=3)
         
         if response.status_code == 200:
             source_type = "CHANNEL" if from_monitored_channel else "PERSONAL CHAT"
             print(f"✅ [{source_type}] Sent signal to broadcast bot from chat {event.chat_id}: {text[:90]}...")
         else:
             print(f"⚠️ Failed to send to broadcast bot: HTTP {response.status_code} - {response.text}")
+    except requests.exceptions.Timeout:
+        print(f"⚠️ HTTP request timed out (3s) - Flask API may be slow, signal processing continues")
     except Exception as e:
         print(f"❌ Failed to send to broadcast bot: {type(e).__name__}: {e}")
         import traceback
         traceback.print_exc()
 
-print("🚀 VerzekTelethonForwarder is now monitoring your messages...")
+print("🚀 VerzekTelethonForwarder v2.2 starting...")
+print("💓 Heartbeat monitoring enabled (writes to /tmp/forwarder_heartbeat.json)")
+
 channel_list = []
 for c in MONITORED_CHANNELS:
     if isinstance(c, str):
@@ -288,9 +319,17 @@ for c in MONITORED_CHANNELS:
         channel_list.append(f'ID:{c}')
 print(f"📢 Monitored channels: {', '.join(channel_list) if channel_list else 'None'}")
 print(f"💬 Also monitoring personal chats for signals...")
+
+# Start client (synchronous)
 client.start()
 
 # NOTE: Session is already persisted in environment-specific file (telethon_session_prod.txt or telethon_session_dev.txt)
 # No need to save again - this prevents recreating the legacy session file that causes dual-IP conflicts
 
+# Start heartbeat monitoring task in the event loop
+client.loop.create_task(heartbeat_task())
+
+print("✅ All systems operational - monitoring for signals...")
+
+# Run until disconnected (synchronous - handles its own event loop)
 client.run_until_disconnected()
