@@ -1,7 +1,7 @@
 # VerzekAutoTrader
 
 ## Overview
-VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar Cost Averaging (DCA). It automates trading by monitoring Telegram for signals, broadcasting them to VIP/TRIAL groups, and executing DCA trades with advanced risk management across various exchanges. The platform features a robust subscription system with tiered access, progressive take-profit, auto-stop logic, and comprehensive user/position management. The project's ambition is to provide a secure, reliable, and automated trading environment with a strong focus on user experience.
+VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cost Averaging (DCA) strategies. It automates trading by monitoring Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across multiple exchanges. The platform includes a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to provide a secure, reliable, and automated trading environment with a strong focus on user experience and to enable users to participate in automated trading with sophisticated strategies.
 
 ## User Preferences
 - **Production Safety**: Enterprise-grade database with ACID compliance required
@@ -10,104 +10,38 @@ VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar 
 
 ## System Architecture
 ### UI/UX Decisions
-The mobile application (React Native + Expo) uses a modern dark theme with Teal/Gold gradients (`#0A4A5C` → `#1B9AAA`, `#F9C74F`) for branding, managed via centralized constants. It features an onboarding modal and a compact UI with reduced padding for improved content visibility.
+The mobile application (React Native + Expo) utilizes a modern dark theme with Teal/Gold gradients. It features an onboarding modal and a compact UI for optimal content visibility.
 
 ### Technical Implementations
-- **Core Trading Modules**: Includes a DCA Engine, Safety Manager (auto-stop logic), DCA Orchestrator for signal execution, and a Position Tracker with target-based take-profit.
-- **Multi-User Management**: Supports multi-tenancy with per-user DCA configurations, risk settings, exchange account management, symbol whitelists/blacklists, daily stats, and subscription plans (free/pro/vip).
-- **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo modes with secure API key loading.
-- **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy load balancing and Nginx SSL termination. All exchange API calls are routed through a static IP (45.76.90.149) for IP whitelisting, featuring HMAC SHA256 authentication and automatic failover.
-- **Signal Broadcasting System**: Monitors Telegram for signals (Telethon Auto-Forwarder) with keyword detection and spam filtering. Signals are distributed to VIP/TRIAL Telegram groups and a protected `/api/signals` endpoint for the mobile app, with priority signals triggering auto-trading for PREMIUM users.
-- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for user, settings, subscription, exchange account, and position management. Includes rate limiting, 2FA, and audit logging.
-- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview and stats, API integration with the Flask backend, auth-based navigation, in-app FAQ, auto-polling for signal delivery, and comprehensive Help & Resources screen with links to exchange setup guides, video tutorials, security best practices, and support contact.
-- **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom sliding puzzle CAPTCHA, and email verification. API keys are encrypted at rest.
-- **Email Verification System**: Secure token-based email verification with SMTP integration, requiring users to verify email before connecting exchange accounts or trading.
-- **Advanced Features**: Includes an AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, Auto-Optimization (ML-powered), AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
+- **Core Trading Modules**: Includes a DCA Engine, Safety Manager, DCA Orchestrator, and a Position Tracker with target-based take-profit.
+- **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
+- **Exchange Adapters**: A unified interface supports Binance, Bybit, Phemex, and Kraken, offering both live and demo trading modes with secure API key handling.
+- **Static IP Proxy Infrastructure**: A Vultr-based WireGuard VPN mesh with HAProxy and Nginx routes all exchange API calls through a static IP (45.76.90.149) for IP whitelisting, featuring HMAC SHA256 authentication and automatic failover.
+- **Signal Broadcasting System**: Monitors Telegram for signals with keyword detection and spam filtering, distributing them to VIP/TRIAL Telegram groups and a protected API endpoint for the mobile app.
+- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, and positions, incorporating rate limiting, 2FA, and audit logging.
+- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview, API integration with the Flask backend, auth-based navigation, and comprehensive help resources.
+- **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
+- **Email Verification System**: Secure token-based email verification with SMTP integration, required before users can connect exchange accounts or trade.
+- **Advanced Features**: Includes an AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
+- **Health Monitoring System**: Deployed with heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts for continuous operation and quick recovery from service interruptions.
 
 ### System Design Choices
 - **Multi-tenancy**: Isolated configurations and strategies per user.
 - **Microservices-like Components**: Separation of concerns into distinct modules.
 - **Production Database**: SQLite with ACID compliance, WAL mode, and concurrent write safety.
-- **Environment Variables**: All sensitive information is stored in environment variables; no hard-coded fallbacks.
+- **Environment Variables**: All sensitive information is stored in environment variables.
 - **24/7 Operation**: Designed for continuous uptime.
-- **Subscription Model**: FREE/TRIAL → VIP ($50/month, signals only) → PREMIUM ($120/month, full auto-trading).
+- **Subscription Model**: Tiered access (FREE/TRIAL, VIP, PREMIUM) with varying features.
 - **Authentication**: JWT-based with secure password hashing and token refresh.
 - **Encryption**: Fernet (AES-128 CBC mode) for API keys, with master key stored in Replit Secrets.
 
-### Payment System Fixes (October 30, 2025)
-- **Critical Bug Fix**: Fixed payment verification system mismatch between mobile app and backend
-- **Plan Name Standardization**: Changed 'pro' to 'premium' across entire codebase for consistency
-- **Corrected Pricing**: Updated PLAN_PRICES - VIP=$50 (signals only), PREMIUM=$120 (full auto-trading)
-- **Two-Step Payment Flow**: Mobile app now properly calls /api/payments/create → /api/payments/verify
-- **Signature Security**: Made X-Payment-Signature header optional for mobile clients (TronScan provides blockchain verification)
-- **Backward Compatibility**: Added comprehensive support for legacy 'pro'/'PRO' plan users - auto-converts to 'premium' with $120 pricing, maintains auto-trading access, included in analytics/revenue reporting
-- **Case-Insensitive Handling**: All plan processing now normalizes to lowercase before comparison
-- **Email Verification for Payments**: STRICTLY enforced Gmail verification before creating/confirming PREMIUM ($120) subscription payments - users cannot pay without verified email
-- **Files Updated**: api_server.py, payment_system.py, user_manager_v2.py, recurring_payments.py, subscription_security.py, admin_dashboard.py, analytics_engine.py, api.js
-
-### Recent Additions (October 2025)
-- **Exchange Connection Documentation**: Complete user-facing guides for connecting Binance, Bybit, Phemex, and Kraken with step-by-step API key creation instructions, security best practices, IP whitelisting setup (45.76.90.149), troubleshooting guides, and video tutorial scripts. Deployed to Vultr at `/guides/exchange-setup.html`.
-- **Help & Resources Screen**: In-app screen accessible from Settings providing users with 8 quick links to exchange setup guides, security documentation, FAQ, video tutorials (coming soon), troubleshooting help, and support contact. Features beautiful card-based UI matching app theme.
-- **Connection Test Tool**: Python script (`tools/test_binance_connection.py`) for validating user API keys, testing Spot/Futures access, verifying permissions, and troubleshooting connection issues.
-
-### Mobile App Version History
-- **v1.0.0-1.0.2**: Early versions had OTA updates enabled, causing backend connection issues (app downloaded stale code from Expo servers)
-- **v1.0.3**: Fixed backend connection by removing OTA updates (`updates.url`) and hardcoding API_BASE_URL to Replit bridge; confirmed working (duplicate registration detection functional)
-- **v1.0.4**: Updated IP whitelisting display to show all 4 redundant IPs (45.76.90.149, 209.222.24.189, 45.76.158.152, 207.148.80.196); added Telegram support link (@VerzekSupport) for trial users; implemented secure "Remember Me" feature (stores only email in SecureStore, never passwords)
-- **v1.0.6**: Added username field to registration (alphanumeric, 3-20 chars) with validation; fixed IP display to show only working IP (45.76.90.149) that Binance accepts; enhanced Telegram payment notifications to include payer username (@username); improved error messaging for exchange connection failures (now shows detailed message from backend about plan/email verification requirements)
-- **v1.0.7**: Implemented automatic 4-day trial on registration; reduced auto-logout timeout from 3 minutes to 2 minutes; added API endpoint for manual Telegram group access requests (TRIAL users click button → notifies @VerzekSupport)
-
-### Security & UX Features
-- **Auto-Logout**: 2-minute inactivity timeout (INACTIVITY_TIMEOUT) for security, managed by useInactivityLogout hook
-- **IP Whitelisting**: Primary IP 45.76.90.149 (Binance-verified); supported by Binance, Bybit, Phemex; Kraken uses alternative security (master key + trading key model)
-- **Email Verification Enforcement**: Users CANNOT login, make PREMIUM ($120) payments, connect exchanges, or access auto-trading without verifying Gmail address (strict 403 enforcement)
-- **Subscription Tiers**: 
-  - **TRIAL** (automatic 4 days on registration): Manual Telegram group access via button (contact @VerzekSupport)
-  - **VIP ($50/month)**: Signals only in mobile app, NO Telegram group, NO exchange connections
-  - **PREMIUM ($120/month)**: Signals in app + exchange connections + full auto-trading (DCA, progressive TP, multi-exchange) - REQUIRES verified email
-- **Trial Activation**: New users automatically get 4-day trial. Telegram group access requires manual request via app button
-- **Architecture**: Mobile App → Replit HTTPS Bridge (https://verzek-auto-trader.replit.app) → Vultr Backend (80.240.29.142:5000)
-
-### Known Issues & Limitations
-- **Kraken IP Whitelisting**: Kraken Futures doesn't support IP whitelisting but uses master key + trading key security model instead
-
-### Email Service Setup (Vultr Backend)
-- **Status**: ✅ Fully operational with Gmail SMTP
-- **Configuration**: Gmail SMTP (smtp.gmail.com:587) with app password authentication
-- **Email Address**: verzekinnovativesolutionsltd@gmail.com
-- **Automated Welcome Emails**: VIP and PREMIUM subscribers automatically receive personalized welcome emails upon subscription with signal access instructions, User ID for Telegram verification, and feature guides
-- **Integration**: Welcome emails trigger automatically in `api_server.py` via `notify_subscription_upgrade()` function after successful subscription payment
-- **Diagnostic Tool**: `tools/test_email_service.py` for automated testing
-- **Documentation**: Complete guides in `mobile_app/VULTR_EMAIL_SETUP_GUIDE.md` and `mobile_app/EMAIL_SERVICE_DIAGNOSTIC.md`
-
-### Health Monitoring System (October 31, 2025)
-- **Status**: ✅ Deployed to Vultr production (80.240.29.142)
-- **Phase 1+2 Features**: Heartbeat monitoring (updates every 30s), watchdog auto-restart (checks every 60s), Telegram admin alerts on freeze/restart, systemd service management
-- **Root Cause Fixed**: Resolved Telegram forwarder freeze issue (Python output buffering + event loop starvation); deployed unbuffered Python output (`python3 -u`)
-- **Broadcast Bot Token**: Updated with new working token (8479454611:AAFOzT8sDJD4RIPMokIsu1f08hBAvEdSeo4) after previous token revocation
-- **Files Deployed**: telethon_forwarder.py v2.2 (with heartbeat), forwarder_watchdog.py, telethon-forwarder.service, forwarder-watchdog.service, forwarder-watchdog.timer
-- **Deployment Method**: Single installation script (`install_health_monitoring.sh`) for mobile deployment via Termius
-- **Auto-Recovery**: Forwarder auto-restarts within 1-2 minutes if frozen (heartbeat >90s old) or crashed
-- **Monitoring Commands**: 
-  - Check forwarder: `systemctl status telethon-forwarder`
-  - Check watchdog: `systemctl status forwarder-watchdog.timer`
-  - View heartbeat: `cat /tmp/forwarder_heartbeat.json`
-  - View logs: `journalctl -u telethon-forwarder -f`
-
-### Pending Deployments
-- **Full Backend Code Sync** (Option B): Requires PC access for comprehensive deployment of latest Replit codebase to Vultr
-  - Includes: Latest api_server.py with all Phase 1-5 endpoints, updated modules (payment_system.py, email_service.py, advanced features), requirements.txt updates
-  - Script ready: `deploy_backend_to_vultr.sh` (complex file transfer, better suited for PC with SCP/Git)
-  - Current workaround: Simple backend restart via Termius maintains service continuity
-  - Priority: Medium (health monitoring is critical fix; full sync enhances features but not urgent)
-
 ## External Dependencies
-- **Telegram API**: For signal monitoring and broadcasting (`telethon` and `python-telegram-bot`).
+- **Telegram API**: For signal monitoring and broadcasting.
 - **Binance API**: For trading operations.
 - **Bybit API**: For trading operations.
 - **Phemex API**: For trading operations.
 - **Kraken Futures API**: For trading operations.
-- **Flask**: Python web framework for the REST API.
+- **Flask**: Python web framework.
 - **Requests**: Python HTTP library.
 - **Schedule**: Python library for task scheduling.
 - **PyJWT**: For JWT authentication.
@@ -115,4 +49,4 @@ The mobile application (React Native + Expo) uses a modern dark theme with Teal/
 - **OpenAI API**: For AI Trade Assistant (GPT-4o-mini).
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
-- **Gmail SMTP**: For transactional emails (verzekinnovativesolutionsltd@gmail.com).
+- **Gmail SMTP**: For transactional emails.
