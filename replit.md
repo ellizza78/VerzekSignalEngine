@@ -7,6 +7,7 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Production Safety**: Enterprise-grade database with ACID compliance required
 - **Security First**: No hard-coded secrets, all environment variables mandatory
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
+- **Build Process**: ALWAYS build Android APK from Replit Shell using `eas build` command (never use automated tools)
 
 ## System Architecture
 ### UI/UX Decisions
