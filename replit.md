@@ -8,6 +8,7 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Security First**: No hard-coded secrets, all environment variables mandatory
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 - **Build Process**: ALWAYS build Android APK from Replit Shell using `eas build` command (never use automated tools)
+- **Dynamic Updates**: Use OTA updates (eas update) for JavaScript changes; remote config for feature flags and settings; only rebuild APK for native changes
 
 ## System Architecture
 ### UI/UX Decisions
@@ -25,6 +26,7 @@ The mobile application (React Native + Expo) utilizes a modern dark theme with T
 - **Email Verification System**: Secure token-based email verification with SMTP integration, required before users can connect exchange accounts or trade.
 - **Advanced Features**: Includes an AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
 - **Health Monitoring System**: Deployed with heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts for continuous operation and quick recovery from service interruptions.
+- **Dynamic Update Architecture**: Remote config system enables instant updates without APK rebuilds. Features include: remote config endpoint (/api/app-config), feature flags for A/B testing, OTA updates via Expo EAS Update, force update flow for mandatory upgrades, and auto-refresh every 5 minutes. Config stored in SQLite with admin CLI tool for management.
 
 ### System Design Choices
 - **Multi-tenancy**: Isolated configurations and strategies per user.
