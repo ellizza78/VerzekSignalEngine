@@ -155,7 +155,7 @@ def app_config():
     try:
         url = f"{VULTR_CONFIG_SERVICE}/api/app-config"
         r = requests.get(url, timeout=10)
-        return r.content, r.status_code, r.headers.items()
+        return r.content, r.status_code, dict(r.headers)
     except Exception as e:
         logger.error(f"Config service error: {str(e)}")
         return jsonify({"error": str(e)}), 502
@@ -173,12 +173,12 @@ def api_proxy(endpoint):
             url=url,
             headers={key: value for key, value in request.headers if key.lower() != 'host'},
             data=request.get_data(),
-            params=request.args,
+            params=dict(request.args),
             timeout=10
         )
         
         # Return the response from Vultr
-        return r.content, r.status_code, r.headers.items()
+        return r.content, r.status_code, dict(r.headers)
     except requests.exceptions.Timeout:
         logger.error(f"Vultr backend timeout on /api/{endpoint}")
         return jsonify({"error": "Backend timeout"}), 504
