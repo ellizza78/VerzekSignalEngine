@@ -19,6 +19,7 @@ logger = logging.getLogger("VerzekBridge")
 
 # === My live backend server (Vultr) ===
 VULTR_BACKEND = "http://80.240.29.142:5000"
+VULTR_CONFIG_SERVICE = "http://80.240.29.142:5001"
 
 @app.route("/")
 def home():
@@ -146,6 +147,18 @@ def send_test():
             "error": str(e),
             "message": "Make sure EMAIL_USER and EMAIL_PASS are set in Replit Secrets"
         }), 500
+
+@app.route("/api/app-config", methods=["GET"])
+def app_config():
+    """Forward app config requests to dedicated config service"""
+    logger.info("Forwarding /api/app-config to config service")
+    try:
+        url = f"{VULTR_CONFIG_SERVICE}/api/app-config"
+        r = requests.get(url, timeout=10)
+        return r.content, r.status_code, r.headers.items()
+    except Exception as e:
+        logger.error(f"Config service error: {str(e)}")
+        return jsonify({"error": str(e)}), 502
 
 @app.route("/api/<path:endpoint>", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 def api_proxy(endpoint):
