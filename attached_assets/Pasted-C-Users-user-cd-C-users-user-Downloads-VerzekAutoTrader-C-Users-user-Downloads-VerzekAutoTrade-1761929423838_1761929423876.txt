@@ -1,0 +1,118 @@
+C:\Users\user>cd C:\users\user\Downloads\VerzekAutoTrader
+
+C:\Users\user\Downloads\VerzekAutoTrader>scp -r modules root@80.240.29.142:/root/
+The authenticity of host '80.240.29.142 (80.240.29.142)' can't be established.
+ED25519 key fingerprint is SHA256:64N+oFh7NvgZtUjRNnUFbUpMS/XT9GO9XCwTv7dlpDI.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+Warning: Permanently added '80.240.29.142' (ED25519) to the list of known hosts.
+root@80.240.29.142's password:
+Connection closed by 80.240.29.142 port 22
+scp: Connection closed
+
+C:\Users\user\Downloads\VerzekAutoTrader>scp -r modules root@80.240.29.142:/root/
+root@80.240.29.142's password:
+admin_dashboard.py                                                                    100%   11KB  67.2KB/s   00:00
+advanced_analytics.py                                                                 100% 8743    33.4KB/s   00:00
+advanced_charting.py                                                                  100%   14KB  85.9KB/s   00:00
+advanced_orders.py                                                                    100%   19KB 113.1KB/s   00:00
+ai_risk_scoring.py                                                                    100%   12KB  71.6KB/s   00:00
+ai_trade_assistant.py                                                                 100%   15KB  90.1KB/s   00:00
+analytics_engine.py                                                                   100%   11KB  54.0KB/s   00:00
+audit_logger.py                                                                       100% 7443    45.2KB/s   00:00
+auth.py                                                                               100% 3987    24.3KB/s   00:00
+auto_optimization.py                                                                  100%   11KB  67.7KB/s   00:00
+backtesting_engine.py                                                                 100% 9831    58.9KB/s   00:00
+backup_system.py                                                                      100% 6116    34.5KB/s   00:00
+custom_indicators.py                                                                  100% 9246    54.7KB/s   00:00
+database.py                                                                           100%   15KB  88.6KB/s   00:00
+dca_engine.py                                                                         100%   16KB  92.8KB/s   00:00
+dca_orchestrator.py                                                                   100%   30KB 167.4KB/s   00:00
+email_service.py                                                                      100% 5848    34.6KB/s   00:00
+encryption_service.py                                                                 100% 5072    16.3KB/s   00:00
+multi_timeframe_analysis.py                                                           100%   13KB  65.6KB/s   00:00
+payment_system.py                                                                     100%   14KB  77.6KB/s   00:00
+portfolio_rebalancer.py                                                               100% 8657    52.5KB/s   00:00
+position_tracker.py                                                                   100% 5510    34.5KB/s   00:00
+priority_signal_queue.py                                                              100% 4483     8.7KB/s   00:00
+push_notifications.py                                                                 100%   11KB  64.5KB/s   00:00
+rate_limiter.py                                                                       100% 2577    16.2KB/s   00:00
+realtime_price_feed.py                                                                100%   12KB  43.7KB/s   00:00
+recurring_payments.py                                                                 100% 4454    26.7KB/s   00:00
+safety_manager.py                                                                     100%   14KB  83.8KB/s   00:00
+signal_auto_trader.py                                                                 100% 9509    58.4KB/s   00:00
+signal_filter.py                                                                      100% 5820    36.2KB/s   00:00
+smart_order_routing.py                                                                100%   14KB  83.3KB/s   00:00
+social_features.py                                                                    100%   15KB  85.0KB/s   00:00
+social_trading.py                                                                     100%   10KB  63.6KB/s   00:00
+subscription_security.py                                                              100% 8503    51.9KB/s   00:00
+trading_journal.py                                                                    100%   14KB  81.5KB/s   00:00
+tronscan_client.py                                                                    100% 8643    53.4KB/s   00:00
+two_factor_auth.py                                                                    100% 7454    44.7KB/s   00:00
+user_manager_v2.py                                                                    100%   26KB 148.0KB/s   00:00
+user_manager_v2.py.json_backup                                                        100%   24KB 141.0KB/s   00:00
+webhook_handler.py                                                                    100%   10KB  57.2KB/s   00:00
+__init__.py                                                                           100%  449     2.1KB/s   00:00
+admin_dashboard.cpython-311.pyc                                                       100%   18KB 107.5KB/s   00:00
+advanced_analytics.cpython-311.pyc                                                    100%   13KB  75.2KB/s   00:00
+advanced_charting.cpython-311.pyc                                                     100%   26KB 148.5KB/s   00:00
+advanced_orders.cpython-311.pyc                                                       100%   19KB 112.8KB/s   00:00
+ai_risk_scoring.cpython-311.pyc                                                       100%   16KB  91.0KB/s   00:00
+ai_trade_assistant.cpython-311.pyc                                                    100%   17KB 101.5KB/s   00:00
+analytics_engine.cpython-311.pyc                                                      100%   17KB 104.0KB/s   00:00
+audit_logger.cpython-311.pyc                                                          100%   12KB  73.0KB/s   00:00
+auth.cpython-311.pyc                                                                  100% 6202    37.9KB/s   00:00
+auto_optimization.cpython-311.pyc                                                     100%   14KB  80.1KB/s   00:00
+backtesting_engine.cpython-311.pyc                                                    100%   16KB  66.6KB/s   00:00
+backup_system.cpython-311.pyc                                                         100%   10KB  62.3KB/s   00:00
+custom_indicators.cpython-311.pyc                                                     100%   12KB  64.3KB/s   00:00
+database.cpython-311.pyc                                                              100%   22KB 121.9KB/s   00:00
+dca_engine.cpython-311.pyc                                                            100%   19KB 111.8KB/s   00:00
+dca_orchestrator.cpython-311.pyc                                                      100%   29KB 170.0KB/s   00:00
+email_service.cpython-311.pyc                                                         100% 6351    37.8KB/s   00:00
+encryption_service.cpython-311.pyc                                                    100% 7031    42.7KB/s   00:00
+multi_timeframe_analysis.cpython-311.pyc                                              100%   19KB  95.2KB/s   00:00
+payment_system.cpython-311.pyc                                                        100%   17KB 102.1KB/s   00:00
+portfolio_rebalancer.cpython-311.pyc                                                  100%   12KB  72.5KB/s   00:00
+position_tracker.cpython-311.pyc                                                      100%   10KB  54.8KB/s   00:00
+push_notifications.cpython-311.pyc                                                    100%   15KB  79.5KB/s   00:00
+rate_limiter.cpython-311.pyc                                                          100% 4053    23.6KB/s   00:00
+realtime_price_feed.cpython-311.pyc                                                   100%   19KB 107.2KB/s   00:00
+recurring_payments.cpython-311.pyc                                                    100% 6058    35.6KB/s   00:00
+safety_manager.cpython-311.pyc                                                        100%   19KB 104.1KB/s   00:00
+signal_auto_trader.cpython-311.pyc                                                    100%   10KB  62.2KB/s   00:00
+signal_filter.cpython-311.pyc                                                         100% 6979    42.6KB/s   00:00
+smart_order_routing.cpython-311.pyc                                                   100%   17KB  95.8KB/s   00:00
+social_features.cpython-311.pyc                                                       100%   23KB 137.2KB/s   00:00
+social_trading.cpython-311.pyc                                                        100%   17KB  86.4KB/s   00:00
+subscription_security.cpython-311.pyc                                                 100%   13KB  74.7KB/s   00:00
+trading_journal.cpython-311.pyc                                                       100%   24KB 103.9KB/s   00:00
+tronscan_client.cpython-311.pyc                                                       100% 9497    56.9KB/s   00:00
+two_factor_auth.cpython-311.pyc                                                       100%   11KB  64.6KB/s   00:00
+user_manager_v2.cpython-311.pyc                                                       100%   31KB 177.5KB/s   00:00
+webhook_handler.cpython-311.pyc                                                       100%   15KB  90.2KB/s   00:00
+__init__.cpython-311.pyc                                                              100%  697     4.4KB/s   00:00
+
+C:\Users\user\Downloads\VerzekAutoTrader>scp api_server.py root@80.240.29.142:/root/
+root@80.240.29.142's password:
+Permission denied, please try again.
+root@80.240.29.142's password:
+api_server.py                                                                         100%  107KB 148.9KB/s   00:00
+
+C:\Users\user\Downloads\VerzekAutoTrader>scp requirements.txt root@80.240.29.142:/root/
+root@80.240.29.142's password:
+Permission denied, please try again.
+root@80.240.29.142's password:
+Permission denied, please try again.
+root@80.240.29.142's password:
+requirements.txt                                                                      100%  186     1.2KB/s   00:00
+
+C:\Users\user\Downloads\VerzekAutoTrader>
+C:\Users\user\Downloads\VerzekAutoTrader>
+C:\Users\user\Downloads\VerzekAutoTrader>
+
+
+
+
+
+
