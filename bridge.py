@@ -191,6 +191,36 @@ def health():
     """Health check endpoint for Replit"""
     return jsonify({"status": "healthy", "bridge": "active"}), 200
 
+@app.route("/VULTR_QUICK_DEPLOY.sh")
+def serve_quick_deploy():
+    """Serve quick deploy script"""
+    try:
+        with open('VULTR_QUICK_DEPLOY.sh', 'r') as f:
+            content = f.read()
+        response = app.response_class(
+            response=content,
+            status=200,
+            mimetype='text/plain'
+        )
+        return response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 404
+
+@app.route("/VULTR_CONFIG_WATCHDOG.sh")
+def serve_watchdog():
+    """Serve watchdog script"""
+    try:
+        with open('VULTR_CONFIG_WATCHDOG.sh', 'r') as f:
+            content = f.read()
+        response = app.response_class(
+            response=content,
+            status=200,
+            mimetype='text/plain'
+        )
+        return response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 404
+
 if __name__ == "__main__":
     logger.info("🌉 VerzekBridge starting...")
     logger.info(f"🎯 Forwarding to: {VULTR_BACKEND}")
