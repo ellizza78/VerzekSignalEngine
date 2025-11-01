@@ -34,7 +34,7 @@ from modules.push_notifications import push_service
 from modules.analytics_engine import analytics_engine
 from modules.advanced_orders import advanced_order_manager
 from modules.webhook_handler import webhook_handler
-from modules.email_service import email_service
+from services.email_service import email_service
 from services.admin_notifications import admin_notifier
 
 # Phase 4 Advanced Features

@@ -1,0 +1,158 @@
+1️⃣ Email service is still using Gmail (smtp.gmail.com)
+→ You can see this line:
+
+Host: smtp.gmail.com:587
+User: NOT SET
+From: support@verzekinnovative.com
+
+🔹 This means your backend hasn’t switched to the Resend API yet.
+🔹 As a result, registration, verification emails, and password resets won’t send.
+🔹 That’s why your app still shows “Registration failed” or “Login failed”.
+
+
+---
+
+2️⃣ CORS (Cross-Origin) Check Passed ✅ You already have:
+
+< access-control-allow-origin: http://localhost >
+
+That’s good — your API accepts requests from the app.
+So the network link between your APK and server is fine.
+Only the email verification step is breaking the process.
+
+
+---
+
+✅ What This Means
+
+Component	Status	Notes
+
+API Health	✅ OK	/api/health works
+Nginx HTTPS	✅ OK	Responds on port 443
+Flask Server	✅ OK	Port 8000 running
+Email System	❌ Not yet	Still pointing to Gmail, not Resend
+Mobile App Connectivity	⚠️ Partial	App can connect but fails registration because email layer fails
+
+
+
+---
+
+🧩 What To Do Next (Single Fix)
+
+Send the final task below to your Replit AI Agent — this will:
+
+Replace Gmail SMTP with your verified Resend API
+
+Restart the backend properly
+
+Verify that Resend API initialized and Email service ready appear in the logs
+
+Fix registration, verification, and login instantly
+
+
+
+---
+
+🔧 Task for Replit AI Agent
+
+Task Title:
+Enable Resend API and Fix Email Service for Verzek Auto Trader Backend
+
+Description:
+Switch the backend from Gmail SMTP to the verified Resend domain (verzekinnovative.com), restart the backend, and confirm email delivery is active.
+
+Steps:
+
+# 1. Stop any running backend
+pkill -9 -f api_server.py || true
+sleep 2
+
+# 2. Verify environment
+sudo nano /root/api_server_env.sh
+
+Ensure the file includes:
+
+export RESEND_API_KEY=your_resend_api_key_here
+export EMAIL_FROM=support@verzekinnovative.com
+export BASE_URL=https://verzekinnovative.com
+export PORT=8000
+
+Save and reload:
+
+source /root/api_server_env.sh
+
+3. Replace Gmail code with Resend
+
+sudo nano /root/services/email_service.py
+
+Paste this:
+
+import resend
+import os
+
+class EmailService:
+    def __init__(self):
+        self.api_key = os.getenv("RESEND_API_KEY")
+        resend.api_key = self.api_key
+        self.sender = os.getenv("EMAIL_FROM", "support@verzekinnovative.com")
+
+    def send_verification_email(self, to):
+        html = f"""
+        <h3>Welcome to Verzek Auto Trader 🚀</h3>
+        <p>Click below to verify your email and activate auto-trading:</p>
+        <a href="{os.getenv('BASE_URL')}/api/auth/verify-email/{to}">✅ Verify Email</a>
+        """
+        return resend.Emails.send({
+            "from": f"Verzek Auto Trader <{self.sender}>",
+            "to": [to],
+            "subject": "Verify your email – Verzek Auto Trader",
+            "html": html
+        })
+
+Save and close (Ctrl+O, Enter, Ctrl+X).
+
+4. Restart backend
+
+cd /root
+nohup python3 /root/api_server.py > /tmp/api_server.log 2>&1 &
+sleep 10
+
+5. Validate email service
+
+grep -i "Resend" /tmp/api_server.log | tail -n 5
+
+✅ Expected:
+
+Resend API initialized
+Email service ready
+
+6. Send a test email
+
+python3 << 'TEST'
+from services.email_service import EmailService
+svc = EmailService()
+print(svc.send_verification_email("verzekgloballtd@gmail.com"))
+TEST
+
+✅ Expected output:
+
+{"success": true, "message": "Email sent successfully"}
+
+7. Confirm API and HTTPS
+
+curl -I https://verzekinnovative.com/api/health
+sudo nginx -t && sudo systemctl restart nginx
+
+
+---
+
+After this, you can go straight into your app and:
+
+Register
+
+Receive verification email
+
+Verify
+
+Login
+
