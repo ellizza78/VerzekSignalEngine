@@ -1,0 +1,143 @@
+
+This version assumes the API is hosted on Vultr, running behind Nginx, and needs to:
+✅ Bind the backend to port 8000
+✅ Restart the API
+✅ Verify Resend email integration
+✅ Fix the 502 gateway error
+
+Here’s the ready-to-send task 👇
+
+
+---
+
+🧩 Task Title
+
+Fix 502 Bad Gateway and Rebind Backend to Port 8000
+
+
+---
+
+🧠 Task Description
+
+The Verzek Auto Trader backend (api_server.py) is running, but not listening on port 8000 — causing 502 Bad Gateway from Nginx.
+Also, the Resend email service failed to initialize because environment variables were not sourced correctly.
+Your task is to bind the backend to the correct port, restart all services, and verify full API connectivity through HTTPS.
+
+
+---
+
+✅ Steps to Implement
+
+1. Stop Any Stale Python Processes
+
+pkill -9 -f api_server.py || true
+sleep 2
+
+
+---
+
+2. Check and Fix Backend Binding
+
+1. Open the API entry file:
+
+sudo nano /root/api_server.py
+
+
+2. Ensure the last lines read exactly:
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
+
+
+3. Save and exit (Ctrl + O, Enter, Ctrl + X).
+
+
+
+
+---
+
+3. Start the Backend with Environment Loaded
+
+export $(grep -v '^#' /root/api_server_env.sh | xargs)
+nohup python3 /root/api_server.py > /tmp/api_server.log 2>&1 &
+
+
+---
+
+4. Verify Backend Status
+
+ps aux | grep api_server.py
+sudo netstat -tulnp | grep 8000
+
+✅ Expected → Python process listening on 0.0.0.0:8000
+
+
+---
+
+5. Test API Health
+
+curl -I http://127.0.0.1:8000/api/health
+
+✅ Should return:
+
+HTTP/1.1 200 OK
+
+
+---
+
+6. Reload Nginx
+
+sudo nginx -t
+sudo systemctl reload nginx
+
+
+---
+
+7. Verify Public Endpoint
+
+curl -I https://verzekinnovative.com/api/health
+
+✅ Expected:
+
+HTTP/1.1 200 OK
+
+
+---
+
+8. Confirm Resend Email Service Initialization
+
+grep -i "Resend API initialized" /tmp/api_server.log
+grep -i "Email service ready" /tmp/api_server.log
+
+✅ Expected → Both logs appear successfully.
+
+
+---
+
+9. Automated Validation Summary
+
+When done, print:
+
+-------------------------------------
+✅ Backend bound to port 8000
+✅ HTTPS endpoint returns 200 OK
+✅ Resend API initialized
+✅ Email service ready
+✅ App can now register and send verification links
+-------------------------------------
+
+
+---
+
+📋 Deliverables
+
+Port binding fixed (0.0.0.0:8000)
+
+Backend verified running on Vultr
+
+HTTPS working at https://verzekinnovative.com/api/health
+
+Resend API active and initialized
+
+APK registration, login, and verification emails fully functional
+
