@@ -1,0 +1,346 @@
+🪄 Intro Summary for Replit AI Agent
+
+This is a full deployment and configuration sequence for the Verzek Auto Trader Backend hosted on Vultr, with Replit AI Agent coordinating updates.
+
+The purpose is to:
+
+finalize and activate the verified Resend email domain (verzekinnovative.com),
+
+connect it securely to the backend API for live registration, password-reset, and verification emails,
+
+replace the default Nginx welcome page with the live API running on port 8000,
+
+ensure full HTTPS routing via Cloudflare + Certbot,
+
+synchronize environment variables and endpoints across Vultr and Replit,
+
+add automatic health-monitoring, log rotation, and daily backups,
+so that the backend stays online 24/7, self-maintains, and remains synced with the APK frontend.
+
+
+The AI Agent should follow Steps 1 → 10 in order, verifying each stage before moving to the next.
+When complete, the API and email services will operate securely, automatically, and without manual intervention.
+
+
+🧩 VERZEK AUTO TRADER BACKEND — DEPLOYMENT & CONFIGURATION TASKS (VULTR + REPLIT AI AGENT)
+
+
+---
+
+Step 1 → 3 : Configure Verified Email Domain and Enable Live Email Delivery (Resend Integration)
+
+🧠 Description
+
+Our Resend domain verzekinnovative.com is verified.
+Enable live outgoing emails for registration, password reset, and verification links.
+
+✅ Tasks
+
+(1) Update Environment Variables
+
+Edit the project’s .env (or Replit Secrets) and add:
+
+RESEND_API_KEY=your_resend_api_key_here
+EMAIL_FROM=support@verzekinnovative.com
+BASE_URL=https://api.verzektrader.com
+
+Ensure backend uses:
+
+from: "Verzek Auto Trader <support@verzekinnovative.com>"
+
+Remove any old EMAIL_FROM such as onboarding@resend.dev.
+
+(2) Restart Backend API
+
+pkill -9 -f api_server.py
+sleep 2
+source /root/api_server_env.sh
+nohup python3 /root/api_server.py > /tmp/api_server.log 2>&1 &
+
+Confirm in logs:
+
+✅ Email service ready to send messages
+Resend API initialized
+
+(3) Send Test Email
+
+python3 << 'TEST'
+from services.email_service import email_service
+result = email_service.send_verification_email("verzekgloballtd@gmail.com")
+print(result)
+TEST
+
+✅ Expected:
+
+{"success": True, "message": "Email sent successfully"}
+
+Deliverables
+
+.env updated
+
+Backend restarted
+
+Test email successfully delivered
+
+
+
+---
+
+Step 4 : Post-Cloudflare Activation Setup
+
+🧠 Description
+
+Sync backend with verified domain + email services.
+
+✅ Tasks
+
+1. Update all endpoints and .env to use https://verzekinnovativesolutions.com instead of any temporary Replit URL.
+
+
+2. Reconfigure SMTP/Resend to send via Cloudflare-verified domain (support@verzekinnovative.com).
+
+
+3. Confirm SPF, DKIM, MX records are correct in Cloudflare.
+
+
+4. Test registration, password-reset, and welcome emails.
+
+
+5. Enable Full-mode SSL in Cloudflare and test HTTPS.
+
+
+6. Deploy final config to Vultr backend and verify APK frontend sync.
+
+
+
+
+---
+
+Step 5 : Configure Nginx to Serve Verzek Auto Trader API
+
+🧠 Description
+
+verzekinnovative.com resolves to Vultr. Replace the default Nginx page with your API.
+
+✅ Tasks
+
+sudo nano /etc/nginx/sites-available/default
+
+Replace all with:
+
+server {
+    listen 80;
+    server_name verzekinnovative.com www.verzekinnovative.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /var/www/html/static/;
+    }
+}
+
+Test and reload:
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+(Optional SSL):
+
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d verzekinnovative.com -d www.verzekinnovative.com
+sudo systemctl restart nginx
+
+✅ Visiting https://verzekinnovative.com should show your API JSON or homepage (not the Nginx default).
+
+
+---
+
+Step 6 : Confirm Resend DNS and Cloudflare Nameservers
+
+Ensure Cloudflare DNS has:
+
+A → 80.240.29.142
+
+CNAME www → verzekinnovative.com
+
+TXT → v=spf1 include:amazonses.com ~all
+
+TXT (resend._domainkey) with the DKIM key
+
+MX → feedback-smtp.eu-west-1.amazonses.com
+
+
+✅ Resend dashboard should show Status: Verified (Ireland region).
+
+
+---
+
+Step 7 : Verify Email and API Integration
+
+After Nginx & Cloudflare setup, ensure:
+
+1. API returns 200 OK at https://verzekinnovative.com/api/health.
+
+
+2. All outgoing emails (verification, reset, welcome) deliver within seconds.
+
+
+3. Logs show:
+
+✅ Email service ready to send messages
+Resend API initialized (EU-WEST-1)
+
+
+
+
+---
+
+Step 8 : Automated Log Monitor & Health-Check Script
+
+🧠 Description
+
+Monitor uptime and Resend email delivery every 3 hours.
+
+✅ Tasks
+
+Create /root/health_monitor.py
+
+#!/usr/bin/env python3
+import os, requests, time, json
+from datetime import datetime
+API_URL = os.getenv("API_HEALTH_URL", "https://verzekinnovative.com/api/health")
+EMAIL_TEST = os.getenv("EMAIL_MONITOR", "verzekgloballtd@gmail.com")
+RESEND_KEY = os.getenv("RESEND_API_KEY")
+LOG_PATH = "/root/health_monitor.log"
+
+def log(msg):
+    with open(LOG_PATH, "a") as f:
+        f.write(f"[{datetime.utcnow()}] {msg}\n")
+
+def check_api():
+    try:
+        r = requests.get(API_URL, timeout=15)
+        if r.status_code == 200:
+            log("✅ API reachable and healthy."); return True
+        log(f"⚠️ API returned status {r.status_code}"); return False
+    except Exception as e:
+        log(f"❌ API check failed: {e}"); return False
+
+def send_email_test():
+    try:
+        payload = {"from": "Health Monitor <support@verzekinnovative.com>",
+                   "to": [EMAIL_TEST],
+                   "subject": "Verzek Auto Trader – Health Check",
+                   "html": "<p>✅ Email system is working fine.</p>"}
+        r = requests.post("https://api.resend.com/emails",
+                          headers={"Authorization": f"Bearer {RESEND_KEY}",
+                                   "Content-Type": "application/json"},
+                          data=json.dumps(payload))
+        if r.status_code == 200:
+            log("📧 Email test sent successfully."); return True
+        log(f"⚠️ Email test failed – status {r.status_code}: {r.text}"); return False
+    except Exception as e:
+        log(f"❌ Email send error: {e}"); return False
+
+def main():
+    log("---- Running Health Check ----")
+    api_ok = check_api()
+    email_ok = send_email_test()
+    if api_ok and email_ok:
+        log("✅ All systems operational.\n")
+    else:
+        log("🚨 One or more systems FAILED. Investigate immediately.\n")
+
+if __name__ == "__main__":
+    main()
+
+Schedule via cron:
+
+chmod +x /root/health_monitor.py
+(crontab -l 2>/dev/null; echo "0 */3 * * * /usr/bin/python3 /root/health_monitor.py") | crontab -
+
+✅ Logs appear in /root/health_monitor.log; alert emails can be added if failures occur.
+
+
+---
+
+Step 9 : Automatic Log Rotation & Cleanup
+
+🧠 Description
+
+Prevent large logs from filling disk space.
+
+✅ Tasks
+
+Create /etc/logrotate.d/verzekbot
+
+/tmp/api_server.log /root/health_monitor.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    create 0640 root root
+    sharedscripts
+    postrotate
+        systemctl reload nginx 2>/dev/null || true
+    endscript
+}
+
+Test:
+
+sudo logrotate --debug /etc/logrotate.d/verzekbot
+sudo logrotate --force /etc/logrotate.d/verzekbot
+
+Add weekly cleanup:
+
+(crontab -l 2>/dev/null; echo "0 2 * * 0 find /tmp -name '*.log.*' -type f -mtime +7 -delete") | crontab -
+
+✅ Logs auto-rotate daily; old ones compressed and removed after 7 days.
+
+
+---
+
+Step 10 (Lite) : Automated Backup & Recovery Snapshot
+
+🧠 Description
+
+Lightweight periodic backup of your API, database, and config files.
+
+✅ Tasks
+
+Create /root/backup_daily.sh
+
+#!/bin/bash
+tar -czf /root/backup_$(date +%F).tar.gz /root/api /root/database /root/.env
+find /root -name "backup_*.tar.gz" -mtime +7 -delete
+
+Make executable:
+
+chmod +x /root/backup_daily.sh
+
+Run daily at 3 a.m.:
+
+(crontab -l 2>/dev/null; echo "0 3 * * * /root/backup_daily.sh") | crontab -
+
+(Optional) Upload /root/backup_YYYY-MM-DD.tar.gz to Vultr Object Storage or Google Drive manually.
+
+✅ Backups rotate automatically and never exceed one week of storage.
+
+
+---
+
+🏁 Final Expected State
+
+✅ Resend domain verified & emails live
+✅ Nginx proxy serving API securely via HTTPS
+✅ Cloudflare SSL enabled
+✅ Auto health & uptime checks every 3 hours
+✅ Logs auto-rotated
+✅ Backups created daily

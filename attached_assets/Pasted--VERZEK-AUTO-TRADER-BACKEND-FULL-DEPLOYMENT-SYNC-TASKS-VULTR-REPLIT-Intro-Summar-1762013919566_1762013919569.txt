@@ -1,0 +1,233 @@
+🧩 VERZEK AUTO TRADER BACKEND — FULL DEPLOYMENT & SYNC TASKS (VULTR + REPLIT)
+
+
+---
+
+🪄 Intro Summary for Replit AI Agent
+
+This workflow fully deploys and configures the Verzek Auto Trader Backend on Vultr, managed through Replit AI Agent.
+It integrates the verified Resend email domain (verzekinnovative.com), enables HTTPS routing with Cloudflare + Certbot, replaces Nginx’s default page with the live backend API on port 8000, and connects the mobile APK app directly to the live backend.
+
+When complete:
+
+the backend will serve at https://verzekinnovative.com,
+
+all transactional emails will send live via Resend from support@verzekinnovative.com,
+
+SSL will be active and auto-renewing,
+
+the app will sync automatically (no rebuilds needed later).
+
+
+The Agent must execute Steps 1 → 11 sequentially, pausing to confirm success at each stage before continuing.
+
+
+---
+
+✅ Tasks to Implement
+
+
+---
+
+Step 1 – Update Environment Variables
+
+Edit .env or Replit secrets:
+
+RESEND_API_KEY=your_resend_api_key_here
+EMAIL_FROM=support@verzekinnovative.com
+BASE_URL=https://api.verzektrader.com
+
+Ensure backend mail sender uses:
+
+from: "Verzek Auto Trader <support@verzekinnovative.com>"
+
+Remove any old EMAIL_FROM lines such as onboarding@resend.dev.
+
+
+---
+
+Step 2 – Restart the Backend API Service on Vultr
+
+pkill -9 -f api_server.py
+sleep 2
+source /root/api_server_env.sh
+nohup python3 /root/api_server.py > /tmp/api_server.log 2>&1 &
+
+Confirm log shows:
+
+✅ Email service ready to send messages
+Resend API initialized
+
+
+---
+
+Step 3 – Send Test Email
+
+python3 << 'TEST'
+from services.email_service import email_service
+result = email_service.send_verification_email("verzekgloballtd@gmail.com")
+print(result)
+TEST
+
+✅ Expected → {"success": true, "message": "Email sent successfully"}
+
+
+---
+
+Step 4 – Post-Cloudflare Activation Setup
+
+1. Use https://verzekinnovative.com in all env vars.
+
+
+2. Ensure SMTP/Resend uses support@verzekinnovative.com.
+
+
+3. Verify SPF, DKIM, MX in Cloudflare.
+
+
+4. Test registration / password-reset / welcome emails.
+
+
+5. Enable Full-mode SSL in Cloudflare.
+
+
+6. Deploy to Vultr and confirm APK sync.
+
+
+
+
+---
+
+Step 5 – Configure Nginx to Serve the API
+
+Edit /etc/nginx/sites-available/default:
+
+server {
+    listen 80;
+    server_name verzekinnovative.com www.verzekinnovative.com;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location /static/ { alias /var/www/html/static/; }
+}
+
+Then:
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+Visit https://verzekinnovative.com → should show API output.
+
+
+---
+
+Step 6 – Install SSL Certificate
+
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d verzekinnovative.com -d www.verzekinnovative.com
+sudo systemctl restart nginx
+
+
+---
+
+Step 7 – Confirm Resend Integration
+
+curl -s https://api.resend.com/domains \
+ -H "Authorization: Bearer $RESEND_API_KEY" | grep verzekinnovative
+
+✅ Expect "status":"verified"
+
+
+---
+
+Step 8 – Enable Health-Monitoring & Log Rotation
+
+Create /root/health_monitor.py (as in previous steps)
+Schedule cron:
+
+chmod +x /root/health_monitor.py
+(crontab -l 2>/dev/null; echo "0 */3 * * * /usr/bin/python3 /root/health_monitor.py") | crontab -
+
+Logs in /root/health_monitor.log should update every 3 h.
+
+
+---
+
+Step 9 – Automate Daily Backup
+
+tar -czvf /root/backups/auto_$(date +%F).tar.gz /root/api_server.py /root/database/
+find /root/backups -type f -mtime +7 -delete
+
+Add to /etc/crontab for nightly run.
+
+
+---
+
+Step 10 – Final Verification
+
+curl -s https://verzekinnovative.com/api/health
+
+✅ Expect {"status":"ok"}
+Send another email test to verzekgloballtd@gmail.com.
+
+
+---
+
+Step 11 – Confirm & Auto-Sync Mobile App API Endpoint
+
+1. Locate existing URL:
+
+grep -r "https://" mobile_app/ | grep -E "replit|api|verzek"
+
+
+2. Replace old URL:
+
+sed -i 's|https://verzek-auto-trader.replit.app|https://verzekinnovative.com|g' mobile_app/**/*.js
+sed -i 's|https://api.verzektrader.com|https://verzekinnovative.com|g' mobile_app/**/*.js
+
+
+3. Rebuild:
+
+cd mobile_app
+npx expo build:android --non-interactive --no-wait
+mv dist/app-release.apk /root/builds/VerzekAutoTrader_Latest.apk
+
+
+4. Verify:
+
+curl -s https://verzekinnovative.com/api/health | grep status
+
+
+
+✅ Expect {"status":"ok"}
+APK rebuilt and fully synced to live backend.
+
+
+---
+
+🎯 Expected Final State
+
+Backend API live at https://verzekinnovative.com
+
+SSL active via Cloudflare + Certbot
+
+Emails live via Resend (support@verzekinnovative.com)
+
+Auto health monitor, log rotation, and daily backup running
+
+APK connected automatically to live backend
+
+
+
+---
+
+🧾 Final Instruction to Agent
+
+> Execute all steps sequentially (Steps 1 → 11).
+After each step, verify success via console output or log confirmation before proceeding.
+If any step fails, pause execution and display the specific error with context before retrying.
+
