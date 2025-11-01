@@ -15,6 +15,14 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Email Service**: support@verzekinnovative.com (Resend API verified domain)
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
+## Recent Changes (November 2025)
+- **Production Deployment**: Backend successfully deployed to Vultr VPS with Nginx reverse proxy and Let's Encrypt SSL
+- **Health Endpoint**: Added `/api/health` endpoint for monitoring and load balancer health checks
+- **Port Configuration**: Backend runs on port 8000 (changed from 5000), proxied through Nginx on port 443
+- **Email Service**: Resend API fully integrated with support@verzekinnovative.com as verified sender
+- **Environment Setup**: All secrets stored in `/root/api_server_env.sh` with proper permissions (chmod 600)
+- **Security**: Fernet encryption key securely stored in environment variables (ENCRYPTION_MASTER_KEY)
+
 ## System Architecture
 ### UI/UX Decisions
 The mobile application (React Native + Expo) utilizes a modern dark theme with Teal/Gold gradients. It features an onboarding modal and a compact UI for optimal content visibility.
