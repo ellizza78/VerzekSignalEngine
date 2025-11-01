@@ -17,3 +17,4 @@ fpdf
 gunicorn
 gevent
 telethon
+flask-cors

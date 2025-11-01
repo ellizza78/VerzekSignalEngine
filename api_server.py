@@ -6,6 +6,7 @@ Allows mobile app or external dashboard to fetch real-time data.
 """
 
 from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
 from utils.logger import log_event
 from trade_executor import get_all_trades
 from modules import UserManager, PositionTracker, SafetyManager
@@ -56,6 +57,17 @@ from telegram import Update, Bot
 import json as json_module
 
 app = Flask(__name__)
+
+# Enable CORS for mobile app
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "expose_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 
 # Telegram Bot instance (will be set by broadcast_bot)
 telegram_bot_instance = None

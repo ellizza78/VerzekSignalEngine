@@ -95,4 +95,4 @@ build = ["pip", "install", "-r", "requirements.txt"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "libev", "libiconv", "libxcrypt", "nano", "openssl", "pkg-config", "rustc", "opensshWithKerberos"]
+packages = ["cargo", "libev", "libiconv", "libxcrypt", "nano", "opensshWithKerberos", "openssl", "pkg-config", "rustc"]
