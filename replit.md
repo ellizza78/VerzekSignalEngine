@@ -10,6 +10,11 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Build Process**: ALWAYS build Android APK from Replit Shell using `eas build` command (never use automated tools)
 - **Dynamic Updates**: Use OTA updates (eas update) for JavaScript changes; remote config for feature flags and settings; only rebuild APK for native changes
 
+## Production URLs
+- **Backend API**: https://verzekinnovative.com (Vultr VPS: 80.240.29.142)
+- **Email Service**: support@verzekinnovative.com (Resend API verified domain)
+- **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
+
 ## System Architecture
 ### UI/UX Decisions
 The mobile application (React Native + Expo) utilizes a modern dark theme with Teal/Gold gradients. It features an onboarding modal and a compact UI for optimal content visibility.
@@ -23,7 +28,7 @@ The mobile application (React Native + Expo) utilizes a modern dark theme with T
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, and positions, incorporating rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, a dashboard for account overview, API integration with the Flask backend, auth-based navigation, and comprehensive help resources.
 - **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
-- **Email Verification System**: Secure token-based email verification with SMTP integration, required before users can connect exchange accounts or trade.
+- **Email Verification System**: Secure token-based email verification with Resend API (support@verzekinnovative.com), required before users can connect exchange accounts or trade.
 - **Advanced Features**: Includes an AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
 - **Health Monitoring System**: Deployed with heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts for continuous operation and quick recovery from service interruptions.
 - **Dynamic Update Architecture**: Remote config system enables instant updates without APK rebuilds. Features include: remote config endpoint (/api/app-config), feature flags for A/B testing, OTA updates via Expo EAS Update, force update flow for mandatory upgrades, and auto-refresh every 5 minutes. Config stored in SQLite with admin CLI tool for management.
@@ -52,4 +57,4 @@ The mobile application (React Native + Expo) utilizes a modern dark theme with T
 - **OpenAI API**: For AI Trade Assistant (GPT-4o-mini).
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
-- **Gmail SMTP**: For transactional emails.
+- **Resend API**: For transactional emails (support@verzekinnovative.com verified domain).

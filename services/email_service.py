@@ -20,7 +20,7 @@ class EmailService:
         self.from_name = os.getenv('APP_NAME', 'Verzek Auto Trader')
         
         # Base URL for verification links
-        self.base_url = os.getenv('BASE_URL', 'https://verzek-auto-trader.replit.app')
+        self.base_url = os.getenv('BASE_URL', 'https://verzekinnovative.com')
         
         # Token expiration (24 hours)
         self.token_expiration_hours = 24

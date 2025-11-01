@@ -4,25 +4,62 @@
 # Domain: https://verzekinnovative.com
 # Email: support@verzekinnovative.com
 # ═══════════════════════════════════════════════════════════════
+#
+# SECURITY: Before running, you must MANUALLY create /root/api_server_env.sh:
+#
+#   cat > /root/api_server_env.sh << 'EOF'
+#   export RESEND_API_KEY="your_actual_resend_api_key_here"
+#   export EMAIL_FROM="support@verzekinnovative.com"
+#   export APP_NAME="Verzek Auto Trader"
+#   export BASE_URL="https://verzekinnovative.com"
+#   EOF
+#   chmod 600 /root/api_server_env.sh  # Secure permissions!
+#
+# Then run this deployment script.
+# ═══════════════════════════════════════════════════════════════
 
 set -e
-RESEND_API_KEY="re_cVoPKdC1_8vF1dnLgezjSbbE5eztikCY5"
+
 DOMAIN="verzekinnovative.com"
 EMAIL_FROM="support@verzekinnovative.com"
 
-echo "🚀 STEP 1: Update Environment Variables"
+echo "🚀 STEP 1: Verify Environment Configuration"
 echo "═══════════════════════════════════════"
 
-cat > /root/api_server_env.sh << 'ENV_EOF'
-export RESEND_API_KEY="re_cVoPKdC1_8vF1dnLgezjSbbE5eztikCY5"
-export EMAIL_FROM="support@verzekinnovative.com"
-export APP_NAME="Verzek Auto Trader"
-export BASE_URL="https://verzekinnovative.com"
-ENV_EOF
+# Check if environment file exists
+if [ ! -f /root/api_server_env.sh ]; then
+    echo "❌ ERROR: /root/api_server_env.sh not found!"
+    echo ""
+    echo "You must create this file manually with your API keys:"
+    echo ""
+    echo "  cat > /root/api_server_env.sh << 'EOF'"
+    echo "  export RESEND_API_KEY=\"your_resend_api_key\""
+    echo "  export EMAIL_FROM=\"support@verzekinnovative.com\""
+    echo "  export APP_NAME=\"Verzek Auto Trader\""
+    echo "  export BASE_URL=\"https://verzekinnovative.com\""
+    echo "  EOF"
+    echo "  chmod 600 /root/api_server_env.sh"
+    echo ""
+    exit 1
+fi
 
-chmod +x /root/api_server_env.sh
+# Check secure permissions
+PERMS=$(stat -c %a /root/api_server_env.sh 2>/dev/null || stat -f %A /root/api_server_env.sh)
+if [ "$PERMS" != "600" ]; then
+    echo "⚠️  WARNING: /root/api_server_env.sh has insecure permissions ($PERMS)"
+    echo "Fixing permissions to 600 (owner read/write only)..."
+    chmod 600 /root/api_server_env.sh
+fi
+
 source /root/api_server_env.sh
-echo "✅ Environment variables configured"
+
+# Verify required variables are set
+if [ -z "$RESEND_API_KEY" ]; then
+    echo "❌ ERROR: RESEND_API_KEY not set in /root/api_server_env.sh"
+    exit 1
+fi
+
+echo "✅ Environment variables loaded securely"
 
 echo ""
 echo "🔄 STEP 2: Restart Backend API Service"
