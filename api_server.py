@@ -153,6 +153,17 @@ def get_status():
     })
 
 
+@app.route("/api/health")
+def health_check():
+    """Health check endpoint for Nginx and monitoring"""
+    return jsonify({
+        "status": "ok",
+        "message": "Verzek Auto Trader API running",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.3-session-isolation"
+    }), 200
+
+
 # ============================
 # FETCH TRADES
 # ============================
@@ -3408,6 +3419,6 @@ def health_check():
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 8000))
     log_event("API", f"Starting Flask API on port {port}")
     app.run(host="0.0.0.0", port=port, debug=False)
