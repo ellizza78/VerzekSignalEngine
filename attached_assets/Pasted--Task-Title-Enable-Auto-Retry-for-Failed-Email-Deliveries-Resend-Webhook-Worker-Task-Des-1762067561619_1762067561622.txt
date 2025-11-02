@@ -1,0 +1,231 @@
+
+🧩 Task Title
+
+Enable Auto-Retry for Failed Email Deliveries (Resend Webhook + Worker)
+
+🧠 Task Description
+
+Wire up a Resend webhook and a tiny background worker so that when any verification, login, or password-reset email bounces, the backend will automatically re-send it (plain-text fallback, adjusted subject) with exponential backoff and a max of 3 attempts. All without me doing anything manually.
+
+Use the existing Flask API codebase (the same one serving https://verzekinnovative.com), environment is already set with RESEND_API_KEY, EMAIL_FROM, and BASE_URL.
+
+✅ Steps to Implement
+
+1) Add env var and minimal table/storage
+
+Add to .env (or Replit Secrets):
+
+
+RESEND_WEBHOOK_SECRET=replace_with_resend_webhook_secret   # if not available, implement without verification for now
+RETRY_MAX_ATTEMPTS=3
+
+Create a very small local store to track retries (JSON file). Create database/email_retries.json if it doesn’t exist and initialize to {}.
+
+
+2) Small Resend client helper
+
+Create services/resend_client.py:
+
+import os, requests
+
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+EMAIL_FROM = os.getenv("EMAIL_FROM", "support@verzekinnovative.com")
+
+BASE_URL = "https://api.resend.com"
+HEADERS = {
+    "Authorization": f"Bearer {RESEND_API_KEY}",
+    "Content-Type": "application/json",
+}
+
+def send_email(to, subject, html=None, text=None, headers=None):
+    payload = {
+        "from": f"Verzek Auto Trader <{EMAIL_FROM}>",
+        "to": [to],
+        "subject": subject,
+    }
+    if html: payload["html"] = html
+    if text: payload["text"] = text
+    if headers: payload["headers"] = headers
+    r = requests.post(f"{BASE_URL}/emails", json=payload, headers=HEADERS, timeout=20)
+    r.raise_for_status()
+    return r.json()
+
+3) Update your existing email service to expose a “plain-text fallback” resend
+
+Open services/email_service.py and add this helper (keep your existing functions unchanged):
+
+from services.resend_client import send_email
+from urllib.parse import quote
+
+def resend_verification_plain(to_email: str, token: str, base_url: str):
+    verify_link = f"{base_url}/api/auth/verify-email/{quote(token)}"
+    subject = "Verify Your VerzekAutoTrader Account (Retry)"
+    text = (
+        "Hello!\n\n"
+        "We noticed the first verification email bounced, so here is a plain-text version.\n\n"
+        f"Verify your account by opening this link:\n{verify_link}\n\n"
+        "If you didn’t request this, please ignore.\n\n"
+        "— Verzek Auto Trader"
+    )
+    headers = {
+        # helps deliverability
+        "List-Unsubscribe": "<mailto:support@verzekinnovative.com>"
+    }
+    return send_email(to_email, subject, text=text, headers=headers)
+
+4) Add a Resend webhook endpoint
+
+In api_server.py, add a new route to receive bounce events. (Place near other routes.)
+
+import os, json, time, threading
+from flask import request, jsonify
+from pathlib import Path
+
+RETRY_MAX = int(os.getenv("RETRY_MAX_ATTEMPTS", "3"))
+RETRY_DB_PATH = Path("/root/database/email_retries.json")  # adjust if your codebase uses a different root
+
+def _load_retry_db():
+    RETRY_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not RETRY_DB_PATH.exists():
+        RETRY_DB_PATH.write_text("{}")
+    return json.loads(RETRY_DB_PATH.read_text() or "{}")
+
+def _save_retry_db(data):
+    RETRY_DB_PATH.write_text(json.dumps(data, indent=2))
+
+def _schedule_retry(to_email, token, base_url, attempt_delay_sec, current_attempt):
+    from services.email_service import resend_verification_plain
+    def _do():
+        try:
+            resend_verification_plain(to_email, token, base_url)
+        except Exception as e:
+            print(f"[RETRY] resend failed for {to_email}: {e}")
+        finally:
+            # nothing else, we log via dashboard
+            pass
+    t = threading.Timer(attempt_delay_sec, _do)
+    t.daemon = True
+    t.start()
+
+@app.route("/webhooks/resend", methods=["POST"])
+def resend_webhook():
+    # NOTE: If you have RESEND_WEBHOOK_SECRET and signature header, verify it here.
+    event = request.get_json(silent=True) or {}
+    # Typical shape: {"type":"email.bounced","data":{"to":"x@y.com","subject":"...","metadata": {...}}}
+    event_type = event.get("type")
+    data = event.get("data", {})
+    to_email = (data.get("to") or "").strip()
+    metadata = data.get("metadata") or {}
+    token = metadata.get("verify_token")  # we’ll send this metadata when first sending the email
+    base_url = os.getenv("BASE_URL", "https://verzekinnovative.com")
+
+    if event_type == "email.bounced" and to_email:
+        db = _load_retry_db()
+        rec = db.get(to_email, {"attempts": 0, "last_ts": 0})
+        if rec["attempts"] >= RETRY_MAX:
+            print(f"[RETRY] max attempts reached for {to_email}")
+            return jsonify({"ok": True, "skipped": "max-attempts"}), 200
+
+        # exponential backoff: 5m, 30m, 2h
+        delays = [5*60, 30*60, 2*60*60]
+        attempt = rec["attempts"]
+        delay = delays[min(attempt, len(delays)-1)]
+        schedule_in = delay
+
+        # schedule retry only if we have token; if not (e.g., password reset), skip here
+        if token:
+            _schedule_retry(to_email, token, base_url, schedule_in, attempt+1)
+            rec["attempts"] += 1
+            rec["last_ts"] = int(time.time())
+            db[to_email] = rec
+            _save_retry_db(db)
+            print(f"[RETRY] scheduled attempt {rec['attempts']} for {to_email} in {schedule_in}s")
+        else:
+            print(f"[RETRY] bounce for {to_email} without token metadata – no verification retry scheduled")
+    return jsonify({"ok": True}), 200
+
+5) Attach verification token as metadata when first sending
+
+In your original verification-email send function (where you already send via Resend), add metadata={"verify_token": token} so the webhook knows what to retry:
+
+from services.resend_client import send_email
+
+def send_verification_email(to_email: str, token: str, base_url: str):
+    verify_link = f"{base_url}/api/auth/verify-email/{token}"
+    subject = "Verify Your VerzekAutoTrader Account"
+    html = f"""
+      <p>Welcome! Click the button to verify your account:</p>
+      <p><a href="{verify_link}" style="background:#10b981;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;">Verify Email</a></p>
+      <p>If the button doesn’t work, copy this link:</p>
+      <p><code>{verify_link}</code></p>
+    """
+    return send_email(
+        to_email,
+        subject,
+        html=html,
+        headers={"List-Unsubscribe":"<mailto:support@verzekinnovative.com>"},
+    )
+
+Modify that call to include metadata (Resend supports metadata):
+
+payload = {
+        "from": f"Verzek Auto Trader <{EMAIL_FROM}>",
+        "to": [to_email],
+        "subject": subject,
+        "html": html,
+        "headers": {"List-Unsubscribe":"<mailto:support@verzekinnovative.com>"},
+        "metadata": {"verify_token": token}
+    }
+    # Use the same HTTP call you have (or reuse send_email by letting it accept metadata).
+
+If you prefer to keep send_email() simple, add a second helper send_email_with_metadata(...) or extend it to accept metadata.
+
+6) Register Resend webhook (one-time)
+
+In the Resend dashboard:
+
+Go to Webhooks → Create Webhook
+
+URL: https://verzekinnovative.com/webhooks/resend
+
+Events: select at least email.bounced (you can also add delivered/complained for logs)
+
+Copy the signing secret into RESEND_WEBHOOK_SECRET (optional if you skip verification for now)
+
+
+7) Restart backend and quick test
+
+Restart API (same way we’ve been doing).
+
+Test a fresh registration to a known working Gmail → should Deliver as usual.
+
+Test with a deliberately invalid/bouncing address → watch Resend dashboard show Bounced, then the backend will schedule a plain-text retry automatically (5 min later for attempt #1).
+
+
+8) Observability
+
+Tail logs:
+
+
+tail -f /tmp/api_server.log | grep -i '\[RETRY\]\|\[EMAIL\]'
+
+You’ll see lines like:
+
+[RETRY] scheduled attempt 1 for user@example.com in 300s
+
+If the retry sends: Resend dashboard will show a new email to that address.
+
+
+
+
+---
+
+✅ Acceptance Criteria
+
+Webhook /webhooks/resend exists and returns 200.
+
+On email.bounced, a retry is scheduled (5m, 30m, 2h) up to RETRY_MAX_ATTEMPTS.
+
+Retries use plain-text with the same verification token.
+
+No changes needed in the mobile app; users simply receive the retry if their mailbox initially rejected the message.
