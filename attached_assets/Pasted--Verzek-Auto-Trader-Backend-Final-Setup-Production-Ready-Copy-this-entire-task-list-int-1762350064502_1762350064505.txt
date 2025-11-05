@@ -1,0 +1,263 @@
+
+🔧 Verzek Auto Trader Backend — Final Setup (Production Ready)
+
+> 🟢 Copy this entire task list into your Replit AI Agent chat.
+The Agent will handle configuration preparation and give you the exact commands to run on Vultr (80.240.29.142).
+
+
+
+
+---
+
+🧩 1. BACKUP & ENVIRONMENT CHECK
+
+# Backup existing API and service files
+cp /root/api_server.py /root/api_server_backup_$(date +%F).py
+cp /etc/systemd/system/verzek_api.service /root/verzek_api_service_backup_$(date +%F)
+
+Ensure the required environment variables exist:
+
+echo $SUBSCRIPTION_SECRET_KEY
+echo $ENCRYPTION_MASTER_KEY
+
+If they return blank, set them again:
+
+export SUBSCRIPTION_SECRET_KEY="verz3k_prod_!@#_2025"
+export ENCRYPTION_MASTER_KEY="M43XK9_F18dHGVNtq_Op6aUY4zXDnJUMNGaahMiTynM="
+
+✅ Purpose: Keeps your encryption keys consistent between sessions.
+
+
+---
+
+🔥 2. INSTALL FIREBASE SDK & CONFIG
+
+1. Install:
+
+pip install firebase-admin
+
+
+2. From your Firebase Console → Project Settings → Service Accounts,
+click Generate New Private Key and upload it to your Vultr server as:
+
+/root/firebase_key.json
+
+
+3. Add this to /root/api_server.py under your imports:
+
+import firebase_admin
+from firebase_admin import credentials, db
+
+if not firebase_admin._apps:
+    cred = credentials.Certificate("/root/firebase_key.json")
+    firebase_admin.initialize_app(cred, {
+        "databaseURL": "https://verzekautotrader-default-rtdb.firebaseio.com/"
+    })
+
+
+4. Test endpoint:
+
+@app.route("/notify_test", methods=["GET"])
+def notify_test():
+    ref = db.reference("/logs/test_push")
+    ref.push({"msg": "Firebase connected ✅"})
+    return jsonify({"status": "ok", "firebase": True})
+
+
+
+✅ Visit: https://api.verzekinnovative.com/notify_test
+If you see { "firebase": true }, your backend is now cloud-connected.
+
+
+---
+
+⚡ 3. RATE LIMITING (1000+ Users Ready)
+
+pip install Flask-Limiter
+
+Add this to api_server.py:
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(get_remote_address, app=app, default_limits=["120 per minute"])
+
+✅ Protects your API from overload even with 1000 concurrent app users.
+
+
+---
+
+🌐 4. NGINX + SSL CONFIGURATION
+
+Create /etc/nginx/sites-available/verzek_api.conf:
+
+server {
+    listen 80;
+    server_name api.verzekinnovative.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name api.verzekinnovative.com;
+
+    ssl_certificate /etc/letsencrypt/live/api.verzekinnovative.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.verzekinnovative.com/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+    }
+}
+
+Enable and test:
+
+ln -s /etc/nginx/sites-available/verzek_api.conf /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
+apt install certbot python3-certbot-nginx -y
+certbot --nginx -d api.verzekinnovative.com
+
+✅ Result:
+Your API now runs at https://api.verzekinnovative.com
+
+
+---
+
+🔁 5. AUTO-RESTART & MONITOR
+
+Add cron task:
+
+crontab -e
+
+Insert:
+
+*/5 * * * * systemctl is-active --quiet verzek_api.service || systemctl restart verzek_api.service
+
+✅ Restarts the API automatically if it stops.
+
+
+---
+
+🧾 6. LOG ROTATION
+
+apt install logrotate -y
+
+Create /etc/logrotate.d/verzek_auto_exec:
+
+/root/auto_exec.log {
+    weekly
+    rotate 8
+    compress
+    missingok
+    notifempty
+}
+
+✅ Keeps logs manageable and prevents full disk.
+
+
+---
+
+🛡️ 7. API SECURITY VALIDATION
+
+Ensure the API key header validation exists in /root/api_server.py:
+
+API_KEY = "Verzek2025AutoTrader"
+
+key = request.headers.get("X-API-KEY")
+if key != API_KEY:
+    return jsonify({"status": "error", "message": "Unauthorized"}), 401
+
+✅ Prevents external abuse — only the mobile app with the correct key can access endpoints.
+
+
+---
+
+📡 8. APP CONNECTION (SAFE FRONT-END LINK)
+
+Create /mobile_app/config.js:
+
+export const API_BASE_URL = "https://api.verzekinnovative.com";
+export const API_KEY = "Verzek2025AutoTrader";
+
+Usage example in your app:
+
+import { API_BASE_URL, API_KEY } from "./config";
+
+fetch(`${API_BASE_URL}/health`, {
+  headers: { "X-API-KEY": API_KEY },
+})
+  .then(res => res.json())
+  .then(data => console.log("✅ Backend Connected:", data))
+  .catch(err => console.log("❌ Backend Error:", err));
+
+✅ No passwords, no secrets — only the public base URL and static key.
+
+
+---
+
+🔄 9. FINAL RESTART & VALIDATION
+
+Once all updates are done, run:
+
+systemctl daemon-reexec
+systemctl restart verzek_api.service
+systemctl status verzek_api.service -n 10
+curl -X GET https://api.verzekinnovative.com/health -H "X-API-KEY: Verzek2025AutoTrader"
+
+✅ Expected response:
+
+{
+  "status": "ok",
+  "message": "Verzek Auto Trader backend active",
+  "version": "1.5"
+}
+
+
+---
+
+🔍 10. FINAL CHECKLIST
+
+Before you close:
+
+[ ] Visit https://api.verzekinnovative.com/health
+
+[ ] Visit https://api.verzekinnovative.com/notify_test
+
+[ ] Check Firebase → /logs/test_push → new entry added
+
+[ ] Confirm /root/auto_exec.log rotates weekly
+
+[ ] Cron auto-restart verified after reboot
+
+
+
+---
+
+✅ After this Task List Your backend is:
+
+HTTPS-secured
+
+Firebase-connected
+
+Scalable (1000+ users ready)
+
+Rate-limited + self-healing
+
+Compatible with your mobile app
+

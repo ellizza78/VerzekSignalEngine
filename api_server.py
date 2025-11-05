@@ -56,6 +56,13 @@ from modules.trading_journal import TradingJournal
 from telegram import Update, Bot
 import json as json_module
 
+# Firebase Admin SDK (optional - for real-time features)
+try:
+    from services.firebase_service import firebase_service
+    firebase_service.initialize()
+except Exception as e:
+    log_event("WARNING", f"Firebase initialization skipped: {e}")
+
 app = Flask(__name__)
 
 # Enable CORS for mobile app

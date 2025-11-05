@@ -16,5 +16,6 @@ fpdf2
 fpdf
 gunicorn
 gevent
-telethon
 flask-cors
+firebase-admin
+resend
