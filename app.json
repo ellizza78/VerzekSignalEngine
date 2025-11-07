@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "VerzekApp",
+    "slug": "workspace",
+    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "nativeVersion"
+    },
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "android": {
+      "package": "com.ellizza.workspace"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "extra": {
+      "eas": {
+        "projectId": "0696d810-c765-4f10-8441-772606aaed15"
+      }
+    }
+  }
+}
