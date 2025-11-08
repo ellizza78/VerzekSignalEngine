@@ -16,12 +16,17 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
-- **Production Deployment**: Backend successfully deployed to Vultr VPS with Nginx reverse proxy and Let's Encrypt SSL
-- **Health Endpoint**: Added `/api/health` endpoint for monitoring and load balancer health checks
-- **Port Configuration**: Backend runs on port 8000 (changed from 5000), proxied through Nginx on port 443
-- **Email Service**: Resend API fully integrated with support@verzekinnovative.com as verified sender
-- **Environment Setup**: All secrets stored in `/root/api_server_env.sh` with proper permissions (chmod 600)
-- **Security**: Fernet encryption key securely stored in environment variables (ENCRYPTION_MASTER_KEY)
+### Backend Refactor (COMPLETED - Nov 8, 2025)
+- **Complete Backend Rebuild**: Modular architecture with Flask blueprints (auth, users, signals, positions, payments)
+- **Database**: SQLAlchemy ORM with SQLite (Postgres-ready), proper relationships and indexing
+- **Paper Trading Engine**: Supports 50 concurrent positions per user with real-time price feed
+- **Auto-Trader Worker**: Daemon process for automatic trade execution with TP ladder and SL automation
+- **Telegram Broadcasting**: Full integration for VIP/Trial groups with signal/event notifications
+- **Daily Reports**: Automated 24h performance summaries with cron scheduling
+- **Security Hardening**: Required ENCRYPTION_KEY env var, secrets in /root/api_server_env.sh (chmod 600)
+- **Deployment Automation**: Complete systemd services and deployment script for Vultr VPS
+- **Port Configuration**: API runs on port 8050, proxied through Nginx on port 443
+- **Production Deployment**: Ready for deployment to Vultr VPS (80.240.29.142)
 
 ## System Architecture
 ### UI/UX Decisions

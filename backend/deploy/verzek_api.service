@@ -1,0 +1,16 @@
+[Unit]
+Description=Verzek AutoTrader API Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/api_server
+Environment="PATH=/usr/bin:/usr/local/bin"
+EnvironmentFile=/root/api_server_env.sh
+ExecStart=/usr/bin/gunicorn --bind 127.0.0.1:8050 --workers 4 --threads 2 --timeout 120 --access-logfile /var/log/verzek_api_access.log --error-logfile /var/log/verzek_api_error.log api_server:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
