@@ -1,0 +1,3226 @@
+
+🧩 PROJECT CONTEXT
+
+You are working on the Verzek Auto Trader System, which has:
+
+A Backend API (Python/Flask) hosted on Vultr VPS 80.240.29.142
+using domain: https://api.verzekinnovative.com
+
+A Frontend Mobile App (React Native / Expo) running on Replit, connecting to that API
+and built from the GitHub repo https://github.com/ellizza78/VerzekAutoTrader
+
+
+Both must stay perfectly synchronized with the same authentication, endpoints, and database structure.
+
+
+---
+
+🧱 BACKEND (Vultr API / Flask)
+
+Repo: https://github.com/ellizza78/VerzekBackend
+Folder structure on Replit: /root/api_server/
+
+
+---
+
+🧰 Step 1 — Configuration Files
+
+Create or update these three files exactly:
+
+.replit
+
+run = "python3 api_server/api_server.py"
+
+[env]
+FLASK_ENV = "production"
+JWT_SECRET = "VerzekAutoTraderKey2025"
+
+[unit]
+language = "python3"
+entrypoint = "api_server/api_server.py"
+
+[nix]
+channel = "stable-23_05"
+
+replit.nix
+
+{ pkgs }: {
+  deps = [
+    pkgs.python310Full
+    pkgs.python3Packages.pip
+    pkgs.python3Packages.setuptools
+    pkgs.python3Packages.wheel
+    pkgs.gcc
+    pkgs.postgresql
+    pkgs.libpq
+  ];
+}
+
+requirements.txt
+
+Flask==3.0.3
+Flask-JWT-Extended==4.6.0
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+fpdf2==2.7.9
+requests==2.32.3
+python-telegram-bot==21.6
+gunicorn==22.0.0
+
+
+---
+
+🧠 Step 2 — Environment Setup
+
+Run the following in Replit Shell:
+
+pip install -r requirements.txt
+
+Ensure no errors occur.
+Then verify api_server/api_server.py runs cleanly:
+
+python3 api_server/api_server.py
+
+Expected log:
+
+🚀 Starting Verzek Auto Trader API Server (v1.9.4)...
+ * Running on http://0.0.0.0:5000
+
+
+---
+
+📦 Step 3 — Imports and Structure Fix
+
+Ensure all import paths are absolute, not relative.
+Update anywhere needed:
+
+from db import engine, Base, SessionLocal
+from auth_routes import bp as auth_bp
+from models import User
+from utils_security import hash_password, verify_password
+
+If any appear as:
+
+from .db import engine, Base
+
+→ remove the leading dot.
+
+
+---
+
+🔐 Step 4 — Database & Auth Integration
+
+Ensure the following exists inside api_server/api_server.py before the “Flask App Runner” section:
+
+# ============================================================
+# Database + JWT Integration
+# ============================================================
+from flask_jwt_extended import JWTManager
+from db import engine, Base
+from auth_routes import bp as auth_bp
+
+with engine.begin() as conn:
+    Base.metadata.create_all(bind=conn)
+
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET", "VerzekAutoTraderKey2025")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 60 * 60
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 60 * 60 * 24 * 30
+
+jwt = JWTManager(app)
+app.register_blueprint(auth_bp)
+
+
+---
+
+🔎 Step 5 — Verify Endpoints
+
+After starting the API, test locally:
+
+curl http://127.0.0.1:5000/api/ping
+# Expect: {"status":"ok","message":"Verzek Auto Trader API running"}
+
+Then test registration:
+
+curl -X POST http://127.0.0.1:5000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test01","email":"test01@verzek.com","password":"secret123"}'
+
+Check for access_token in the response.
+
+
+---
+
+💾 Step 6 — Commit & Push to GitHub
+
+Once confirmed working:
+
+git add .
+git commit -m "Backend API verified with JWT, DB, and auth routes"
+git push origin main
+
+
+---
+
+📱 FRONTEND (React Native / Expo)
+
+Repo: https://github.com/ellizza78/VerzekAutoTrader
+Replit Path: /mobile_app/VerzekApp/
+
+
+---
+
+⚙️ Step 1 — API Config Validation
+
+Confirm this file exists:
+mobile_app/VerzekApp/config/config_production.js
+
+export const API_BASE_URL = 'https://api.verzekinnovative.com';
+
+export const API_ENDPOINTS = {
+  REGISTER: '/api/auth/register',
+  LOGIN: '/api/auth/login',
+  REFRESH: '/api/auth/refresh',
+  ME: '/api/auth/me',
+  USERS: '/api/users',
+  USER_GENERAL: (userId) => `/api/users/${userId}/general`,
+  USER_RISK: (userId) => `/api/users/${userId}/risk`,
+  USER_STRATEGY: (userId) => `/api/users/${userId}/strategy`,
+  USER_DCA: (userId) => `/api/users/${userId}/dca`,
+  USER_SUBSCRIPTION: (userId) => `/api/users/${userId}/subscription`,
+  USER_EXCHANGES: (userId) => `/api/users/${userId}/exchanges`,
+  POSITIONS: '/api/positions',
+  USER_POSITIONS: (userId) => `/api/positions/${userId}`,
+  SAFETY_STATUS: '/api/safety/status',
+};
+
+All API calls should include:
+
+headers: {
+  'X-API-KEY': 'Verzek2025AutoTrader'
+}
+
+
+---
+
+🧪 Step 2 — Verify Health Connection
+
+Run:
+
+curl https://api.verzekinnovative.com/api/ping
+
+Expected:
+
+{"status":"ok","message":"Verzek Auto Trader API running"}
+
+Then open your Expo app (in Expo Go or APK) and confirm: ✅ API Online
+✅ Login/Register works
+✅ Signal Feed loads
+✅ Settings persist to backend
+
+
+---
+
+📤 Step 3 — Push Updated Frontend
+
+After testing:
+
+git add .
+git commit -m "Frontend API integration verified with production backend"
+git push origin main
+
+
+---
+
+🧾 Step 4 — Final Verification Checklist
+
+✅ App connects to https://api.verzekinnovative.com
+✅ Register/Login produces JWT tokens
+✅ Signals page loads data from backend
+✅ No CORS or timeout errors
+✅ All configurations committed to GitHub
+
+
+---
+
+🧠 FINAL AGENT INSTRUCTION (copy-paste this)
+
+> Please synchronize the Verzek Auto Trader system by applying all backend and frontend steps above.
+
+1. Fix and verify backend configuration, run /api/ping, /api/auth/register, confirm SQLite or PostgreSQL auth works, then push to https://github.com/ellizza78/VerzekBackend.
+
+
+2. Verify frontend API connections to https://api.verzekinnovative.com, confirm login/register/signal feed, and push updates to https://github.com/ellizza78/VerzekAutoTrader.
+
+
+3. Ensure both projects run cleanly with no CORS or dependency issues.
+
+
+4. When done, summarize success and confirm readiness for APK build.
+
+
+
+
+
+
+---
+
+🚀 PHASE 2 — FULL VERZEK SYSTEM TEST & EXPANSION TASK LIST
+
+ after Phase 1 completes, continue setup and testing in order.
+ It will make Verzek system fully operational with live signals, user tiers, persistence, and real app-data flow.
+
+
+
+
+---
+
+🔹 1. Database Persistence and User State
+
+Goal: make authentication and user data fully persistent.
+
+Tasks
+
+1. In db.py, confirm:
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+DATABASE_URL = "sqlite:///database/verzek.db"  # or PostgreSQL later
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+2. Ensure Base.metadata.create_all(bind=engine) runs on startup.
+
+
+3. Verify tokens persist correctly; re-login after app restart should work.
+
+
+4. Create a database/ folder and confirm verzek.db is generated.
+
+
+
+
+---
+
+🔹 2. Signal Broadcast Verification
+
+Goal: confirm signals flow from API → Telegram Trial Group → App Feed.
+
+Tasks
+
+1. Test endpoint /api/signals:
+
+curl -X POST https://api.verzekinnovative.com/api/signals \
+-H "Authorization: Bearer <access_token>" \
+-H "Content-Type: application/json" \
+-d '{
+  "symbol": "BTCUSDT",
+  "side": "BUY",
+  "entry": 70000,
+  "tp": [70500,71000],
+  "sl": 69500,
+  "confidence": 95,
+  "trade_type": "FUTURES",
+  "duration": "SHORT"
+}'
+
+
+2. Check Telegram Trial Group receives the alert immediately.
+
+
+3. Confirm /api/signals response returns ✅ Signal broadcasted successfully.
+
+
+4. App feed should display the same signal.
+
+
+
+
+---
+
+🔹 3. Subscription Tier Handling
+
+Goal: enable feature separation for Trial vs VIP vs Premium users.
+
+Tasks
+
+1. Add subscription_type to User model:
+TRIAL, VIP, or PREMIUM.
+
+
+2. Update /api/auth/register to default subscription_type="TRIAL".
+
+
+3. Add /api/users/<id>/subscription endpoint to upgrade plans.
+
+
+4. Frontend:
+
+Show plan in Settings page.
+
+Disable Auto-Trader controls for Trial users.
+
+Enable for Premium only.
+
+
+
+
+
+---
+
+🔹 4. Auto-Trader Connection Validation
+
+Goal: confirm Premium users’ bots can receive trade data.
+
+Tasks
+
+1. Implement /api/trades/execute endpoint:
+
+Accept trade payloads from mobile app.
+
+Store in executed_trades table.
+
+
+
+2. Mobile app should POST trade confirmations.
+
+
+3. Log all executed trades with timestamp, symbol, and result.
+
+
+
+
+---
+
+🔹 5. Performance & Stability Checks
+
+Goal: ensure the system stays alive 24/7.
+
+Tasks
+
+1. Verify verzek_api.service runs under systemd.
+
+sudo systemctl status verzek_api.service
+
+
+2. Ensure ai_service-monitor.py reports uptime to VIP Telegram Group.
+
+
+3. Set Replit’s “Always On” feature for the mobile workspace.
+
+
+4. Confirm Nginx reverse-proxy SSL (api.verzekinnovative.com) still passes health check:
+
+curl -v https://api.verzekinnovative.com/api/ping
+
+
+
+
+---
+
+🔹 6. Unified Testing Flow
+
+1. Register a new Trial user via app.
+
+
+2. Login → receive JWT → confirm SQLite record created.
+
+
+3. Send a signal → Telegram Trial Group + App Feed receive it.
+
+
+4. Upgrade to VIP → receive signals without restrictions.
+
+
+5. Upgrade to Premium → enable Auto-Trader execution API.
+
+
+
+
+---
+
+🔹 7. GitHub and Deployment Sync
+
+After successful tests:
+
+git add .
+git commit -m "Phase 2 complete – persistent auth, signals, tiers active"
+git push origin main
+
+Confirm both repos show “Phase 2 complete” in GitHub.
+
+
+---
+
+🔹 8. Final Readiness Checklist
+
+✅ SQLite auth persistent
+✅ JWT login/refresh verified
+✅ Telegram Trial Group receives signals
+✅ App feed updates real-time
+✅ Subscription tiers fully functional
+✅ Premium trades execute through API
+✅ All services running and pushed to GitHub
+
+
+---
+
+🧠 FINAL INSTRUCTION TO REPLIT AI AGENT
+
+> Proceed with all Phase 2 tasks.
+Use the live backend (https://api.verzekinnovative.com) and synchronized frontend.
+Verify database persistence, Telegram signal delivery, subscription tiers, and auto-trader functionality.
+Summarize test results and confirm readiness for Phase 3: Public Deployment + Payment Gateway Integration.
+
+
+🚀 PHASE 3 — PUBLIC LAUNCH (WITH USDT PAYMENTS ONLY)
+
+
+---
+
+💰 1️⃣ USDT (TRC-20) Payment Activation System
+
+Goal:
+Allow users to upgrade from Trial → VIP → Premium by paying to your USDT wallet and submitting proof inside the App.
+
+
+---
+
+🔹 Backend (API) Tasks
+
+New Endpoints
+
+# /api/payments/usdt/initiate
+@app.route("/api/payments/usdt/initiate", methods=["POST"])
+def initiate_usdt_payment():
+    data = request.get_json()
+    email = data.get("email")
+    plan = data.get("plan")
+    tx_hash = data.get("tx_hash")
+    network = data.get("network", "TRC20")
+
+    # Example wallet verification (manual for now)
+    WALLET_ADDRESS = "TXf8Yg......(your USDT wallet address here)"
+
+    # Save pending payment
+    payment = PaymentRecord(
+        email=email,
+        plan=plan,
+        tx_hash=tx_hash,
+        status="PENDING",
+        network=network
+    )
+    db.session.add(payment)
+    db.session.commit()
+
+    return {"status": "ok", "message": "Payment submitted. Verification pending."}, 200
+
+# /api/payments/usdt/verify
+@app.route("/api/payments/usdt/verify", methods=["POST"])
+def verify_usdt_payment():
+    data = request.get_json()
+    tx_hash = data["tx_hash"]
+
+    payment = db.query(PaymentRecord).filter_by(tx_hash=tx_hash).first()
+    if payment:
+        payment.status = "CONFIRMED"
+        user = db.query(User).filter_by(email=payment.email).first()
+        user.subscription_type = payment.plan
+        user.subscription_expires = datetime.utcnow() + timedelta(days=30)
+        db.commit()
+        return {"status": "ok", "message": f"{payment.plan} activated."}, 200
+    return {"error": "Invalid transaction"}, 404
+
+
+---
+
+🔹 Database Model Update
+
+Create models/payment_record.py:
+
+from sqlalchemy import Column, Integer, String, DateTime
+from datetime import datetime
+from db import Base
+
+class PaymentRecord(Base):
+    __tablename__ = "payment_records"
+    id = Column(Integer, primary_key=True)
+    email = Column(String, nullable=False)
+    plan = Column(String, nullable=False)
+    tx_hash = Column(String, unique=True, nullable=False)
+    status = Column(String, default="PENDING")
+    network = Column(String, default="TRC20")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
+---
+
+🔹 Admin Verification Flow
+
+1. Admin checks transactions on TronScan for your wallet.
+
+
+2. If valid → run:
+
+curl -X POST https://api.verzekinnovative.com/api/payments/usdt/verify \
+-H "Content-Type: application/json" \
+-d '{"tx_hash":"<TX_HASH>"}'
+
+
+3. The API upgrades the user’s subscription instantly.
+
+
+4. User sees “✅ Payment Verified – Plan Activated” in the App.
+
+
+
+
+---
+
+📱 2️⃣ Frontend (App) Integration
+
+UI Screens to Add
+
+1. SubscriptionPlansScreen.js
+
+import { View, Text, TouchableOpacity } from 'react-native';
+
+export default function SubscriptionPlansScreen() {
+  const USDT_ADDRESS = "TXf8Yg...(your TRC20 address)";
+  return (
+    <View style={{ padding: 20 }}>
+      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Upgrade Your Plan</Text>
+      <Text>Send USDT (TRC20) to:</Text>
+      <Text selectable>{USDT_ADDRESS}</Text>
+
+      <Text style={{ marginTop: 10 }}>After sending, paste your TX HASH below:</Text>
+      {/* Simple input + submit button calling /api/payments/usdt/initiate */}
+    </View>
+  );
+}
+
+2. PaymentStatusScreen.js Shows “Pending Verification” → “✅ Verified”.
+
+
+---
+
+API Integration
+
+Create paymentService.js:
+
+import axios from 'axios';
+import { API_BASE_URL } from '../config/config_production';
+
+export const submitPayment = async (email, plan, tx_hash) =>
+  await axios.post(`${API_BASE_URL}/api/payments/usdt/initiate`, {
+    email, plan, tx_hash, network: "TRC20"
+  });
+
+
+---
+
+🔐 3️⃣ Subscription Enforcement
+
+Backend
+
+In @jwt_required() protected routes, check user plan before returning premium data.
+
+if user.subscription_type == "TRIAL":
+    return {"error": "Upgrade required"}, 403
+
+
+Frontend
+
+Disable premium features for Trial users.
+
+Show “Upgrade to VIP/Premium to access this feature.”
+
+
+
+---
+
+📢 4️⃣ Launch Announcement Flow
+
+When backend detects a new confirmed payment, automatically send a message via your Telegram VIP bot:
+
+🎉  New VIP Activated!  
+👤 User: <email>  
+💎 Plan: <plan>  
+⏳ Valid Till: <date>  
+✅ Welcome to Verzek VIP Trading Club!
+
+
+
+---
+
+🧾 5️⃣ Final Deployment Checklist
+
+✅ Backend endpoints /usdt/initiate + /usdt/verify working
+✅ SQLite or PostgreSQL records persist payments
+✅ Telegram bot notifies admin + VIP group
+✅ App payment screen collects TX Hash
+✅ Upgrade flow visible and verified
+✅ Everything pushed to GitHub
+
+
+---
+
+🧠 FINAL INSTRUCTION TO REPLIT AI AGENT
+
+> Proceed with Phase 3 (USDT Integration Version).
+Implement manual USDT (TRC-20) payment activation endpoints and frontend submission screens.
+Link transaction verification to subscription upgrade and enable Telegram VIP notifications after confirmation.
+Do not include Play Store or Paystack integration yet — leave hooks for future Phase 3B.
+When done, summarize Phase 3 success and prepare Phase 4 (Admin Dashboard + Enterprise Partner Analytics).
+
+
+🧠 PHASE 4 — ENTERPRISE DASHBOARD & ANALYTICS SYSTEM
+
+
+---
+
+🌐 1️⃣ Admin Dashboard API Layer
+
+Goal: Give Verzek management full visibility — signals, users, profits, payments.
+
+
+---
+
+🔹 Backend: Create Admin Blueprint
+
+admin_routes.py
+
+from flask import Blueprint, jsonify
+from db import SessionLocal
+from models import User, PaymentRecord, SignalRecord
+from datetime import datetime, timedelta
+
+bp = Blueprint("admin", __name__)
+
+@bp.route("/api/admin/overview", methods=["GET"])
+def overview():
+    db = SessionLocal()
+    total_users = db.query(User).count()
+    vip_users = db.query(User).filter_by(subscription_type="VIP").count()
+    premium_users = db.query(User).filter_by(subscription_type="PREMIUM").count()
+    total_payments = db.query(PaymentRecord).count()
+    confirmed = db.query(PaymentRecord).filter_by(status="CONFIRMED").count()
+    signals_sent = db.query(SignalRecord).count()
+    db.close()
+
+    return jsonify({
+        "total_users": total_users,
+        "vip_users": vip_users,
+        "premium_users": premium_users,
+        "total_payments": total_payments,
+        "confirmed_payments": confirmed,
+        "signals_sent": signals_sent
+    })
+
+✅ Endpoints:
+
+/api/admin/overview → General stats
+
+/api/admin/users → Paginated user list
+
+/api/admin/payments → Payment logs
+
+/api/admin/signals → Signal analytics
+
+
+✅ Access Control:
+Use @jwt_required() + check admin flag:
+
+if current_user.role != "ADMIN":
+    return {"error": "Unauthorized"}, 403
+
+
+---
+
+📊 2️⃣ Signal Performance Analytics
+
+Goal: Track accuracy, profit rates, and average ROI for transparency.
+
+
+---
+
+🔹 Extend SignalRecord Model
+
+class SignalRecord(Base):
+    __tablename__ = "signal_records"
+    id = Column(Integer, primary_key=True)
+    symbol = Column(String)
+    side = Column(String)
+    entry = Column(Float)
+    tp1 = Column(Float)
+    tp2 = Column(Float)
+    sl = Column(Float)
+    outcome = Column(String, default="OPEN")  # HIT_TP, HIT_SL, CANCELLED
+    profit_pct = Column(Float, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+🔹 Add endpoint to calculate stats
+
+@bp.route("/api/admin/signal-stats", methods=["GET"])
+def signal_stats():
+    db = SessionLocal()
+    total = db.query(SignalRecord).count()
+    wins = db.query(SignalRecord).filter(SignalRecord.outcome=="HIT_TP").count()
+    losses = db.query(SignalRecord).filter(SignalRecord.outcome=="HIT_SL").count()
+    avg_profit = db.query(func.avg(SignalRecord.profit_pct)).scalar()
+    db.close()
+
+    return jsonify({
+        "total_signals": total,
+        "wins": wins,
+        "losses": losses,
+        "win_rate": round((wins/total)*100,2) if total else 0,
+        "average_profit": round(avg_profit,2) if avg_profit else 0
+    })
+
+
+---
+
+📈 3️⃣ Partner & Affiliate Management
+
+Goal: Track referrals, profit sharing, and MOU partner statistics.
+
+
+---
+
+🔹 Partner Model
+
+class Partner(Base):
+    __tablename__ = "partners"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    telegram_handle = Column(String)
+    email = Column(String)
+    referral_code = Column(String, unique=True)
+    total_referrals = Column(Integer, default=0)
+    earnings = Column(Float, default=0)
+
+🔹 Referral Link Logic
+
+Each partner gets a referral_code.
+
+Users registering with ?ref=<code> are linked to that partner.
+
+Backend adds $10 credit per active VIP referral.
+
+
+
+---
+
+💻 4️⃣ Frontend Admin Interface
+
+Goal: Build an internal dashboard accessible via browser (or integrated into app for admin accounts).
+
+
+---
+
+🔹 New Folder
+
+mobile_app/VerzekApp/src/admin/
+
+DashboardScreen.js
+
+SignalStatsScreen.js
+
+PartnerScreen.js
+
+
+🔹 DashboardScreen.js (example)
+
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { API_BASE_URL } from '../config/config_production';
+import axios from 'axios';
+
+export default function DashboardScreen() {
+  const [stats, setStats] = useState({});
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/admin/overview`)
+      .then(res => setStats(res.data))
+      .catch(err => console.log(err));
+  }, []);
+
+  return (
+    <ScrollView style={{ padding: 20 }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold' }}>Verzek Admin Dashboard</Text>
+      <Text>Total Users: {stats.total_users}</Text>
+      <Text>VIP Users: {stats.vip_users}</Text>
+      <Text>Premium Users: {stats.premium_users}</Text>
+      <Text>Signals Sent: {stats.signals_sent}</Text>
+      <Text>Confirmed Payments: {stats.confirmed_payments}</Text>
+    </ScrollView>
+  );
+}
+
+
+---
+
+📢 5️⃣ Telegram Admin Alerts
+
+Goal: Auto-notify when key system events occur.
+
+New VIP subscription ✅
+
+Partner referral completed 💼
+
+Signal win or stop-loss hit 📊
+
+
+Example Alert
+
+⚙️ [ADMIN ALERT]
+New VIP Activated
+User: test@vzk.com
+Plan: PREMIUM
+Ref: PARTNER001
+Profit Share Updated ✅
+
+
+---
+
+🧾 6️⃣ Phase 4 Test Checklist
+
+✅ /api/admin/* endpoints active and protected
+✅ Signal analytics return valid win-rate data
+✅ Partner records track referrals
+✅ Telegram admin alerts working
+✅ Admin dashboard UI loads stats in-app
+✅ All updates pushed to GitHub
+
+
+---
+
+🧠 FINAL INSTRUCTION TO REPLIT AI AGENT
+
+> Proceed with Phase 4 deployment.
+Create backend admin analytics endpoints, SignalRecord and Partner models, and Telegram admin alerts.
+Add admin-only dashboard screens to the mobile app for real-time monitoring of signals, users, and payments.
+Verify all endpoints sync with the live backend (https://api.verzekinnovative.com) and push final backend/frontend updates to GitHub.
+Summarize successful completion and prepare for Phase 5: Auto-Trading Execution Engine + Portfolio Tracker.
+
+
+
+
+🔧 PHASE 5 — AUTO-TRADING EXECUTION & PORTFOLIO TRACKER
+
+Mode: Start with Paper/Simulation (no exchange keys required).
+Optional: Pluggable Exchange Connectors (via CCXT) gated by ENABLE_LIVE_TRADING=false for now.
+Non-breaking: Keep existing auth (JWT with sub as string "1"), DB (SQLite now), /api/signals format, and Telegram broadcast utility.
+
+
+---
+
+✅ 0) REPO SETUP (Back & Front)
+
+Backend repo: ellizza78/VerzekBackend
+Mobile repo: ellizza78/VerzekAutoTrader
+
+Pull the latest from Vultr backend if needed (mirror current /root/api_server to VerzekBackend).
+
+Keep JWT_SECRET=VerzekAutoTraderKey2025 (already live).
+
+Preserve /api/signals broadcast to Telegram TRIAL group & App (already working).
+
+
+
+---
+
+🖥️ BACKEND – IMPLEMENTATION TASKS
+
+1) Create trading/ package (paper engine + adapters)
+
+Create files:
+
+/root/api_server/trading/__init__.py
+/root/api_server/trading/models.py
+/root/api_server/trading/engine.py
+/root/api_server/trading/adapters.py        # CCXT placeholder (disabled by default)
+/root/api_server/trading/rules.py           # risk/circuit breaker rules
+/root/api_server/trading/schemas.py         # pydantic-like validation (or simple dict checks)
+
+models.py (SQLAlchemy – use existing db.SessionLocal, db.Base)
+
+TradeAccount (id, user_id, exchange, api_key_enc, api_secret_enc, passphrase_enc, is_active, created_at)
+
+OpenPosition (id, user_id, symbol, side, entry_price, qty, leverage, tp_json, sl_price, status[OPEN/CLOSED], pnl_pct, opened_at, closed_at, trade_id)
+
+OrderLog (id, user_id, symbol, side, price, qty, type[MARKET/LIMIT], status, exch_order_id, meta_json, created_at)
+
+TradeRule (id, user_id, max_concurrent, max_risk_per_trade_pct, max_daily_loss_pct, circuit_breaker_active, last_reset)
+
+PnLAggregate (id, user_id, day, trades, wins, losses, gross_pct, net_pct, max_dd_pct)
+
+
+engine.py (Paper Engine first)
+
+open_position_from_signal(signal, user) → validate via rules.py, simulate market fill (entry_price, qty calculated from user risk & leverage), insert OpenPosition & OrderLog, return summary.
+
+close_position(position_id, reason) → mark CLOSED, compute pnl%, log.
+
+apply_signal_to_users(signal) → iterate over Premium users with auto_trade_enabled=1 and open positions in paper mode.
+
+recalc_daily_pnl(user_id) → roll up to PnLAggregate.
+
+
+adapters.py (CCXT placeholder)
+
+Implement place_order_ccxt() and close_order_ccxt() but guard behind ENABLE_LIVE_TRADING=false.
+
+Log "LIVE_TRADING_DISABLED" if false.
+
+
+rules.py
+
+can_open_new_position(user_id, symbol) → enforce max_concurrent, per-symbol singleton, daily loss breaker.
+
+calc_position_size(balance_usdt, risk_pct, entry, sl) → returns qty & notional.
+
+validate_signal(payload) → ensure fields: symbol, side, entry, tp[], sl, trade_type, duration.
+
+
+schemas.py
+
+Lightweight validation (dict checks) – no external dependency required.
+
+
+
+---
+
+2) New Blueprint: /api/trade/*
+
+Create: /root/api_server/trading_routes.py
+
+POST /api/trade/preview
+
+Auth: Bearer required
+
+Body: { symbol, side, entry, sl, tp:[], leverage, mode: "PAPER"|"LIVE" }
+
+Response: position size, est. risk, est. pnl to TP1/TP2, rule decisions
+
+
+POST /api/trade/execute
+
+Auth + check auto_trade_enabled
+
+Body: same as preview + confirm flag
+
+Uses engine.open_position_from_signal (PAPER if ENABLE_LIVE_TRADING=false)
+
+Returns {position_id, order_id, status, message}
+
+
+POST /api/trade/close
+
+Body: { position_id, reason } → close & compute pnl
+
+
+GET /api/positions
+
+List open positions for current user
+
+
+GET /api/positions/history?days=30
+
+Summarized PnLAggregate and closed trades
+
+
+
+Integrate into app:
+In /root/api_server/api_server.py, near other blueprints, add:
+
+from trading_routes import bp as trade_bp
+app.register_blueprint(trade_bp)
+
+
+---
+
+3) Wire /api/signals → auto-trade (PAPER) + broadcast (already)
+
+Modify existing POST /api/signals handler:
+
+After validation & DB insert → call trading.engine.apply_signal_to_users(signal)
+
+Keep broadcast_signal() call to Telegram TRIAL group & App as you already have.
+
+
+Performance: This is light (PAPER). For heavy load later, move to background worker (Phase 6).
+
+
+---
+
+4) Update DB init & migrations
+
+Ensure db.Base.metadata.create_all(bind=engine) covers new models.
+
+Add safe migration step in api_server.py startup (already using 1.9.x pattern).
+
+
+
+---
+
+5) Env & secrets (no live trading yet)
+
+Add to /etc/environment (already used by systemd):
+
+ENABLE_LIVE_TRADING="false"
+TELEGRAM_BOT_TOKEN="8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE"
+TELEGRAM_VIP_CHAT_ID="-1002721581400"
+JWT_SECRET="VerzekAutoTraderKey2025"
+
+Then:
+
+sudo systemctl daemon-reload
+sudo systemctl restart verzek-api.service
+
+
+---
+
+6) cURL tests (copy & run on Vultr)
+
+Login → get token
+
+ACCESS=$(curl -s -X POST https://api.verzekinnovative.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@vzk.com","password":"1234"}' | jq -r .access_token)
+echo $ACCESS
+
+Preview trade (PAPER):
+
+curl -s -X POST https://api.verzekinnovative.com/api/trade/preview \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbol":"BTCUSDT","side":"BUY","entry":70000,
+    "sl":69500,"tp":[70500,71000],
+    "leverage":10,"mode":"PAPER"
+  }' | jq
+
+Execute trade (PAPER):
+
+curl -s -X POST https://api.verzekinnovative.com/api/trade/execute \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbol":"BTCUSDT","side":"BUY","entry":70000,
+    "sl":69500,"tp":[70500,71000],
+    "leverage":10,"mode":"PAPER","confirm":true
+  }' | jq
+
+List open positions:
+
+curl -s -H "Authorization: Bearer $ACCESS" \
+  https://api.verzekinnovative.com/api/positions | jq
+
+Close position:
+
+curl -s -X POST https://api.verzekinnovative.com/api/trade/close \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{"position_id":1,"reason":"TP1_HIT"}' | jq
+
+
+---
+
+📱 MOBILE APP – IMPLEMENTATION TASKS
+
+7) New screens & services
+
+Create:
+
+mobile_app/VerzekApp/src/screens/AutoTradeScreen.js
+mobile_app/VerzekApp/src/screens/PositionsScreen.js
+mobile_app/VerzekApp/src/services/trade.js
+
+services/trade.js:
+
+import api from './api';
+export const previewTrade = (payload) => api.post('/api/trade/preview', payload);
+export const executeTrade = (payload) => api.post('/api/trade/execute', payload);
+export const closeTrade = (position_id, reason) => api.post('/api/trade/close', { position_id, reason });
+export const listPositions = () => api.get('/api/positions');
+export const listHistory = (days=30) => api.get(`/api/positions/history?days=${days}`);
+
+AutoTradeScreen.js:
+
+Form: symbol, side, entry, sl, tp1/tp2, leverage, mode(PAPER only).
+
+Buttons: Preview → shows risk & TP projections; Execute → calls /execute.
+
+
+PositionsScreen.js:
+
+Tabs: Open, History.
+
+Show PnL%, TP/SL, close button → calls /trade/close.
+
+
+Route wiring: add screens to navigator & menu.
+
+
+---
+
+8) Feature flags in app
+
+Hide “Link Exchange” pages (Phase 7).
+
+Enable Auto-Trade (PAPER) for users where auto_trade_enabled=1.
+
+If user is not VIP/PREMIUM, disable execute button & show “Upgrade to Premium”.
+
+
+
+---
+
+🔔 TELEGRAM NOTIFICATIONS (already have bot)
+
+In backend engine.py, after open/close:
+
+Send VIP group alert using send_to_telegram() you already integrated.
+
+Open: “🚀 PAPER TRADE OPENED …”
+
+Close: “✅ PAPER TRADE CLOSED … PnL: +1.2%”.
+
+
+
+
+---
+
+🔒 SECURITY / COMPAT
+
+Keep sub as string in JWT (you already fixed).
+
+All new endpoints use the same Bearer auth check you added for /api/auth/me.
+
+Do not require X-API-KEY for trade endpoints (only JWT).
+
+
+
+---
+
+🧪 E2E CHECKLIST
+
+/api/trade/preview returns size & risk.
+
+/api/trade/execute creates OpenPosition (PAPER).
+
+/api/positions shows it; /api/trade/close closes it with PnL.
+
+Telegram VIP receives open/close messages.
+
+App screens can preview/execute/close in PAPER mode.
+
+No live exchange calls unless ENABLE_LIVE_TRADING=true (we’ll keep it false).
+
+
+
+---
+
+📦 FINAL STEP
+
+Push all backend changes to ellizza78/VerzekBackend and deploy to Vultr (sudo systemctl restart verzek-api.service).
+
+Push mobile changes to ellizza78/VerzekAutoTrader, then rebuild the APK (EAS) and test Auto-Trade + Positions.
+
+
+⚙️ PHASE 6 — BACKGROUND WORKER + WEBHOOK + AUTOMATION SYSTEM
+
+Goal:
+Enable 24/7 hands-free auto-trading, automatic take-profit/stop-loss execution, daily PnL aggregation, Telegram notifications, and webhook triggers — all synced with your live backend (https://api.verzekinnovative.com).
+
+
+---
+
+🧱 PROJECT STRUCTURE
+
+/root/api_server/
+├── api_server.py
+├── trading/
+│   ├── engine.py
+│   ├── models.py
+│   ├── rules.py
+│   ├── adapters.py
+│   ├── schemas.py
+├── background_worker.py          ✅  NEW
+├── utils/
+│   ├── telegram.py
+│   ├── logger.py
+│   ├── notifier.py               ✅  NEW
+├── ai_service-monitor.py
+└── systemd unit: verzek_worker.service ✅  NEW
+
+
+---
+
+🔧 TASK 1 — CREATE background_worker.py
+
+> Handles continuous monitoring of open positions, TP/SL checks, and daily summaries.
+
+
+
+#!/usr/bin/env python3
+import time, json, requests, traceback
+from datetime import datetime, timedelta
+from db import SessionLocal
+from trading.models import OpenPosition, PnLAggregate
+from utils.notifier import send_telegram
+from utils.logger import get_logger
+
+logger = get_logger("VerzekWorker")
+CHECK_INTERVAL = 15  # seconds
+DAILY_RESET_HOUR = 0  # UTC midnight
+
+def get_price(symbol):
+    try:
+        url = f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}"
+        r = requests.get(url, timeout=5).json()
+        return float(r["price"])
+    except Exception as e:
+        logger.warning(f"Price fetch failed for {symbol}: {e}")
+        return None
+
+def check_positions():
+    db = SessionLocal()
+    open_positions = db.query(OpenPosition).filter(OpenPosition.status == "OPEN").all()
+    for pos in open_positions:
+        price = get_price(pos.symbol)
+        if not price:
+            continue
+        try:
+            if price >= pos.tp1:
+                pos.status = "CLOSED"
+                pos.pnl_pct = round((pos.tp1 - pos.entry_price) / pos.entry_price * 100, 2)
+                pos.closed_at = datetime.utcnow()
+                db.commit()
+                msg = (f"✅ TRADE CLOSED (TP HIT)\n"
+                       f"Symbol: {pos.symbol}\nSide: {pos.side}\n"
+                       f"PnL: +{pos.pnl_pct}%\nClosed @ {price}")
+                send_telegram(msg)
+                logger.info(msg)
+            elif price <= pos.sl_price:
+                pos.status = "CLOSED"
+                pos.pnl_pct = round((pos.sl_price - pos.entry_price) / pos.entry_price * 100, 2)
+                pos.closed_at = datetime.utcnow()
+                db.commit()
+                msg = (f"❌ STOP LOSS HIT\n"
+                       f"Symbol: {pos.symbol}\nPnL: {pos.pnl_pct}%\nClosed @ {price}")
+                send_telegram(msg)
+                logger.info(msg)
+        except Exception as e:
+            logger.error(f"Error checking {pos.symbol}: {e}")
+    db.close()
+
+def daily_summary():
+    db = SessionLocal()
+    today = datetime.utcnow().date()
+    closed_today = db.query(OpenPosition).filter(OpenPosition.closed_at >= today).all()
+    wins = [p for p in closed_today if p.pnl_pct > 0]
+    losses = [p for p in closed_today if p.pnl_pct <= 0]
+    total = len(closed_today)
+    win_rate = round(len(wins) / total * 100, 2) if total else 0
+    avg_pnl = round(sum(p.pnl_pct for p in closed_today) / total, 2) if total else 0
+    db.add(PnLAggregate(day=today, trades=total, wins=len(wins),
+                        losses=len(losses), gross_pct=avg_pnl, net_pct=avg_pnl))
+    db.commit()
+    db.close()
+    msg = (f"📅 DAILY REPORT\n"
+           f"Trades: {total}\nWins: {len(wins)} | Losses: {len(losses)}\n"
+           f"Win Rate: {win_rate}%\nAvg Profit: {avg_pnl}%")
+    send_telegram(msg)
+    logger.info(msg)
+
+def main():
+    logger.info("🧠 Verzek Background Worker started.")
+    last_summary_date = None
+    while True:
+        try:
+            check_positions()
+            now = datetime.utcnow()
+            if now.hour == DAILY_RESET_HOUR and (not last_summary_date or last_summary_date != now.date()):
+                daily_summary()
+                last_summary_date = now.date()
+        except Exception:
+            logger.error(traceback.format_exc())
+        time.sleep(CHECK_INTERVAL)
+
+if __name__ == "__main__":
+    main()
+
+
+---
+
+🔔 TASK 2 — CREATE utils/notifier.py
+
+> Central notification utility (Telegram, logs, etc.)
+
+
+
+import os, requests
+from utils.logger import get_logger
+
+logger = get_logger("Notifier")
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_VIP_CHAT_ID")
+
+def send_telegram(message):
+    if not BOT_TOKEN or not CHAT_ID:
+        logger.warning("Telegram credentials missing.")
+        return
+    try:
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+        payload = {"chat_id": CHAT_ID, "text": message}
+        requests.post(url, json=payload, timeout=5)
+    except Exception as e:
+        logger.warning(f"Telegram send failed: {e}")
+
+
+---
+
+🧩 TASK 3 — CREATE SYSTEMD SERVICE
+
+sudo nano /etc/systemd/system/verzek_worker.service
+
+Paste:
+
+[Unit]
+Description=Verzek Background Trade Worker
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/api_server
+ExecStart=/usr/bin/python3 background_worker.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+Then enable and start:
+
+sudo systemctl daemon-reload
+sudo systemctl enable verzek_worker.service
+sudo systemctl start verzek_worker.service
+sudo systemctl status verzek_worker.service -l
+
+
+---
+
+🌍 TASK 4 — ADD WEBHOOK ENDPOINT (/api/webhook/signal)
+
+> Allows external providers (TradingView, Cornix, etc.) to trigger signals.
+
+
+
+In api_server.py (or new webhook_routes.py):
+
+@app.route("/api/webhook/signal", methods=["POST"])
+def webhook_signal():
+    data = request.get_json(force=True)
+    # validate minimal fields
+    if "symbol" not in data or "side" not in data:
+        return jsonify({"error":"invalid payload"}),400
+    from trading.engine import apply_signal_to_users
+    apply_signal_to_users(data)
+    return jsonify({"status":"ok","message":"Signal received"}),200
+
+
+---
+
+⚙️ TASK 5 — SET ENVIRONMENT VARIABLES
+
+sudo nano /etc/environment
+
+Ensure these lines exist:
+
+TELEGRAM_BOT_TOKEN="8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE"
+TELEGRAM_VIP_CHAT_ID="-1002721581400"
+ENABLE_LIVE_TRADING="false"
+JWT_SECRET="VerzekAutoTraderKey2025"
+
+Then:
+
+source /etc/environment
+sudo systemctl restart verzek-api.service
+sudo systemctl restart verzek_worker.service
+
+
+---
+
+🧪 TASK 6 — TEST WORKER OPERATION
+
+Manual trigger test:
+
+sudo journalctl -u verzek_worker.service -f
+
+Then manually insert a mock open position in DB or via /api/trade/execute and wait for TP/SL check → should log and send a Telegram message.
+
+Test webhook:
+
+curl -X POST https://api.verzekinnovative.com/api/webhook/signal \
+ -H "Content-Type: application/json" \
+ -d '{"symbol":"BTCUSDT","side":"BUY","entry":70000,"tp":[70500],"sl":69500,"trade_type":"FUTURES","duration":"SHORT"}'
+
+→ Worker executes paper trade + sends Telegram confirmation.
+
+
+---
+
+🧭 TASK 7 — DAILY PnL & SUMMARY VALIDATION
+
+After midnight UTC, check Telegram VIP group:
+
+📅 DAILY REPORT
+Trades: 5
+Wins: 4 | Losses: 1
+Win Rate: 80%
+Avg Profit: +1.7%
+
+
+---
+
+🧱 TASK 8 — GITHUB & DEPLOYMENT
+
+Push updated backend code:
+
+cd /root/api_server
+git add .
+git commit -m "Phase 6 - Background Worker + Webhook Automation"
+git push origin main
+
+Confirm on GitHub (ellizza78/VerzekBackend).
+
+
+---
+
+✅ OUTCOME AFTER PHASE 6
+
+Feature	Status
+
+Auto TP/SL management	✅ Done
+Telegram trade alerts	✅ Done
+Daily PnL summary	✅ Done
+Webhook endpoint	✅ Done
+Persistent restart-safe worker	✅ Done
+Scalability for Enterprise use	✅ Done
+
+
+1) Environment variables (add/ensure)
+
+Generate a strong encryption key once:
+
+python3 - <<'PY'
+from cryptography.fernet import Fernet
+print(Fernet.generate_key().decode())
+PY
+
+Copy the printed key. Now persist env vars:
+
+sudo bash -lc 'cat >/etc/verzek-env.conf <<EOF
+# ===== Verzek backend secure env =====
+JWT_SECRET=VerzekAutoTraderKey2025
+EXCHANGE_ENCRYPTION_KEY=PASTE_YOUR_FERNET_KEY_HERE
+BINANCE_FUTURES_API_BASE=https://fapi.binance.com
+AUTO_EXECUTE_LIVE=false        # set true ONLY when ready
+LIVE_TRADING_DEFAULT=false     # per-user default mode
+EOF'
+
+# Load now and on boot
+grep -q verzek-env.conf /etc/environment || echo 'source /etc/verzek-env.conf' | sudo tee -a /etc/environment
+set -a && . /etc/verzek-env.conf && set +a
+env | egrep 'JWT_SECRET|EXCHANGE_ENCRYPTION_KEY|BINANCE_FUTURES'
+
+
+---
+
+2) DB models: add ExchangeAccount & Position
+
+Append to your existing /root/api_server/db.py (end of file). If you prefer a clean drop-in, replace the whole file with this:
+
+sudo tee /root/api_server/db.py > /dev/null <<'PY'
+from datetime import datetime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, Text, ForeignKey
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship
+import os
+
+DB_PATH = os.path.join(os.path.dirname(__file__), "verzek_users.db")
+DATABASE_URL = f"sqlite:///{DB_PATH}"
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    future=True,
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+# --- Existing models (example, keep yours if already defined) ---
+class User(Base):
+    __tablename__ = "users"
+    id          = Column(Integer, primary_key=True, index=True)
+    email       = Column(String, unique=True, index=True, nullable=False)
+    password    = Column(String, nullable=False)  # already hashed/salted in your v1.9.x
+    created_at  = Column(DateTime, default=datetime.utcnow)
+    is_active   = Column(Boolean, default=True)
+    plan        = Column(String, default="trial")  # trial|vip|premium|elite
+    auto_trade_enabled = Column(Boolean, default=False)
+
+    exchange_accounts = relationship("ExchangeAccount", back_populates="user")
+    positions         = relationship("Position", back_populates="user")
+
+class Signal(Base):
+    __tablename__ = "signals"
+    id          = Column(Integer, primary_key=True)
+    symbol      = Column(String, nullable=False)
+    side        = Column(String, nullable=False)   # BUY|SELL or LONG|SHORT
+    entry       = Column(Float, nullable=True)
+    sl          = Column(Float, nullable=True)
+    tp1         = Column(Float, nullable=True)
+    tp2         = Column(Float, nullable=True)
+    tp3         = Column(Float, nullable=True)
+    confidence  = Column(Integer, default=0)
+    trade_type  = Column(String, default="FUTURES")  # SPOT|FUTURES
+    duration    = Column(String, default="SHORT")    # SHORT|LONG
+    status      = Column(String, default="NEW")      # NEW|EXECUTED|CLOSED
+    created_at  = Column(DateTime, default=datetime.utcnow)
+
+# --- New: store encrypted API keys for live trading ---
+class ExchangeAccount(Base):
+    __tablename__ = "exchange_accounts"
+    id          = Column(Integer, primary_key=True)
+    user_id     = Column(Integer, ForeignKey("users.id"), nullable=False)
+    exchange    = Column(String, nullable=False)      # "binance"
+    api_key_enc = Column(Text, nullable=False)        # Fernet encrypted
+    api_secret_enc = Column(Text, nullable=False)     # Fernet encrypted
+    passphrase_enc = Column(Text, nullable=True)      # reserved (e.g. for other exchanges)
+    is_paper    = Column(Boolean, default=True)       # paper/demo mode? (not used by Binance Futures but kept)
+    leverage    = Column(Integer, default=10)
+    created_at  = Column(DateTime, default=datetime.utcnow)
+
+    user        = relationship("User", back_populates="exchange_accounts")
+
+# --- New: positions, record both demo and live ---
+class Position(Base):
+    __tablename__ = "positions"
+    id            = Column(Integer, primary_key=True)
+    user_id       = Column(Integer, ForeignKey("users.id"), nullable=False)
+    symbol        = Column(String, nullable=False)
+    side          = Column(String, nullable=False)        # LONG|SHORT
+    qty           = Column(Float, nullable=False)
+    entry_price   = Column(Float, nullable=True)
+    sl            = Column(Float, nullable=True)
+    tp1           = Column(Float, nullable=True)
+    tp2           = Column(Float, nullable=True)
+    tp3           = Column(Float, nullable=True)
+    status        = Column(String, default="OPEN")        # OPEN|CLOSED|CANCELED
+    is_live       = Column(Boolean, default=False)
+    exchange      = Column(String, default="binance")
+    exchange_order_id = Column(String, nullable=True)
+    created_at    = Column(DateTime, default=datetime.utcnow)
+    updated_at    = Column(DateTime, default=datetime.utcnow)
+
+    user          = relationship("User", back_populates="positions")
+PY
+
+Initialize/upgrade tables:
+
+python3 - <<'PY'
+from db import Base, engine
+Base.metadata.create_all(bind=engine)
+print("✅ DB migrated/ensured")
+PY
+
+
+---
+
+3) Crypto helper (Fernet wrap)
+
+sudo tee /root/api_server/utils/crypto_utils.py > /dev/null <<'PY'
+import os
+from cryptography.fernet import Fernet
+
+_fkey = os.getenv("EXCHANGE_ENCRYPTION_KEY")
+if not _fkey:
+    raise RuntimeError("EXCHANGE_ENCRYPTION_KEY missing")
+_f = Fernet(_fkey.encode() if isinstance(_fkey, str) else _fkey)
+
+def enc(s: str) -> str:
+    return _f.encrypt(s.encode()).decode()
+
+def dec(s: str) -> str:
+    return _f.decrypt(s.encode()).decode()
+PY
+
+
+---
+
+4) Binance Futures adapter (HTTP signing)
+
+sudo tee /root/api_server/exchange_adapter.py > /dev/null <<'PY'
+import os, time, hmac, hashlib
+import httpx
+
+BINANCE_BASE = os.getenv("BINANCE_FUTURES_API_BASE", "https://fapi.binance.com")
+
+class BinanceFuturesAdapter:
+    def __init__(self, api_key: str, api_secret: str):
+        self.api_key = api_key
+        self.api_secret = api_secret.encode()
+
+    def _sign(self, params: dict) -> str:
+        qs = "&".join([f"{k}={params[k]}" for k in sorted(params)])
+        return hmac.new(self.api_secret, qs.encode(), hashlib.sha256).hexdigest()
+
+    def _headers(self):
+        return {"X-MBX-APIKEY": self.api_key}
+
+    async def _post(self, path: str, params: dict):
+        params = {**params, "timestamp": int(time.time()*1000)}
+        sig = self._sign(params)
+        params["signature"] = sig
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.post(f"{BINANCE_BASE}{path}", params=params, headers=self._headers())
+            r.raise_for_status()
+            return r.json()
+
+    async def _get(self, path: str, params: dict):
+        params = {**params, "timestamp": int(time.time()*1000)}
+        sig = self._sign(params)
+        params["signature"] = sig
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(f"{BINANCE_BASE}{path}", params=params, headers=self._headers())
+            r.raise_for_status()
+            return r.json()
+
+    async def account_balance(self):
+        # Futures endpoint: /fapi/v2/balance
+        return await self._get("/fapi/v2/balance", {})
+
+    async def set_leverage(self, symbol: str, leverage: int):
+        return await self._post("/fapi/v1/leverage", {"symbol": symbol, "leverage": leverage})
+
+    async def place_market_order(self, symbol: str, side: str, quantity: float, leverage: int = None):
+        if leverage:
+            try:
+                await self.set_leverage(symbol, leverage)
+            except Exception:
+                pass
+        params = {
+            "symbol": symbol,
+            "side": "BUY" if side.upper() in ("LONG","BUY") else "SELL",
+            "type": "MARKET",
+            "quantity": quantity,
+        }
+        return await self._post("/fapi/v1/order", params)
+PY
+
+
+---
+
+5) Exchange routes (add/list/remove keys, balance, leverage)
+
+sudo tee /root/api_server/exchange_routes.py > /dev/null <<'PY'
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from db import SessionLocal, ExchangeAccount, User
+from utils.crypto_utils import enc, dec
+from exchange_adapter import BinanceFuturesAdapter
+import asyncio
+
+bp = Blueprint("exchanges", __name__, url_prefix="/api")
+
+@bp.post("/exchanges")
+@jwt_required()
+def add_exchange():
+    """
+    Body: { exchange:"binance", api_key, api_secret, leverage?:int, is_paper?:bool }
+    """
+    uid = int(get_jwt_identity())
+    data = request.get_json() or {}
+    ex = data.get("exchange","binance").lower()
+    if ex != "binance":
+        return jsonify({"error":"Only 'binance' supported for now"}), 400
+    api_key = data.get("api_key"); api_secret = data.get("api_secret")
+    if not api_key or not api_secret:
+        return jsonify({"error":"api_key and api_secret required"}), 400
+    lev = int(data.get("leverage", 10))
+    is_paper = bool(data.get("is_paper", True))
+
+    db = SessionLocal()
+    try:
+        # Upsert one account per user/exchange
+        acct = db.query(ExchangeAccount).filter_by(user_id=uid, exchange=ex).one_or_none()
+        if not acct:
+            acct = ExchangeAccount(user_id=uid, exchange=ex,
+                                   api_key_enc=enc(api_key), api_secret_enc=enc(api_secret),
+                                   leverage=lev, is_paper=is_paper)
+            db.add(acct)
+        else:
+            acct.api_key_enc = enc(api_key)
+            acct.api_secret_enc = enc(api_secret)
+            acct.leverage = lev
+            acct.is_paper = is_paper
+        db.commit()
+        return jsonify({"ok":True, "message":"Exchange account saved", "exchange":ex, "leverage":lev, "is_paper":is_paper}), 200
+    finally:
+        db.close()
+
+@bp.get("/users/<int:user_id>/balance/binance")
+@jwt_required()
+def get_balance(user_id: int):
+    uid = int(get_jwt_identity())
+    if uid != user_id:
+        return jsonify({"error":"Forbidden"}), 403
+    db = SessionLocal()
+    try:
+        acct = db.query(ExchangeAccount).filter_by(user_id=uid, exchange="binance").one_or_none()
+        if not acct:
+            return jsonify({"error":"No binance account saved"}), 404
+        adapter = BinanceFuturesAdapter(dec(acct.api_key_enc), dec(acct.api_secret_enc))
+        data = asyncio.run(adapter.account_balance())
+        return jsonify({"ok":True, "balance":data}), 200
+    except Exception as e:
+        return jsonify({"ok":False, "error":str(e)}), 400
+    finally:
+        db.close()
+
+@bp.get("/users/<int:user_id>/exchanges/binance/leverage")
+@jwt_required()
+def get_leverage(user_id:int):
+    uid = int(get_jwt_identity())
+    if uid != user_id:
+        return jsonify({"error":"Forbidden"}), 403
+    db = SessionLocal()
+    try:
+        acct = db.query(ExchangeAccount).filter_by(user_id=uid, exchange="binance").one_or_none()
+        if not acct:
+            return jsonify({"error":"No binance account saved"}), 404
+        return jsonify({"ok":True, "leverage": acct.leverage}), 200
+    finally:
+        db.close()
+
+@bp.put("/users/<int:user_id>/exchanges/binance/leverage")
+@jwt_required()
+def update_leverage(user_id:int):
+    uid = int(get_jwt_identity())
+    if uid != user_id:
+        return jsonify({"error":"Forbidden"}), 403
+    body = request.get_json() or {}
+    lev = int(body.get("leverage", 10))
+    db = SessionLocal()
+    try:
+        acct = db.query(ExchangeAccount).filter_by(user_id=uid, exchange="binance").one_or_none()
+        if not acct:
+            return jsonify({"error":"No binance account saved"}), 404
+        acct.leverage = lev
+        db.commit()
+        return jsonify({"ok":True, "leverage":lev}), 200
+    finally:
+        db.close()
+
+@bp.delete("/users/<int:user_id>/exchanges")
+@jwt_required()
+def remove_exchange(user_id:int):
+    uid = int(get_jwt_identity())
+    body = request.get_json() or {}
+    ex = body.get("account_id") or body.get("exchange","binance")
+    if uid != user_id:
+        return jsonify({"error":"Forbidden"}), 403
+    db = SessionLocal()
+    try:
+        q = db.query(ExchangeAccount).filter_by(user_id=uid, exchange=ex)
+        if q.count()==0:
+            return jsonify({"ok":True, "message":"Nothing to remove"}), 200
+        q.delete()
+        db.commit()
+        return jsonify({"ok":True, "message":"Removed"}), 200
+    finally:
+        db.close()
+PY
+
+
+---
+
+6) Trading routes (preview/execute market order)
+
+sudo tee /root/api_server/trading_routes.py > /dev/null <<'PY'
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from db import SessionLocal, ExchangeAccount, Position
+from utils.crypto_utils import dec
+from exchange_adapter import BinanceFuturesAdapter
+import os, asyncio, time
+
+bp = Blueprint("trading", __name__, url_prefix="/api")
+AUTO_EXECUTE_LIVE = os.getenv("AUTO_EXECUTE_LIVE","false").lower()=="true"
+LIVE_DEFAULT      = os.getenv("LIVE_TRADING_DEFAULT","false").lower()=="true"
+
+@bp.post("/trade/preview")
+@jwt_required()
+def preview_trade():
+    # just echoes the computed quantities; you can extend with risk calc
+    data = request.get_json() or {}
+    return jsonify({"ok":True, "preview": data}), 200
+
+@bp.post("/trade/market")
+@jwt_required()
+def trade_market():
+    """
+    Body: { symbol, side: BUY|SELL|LONG|SHORT, qty: float, leverage?:int, sl?:float, tp?:[...], live?:bool }
+    """
+    uid = int(get_jwt_identity())
+    body = request.get_json() or {}
+    symbol   = (body.get("symbol") or "").upper()
+    side     = (body.get("side") or "").upper()
+    qty      = float(body.get("qty", 0))
+    leverage = int(body.get("leverage", 10))
+    sl       = body.get("sl"); tp = body.get("tp") or []
+    live     = bool(body.get("live", LIVE_DEFAULT)) and AUTO_EXECUTE_LIVE
+
+    if not symbol or qty <= 0 or side not in ("BUY","SELL","LONG","SHORT"):
+        return jsonify({"error":"Invalid trade payload"}), 400
+
+    db = SessionLocal()
+    try:
+        # load user account
+        acct = db.query(ExchangeAccount).filter_by(user_id=uid, exchange="binance").one_or_none()
+        if not acct:
+            return jsonify({"error":"No binance account saved"}), 400
+
+        # open Position record (even for dry-run)
+        pos = Position(
+            user_id=uid, symbol=symbol, side="LONG" if side in ("BUY","LONG") else "SHORT",
+            qty=qty, sl=sl, tp1=(tp[0] if tp else None),
+            tp2=(tp[1] if len(tp)>1 else None), tp3=(tp[2] if len(tp)>2 else None),
+            is_live=bool(live), status="OPEN"
+        )
+        db.add(pos); db.commit(); db.refresh(pos)
+
+        if not live:
+            return jsonify({
+                "ok":True, "live":False, "position_id":pos.id,
+                "message":"DRY-RUN ONLY (AUTO_EXECUTE_LIVE=false). No live order placed."
+            }), 200
+
+        # LIVE path (will place real order)
+        adapter = BinanceFuturesAdapter(dec(acct.api_key_enc), dec(acct.api_secret_enc))
+        res = asyncio.run(adapter.place_market_order(symbol=symbol, side=side, quantity=qty, leverage=leverage))
+        order_id = str(res.get("orderId"))
+        pos.exchange_order_id = order_id
+        pos.entry_price = float(res.get("avgPrice") or 0) or float(res.get("price",0) or 0)
+        pos.status = "OPEN"
+        pos.updated_at = time.strftime("%Y-%m-%d %H:%M:%S")
+        db.commit()
+
+        return jsonify({"ok":True, "live":True, "position_id":pos.id, "exchange_order_id":order_id, "res":res}), 200
+    except Exception as e:
+        return jsonify({"ok":False, "error":str(e)}), 400
+    finally:
+        db.close()
+
+@bp.get("/positions")
+@jwt_required()
+def list_positions():
+    uid = int(get_jwt_identity())
+    db = SessionLocal()
+    try:
+        rows = db.query(Position).filter_by(user_id=uid).order_by(Position.created_at.desc()).limit(100).all()
+        out = []
+        for p in rows:
+            out.append({
+                "id": p.id, "symbol": p.symbol, "side": p.side, "qty": p.qty,
+                "entry": p.entry_price, "sl": p.sl, "tp": [x for x in [p.tp1,p.tp2,p.tp3] if x],
+                "status": p.status, "live": p.is_live, "exchange": p.exchange,
+                "exchange_order_id": p.exchange_order_id, "created_at": str(p.created_at)
+            })
+        return jsonify({"ok":True, "count":len(out), "positions": out}), 200
+    finally:
+        db.close()
+PY
+
+
+---
+
+7) Wire blueprints in api_server.py
+
+Open /root/api_server/api_server.py and ensure near your other imports:
+
+import os, sys
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+from flask_jwt_extended import JWTManager
+from db import engine, Base
+from exchange_routes import bp as exchanges_bp
+from trading_routes import bp as trading_bp
+
+Then after app = Flask(__name__) and before the final if __name__ == "__main__": runner, add (or replace existing JWT block) :
+
+# === Phase 7: DB + JWT + Blueprints ===
+with engine.begin() as conn:
+    Base.metadata.create_all(bind=conn)
+
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET", "VerzekAutoTraderKey2025")
+app.config["JWT_TOKEN_LOCATION"] = ["headers"]
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 60 * 60
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 60 * 60 * 24 * 30
+jwt = JWTManager(app)
+
+# Register new blueprints
+app.register_blueprint(exchanges_bp)
+app.register_blueprint(trading_bp)
+
+(Leave your existing /api/health, /api/auth/*, /api/signals, broadcast, etc.)
+
+
+---
+
+8) Restart services
+
+sudo systemctl daemon-reload
+sudo systemctl restart verzek-api.service
+sleep 2
+curl -s https://api.verzekinnovative.com/api/health | jq
+
+
+---
+
+9) Test flow (SAFE: DRY-RUN)
+
+Get access token:
+
+ACCESS=$(curl -s -X POST https://api.verzekinnovative.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@vzk.com","password":"1234"}' | jq -r .access_token)
+echo $ACCESS
+
+Add (or update) Binance keys (won’t place orders yet since AUTO_EXECUTE_LIVE=false):
+
+curl -s -X POST https://api.verzekinnovative.com/api/exchanges \
+  -H "Authorization: Bearer $ACCESS" -H "Content-Type: application/json" \
+  -d '{"exchange":"binance","api_key":"YOUR_BINANCE_KEY","api_secret":"YOUR_BINANCE_SECRET","leverage":10,"is_paper":false}' | jq
+
+(Optionally) check balance (will call Binance; works even in dry-run):
+
+USER_ID=1
+curl -s "https://api.verzekinnovative.com/api/users/$USER_ID/balance/binance" \
+  -H "Authorization: Bearer $ACCESS" | jq
+
+Place demo market trade (records a position, no live order):
+
+curl -s -X POST https://api.verzekinnovative.com/api/trade/market \
+  -H "Authorization: Bearer $ACCESS" -H "Content-Type: application/json" \
+  -d '{"symbol":"BTCUSDT","side":"LONG","qty":0.001,"leverage":10,"tp":[71000,72000],"sl":69000,"live":false}' | jq
+
+List positions:
+
+curl -s -X GET https://api.verzekinnovative.com/api/positions \
+  -H "Authorization: Bearer $ACCESS" | jq
+
+
+---
+
+10) Go LIVE (only when ready)
+
+Double-check your Binance API key has Futures enabled and IP restrictions set appropriately.
+
+Then:
+
+sudo sed -i 's/^AUTO_EXECUTE_LIVE=.*/AUTO_EXECUTE_LIVE=true/' /etc/verzek-env.conf
+sudo sed -i 's/^LIVE_TRADING_DEFAULT=.*/LIVE_TRADING_DEFAULT=true/' /etc/verzek-env.conf
+. /etc/environment
+sudo systemctl restart verzek-api.service
+sleep 2
+env | egrep 'AUTO_EXECUTE_LIVE|LIVE_TRADING_DEFAULT'
+
+Now live order (careful!):
+
+curl -s -X POST https://api.verzekinnovative.com/api/trade/market \
+  -H "Authorization: Bearer $ACCESS" -H "Content-Type: application/json" \
+  -d '{"symbol":"BTCUSDT","side":"LONG","qty":0.001,"leverage":5,"tp":[71000,72000],"sl":69000,"live":true}' | jq
+
+If you want to keep per-user control (e.g., only Premium/Elite can go live), leave LIVE_TRADING_DEFAULT=false, keep AUTO_EXECUTE_LIVE=true, and add a user flag auto_trade_enabled=true (you already have this field). We can extend the /api/users/:id endpoints to toggle it — say the word and I’ll drop that route in.
+
+
+---
+
+Frontend notes (already wired)
+
+Your mobile app already has:
+
+// config/api.js (you shared)
+export const API_ENDPOINTS = {
+  // ...
+  USER_EXCHANGES: (userId) => `/api/users/${userId}/exchanges`,
+  getExchangeBalance: (userId, exchange) => `/api/users/${userId}/balance/${exchange}`,
+  getExchangeLeverage: (userId, exchange) => `/api/users/${userId}/exchanges/${exchange}/leverage`,
+  updateExchangeLeverage: (userId, exchange) => `/api/users/${userId}/exchanges/${exchange}/leverage`,
+  POSITIONS: '/api/positions',
+};
+
+✅ These match the new backend routes.
+
+
+---
+
+That’s it.
+
+You now have secure exchange accounts + a live Binance Futures adapter + trading endpoints + dry-run/live switch.
+
+
+🧠 Replit AI Agent – Phase 8 Task Script
+
+Goal:
+Fully upgrade the Verzek backend into a complete, self-running Auto-Trading & Monitoring System that executes, tracks, and reports all trades automatically — obeying every user configuration and signal update.
+
+
+---
+
+✅ Step 1 – Add/Update Worker Files
+
+Create or update the following inside /root/api_server/workers/:
+
+auto_trader_worker.py
+
+trade_monitor_worker.py
+
+signal_listener_worker.py
+
+daily_report_worker.py
+
+
+Each file must be production-ready (no pseudo-code).
+
+🔹 auto_trader_worker.py
+
+Handles new signal execution (max 50 simultaneous trades).
+Enforces user config: capital_usdt, per_trade_usdt, leverage, max_open_trades, auto_trade_enabled.
+
+Logic
+
+# Pseudocode summary
+1. Fetch NEW signals from /api/signals or DB.
+2. For each eligible user (auto_trade_enabled=True):
+   a. Skip if open positions >= max_open_trades
+   b. Calculate trade size = per_trade_usdt * leverage / entry_price
+   c. Create position record with all TPs + SL
+   d. Send Telegram alert (trade opened)
+3. Update signal.status = "EXECUTED"
+
+Use ThreadPoolExecutor(max_workers=50) for concurrency.
+Send alerts to VIP group.
+
+
+---
+
+🔹 trade_monitor_worker.py
+
+Tracks all active positions and auto-closes or partially takes profit.
+
+Behavior
+
+Runs every 30 seconds.
+
+Detects incoming updates like:
+
+“Target n reached 🚨” → partial profit, mark PARTIAL.
+
+“All take-profit targets achieved 😎” → full close.
+
+“Stop Loss ⛔️” → close immediately.
+
+“Signal Cancelled ❎” → close immediately.
+
+“Closed 🔘” → finalize PnL.
+
+
+
+Partial TP rule:
+At each target TP level, take profit for that target only — continue until last TP.
+
+Send Telegram updates for each event and mark trades in DB (pnl_percent, reason, closed_at).
+
+
+---
+
+🔹 signal_listener_worker.py
+
+Reads VIP Telegram group messages and converts them into structured JSON events.
+
+Detect messages:
+
+Signal XXX/USDT → new trade.
+
+Target n reached 🚨 → partial TP.
+
+Stop Loss ⛔️ → SL.
+
+Signal Cancelled ❎ → cancel.
+
+All TP achieved 😎 → full TP.
+
+Closed 🔘 → closure.
+
+
+POST parsed data to:
+
+/api/signals (new signal)
+
+/api/signal-events (TP/SL/CANCEL/CLOSE)
+
+
+
+---
+
+🔹 daily_report_worker.py
+
+Generates 24 h performance summary and broadcasts it.
+
+Tasks
+
+1. Aggregate positions from the last 24 hours.
+
+
+2. Compute total profit, avg profit, win rate, call count.
+
+
+3. Send formatted summary to:
+
+VIP Telegram group
+
+Trial Telegram group
+
+
+
+4. Save JSON to DB (/api/reports/daily).
+
+
+5. Schedule daily (23:59 UTC).
+
+
+
+
+---
+
+✅ Step 2 – Upgrade Database
+
+Add these new fields:
+
+ALTER TABLE users
+  ADD COLUMN capital_usdt FLOAT DEFAULT 100.0,
+  ADD COLUMN per_trade_usdt FLOAT DEFAULT 5.0,
+  ADD COLUMN leverage INTEGER DEFAULT 5,
+  ADD COLUMN max_open_trades INTEGER DEFAULT 5;
+
+ALTER TABLE positions
+  ADD COLUMN closed_at DATETIME,
+  ADD COLUMN pnl_percent FLOAT DEFAULT 0,
+  ADD COLUMN reason TEXT;
+
+
+---
+
+✅ Step 3 – Create Systemd Services
+
+Inside /etc/systemd/system/, create and enable:
+
+Service	Purpose
+
+verzek-autotrade.service	Executes new signals
+verzek-trade-monitor.service	Monitors and closes positions
+verzek-signal-listener.service	Parses Telegram messages
+verzek-daily-report.service	Posts daily report
+
+
+Example template:
+
+[Unit]
+Description=Verzek Auto Trader Worker
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/api_server
+ExecStart=/usr/bin/python3 /root/api_server/workers/auto_trader_worker.py
+Restart=always
+RestartSec=5
+Environment=TELEGRAM_BOT_TOKEN=<BOT_TOKEN>
+Environment=VIP_CHAT_ID=-1002721581400
+Environment=TRIAL_CHAT_ID=-1002726167386
+Environment=MAX_CONCURRENT_TRADES=50
+
+[Install]
+WantedBy=multi-user.target
+
+Reload and enable:
+
+sudo systemctl daemon-reload
+sudo systemctl enable verzek-autotrade.service
+sudo systemctl start verzek-autotrade.service
+
+Repeat for the other three services.
+
+
+---
+
+✅ Step 4 – Verification Checklist
+
+Check	Expected Outcome
+
+New signals → auto-executed	Positions open immediately
+Target/Stop/Cancel → auto-close	Trade status updates instantly
+Partial TPs	Profit taken stepwise until final target
+User settings	Capital, leverage, max trades obeyed
+Daily report	Sent to Trial & VIP Telegram groups + App
+All services running	systemctl status shows active
+
+
+
+---
+
+✅ Step 5 – Final Confirmation
+
+When complete:
+
+Run test signals → confirm auto-execution.
+
+Observe partial TP and SL behavior.
+
+Confirm daily report posted at 23:59 UTC.
+
+Ensure all workers auto-restart after reboot.
+
+
+
+---
+
+🧠 Summary for Replit AI Agent
+
+> “Implement Phase 8 — Full Auto-Trade Execution & Monitoring.
+Create and configure the four workers listed above, update the database schema, and set up systemd services for 24/7 operation.
+Verify that partial take-profits, cancelled or stopped trades trigger auto-closure, and that daily reports are posted to both Telegram groups and the app API.”
+
+
+
+🛡️ Replit AI Agent — Phase 9: Auto-Trade Safety & Risk Management
+
+Goal: Add a robust risk engine with per-user limits, global circuit breaker, drawdown protection, cooldowns, and exposure caps. Enforce these checks inside workers before opening/maintaining positions. Provide admin APIs, dashboards, and Telegram alerts for lock/unlock events.
+
+
+---
+
+1) Create Risk Engine Module
+
+Path: /root/api_server/services/risk_engine.py
+
+Requirements:
+
+Pure Python module used by workers & API to evaluate:
+
+check_user_pre_trade_limits(user, signal)
+
+Enforce:
+
+max_concurrent_trades (already have), but also enforce: max_daily_trades
+
+per_trade_usdt not exceeding capital_usdt
+
+max_account_exposure_pct across all open positions (sum(open_positions_value) <= capital_usdt * pct)
+
+per_symbol_limit (max open positions per symbol)
+
+cooldown_minutes_after_loss (deny new trades during cooldown window after losing close)
+
+
+
+check_global_circuit_breaker()
+
+If global kill switch ON → deny all new trades
+
+If global drawdown of last 24h exceeds GLOBAL_MAX_DD_PCT → toggle kill switch ON and alert Telegram
+
+
+compute_account_exposure(user_id)
+
+Sum notional = Σ( entry_price * qty / leverage? ) (use our chosen notional model from Phase 8)
+
+
+record_risk_event(kind, user_id, symbol, details)
+
+Writes into risk_events table and sends Telegram alerts for critical events
+
+
+
+
+Return signatures:
+
+All check functions return (allowed: bool, reason: str).
+
+
+
+---
+
+2) DB Schema Upgrades (SQLite now; keep SQL portable for Postgres later)
+
+Apply migrations (idempotent):
+
+-- Users: extend risk preferences
+ALTER TABLE users ADD COLUMN daily_loss_limit_pct      REAL DEFAULT 25.0;
+ALTER TABLE users ADD COLUMN max_daily_trades          INTEGER DEFAULT 50;
+ALTER TABLE users ADD COLUMN max_account_exposure_pct  REAL DEFAULT 80.0;
+ALTER TABLE users ADD COLUMN per_symbol_limit          INTEGER DEFAULT 5;
+ALTER TABLE users ADD COLUMN cooldown_minutes_after_loss INTEGER DEFAULT 15;
+
+-- Global safety table (create if not exists)
+CREATE TABLE IF NOT EXISTS safety_settings (
+  id INTEGER PRIMARY KEY,
+  global_kill_switch INTEGER DEFAULT 0,            -- 0/1
+  global_max_dd_pct REAL DEFAULT 35.0,             -- daily drawdown threshold for system halt
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Risk events audit
+CREATE TABLE IF NOT EXISTS risk_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts DATETIME DEFAULT CURRENT_TIMESTAMP,
+  kind TEXT,               -- USER_BLOCKED, GLOBAL_HALT, EXPOSURE_LIMIT, DD_LIMIT, COOLDOWN, etc.
+  user_id INTEGER,
+  symbol TEXT,
+  details TEXT
+);
+
+-- Positions: ensure we can store realized PnL % and last update
+ALTER TABLE positions ADD COLUMN realized_pnl_pct REAL DEFAULT 0.0;
+ALTER TABLE positions ADD COLUMN last_event_at DATETIME;
+
+Add seed row if empty:
+
+INSERT INTO safety_settings (id, global_kill_switch, global_max_dd_pct)
+SELECT 1, 0, 35.0 WHERE NOT EXISTS(SELECT 1 FROM safety_settings WHERE id=1);
+
+
+---
+
+3) New Admin & User Risk APIs
+
+Path: /root/api_server/risk_routes.py
+Blueprint: bp = Blueprint("risk", __name__, url_prefix="/api")
+
+Endpoints (JWT-protected, admin gated where noted):
+
+GET /api/safety/status
+Returns { global_kill_switch, global_max_dd_pct, last24h_drawdown_pct, active_workers, timestamp }
+
+POST /api/safety/toggle (admin only)
+Body: { "kill_switch": true|false } → flips global kill switch; logs risk_event GLOBAL_HALT or GLOBAL_RESUME; sends Telegram alert to VIP group.
+
+GET /api/risk/limits/me (user scope)
+Returns user’s risk settings & current exposure, open trades, today’s trade count, today’s realized PnL%.
+
+PUT /api/risk/limits/me (user scope)
+Body may include: daily_loss_limit_pct, max_daily_trades, max_account_exposure_pct, per_symbol_limit, cooldown_minutes_after_loss. Persist in users table.
+
+GET /api/risk/events (admin only)
+Query params: ?since=YYYY-MM-DD → returns recent risk events for auditing.
+
+
+Integrate blueprint:
+In /root/api_server/api_server.py add:
+
+from risk_routes import bp as risk_bp
+app.register_blueprint(risk_bp)
+
+
+---
+
+4) Wire Risk Checks into Workers
+
+a) workers/auto_trader_worker.py
+
+Before opening a trade for a user:
+
+1. allowed, reason = risk_engine.check_global_circuit_breaker()
+
+
+2. If allowed, allowed, reason = risk_engine.check_user_pre_trade_limits(user, signal)
+
+
+3. If blocked → log risk_engine.record_risk_event("USER_BLOCKED", user.id, symbol, reason) and skip; send Telegram notice (soft warning).
+
+
+
+Also enforce:
+
+MAX_CONCURRENT_TRADES env is a hard ceiling per worker; per-user limit uses user.max_concurrent_trades (we already have).
+
+Cap calculated order size so that sum(notional exposures) ≤ user.capital_usdt * (user.max_account_exposure_pct/100). If exceeds → reduce qty or block (log event).
+
+
+
+b) workers/trade_monitor_worker.py
+
+When processing events (TP hit, SL, Cancel, Closed):
+
+On SL or “Closed with loss”: update realized_pnl_pct and set last_loss_at = now() in user stats table (if not there, create user_stats table with user_id, today_realized_pnl_pct, today_trade_count, last_loss_at).
+
+If today_realized_pnl_pct <= - user.daily_loss_limit_pct → flip safety_settings.global_kill_switch = 1 if GLOBAL DD also breached via risk_engine.
+
+On each closure, update today_trade_count. Enforce max_daily_trades.
+
+
+
+c) workers/daily_report_worker.py
+
+Include a safety section:
+
+global_kill_switch status
+
+today drawdown %
+
+count of blocked trades due to risk limits
+
+
+Push summary to VIP + Trial group + POST to /api/reports/daily.
+
+
+
+---
+
+5) Add Circuit-Breaker Worker
+
+Path: /root/api_server/workers/circuit_breaker_worker.py
+
+Responsibilities (runs every 60s):
+
+Compute rolling 24h system drawdown % from all positions (use realized losses).
+
+If drawdown >= global_max_dd_pct and kill_switch == 0, set kill_switch=1 and alert Telegram (🚨 “Global circuit breaker activated; new trades paused”).
+
+If drawdown recovers below (global_max_dd_pct - 5%) for ≥30 min, auto-resume (optional) or keep manual toggle only (configurable via AUTO_RESUME=0|1).
+
+Expose simple health log line.
+
+
+Env:
+
+AUTO_RESUME=0
+
+
+---
+
+6) Systemd Services for Risk & Circuit-Breaker
+
+Create /etc/systemd/system/verzek-circuit-breaker.service:
+
+[Unit]
+Description=Verzek Circuit Breaker Worker
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/api_server
+ExecStart=/usr/bin/python3 /root/api_server/workers/circuit_breaker_worker.py
+Restart=always
+RestartSec=5
+Environment=TELEGRAM_BOT_TOKEN=<BOT_TOKEN>
+Environment=VIP_CHAT_ID=-1002721581400
+Environment=AUTO_RESUME=0
+
+[Install]
+WantedBy=multi-user.target
+
+Reload & enable:
+
+sudo systemctl daemon-reload
+sudo systemctl enable verzek-circuit-breaker.service
+sudo systemctl start verzek-circuit-breaker.service
+
+> ⚠️ Ensure verzek-autotrade.service and verzek-trade-monitor.service call into risk_engine now.
+
+
+
+
+---
+
+7) Telegram Alerts (Reuse Existing Helper)
+
+Update /root/api_server/utils/broadcast_signal.py (or your existing Telegram helper):
+
+Add helpers:
+
+def alert_risk_event(text: str): send_to_telegram(text, chat_id=os.getenv("VIP_CHAT_ID"))
+def alert_kill_switch_on(reason): send_to_telegram(f"🚨 *GLOBAL HALT ENABLED*\n{reason}", chat_id=os.getenv("VIP_CHAT_ID"))
+def alert_kill_switch_off(): send_to_telegram("✅ *GLOBAL HALT DISABLED* — Trading resumed.", chat_id=os.getenv("VIP_CHAT_ID"))
+def alert_user_block(user_id, reason): send_to_telegram(f"⚠️ User {user_id} blocked by risk engine: {reason}", chat_id=os.getenv("VIP_CHAT_ID"))
+
+
+---
+
+8) API: Safety Status Widget for App
+
+Add to /root/api_server/system_routes.py (or inside risk_routes.py):
+
+GET /api/safety/widget → returns:
+
+{
+  "kill_switch": true,
+  "today_dd_pct": 18.7,
+  "today_trades": 42,
+  "blocks": 5,
+  "max_dd_limit": 35.0,
+  "timestamp": "2025-11-08T12:34:56Z"
+}
+
+This feeds a small “Safety Indicator” badge in the app.
+
+
+---
+
+9) Environment Variables (add to /etc/environment and systemd units)
+
+JWT_SECRET="VerzekAutoTraderKey2025"
+
+# Telegram
+TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN"
+VIP_CHAT_ID="-1002721581400"
+TRIAL_CHAT_ID="-1002726167386"
+
+# Risk / Circuit
+GLOBAL_MAX_DD_PCT="35"
+AUTO_RESUME="0"
+
+Reload daemons after any change:
+
+sudo systemctl daemon-reload
+sudo systemctl restart verzek-autotrade.service
+sudo systemctl restart verzek-trade-monitor.service
+sudo systemctl restart verzek-circuit-breaker.service
+
+
+---
+
+10) Acceptance Tests (Run all)
+
+A. Global safety
+
+curl -s https://api.verzekinnovative.com/api/safety/status | jq
+curl -s -X POST https://api.verzekinnovative.com/api/safety/toggle \
+  -H "Authorization: Bearer <admin_access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"kill_switch": true}' | jq
+
+→ New trades should be blocked, Telegram alert appears.
+
+B. User limits
+
+1. Set strict limits:
+
+
+
+curl -s -X PUT https://api.verzekinnovative.com/api/risk/limits/me \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{"max_daily_trades":1,"max_concurrent_trades":1,"per_symbol_limit":1,"max_account_exposure_pct":10,"cooldown_minutes_after_loss":30}' | jq
+
+2. Attempt 2+ test trades via /api/signals → 2nd must be blocked; risk_events should log USER_BLOCKED.
+
+
+
+C. Drawdown → kill switch
+
+Simulate a loss close that exceeds daily_loss_limit_pct and triggers global DD threshold → verify global_kill_switch=1 and Telegram alert.
+
+
+D. Widget
+
+curl -s https://api.verzekinnovative.com/api/safety/widget | jq
+
+→ shows correct status, dd%, blocks, etc.
+
+
+---
+
+11) Frontend Touch-ups (to be pushed to VerzekAutoTrader repo)
+
+Add a Safety Badge component (e.g., src/components/SafetyBadge.js) that calls /api/safety/widget on app start & every 60s.
+
+Add User Risk Settings screen (if not already present) to read/write /api/risk/limits/me.
+
+In Signal List / Position List screens, show “⚠️ HALTED” banner when kill_switch=true.
+
+When a placement is blocked by risk engine, surface the reason from /api/signals response (HTTP 409 or 403 with {error, reason}).
+
+
+
+---
+
+12) Done Criteria
+
+New trades are blocked when:
+
+Global kill switch enabled
+
+User hit daily loss % limit or daily trade count
+
+Exposure cap exceeded
+
+Cooldown active after loss
+
+Per-symbol limit hit
+
+
+Circuit breaker auto-enables on daily DD breach, firing Telegram alert.
+
+Admin can toggle kill switch from API.
+
+App shows Safety Badge & respects blocked states.
+
+Risk events recorded and viewable via API.
+
+
+🚀 Replit AI Agent – Phase 10: Exchange Execution Layer (Binance Futures + Paper Mode)
+
+Repo: github.com/ellizza78/VerzekBackend
+Server: Vultr (Ubuntu 22.04) at 80.240.29.142 behind Nginx → https://api.verzekinnovative.com
+App assumptions:
+
+Auth/JWT + /api/signals + Risk Engine (Phase 9) + Workers (Phase 8) are in place.
+
+Users set per-trade config in the app (capital, leverage, max concurrent trades, etc.).
+
+Must support up to 50 concurrent trades per user (subject to risk limits & exchange constraints).
+
+Must obey each signal’s TP ladder / SL / cancel / all TP achieved events and auto-close.
+
+
+
+---
+
+0) Branch & env
+
+1. Create branch: feature/exchange-exec-v1
+
+
+2. Ensure .env (or /etc/environment on server) supports:
+
+
+
+# Core
+JWT_SECRET=VerzekAutoTraderKey2025
+
+# Telegram alerts (already used)
+TELEGRAM_BOT_TOKEN=<your_bot_token>
+VIP_CHAT_ID=-1002721581400
+TRIAL_CHAT_ID=-1002726167386
+
+# Risk / Circuit
+GLOBAL_MAX_DD_PCT=35
+AUTO_RESUME=0
+
+# Exchange adapters
+BINANCE_FUTURES_BASE=https://fapi.binance.com
+BINANCE_FUTURES_TESTBASE=https://testnet.binancefuture.com
+EXCHANGE_MODE=paper        # values: paper | binance_testnet | binance_mainnet
+EXCHANGE_HMAC_ALGO=HMAC-SHA256
+
+# Secrets encryption at rest
+SECRETS_FERNET_KEY=<generate_32byte_base64_key_once>
+
+Commit .env.example without secrets.
+
+
+---
+
+1) DB Migrations (idempotent)
+
+Create db/migrations/2025_11_08_exchange_exec.sql:
+
+-- user exchange connections
+CREATE TABLE IF NOT EXISTS user_exchanges (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  provider TEXT NOT NULL,             -- 'binance_futures'
+  api_key_enc TEXT,                   -- Fernet encrypted
+  api_secret_enc TEXT,                -- Fernet encrypted
+  passphrase_enc TEXT,                -- nullable, for other exchanges later
+  mode TEXT DEFAULT 'paper',          -- 'paper' | 'binance_testnet' | 'binance_mainnet'
+  leverage_default INTEGER DEFAULT 10,
+  margin_mode TEXT DEFAULT 'ISOLATED',-- 'ISOLATED' | 'CROSSED'
+  hedge_mode INTEGER DEFAULT 0,       -- 0 = one-way, 1 = hedge
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- orders & executions
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  symbol TEXT NOT NULL,          -- e.g., 'BTCUSDT'
+  side TEXT NOT NULL,            -- BUY | SELL
+  position_side TEXT,            -- LONG | SHORT | ONE_WAY
+  type TEXT NOT NULL,            -- MARKET | LIMIT | STOP | STOP_MARKET | TAKE_PROFIT | TAKE_PROFIT_MARKET
+  status TEXT DEFAULT 'NEW',     -- NEW | PARTIALLY_FILLED | FILLED | CANCELED | REJECTED
+  qty REAL NOT NULL,
+  price REAL,
+  stop_price REAL,
+  reduce_only INTEGER DEFAULT 0,
+  client_order_id TEXT,          -- our local id
+  exchange_order_id TEXT,        -- returned by exchange
+  notional REAL DEFAULT 0,
+  leverage INTEGER DEFAULT 10,
+  linked_position_id INTEGER,    -- join to positions.id
+  meta JSON,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- executions/fills
+CREATE TABLE IF NOT EXISTS fills (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL,
+  trade_id TEXT,
+  price REAL,
+  qty REAL,
+  commission REAL,
+  commission_asset TEXT,
+  realized_pnl REAL,
+  ts DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- user day stats (for cooldown/daily limits)
+CREATE TABLE IF NOT EXISTS user_stats (
+  user_id INTEGER PRIMARY KEY,
+  today_trade_count INTEGER DEFAULT 0,
+  today_realized_pnl_pct REAL DEFAULT 0.0,
+  last_loss_at DATETIME
+);
+
+Run migration loader in db/__init__.py (ensure it applies automatically on boot).
+
+
+---
+
+2) Secrets helper (Fernet)
+
+Path: utils/secret_box.py
+
+import os, base64
+from cryptography.fernet import Fernet
+
+_key = os.getenv("SECRETS_FERNET_KEY")
+if not _key:
+    raise RuntimeError("SECRETS_FERNET_KEY missing")
+fernet = Fernet(_key.encode() if not _key.startswith("gAAAA") else _key)
+
+def enc(text: str) -> str:
+    if not text: return None
+    return fernet.encrypt(text.encode()).decode()
+
+def dec(token: str) -> str:
+    if not token: return None
+    return fernet.decrypt(token.encode()).decode()
+
+Add cryptography to requirements.txt.
+
+
+---
+
+3) Exchange adapter (Binance Futures + Paper)
+
+Path: exchanges/binance_futures.py
+
+Features:
+
+Build signed requests (HMAC SHA256)
+
+Endpoints used:
+
+POST /fapi/v1/leverage
+
+POST /fapi/v1/order (market/limit/TP/SL w/ reduceOnly, positionSide if hedge)
+
+DELETE /fapi/v1/order
+
+GET /fapi/v2/balance (or /fapi/v2/account)
+
+
+Helper: _sign(params, secret); recvWindow=5000; timestamp=ms.
+
+Respect exchange mode paper|binance_testnet|binance_mainnet to pick base URL.
+
+
+Expose class:
+
+class BinanceFuturesClient:
+    def __init__(self, api_key, api_secret, mode, leverage_default=10, hedge_mode=False):
+        ...
+
+    def set_leverage(self, symbol, leverage): ...
+    def place_market(self, symbol, side, qty, position_side=None, reduce_only=False, client_id=None): ...
+    def place_limit(self, symbol, side, qty, price, time_in_force="GTC", position_side=None, reduce_only=False, client_id=None): ...
+    def place_sl(self, symbol, side, qty, stop_price, position_side=None): ...
+    def place_tp(self, symbol, side, qty, price, position_side=None, reduce_only=True): ...
+    def cancel_all_symbol(self, symbol): ...
+    def get_account_info(self): ...
+
+Paper client: exchanges/paper_client.py
+
+Same interface. Writes orders & fills locally, simulates fills immediately (or with simple slippage). Useful for instant end-to-end.
+
+
+
+---
+
+4) User Exchange Routes
+
+Path: exchange_routes.py → Blueprint("exchange", __name__, url_prefix="/api/exchanges")
+
+Endpoints:
+
+GET /me → user’s connected exchange (mode, leverage_default, margin mode, hedge mode — no secrets)
+
+POST /connect
+Body:
+
+{ "provider": "binance_futures", "api_key": "...", "api_secret": "...", 
+  "mode": "paper|binance_testnet|binance_mainnet",
+  "leverage_default": 10, "margin_mode": "ISOLATED", "hedge_mode": 0 }
+
+→ Encrypt and store keys (secret_box.enc), upsert row.
+
+PUT /me → update fields (mode, leverage_default, margin_mode, hedge_mode)
+
+DELETE /me → disconnect (wipe secrets)
+
+(Optional) POST /validate → try get_account_info() to verify keys (respond with summary; no secrets returned)
+
+
+Register in api_server.py:
+
+from exchange_routes import bp as exchange_bp
+app.register_blueprint(exchange_bp)
+
+
+---
+
+5) Order Sizing + Mapping from Signal
+
+Path: services/sizing.py
+
+Implement:
+
+compute_qty_for_signal(user, symbol, entry_price, per_trade_usdt, leverage)
+
+notional = per_trade_usdt * leverage
+
+qty = notional / entry_price
+
+Round to Binance lot size (add markets.json or query exchange filters once and cache). For now, implement conservative rounding (e.g., 3 decimals for most alts, 3 or 6 for BTC/ETH testnet).
+
+
+position_side_for(signal_direction)
+
+LONG → BUY side / positionSide=LONG
+
+SHORT → SELL side / positionSide=SHORT
+
+
+Use reduceOnly=True for TP/SL orders.
+
+
+
+---
+
+6) Execution Orchestrator
+
+Path: services/execution.py
+
+get_client_for_user(user_id)
+
+Read user_exchanges row; if mode=paper → return PaperClient; else decrypt keys and return BinanceFuturesClient.
+
+
+place_entry_and_ladder(user, signal)
+Steps:
+
+1. Build position side + entry side from signal.direction (LONG/SHORT).
+
+
+2. risk_engine.check_user_pre_trade_limits(user, signal) (already integrated in Phase 9)
+
+
+3. client.set_leverage(symbol, user.leverage_default or signal.leverage) (best effort)
+
+
+4. Compute qty from per_trade_usdt and leverage.
+
+
+5. Entry: market or limit (choose MARKET for v1).
+
+
+6. For TP array: create reduce-only limit orders with fraction sizing (e.g., equally split qty across TP targets; or obey app’s “TP ladder percentages” if already in DB).
+
+
+7. SL: create STOP_MARKET reduce-only at stop_loss price.
+
+
+8. Persist all orders rows with exchange ids (or paper ids).
+
+
+
+close_position_on_event(user_id, position_id, reason)
+
+Cancel open TPs/SL, send reduce-only market to close remaining qty, update positions & orders, record PnL, risk_engine.record_risk_event("AUTO_CLOSE", user_id, symbol, reason) if SL/cancel scenario.
+
+
+
+
+---
+
+7) Wire into Workers
+
+a) workers/auto_trader_worker.py
+
+On new /api/signals item, for each user with auto_trade_enabled=1 and pass risk checks:
+
+Map trade_type: FUTURES → use exchange adapter; SPOT (future work; can default to paper or skip)
+
+Call execution.place_entry_and_ladder(user, signal)
+
+Respect per-user max_concurrent_trades (up to 50) and exposure caps (Phase 9 does this).
+
+Log & Telegram notify:
+
+“✅ Placed entry X / TPs / SL for USER#… SYMBOL … qty/leverage … mode: paper/testnet/mainnet”
+
+
+
+
+b) workers/trade_monitor_worker.py
+
+On “TP reached / SL / Cancelled / All TP Achieved” messages from signal source:
+
+Call execution.close_position_on_event accordingly (for SL, Cancelled, All TP Achieved).
+
+For intermediate TP hits: mark that TP order as FILLED; if laddered partial take-profit, leave remaining TPs & SL in place. Update positions.remaining_qty, realized_pnl_pct progressively.
+
+
+On price polling (optional): if TP/SL not filled by exchange (paper mode), simulate fills based on last price in your price feed (you can reuse CoinRanking/CCXT later; for now keep event-driven from signals).
+
+
+
+---
+
+8) API for Positions & Orders (to match your app)
+
+Path: trade_routes.py → Blueprint("trade", __name__, url_prefix="/api")
+
+GET /api/positions (admin) & /api/positions/:userId (user scope)
+Returns open/closed positions with order ladder, PnL, remaining qty, leverage, trade_type.
+
+POST /api/positions/:id/close (user scope)
+Body { reason: "user_close" } → market reduce-only close; cancel TPs/SL.
+
+GET /api/orders/:positionId → orders list for the position.
+
+POST /api/orders/:orderId/cancel → cancel a specific order if open.
+
+
+Register in api_server.py:
+
+from trade_routes import bp as trade_bp
+app.register_blueprint(trade_bp)
+
+Map to your frontend API_ENDPOINTS if needed:
+
+POSITIONS: '/api/positions'
+USER_POSITIONS: (userId) => `/api/positions/${userId}`
+ORDERS_FOR_POSITION: (posId) => `/api/orders/${posId}`
+CLOSE_POSITION: (posId) => `/api/positions/${posId}/close`
+EXCHANGES_ME: '/api/exchanges/me'
+EXCHANGES_CONNECT: '/api/exchanges/connect'
+EXCHANGES_UPDATE: '/api/exchanges/me'
+EXCHANGES_DELETE: '/api/exchanges/me'
+
+
+---
+
+9) Systemd services (execution layer)
+
+Create /etc/systemd/system/verzek-exec.service:
+
+[Unit]
+Description=Verzek Auto Trader Execution Worker
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/api_server
+ExecStart=/usr/bin/python3 /root/api_server/workers/auto_trader_worker.py
+Restart=always
+RestartSec=5
+Environment=JWT_SECRET=VerzekAutoTraderKey2025
+Environment=TELEGRAM_BOT_TOKEN=<your_bot_token>
+Environment=VIP_CHAT_ID=-1002721581400
+Environment=TRIAL_CHAT_ID=-1002726167386
+Environment=EXCHANGE_MODE=paper
+Environment=BINANCE_FUTURES_BASE=https://fapi.binance.com
+Environment=BINANCE_FUTURES_TESTBASE=https://testnet.binancefuture.com
+Environment=SECRETS_FERNET_KEY=<same_as_env>
+
+[Install]
+WantedBy=multi-user.target
+
+daemon-reload and enable:
+
+sudo systemctl daemon-reload
+sudo systemctl enable verzek-exec.service
+sudo systemctl restart verzek-exec.service
+sudo systemctl status verzek-exec.service -l
+
+(Ensure verzek-trade-monitor.service already running; if not, create similar unit for workers/trade_monitor_worker.py.)
+
+
+---
+
+10) Acceptance Tests (End-to-end)
+
+A) Connect paper exchange
+
+ACCESS=$(curl -s -X POST https://api.verzekinnovative.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@vzk.com","password":"1234"}' | jq -r .access_token)
+
+curl -s -X POST https://api.verzekinnovative.com/api/exchanges/connect \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "binance_futures",
+    "api_key": "",
+    "api_secret": "",
+    "mode": "paper",
+    "leverage_default": 10,
+    "margin_mode": "ISOLATED",
+    "hedge_mode": 0
+  }' | jq
+
+B) Post a test signal (FUTURES, LONG)
+
+curl -s -X POST https://api.verzekinnovative.com/api/signals \
+  -H "Authorization: Bearer $ACCESS" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbol": "BTCUSDT",
+    "direction": "LONG",
+    "entry": 70000,
+    "targets": [70500,71000,72000],
+    "stop_loss": 69500,
+    "leverage": 10,
+    "trade_type": "FUTURES",
+    "confidence": "High",
+    "duration": "SHORT"
+  }' | jq
+
+Expect: verzek-exec places entry+TP ladder+SL in paper adapter; Telegram confirms.
+
+C) Query positions
+
+curl -s https://api.verzekinnovative.com/api/positions/1 \
+  -H "Authorization: Bearer $ACCESS" | jq
+
+D) Simulate “Target 1 reached” event
+
+Use your current signal-to-monitor pipeline to trigger TP1; verify partial close & PnL update.
+
+
+E) Simulate “Stop Loss” event
+
+Post SL event; verify full close, PnL negative, cooldown set (if configured), Telegram alert.
+
+
+F) Concurrency
+
+Fire many signals until user hits max_concurrent_trades=50 → next trade should be blocked by risk engine; risk_events shows USER_BLOCKED (concurrency).
+
+
+
+---
+
+11) Frontend integration (minimal, since app is built)
+
+Ensure Settings → Exchange screen hits:
+
+GET /api/exchanges/me
+
+POST /api/exchanges/connect
+
+PUT /api/exchanges/me
+
+DELETE /api/exchanges/me
+
+
+Positions screen:
+
+GET /api/positions/:userId
+
+GET /api/orders/:positionId
+
+POST /api/positions/:id/close
+
+
+Safety badge already planned in Phase 9 (/api/safety/widget)
+
+
+
+---
+
+12) Deployment & Enable
+
+1. Push branch → open PR → merge to main.
+
+
+2. On Vultr:
+
+cd /root/api_server
+git pull
+pip install -r requirements.txt
+sudo systemctl daemon-reload
+sudo systemctl restart verzek-api.service
+sudo systemctl restart verzek-exec.service
+sudo systemctl restart verzek-trade-monitor.service
+sudo systemctl restart verzek-circuit-breaker.service
+sudo journalctl -u verzek-exec.service -f
+
+
+3. Verify with the Acceptance Tests above.
+
+
+
+
+---
+
+Notes / Defaults
+
+Mode = paper by default. Switch EXCHANGE_MODE=binance_testnet when you’re ready, and later binance_mainnet.
+
+For testnet/mainnet, you must enable Futures on the user’s Binance account and set API keys with Futures permissions.
+
+We used ISOLATED margin and one-way mode by default; can add hedge later if needed.
+
+We obey per-signal ladder: each TP creates a separate reduce-only order for partial exit. If you already capture TP split % from the app, use those; otherwise split evenly.
+
+
+
