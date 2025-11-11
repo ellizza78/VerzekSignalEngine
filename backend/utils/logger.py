@@ -13,24 +13,32 @@ def setup_logger(name: str, log_file: str = None, level=logging.INFO):
     logger = logging.getLogger(name)
     logger.setLevel(level)
     
+    # Prevent duplicate handlers
+    if logger.handlers:
+        return logger
+    
     # Console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(level)
     console_format = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
     )
     console_handler.setFormatter(console_format)
     logger.addHandler(console_handler)
     
     # File handler (if log_file provided)
     if log_file:
-        os.makedirs(os.path.dirname(log_file), exist_ok=True)
+        log_dir = os.path.dirname(log_file)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
         file_handler = RotatingFileHandler(
             log_file, maxBytes=10*1024*1024, backupCount=5
         )
         file_handler.setLevel(level)
         file_format = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
         )
         file_handler.setFormatter(file_format)
         logger.addHandler(file_handler)
@@ -38,6 +46,9 @@ def setup_logger(name: str, log_file: str = None, level=logging.INFO):
     return logger
 
 
+# Determine log directory based on environment
+LOG_DIR = os.getenv("LOG_DIR", "/root/api_server/logs")
+
 # Default loggers
-api_logger = setup_logger('verzek_api', '/var/log/verzek_api.log')
-worker_logger = setup_logger('verzek_worker', '/var/log/verzek_worker.log')
+api_logger = setup_logger('verzek_api', f'{LOG_DIR}/api.log')
+worker_logger = setup_logger('verzek_worker', f'{LOG_DIR}/worker.log')

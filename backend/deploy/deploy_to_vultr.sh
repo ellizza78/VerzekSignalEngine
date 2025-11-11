@@ -34,9 +34,11 @@ echo "🐍 Step 3: Installing Python dependencies..."
 pip3 install --upgrade pip
 pip3 install -r requirements.txt
 
-# Step 4: Create database directory
-echo "💾 Step 4: Creating database directory..."
+# Step 4: Create database and logs directories
+echo "💾 Step 4: Creating database and logs directories..."
 mkdir -p $API_DIR/database
+mkdir -p $API_DIR/logs
+chmod 755 $API_DIR/logs
 
 # Step 5: Configure environment variables
 echo "⚙️  Step 5: Configuring environment..."
@@ -65,6 +67,7 @@ export WORKER_POLL_SECONDS="10"
 export FLASK_ENV="production"
 export PORT="8050"
 export SERVER_IP="80.240.29.142"
+export LOG_DIR="/root/api_server/logs"
 EXAMPLE_EOF
     echo ""
     echo "Then run: chmod 600 /root/api_server_env.sh"

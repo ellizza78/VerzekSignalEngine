@@ -21,20 +21,32 @@ POLL_SECONDS = int(os.getenv("WORKER_POLL_SECONDS", "10"))
 
 def main():
     """Main worker loop"""
-    worker_logger.info(f"🚀 Verzek AutoTrader Worker started (poll interval: {POLL_SECONDS}s)")
+    worker_logger.info("=" * 60)
+    worker_logger.info(f"🚀 Verzek AutoTrader Worker v2.1 started")
+    worker_logger.info(f"⏱️  Poll interval: {POLL_SECONDS} seconds")
+    worker_logger.info(f"💾 Database: {os.getenv('DATABASE_URL', 'sqlite:///')}")
+    worker_logger.info(f"🔧 Exchange mode: {os.getenv('EXCHANGE_MODE', 'paper')}")
+    worker_logger.info("=" * 60)
+    
+    cycle_count = 0
     
     while True:
         try:
+            cycle_count += 1
+            worker_logger.info(f"📊 Starting execution cycle #{cycle_count}")
+            
             db = SessionLocal()
             run_once(db)
             db.close()
             
+            worker_logger.info(f"✅ Cycle #{cycle_count} completed successfully")
+            
         except KeyboardInterrupt:
-            worker_logger.info("Worker stopped by user")
+            worker_logger.info("⛔ Worker stopped by user (Ctrl+C)")
             break
             
         except Exception as e:
-            worker_logger.error(f"Worker error: {e}")
+            worker_logger.error(f"❌ Worker error in cycle #{cycle_count}: {e}", exc_info=True)
         
         finally:
             time.sleep(POLL_SECONDS)

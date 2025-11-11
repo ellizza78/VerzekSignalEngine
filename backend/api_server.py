@@ -61,15 +61,25 @@ app.register_blueprint(payments_bp, url_prefix="/api/payments")
 
 
 # Health check endpoints
-@app.route('/api/health', methods=['GET'])
 @app.route('/api/ping', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
+def ping():
+    """Ping endpoint for basic connectivity check"""
+    return jsonify({
+        "status": "ok",
+        "service": "VerzekBackend",
+        "version": "2.1",
+        "message": "Backend responding successfully 🚀"
+    }), 200
+
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    """Health check endpoint with timestamp"""
+    from datetime import datetime
     return jsonify({
         "ok": True,
-        "status": "ok",
-        "message": "Verzek Auto Trader API running",
-        "version": "2.0.0"
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat() + "Z"
     }), 200
 
 
@@ -119,9 +129,13 @@ def internal_error(error):
 # Flask app runner (for development)
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8050"))
-    print(f"🚀 Starting Verzek Auto Trader API Server (v2.0.0)...")
+    print(f"🚀 Starting Verzek Auto Trader API Server (v2.1)...")
     print(f"📍 Running on http://0.0.0.0:{port}")
     print(f"🔧 Mode: {os.getenv('EXCHANGE_MODE', 'paper')}")
+    print(f"📋 Registered routes:")
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint != 'static':
+            print(f"   {rule.rule} -> {rule.endpoint}")
     
     app.run(
         host="0.0.0.0",
