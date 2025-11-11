@@ -159,6 +159,18 @@ class TradeLog(Base):
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
 
 
+class VerificationToken(Base):
+    """Email verification and password reset tokens"""
+    __tablename__ = "verification_tokens"
+    
+    id = Column(Integer, primary_key=True)
+    token = Column(String(255), unique=True, index=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    token_type = Column(String(50), nullable=False)  # email_verification, password_reset
+    expires_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Payment(Base):
     """Payment tracking for subscription upgrades"""
     __tablename__ = "payments"

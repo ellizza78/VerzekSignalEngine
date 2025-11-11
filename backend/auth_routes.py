@@ -46,12 +46,12 @@ def register():
                 referrer_id = referrer.id
                 api_logger.info(f"New user referred by user {referrer_id} with code {referral_code_input}")
         
-        # Create user
+        # Create user (unverified)
         user = User(
             email=email,
             password_hash=hash_password(password),
             full_name=full_name,
-            is_verified=True,  # Set to True for now (user requested no email verification currently)
+            is_verified=False,  # Require email verification
             subscription_type="TRIAL",
             referred_by=referrer_id
         )
@@ -72,11 +72,13 @@ def register():
         db.add(settings)
         db.commit()
         
-        # Send welcome email (async, don't block registration)
+        # Generate verification token and send email
         try:
-            send_welcome_email(email, full_name or "User")
+            verification_token = generate_verification_token(user.id, db)
+            send_verification_email(email, verification_token, user.id)
+            api_logger.info(f"Verification email sent to {email}")
         except Exception as e:
-            api_logger.error(f"Welcome email failed for {email}: {e}")
+            api_logger.error(f"Verification email failed for {email}: {e}")
         
         # Generate tokens
         access_token = create_access_token(identity=user.id)
@@ -124,6 +126,15 @@ def login():
         if not user or not verify_password(password, user.password_hash):
             db.close()
             return jsonify({"ok": False, "error": "Invalid credentials"}), 401
+        
+        # Check if email is verified
+        if not user.is_verified:
+            db.close()
+            return jsonify({
+                "ok": False,
+                "error": "Email not verified. Please check your inbox for the verification link.",
+                "needs_verification": True
+            }), 403
         
         # Generate tokens
         access_token = create_access_token(identity=user.id)
@@ -207,14 +218,77 @@ def get_current_user():
         return jsonify({"ok": False, "error": "Failed to get user"}), 500
 
 
+@bp.route('/verify-email', methods=['POST'])
+def verify_email():
+    """Verify email address with token"""
+    try:
+        data = request.get_json()
+        token = data.get('token', '').strip()
+        
+        if not token:
+            return jsonify({"ok": False, "error": "Verification token required"}), 400
+        
+        db: Session = SessionLocal()
+        
+        # Verify token
+        user_id = verify_token(token, "email_verification", db)
+        if not user_id:
+            db.close()
+            return jsonify({"ok": False, "error": "Invalid or expired verification token"}), 400
+        
+        # Mark user as verified
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            db.close()
+            return jsonify({"ok": False, "error": "User not found"}), 404
+        
+        user.is_verified = True
+        db.commit()
+        
+        # Invalidate token
+        invalidate_token(token, db)
+        db.close()
+        
+        api_logger.info(f"Email verified for user {user_id}")
+        
+        return jsonify({
+            "ok": True,
+            "message": "Email verified successfully! You can now log in."
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Email verification error: {e}")
+        return jsonify({"ok": False, "error": "Verification failed"}), 500
+
+
 @bp.route('/resend-verification', methods=['POST'])
 @jwt_required()
 def resend_verification():
-    """Resend verification email (stub for now)"""
+    """Resend verification email"""
     try:
         user_id = get_jwt_identity()
-        # TODO: Implement email sending
-        api_logger.info(f"Verification email requested for user {user_id}")
+        db: Session = SessionLocal()
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            db.close()
+            return jsonify({"ok": False, "error": "User not found"}), 404
+        
+        if user.is_verified:
+            db.close()
+            return jsonify({"ok": False, "error": "Email already verified"}), 400
+        
+        # Generate new verification token and send email
+        try:
+            verification_token = generate_verification_token(user.id, db)
+            send_verification_email(user.email, verification_token, user.id)
+            api_logger.info(f"Verification email resent to {user.email}")
+        except Exception as e:
+            api_logger.error(f"Failed to resend verification email: {e}")
+            db.close()
+            return jsonify({"ok": False, "error": "Failed to send email"}), 500
+        
+        db.close()
         
         return jsonify({
             "ok": True,
@@ -241,8 +315,8 @@ def forgot_password():
         
         # Always return success (don't reveal if email exists for security)
         if user:
-            # Generate reset token
-            reset_token = generate_reset_token(user.id)
+            # Generate reset token (now with db session)
+            reset_token = generate_reset_token(user.id, db)
             
             # Send reset email
             send_password_reset_email(email, reset_token, user.id)
@@ -273,13 +347,14 @@ def reset_password():
         if not token or not new_password:
             return jsonify({"ok": False, "error": "Token and new password required"}), 400
         
-        # Verify token
-        user_id = verify_token(token, "password_reset")
+        # Verify token (now with db session)
+        db: Session = SessionLocal()
+        user_id = verify_token(token, "password_reset", db)
         if not user_id:
+            db.close()
             return jsonify({"ok": False, "error": "Invalid or expired reset token"}), 400
         
         # Update password
-        db: Session = SessionLocal()
         user = db.query(User).filter(User.id == user_id).first()
         
         if not user:
@@ -288,10 +363,10 @@ def reset_password():
         
         user.password_hash = hash_password(new_password)
         db.commit()
-        db.close()
         
         # Invalidate token
-        invalidate_token(token)
+        invalidate_token(token, db)
+        db.close()
         
         api_logger.info(f"Password reset successful for user {user_id}")
         

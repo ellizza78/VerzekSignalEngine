@@ -9,6 +9,7 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 - **Build Process**: ALWAYS build Android APK from Replit Shell using `eas build` command (never use automated tools)
 - **Dynamic Updates**: Use OTA updates (eas update) for JavaScript changes; remote config for feature flags and settings; only rebuild APK for native changes
+- **Email Verification**: REQUIRED - All new users must verify email before login
 
 ## Production URLs
 - **Backend API**: https://verzekinnovative.com (Vultr VPS: 80.240.29.142)
@@ -16,6 +17,15 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
+### Email Verification System (COMPLETED - Nov 11, 2025)
+- **Database Tokens**: Created VerificationToken model for persistent token storage (production-safe)
+- **Registration Flow**: New users are created with is_verified=False, verification email sent automatically
+- **Login Protection**: Unverified users cannot log in (HTTP 403 with needs_verification flag)
+- **Email Verification**: /api/auth/verify-email endpoint verifies tokens and activates accounts
+- **Password Reset**: Database-persisted tokens (15-minute expiry) replace in-memory storage
+- **Token Cleanup**: cleanup_expired_tokens() function for periodic cron cleanup
+- **Resend Verification**: /api/auth/resend-verification endpoint for users who didn't receive email
+- **Production Ready**: All tokens stored in verification_tokens table with expiration tracking
 ### VPS Deployment with Watchdog (IN PROGRESS - Nov 11, 2025)
 - **Deployment Location**: /root/VerzekBackend/backend on Vultr VPS (80.240.29.142)
 - **SSL Certificate**: Installed via certbot for https://api.verzekinnovative.com
