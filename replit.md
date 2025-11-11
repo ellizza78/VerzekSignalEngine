@@ -16,6 +16,18 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
+### VPS Deployment with Watchdog (IN PROGRESS - Nov 11, 2025)
+- **Deployment Location**: /root/VerzekBackend/backend on Vultr VPS (80.240.29.142)
+- **SSL Certificate**: Installed via certbot for https://api.verzekinnovative.com
+- **Deployment Method**: Background process (bypassing systemd due to crash-loop issues)
+- **Startup Script**: /root/start_verzek_api.sh (auto-start via crontab @reboot)
+- **Restart Script**: /root/restart_verzek_api.sh (manual restart)
+- **Watchdog**: /root/api_watchdog.sh monitors API every 10s, auto-restarts on failure
+- **Configuration**: 1 worker, 4 threads, WAL mode enabled for SQLite
+- **Known Issue**: API crashes frequently (within seconds/minutes) - root cause unknown
+- **Status**: Watchdog keeps API semi-operational, but needs application-level debugging
+- **Next Steps**: Debug Python application code (api_server.py, db.py) to find crash cause
+
 ### Phase 3 Complete & GitHub Push (COMPLETED - Nov 11, 2025)
 - **GitHub Repository**: Successfully pushed to https://github.com/ellizza78/VerzekBackend (8,188 objects, 211 MB)
 - **Rate Limiting**: Thread-safe in-memory limiter (1 signal/symbol/minute) prevents spam, returns HTTP 429
