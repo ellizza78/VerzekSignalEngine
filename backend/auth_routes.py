@@ -100,7 +100,8 @@ def register():
                 "full_name": user.full_name,
                 "subscription_type": user.subscription_type,
                 "is_verified": user.is_verified,
-                "referral_code": user.referral_code
+                "referral_code": user.referral_code,
+                "created_at": user.created_at.isoformat() if user.created_at else None
             }
         }), 201
         
@@ -155,7 +156,8 @@ def login():
                 "subscription_type": user.subscription_type,
                 "is_verified": user.is_verified,
                 "auto_trade_enabled": user.auto_trade_enabled,
-                "referral_code": user.referral_code
+                "referral_code": user.referral_code,
+                "created_at": user.created_at.isoformat() if user.created_at else None
             }
         }), 200
         
@@ -262,37 +264,58 @@ def verify_email():
 
 
 @bp.route('/resend-verification', methods=['POST'])
-@jwt_required()
 def resend_verification():
-    """Resend verification email"""
+    """Resend verification email (public endpoint - works with or without auth)"""
     try:
-        user_id = get_jwt_identity()
         db: Session = SessionLocal()
-        user = db.query(User).filter(User.id == user_id).first()
+        user = None
         
-        if not user:
-            db.close()
-            return jsonify({"ok": False, "error": "User not found"}), 404
-        
-        if user.is_verified:
-            db.close()
-            return jsonify({"ok": False, "error": "Email already verified"}), 400
-        
-        # Generate new verification token and send email
+        # Try to get user from JWT token (if authenticated)
         try:
-            verification_token = generate_verification_token(user.id, db)
-            send_verification_email(user.email, verification_token, user.id)
-            api_logger.info(f"Verification email resent to {user.email}")
-        except Exception as e:
-            api_logger.error(f"Failed to resend verification email: {e}")
-            db.close()
-            return jsonify({"ok": False, "error": "Failed to send email"}), 500
+            user_id = get_jwt_identity()
+            if user_id:
+                user = db.query(User).filter(User.id == user_id).first()
+        except:
+            pass
+        
+        # If not authenticated, get email from request body
+        if not user:
+            data = request.get_json()
+            email = data.get('email', '').strip().lower()
+            
+            if not email:
+                db.close()
+                return jsonify({"ok": False, "error": "Email required"}), 400
+            
+            user = db.query(User).filter(User.email == email).first()
+        
+        # Always return success (don't reveal if email exists for security)
+        if user:
+            if user.is_verified:
+                api_logger.info(f"Verification resend attempted for already verified email: {user.email}")
+                db.close()
+                return jsonify({
+                    "ok": True,
+                    "message": "If this email is unverified, a verification link has been sent"
+                }), 200
+            
+            # Generate new verification token and send email
+            try:
+                verification_token = generate_verification_token(user.id, db)
+                send_verification_email(user.email, verification_token, user.id)
+                api_logger.info(f"Verification email resent to {user.email}")
+            except Exception as e:
+                api_logger.error(f"Failed to resend verification email: {e}")
+                db.close()
+                return jsonify({"ok": False, "error": "Failed to send email"}), 500
+        else:
+            api_logger.info(f"Verification resend attempted for non-existent email")
         
         db.close()
         
         return jsonify({
             "ok": True,
-            "message": "Verification email sent"
+            "message": "If this email is unverified, a verification link has been sent"
         }), 200
         
     except Exception as e:
