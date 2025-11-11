@@ -15,6 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "expo-application": "^7.0.7",
-    "expo-constants": "^18.0.10"
+    "expo-constants": "^18.0.10",
+    "expo-device": "^8.0.9",
+    "expo-notifications": "^0.32.12"
   }
 }
