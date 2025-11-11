@@ -29,10 +29,23 @@ else
     cd $API_DIR
 fi
 
-# Step 3: Install Python dependencies
-echo "🐍 Step 3: Installing Python dependencies..."
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
+# Step 3: Create virtual environment and install dependencies
+echo "🐍 Step 3: Setting up Python environment..."
+cd $API_DIR/backend
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+    echo "✅ Virtual environment created"
+fi
+
+# Activate and install dependencies
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+deactivate
+
+cd $API_DIR
 
 # Step 4: Create database and logs directories
 echo "💾 Step 4: Creating database and logs directories..."
@@ -54,17 +67,32 @@ if [ ! -f "/root/api_server_env.sh" ]; then
     echo ""
     cat << 'EXAMPLE_EOF'
 #!/bin/bash
-# Verzek AutoTrader Configuration
-export JWT_SECRET="VerzekAutoTraderKey2025"
-export API_KEY="Verzek2025AutoTrader"
-export DATABASE_URL="sqlite:////root/api_server/database/verzek.db"
-export EXCHANGE_MODE="paper"
+# Verzek AutoTrader Production Configuration
+# ⚠️ SECURITY: Generate unique values for all secrets below!
+
+# Security Keys (MUST BE UNIQUE - DO NOT USE THESE DEFAULTS IN PRODUCTION!)
+export JWT_SECRET="<GENERATE_UNIQUE_SECRET_HERE>"  # Generate with: openssl rand -hex 32
 export ENCRYPTION_KEY="<GENERATE_WITH: python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'>"
+
+# Database
+export DATABASE_URL="sqlite:////root/api_server/backend/database/verzek.db"
+
+# Telegram Integration
 export TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
-export TELEGRAM_VIP_CHAT_ID="<YOUR_VIP_CHAT_ID>"
-export TELEGRAM_TRIAL_CHAT_ID="<YOUR_TRIAL_CHAT_ID>"
+export BROADCAST_BOT_TOKEN="<YOUR_BROADCAST_BOT_TOKEN>"
+export VIP_GROUP_ID="<YOUR_VIP_GROUP_ID>"
+export TRIAL_GROUP_ID="<YOUR_TRIAL_GROUP_ID>"
 export ADMIN_CHAT_ID="<YOUR_ADMIN_CHAT_ID>"
+
+# Email (Resend API)
+export EMAIL_FROM="support@verzekinnovative.com"
+export RESEND_API_KEY="<YOUR_RESEND_API_KEY>"
+
+# Trading Configuration
+export EXCHANGE_MODE="paper"  # paper or live
 export WORKER_POLL_SECONDS="10"
+
+# Server Configuration
 export FLASK_ENV="production"
 export PORT="8050"
 export SERVER_IP="80.240.29.142"
@@ -80,8 +108,8 @@ source /root/api_server_env.sh
 
 # Step 6: Install systemd services
 echo "🔧 Step 6: Installing systemd services..."
-cp $API_DIR/deploy/verzek_api.service /etc/systemd/system/
-cp $API_DIR/deploy/verzek_worker.service /etc/systemd/system/
+cp $API_DIR/backend/deploy/verzek_api.service /etc/systemd/system/
+cp $API_DIR/backend/deploy/verzek_worker.service /etc/systemd/system/
 
 # Step 7: Reload systemd and enable services
 echo "🔄 Step 7: Enabling services..."
@@ -152,15 +180,22 @@ fi
 
 # Step 12: Setup daily report cron
 echo "⏰ Step 12: Setting up daily report cron..."
-CRON_LINE="0 23 * * * /usr/bin/python3 $API_DIR/reports/daily_report.py >> /var/log/verzek_daily.log 2>&1"
+CRON_LINE="0 23 * * * /bin/bash -c 'cd $API_DIR/backend && source venv/bin/activate && source /root/api_server_env.sh && python reports/daily_report.py' >> /var/log/verzek_daily.log 2>&1"
 (crontab -l 2>/dev/null | grep -v "daily_report.py"; echo "$CRON_LINE") | crontab -
+echo "✅ Daily report cron configured (runs at 11 PM daily)"
 
 # Step 13: Setup watchdog monitoring
 echo "🔍 Step 13: Setting up watchdog monitoring..."
-if [ -f "$API_DIR/scripts/setup_watchdog_cron.sh" ]; then
-    bash $API_DIR/scripts/setup_watchdog_cron.sh
+if [ -f "$API_DIR/backend/scripts/watchdog.sh" ]; then
+    # Make watchdog script executable
+    chmod +x $API_DIR/backend/scripts/watchdog.sh
+    
+    # Create watchdog cron with full environment setup (venv + env vars)
+    WATCHDOG_CRON="*/5 * * * * /bin/bash -c 'cd $API_DIR/backend && source venv/bin/activate && source /root/api_server_env.sh && scripts/watchdog.sh' >> $API_DIR/logs/watchdog.log 2>&1"
+    (crontab -l 2>/dev/null | grep -v "watchdog.sh"; echo "$WATCHDOG_CRON") | crontab -
+    echo "✅ Watchdog monitoring configured (runs every 5 minutes)"
 else
-    echo "⚠️  Watchdog setup script not found - skipping"
+    echo "⚠️  Watchdog script not found - skipping"
 fi
 
 # Step 14: Log deployment

@@ -5,12 +5,11 @@ After=network.target verzek_api.service
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/api_server
-Environment="PATH=/usr/bin:/usr/local/bin"
+WorkingDirectory=/root/api_server/backend
 EnvironmentFile=/root/api_server_env.sh
-ExecStart=/usr/bin/python3 /root/api_server/worker.py
+ExecStart=/root/api_server/backend/venv/bin/python worker.py
 Restart=always
-RestartSec=5
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

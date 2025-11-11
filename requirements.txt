@@ -19,3 +19,13 @@ gevent
 flask-cors
 firebase-admin
 resend
+cryptography
+Flask
+Flask-CORS
+Flask-JWT-Extended
+gunicorn
+psycopg2-binary
+python-dotenv
+python-telegram-bot
+requests
+SQLAlchemy
