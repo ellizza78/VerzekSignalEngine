@@ -253,7 +253,22 @@ def manage_exchanges(user_id):
             return jsonify({"ok": True, "exchanges": exchange_list}), 200
         
         elif request.method == 'POST':
-            # Add exchange
+            # Add exchange - check email verification first
+            user = db.query(User).filter(User.id == user_id).first()
+            
+            if not user:
+                db.close()
+                return jsonify({"ok": False, "error": "User not found"}), 404
+            
+            if not user.is_verified:
+                db.close()
+                return jsonify({
+                    "ok": False,
+                    "error": "Email verification required",
+                    "message": "Please verify your email address before connecting exchange accounts. Check your inbox for the verification link.",
+                    "needs_verification": True
+                }), 403
+            
             data = request.get_json()
             exchange = ExchangeAccount(
                 user_id=user_id,
@@ -270,7 +285,22 @@ def manage_exchanges(user_id):
             return jsonify({"ok": True, "message": "Exchange added"}), 201
         
         elif request.method == 'DELETE':
-            # Delete exchange
+            # Delete exchange - check email verification first
+            user = db.query(User).filter(User.id == user_id).first()
+            
+            if not user:
+                db.close()
+                return jsonify({"ok": False, "error": "User not found"}), 404
+            
+            if not user.is_verified:
+                db.close()
+                return jsonify({
+                    "ok": False,
+                    "error": "Email verification required",
+                    "message": "Please verify your email address before managing exchange accounts.",
+                    "needs_verification": True
+                }), 403
+            
             exchange_id = request.args.get('exchange_id')
             if exchange_id:
                 db.query(ExchangeAccount).filter(
