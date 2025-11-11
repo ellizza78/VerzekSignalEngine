@@ -17,15 +17,26 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
-### Email Verification System (COMPLETED - Nov 11, 2025)
-- **Database Tokens**: Created VerificationToken model for persistent token storage (production-safe)
-- **Registration Flow**: New users are created with is_verified=False, verification email sent automatically
-- **Login Protection**: Unverified users cannot log in (HTTP 403 with needs_verification flag)
-- **Email Verification**: /api/auth/verify-email endpoint verifies tokens and activates accounts
-- **Password Reset**: Database-persisted tokens (15-minute expiry) replace in-memory storage
-- **Token Cleanup**: cleanup_expired_tokens() function for periodic cron cleanup
-- **Resend Verification**: /api/auth/resend-verification endpoint for users who didn't receive email
-- **Production Ready**: All tokens stored in verification_tokens table with expiration tracking
+### Email Verification & 4-Day Trial System (COMPLETED - Nov 11, 2025)
+**Email Verification (PRODUCTION READY):**
+- **Database Tokens**: VerificationToken model with persistent storage (production-safe for multi-worker deployment)
+- **Registration Flow**: Users created with is_verified=False, verification email sent via Resend API
+- **Login Protection**: Unverified users blocked with HTTP 403 + needs_verification flag
+- **Mobile App Protection**: loadUser() checks is_verified on app start, auto-logout if false
+- **Resend Verification**: Public endpoint (no auth required) accepts email parameter, prevents account enumeration
+- **Mobile UI**: EmailVerificationScreen with resend functionality, navigation from login error
+- **Backend Responses**: register/login/me endpoints return created_at field for trial tracking
+- **Token Management**: 24-hour expiration, one-time use, automatic cleanup function
+
+**4-Day Trial Expiration (PRODUCTION READY):**
+- **Auto-Logout**: TRIAL users automatically logged out after 4 days from registration
+- **Dual Enforcement**: Checked on app load (loadUser) AND login attempt
+- **Token Cleanup**: Immediate removal of access/refresh tokens on expiration
+- **Date Calculation**: `Math.floor((currentDate - createdDate) / (1000 * 60 * 60 * 24))` 
+- **Trial Warning**: Day 3+ users see console warning about upcoming expiration
+- **Error Messaging**: Clear user-facing error with upgrade prompt
+- **Telegram Trial Link**: https://t.me/+JObDSp1HOuxmMWQ0 (updated in SubscriptionScreen)
+- **Architect Approved**: All security checks passed, ready for OTA deployment
 ### VPS Deployment with Watchdog (IN PROGRESS - Nov 11, 2025)
 - **Deployment Location**: /root/VerzekBackend/backend on Vultr VPS (80.240.29.142)
 - **SSL Certificate**: Installed via certbot for https://api.verzekinnovative.com
