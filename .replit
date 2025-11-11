@@ -29,7 +29,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd mobile_app/VerzekApp && rm -rf .expo && EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0 npx expo start --clear --port 8080 --tunnel"
+args = "cd mobile_app/VerzekApp && rm -rf .expo && EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0 npx expo start --clear --port 8080 --tunnel --go"
 waitForPort = 8080
 
 [[workflows.workflow]]
@@ -55,10 +55,6 @@ externalPort = 3000
 [[ports]]
 localPort = 8080
 externalPort = 8080
-
-[[ports]]
-localPort = 40639
-externalPort = 3001
 
 [deployment]
 deploymentTarget = "vm"
