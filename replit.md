@@ -16,6 +16,15 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
+### Phase 3 Complete & GitHub Push (COMPLETED - Nov 11, 2025)
+- **GitHub Repository**: Successfully pushed to https://github.com/ellizza78/VerzekBackend (8,188 objects, 211 MB)
+- **Rate Limiting**: Thread-safe in-memory limiter (1 signal/symbol/minute) prevents spam, returns HTTP 429
+- **Watchdog Monitoring**: 5-minute health checks with auto-restart and Telegram admin alerts
+- **Enhanced Deployment**: Post-deploy endpoint testing (/api/ping, /api/health) with deployment history logging
+- **Signal Detection**: Unified keywords.json schema for BUY/SELL/CLOSE/UPDATE signal parsing
+- **API Endpoints**: Separated /api/ping (service info) and /api/health (ok:true with UTC timestamp)
+- **Version**: 2.1 - Production Ready for Vultr VPS deployment
+
 ### Backend Refactor (COMPLETED - Nov 8, 2025)
 - **Complete Backend Rebuild**: Modular architecture with Flask blueprints (auth, users, signals, positions, payments)
 - **Database**: SQLAlchemy ORM with SQLite (Postgres-ready), proper relationships and indexing
