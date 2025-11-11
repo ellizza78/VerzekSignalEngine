@@ -63,6 +63,7 @@ export ENCRYPTION_KEY="<GENERATE_WITH: python3 -c 'from cryptography.fernet impo
 export TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
 export TELEGRAM_VIP_CHAT_ID="<YOUR_VIP_CHAT_ID>"
 export TELEGRAM_TRIAL_CHAT_ID="<YOUR_TRIAL_CHAT_ID>"
+export ADMIN_CHAT_ID="<YOUR_ADMIN_CHAT_ID>"
 export WORKER_POLL_SECONDS="10"
 export FLASK_ENV="production"
 export PORT="8050"

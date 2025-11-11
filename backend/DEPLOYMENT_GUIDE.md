@@ -39,6 +39,9 @@ export TELEGRAM_BOT_TOKEN="<YOUR_BOT_TOKEN>"
 export TELEGRAM_VIP_CHAT_ID="<YOUR_VIP_CHAT_ID>"
 export TELEGRAM_TRIAL_CHAT_ID="<YOUR_TRIAL_CHAT_ID>"
 
+# Admin Notifications (for deployment/watchdog alerts)
+export ADMIN_CHAT_ID="<YOUR_ADMIN_CHAT_ID>"
+
 # Worker
 export WORKER_POLL_SECONDS="10"
 
