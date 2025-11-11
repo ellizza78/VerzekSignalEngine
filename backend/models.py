@@ -19,6 +19,8 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     auto_trade_enabled = Column(Boolean, default=False)
     subscription_type = Column(String(20), default="TRIAL")  # TRIAL, VIP, PREMIUM
+    referral_code = Column(String(20), unique=True, index=True)  # VZK + 6 chars
+    referred_by = Column(Integer, ForeignKey("users.id"), nullable=True)  # Referrer user ID
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
