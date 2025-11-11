@@ -11,6 +11,7 @@ from db import SessionLocal
 from models import Signal, Position, TradeLog
 from broadcast import broadcast_signal, broadcast_target_hit, broadcast_stop_loss, broadcast_signal_cancelled
 from utils.logger import api_logger
+from utils.rate_limiter import rate_limiter
 
 bp = Blueprint('signals', __name__)
 
@@ -67,6 +68,13 @@ def create_signal():
         for field in required:
             if field not in data:
                 return jsonify({"ok": False, "error": f"Missing field: {field}"}), 400
+        
+        # Rate limiting check
+        symbol = data['symbol'].upper()
+        allowed, reason = rate_limiter.check_signal_rate(symbol, limit_per_minute=1)
+        if not allowed:
+            api_logger.warning(f"Rate limit exceeded for {symbol}: {reason}")
+            return jsonify({"ok": False, "error": reason}), 429
         
         db: Session = SessionLocal()
         

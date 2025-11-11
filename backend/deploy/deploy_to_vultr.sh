@@ -98,10 +98,31 @@ echo "✅ Step 9: Checking service status..."
 systemctl status verzek_api.service --no-pager || true
 systemctl status verzek_worker.service --no-pager || true
 
-# Step 10: Test API
-echo "🧪 Step 10: Testing API..."
-sleep 2
-curl -s http://127.0.0.1:8050/api/health | jq . || echo "API test failed - check logs"
+# Step 10: Test API endpoints
+echo "🧪 Step 10: Testing API endpoints..."
+sleep 3
+
+# Test /api/ping
+echo "   Testing /api/ping..."
+PING_RESULT=$(curl -s http://127.0.0.1:8050/api/ping)
+if echo "$PING_RESULT" | jq -e '.status == "ok"' > /dev/null 2>&1; then
+    echo "   ✅ /api/ping - OK"
+else
+    echo "   ❌ /api/ping - FAILED"
+    echo "   Response: $PING_RESULT"
+fi
+
+# Test /api/health
+echo "   Testing /api/health..."
+HEALTH_RESULT=$(curl -s http://127.0.0.1:8050/api/health)
+if echo "$HEALTH_RESULT" | jq -e '.ok == true' > /dev/null 2>&1; then
+    echo "   ✅ /api/health - OK"
+    HEALTH_STATUS="healthy"
+else
+    echo "   ❌ /api/health - FAILED"
+    echo "   Response: $HEALTH_RESULT"
+    HEALTH_STATUS="unhealthy"
+fi
 
 # Step 11: Configure Nginx (if not already configured)
 echo "🌐 Step 11: Checking Nginx configuration..."
@@ -133,20 +154,60 @@ echo "⏰ Step 12: Setting up daily report cron..."
 CRON_LINE="0 23 * * * /usr/bin/python3 $API_DIR/reports/daily_report.py >> /var/log/verzek_daily.log 2>&1"
 (crontab -l 2>/dev/null | grep -v "daily_report.py"; echo "$CRON_LINE") | crontab -
 
+# Step 13: Setup watchdog monitoring
+echo "🔍 Step 13: Setting up watchdog monitoring..."
+if [ -f "$API_DIR/scripts/setup_watchdog_cron.sh" ]; then
+    bash $API_DIR/scripts/setup_watchdog_cron.sh
+else
+    echo "⚠️  Watchdog setup script not found - skipping"
+fi
+
+# Step 14: Log deployment
+echo "📝 Step 14: Logging deployment..."
+DEPLOY_LOG="/root/api_server/logs/deployment_history.log"
+mkdir -p $(dirname "$DEPLOY_LOG")
+cat >> "$DEPLOY_LOG" << EOF
+========================================
+Deployment: $(date '+%Y-%m-%d %H:%M:%S %Z')
+Version: 2.1
+Health Status: $HEALTH_STATUS
+Services: verzek_api.service, verzek_worker.service
+Deployed by: $(whoami)
+========================================
+
+EOF
+
+# Step 15: Send Telegram success notification (if configured)
+if [ "$HEALTH_STATUS" = "healthy" ] && [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$ADMIN_CHAT_ID" ]; then
+    echo "📱 Step 15: Sending success notification..."
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d "chat_id=${ADMIN_CHAT_ID}" \
+        -d "text=✅ <b>VerzekBackend Deployment Successful</b>%0A%0AVersion: 2.1%0ATime: $(date '+%Y-%m-%d %H:%M:%S')%0AStatus: ${HEALTH_STATUS}%0A%0AAll systems operational!" \
+        -d "parse_mode=HTML" > /dev/null 2>&1
+else
+    echo "📱 Step 15: Skipping Telegram notification (not configured or unhealthy)"
+fi
+
 echo ""
 echo "========================================="
 echo "✅ Deployment completed successfully!"
 echo ""
-echo "📊 Service Status:"
-echo "  API:    systemctl status verzek_api.service"
-echo "  Worker: systemctl status verzek_worker.service"
+echo "📍 API URL: https://api.verzekinnovative.com"
+echo "🏥 Health Check: curl https://api.verzekinnovative.com/api/health"
+echo "📊 Status: $HEALTH_STATUS"
 echo ""
-echo "📝 Logs:"
-echo "  API:    journalctl -u verzek_api.service -f"
-echo "  Worker: journalctl -u verzek_worker.service -f"
+echo "🔧 Service Commands:"
+echo "  sudo systemctl status verzek_api.service"
+echo "  sudo systemctl status verzek_worker.service"
+echo "  sudo journalctl -u verzek_api.service -f"
+echo "  sudo journalctl -u verzek_worker.service -f"
 echo ""
-echo "🌐 API Endpoint:"
-echo "  https://api.verzekinnovative.com/api/health"
+echo "📁 Logs:"
+echo "  /root/api_server/logs/api.log"
+echo "  /root/api_server/logs/worker.log"
+echo "  /root/api_server/logs/watchdog.log"
+echo "  /root/api_server/logs/deployment_history.log"
 echo ""
+echo "🔍 Watchdog: Health checks every 5 minutes"
 echo "🎉 Backend is now live and auto-trading is operational!"
 echo "========================================="

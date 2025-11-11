@@ -1,0 +1,21 @@
+{
+  "version": "2.1",
+  "last_updated": "2025-11-11",
+  "trading_keywords": {
+    "buy": ["BUY", "LONG", "OPEN LONG", "GO LONG", "ENTER LONG", "BUY NOW"],
+    "sell": ["SELL", "SHORT", "OPEN SHORT", "GO SHORT", "ENTER SHORT", "SELL NOW"],
+    "close": ["CLOSE", "EXIT", "CANCEL", "STOP TRADE", "TAKE PROFIT", "CLOSE POSITION"],
+    "update": ["UPDATE", "REVISE", "MODIFY", "ADJUST", "CHANGE"],
+    "hold": ["HOLD", "WAIT", "WATCH", "MONITOR"],
+    "alert": ["ALERT", "WARNING", "DANGER", "RISK"]
+  },
+  "signal_fields": {
+    "required": ["symbol", "action"],
+    "optional": ["entry_price", "take_profit", "stop_loss", "leverage", "notes"]
+  },
+  "rate_limits": {
+    "signals_per_symbol_per_minute": 1,
+    "max_signals_per_hour": 100,
+    "max_positions_per_user": 50
+  }
+}
