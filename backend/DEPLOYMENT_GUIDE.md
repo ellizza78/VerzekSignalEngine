@@ -214,3 +214,75 @@ ssh root@80.240.29.142 "cd /root/VerzekBackend/backend && cp verzek.db.backup_TI
 # Restart API
 ssh root@80.240.29.142 "systemctl restart verzek-api"
 ```
+
+## Next Steps
+
+1. Deploy to VPS
+2. Test email verification flow end-to-end
+3. Update mobile app to handle verification flow
+4. Monitor logs for any issues
+5. Test OTA updates for remote config changes
+
+---
+
+## 🔐 Admin System (NEW - Nov 12, 2025)
+
+### Admin Endpoints for Payment & Subscription Management
+
+**CRITICAL: Set ADMIN_EMAIL environment variable**
+```bash
+# In /root/api_server_env.sh
+export ADMIN_EMAIL="your_admin_email@example.com"
+```
+
+### Admin Endpoints:
+- `GET /api/admin/payments/pending` - View pending payment verifications
+- `POST /api/admin/payments/approve/<payment_id>` - Approve payment & upgrade user
+- `POST /api/admin/payments/reject/<payment_id>` - Reject payment  
+- `GET /api/admin/payments/all` - All payments with filters
+- `GET /api/admin/subscriptions/overview` - Revenue & subscription stats
+- `GET /api/admin/referrals` - Complete referral tree
+- `GET /api/admin/referrals/payouts` - Calculate referral bonuses
+- `GET /api/admin/stats` - Platform statistics
+
+**Full admin guide:** See `ADMIN_REFERRAL_GUIDE.md`
+
+### Security Fix Applied:
+✅ Payment approval now restricted to admin only (prevents self-upgrade vulnerability)
+
+---
+
+## 📦 Quick Deployment Checklist
+
+1. **Backup database**
+   ```bash
+   cp database/verzek_autotrader.db database/verzek_autotrader.db.backup.$(date +%Y%m%d)
+   ```
+
+2. **Upload & extract package**
+   ```bash
+   scp /tmp/verzek_backend_complete.tar.gz root@80.240.29.142:/tmp/
+   cd /root/VerzekBackend/backend && tar -xzf /tmp/verzek_backend_complete.tar.gz
+   ```
+
+3. **Run migrations** (if not already done)
+   ```bash
+   sqlite3 database/verzek_autotrader.db < database/migrations/add_verification_tokens.sql
+   sqlite3 database/verzek_autotrader.db < database/migrations/add_device_tokens.sql
+   ```
+
+4. **Set ADMIN_EMAIL** (in `/root/api_server_env.sh`)
+   ```bash
+   export ADMIN_EMAIL="admin@verzekinnovative.com"
+   ```
+
+5. **Restart API**
+   ```bash
+   /root/restart_verzek_api.sh
+   ```
+
+6. **Verify deployment**
+   ```bash
+   curl https://api.verzekinnovative.com/api/health
+   tail -f /root/VerzekBackend/backend/logs/api.log  # Check for ADMIN_EMAIL warning
+   ```
