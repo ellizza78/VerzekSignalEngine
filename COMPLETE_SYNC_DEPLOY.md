@@ -10,7 +10,7 @@
 ### ✅ Replit Backend (Source of Truth)
 - **Structure:** Clean, complete, production-ready
 - **Files:** api_server.py, all routes, utils, models, config
-- **Dependencies:** requirements.txt (UPDATED with resend==0.8.0)
+- **Dependencies:** requirements.txt (UPDATED with resend==2.19.0)
 - **GitHub Connection:** ✅ Connected to ellizza78/VerzekBackend
 - **Commits Ahead:** 198 commits not pushed
 
@@ -124,7 +124,13 @@ cd /root/VerzekBackend/backend
 
 # Install all dependencies
 echo "📦 Step 4: Installing Python dependencies..."
-pip3 install -r requirements.txt --upgrade 2>&1 | grep -i "success\|install\|requirement" || true
+set -o pipefail
+pip3 install -r requirements.txt --upgrade 2>&1 | tee /tmp/pip_install.log
+if [ $? -ne 0 ]; then
+    echo "❌ Dependency installation failed! Check log:"
+    cat /tmp/pip_install.log
+    exit 1
+fi
 echo "✅ Dependencies installed"
 
 # Create required directories
@@ -145,10 +151,20 @@ fi
 # Remove "export" keywords (systemd doesn't support them)
 sed -i 's/^export //g' /root/api_server_env.sh
 
-# Ensure critical variables are present
-grep -q "RESEND_API_KEY" /root/api_server_env.sh || echo "RESEND_API_KEY=re_ACMWmmPe_CHiR7EtPzMwP8Dc9FLy_Lmyu" >> /root/api_server_env.sh
-grep -q "EMAIL_FROM" /root/api_server_env.sh || echo "EMAIL_FROM=support@verzekinnovative.com" >> /root/api_server_env.sh
-grep -q "DATABASE_URL" /root/api_server_env.sh || echo "DATABASE_URL=postgresql://verzek_user:VerzekDB2025!Secure#936a@localhost/verzek_db" >> /root/api_server_env.sh
+# Verify critical variables are present and non-empty
+MISSING_VARS=""
+grep -Eq '^RESEND_API_KEY=.+' /root/api_server_env.sh || MISSING_VARS="$MISSING_VARS RESEND_API_KEY"
+grep -Eq '^EMAIL_FROM=.+' /root/api_server_env.sh || MISSING_VARS="$MISSING_VARS EMAIL_FROM"
+grep -Eq '^DATABASE_URL=.+' /root/api_server_env.sh || MISSING_VARS="$MISSING_VARS DATABASE_URL"
+grep -Eq '^JWT_SECRET=.+' /root/api_server_env.sh || MISSING_VARS="$MISSING_VARS JWT_SECRET"
+grep -Eq '^ENCRYPTION_KEY=.+' /root/api_server_env.sh || MISSING_VARS="$MISSING_VARS ENCRYPTION_KEY"
+
+if [ -n "$MISSING_VARS" ]; then
+    echo "❌ ERROR: Missing or empty required environment variables:$MISSING_VARS"
+    echo "Please add them to /root/api_server_env.sh before deploying."
+    echo "Required format: KEY=value (no 'export', no comments, non-empty)"
+    exit 1
+fi
 
 echo "✅ Environment configured"
 
@@ -181,10 +197,17 @@ echo "✅ Service file created"
 echo "🔄 Step 8: Reloading systemd..."
 systemctl daemon-reload
 
-# Start service
-echo "🚀 Step 9: Starting verzek-api.service..."
+# Start services
+echo "🚀 Step 9: Starting services..."
 systemctl enable verzek-api.service
 systemctl start verzek-api.service
+
+# Check if worker service exists and start it
+if [ -f "/etc/systemd/system/verzek-worker.service" ]; then
+    echo "🔄 Starting verzek-worker.service..."
+    systemctl enable verzek-worker.service
+    systemctl start verzek-worker.service
+fi
 
 # Wait for startup
 echo "⏳ Waiting for service to start..."
@@ -313,7 +336,7 @@ systemctl status verzek-api.service
 - [ ] Push backend to GitHub (198 commits)
 - [ ] Push mobile app to GitHub (194 commits)
 - [ ] Tag releases on GitHub
-- [ ] Verify requirements.txt includes resend==0.8.0
+- [ ] Verify requirements.txt includes resend==2.19.0
 
 ### Deployment:
 - [ ] Run deployment script on VPS
