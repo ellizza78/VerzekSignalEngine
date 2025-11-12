@@ -29,6 +29,7 @@ from users_routes import bp as users_bp
 from signals_routes import bp as signals_bp
 from positions_routes import bp as positions_bp
 from payments_routes import bp as payments_bp
+from admin_routes import bp as admin_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -58,6 +59,7 @@ app.register_blueprint(users_bp, url_prefix="/api/users")
 app.register_blueprint(signals_bp, url_prefix="/api/signals")
 app.register_blueprint(positions_bp, url_prefix="/api/positions")
 app.register_blueprint(payments_bp, url_prefix="/api/payments")
+app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
 
 # Health check endpoints
