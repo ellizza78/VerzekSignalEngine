@@ -1,0 +1,68 @@
+ov 12 15:06:18 vultr systemd[1]: verzek-api.servi…e.
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: verzek-api.servi…sh
+Nov 12 15:06:18 vultr systemd[1]: Starting Verzek …..
+Hint: Some lines were ellipsized, use -l to show in full.
+root@vultr:~/VerzekBackend# journalctl -u verzek-api -n 50 --no-pager
+Nov 12 15:07:02 vultr gunicorn[598169]:     return self.load_wsgiapp()
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/usr/local/lib/python3.10/dist-packages/gunicorn/app/wsgiapp.py", line 48, in load_wsgiapp
+Nov 12 15:07:02 vultr gunicorn[598169]:     return util.import_app(self.app_uri)
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/usr/local/lib/python3.10/dist-packages/gunicorn/util.py", line 371, in import_app
+Nov 12 15:07:02 vultr gunicorn[598169]:     mod = importlib.import_module(module)
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+Nov 12 15:07:02 vultr gunicorn[598169]:     return _bootstrap._gcd_import(name[level:], package, level)
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/root/VerzekBackend/api_server.py", line 27, in <module>
+Nov 12 15:07:02 vultr gunicorn[598169]:     from auth_routes import bp as auth_bp
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/root/VerzekBackend/auth_routes.py", line 12, in <module>
+Nov 12 15:07:02 vultr gunicorn[598169]:     from utils.security import hash_password, verify_password
+Nov 12 15:07:02 vultr gunicorn[598169]:   File "/root/VerzekBackend/utils/security.py", line 23, in <module>
+Nov 12 15:07:02 vultr gunicorn[598169]:     raise ValueError(
+Nov 12 15:07:02 vultr gunicorn[598169]: ValueError: ENCRYPTION_KEY environment variable is required. Generate one with: python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'
+Nov 12 15:07:02 vultr gunicorn[598169]: [2025-11-12 15:07:02 +0000] [598169] [INFO] Worker exiting (pid: 598169)
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Worker (pid:598165) exited with code 3
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Worker (pid:598167) was sent SIGTERM!
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Worker (pid:598169) was sent SIGTERM!
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Worker (pid:598168) was sent SIGTERM!
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Shutting down: Master
+Nov 12 15:07:02 vultr gunicorn[598158]: [2025-11-12 15:07:02 +0000] [598158] [ERROR] Reason: Worker failed to boot.
+Nov 12 15:07:02 vultr systemd[1]: verzek-api.service: Main process exited, code=exited, status=3/NOTIMPLEMENTED
+Nov 12 15:07:02 vultr systemd[1]: verzek-api.service: Failed with result 'exit-code'.
+Nov 12 15:07:02 vultr systemd[1]: verzek-api.service: Consumed 9.575s CPU time.
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Scheduled restart job, restart counter is at 19.
+Nov 12 15:07:03 vultr systemd[1]: Stopped Verzek Auto Trader API (Gunicorn).
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Consumed 9.575s CPU time.
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export RESEND_API_KEY=re_ACMWmmPe_CHiR7EtPGbLFyzkNnYVh64qA': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export EMAIL_FROM=support@verzekinnovative.com': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export SUPPORT_EMAIL=support@verzekinnovative.com': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export APP_NAME=VerzekAutoTrader': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export API_BASE_URL=https://api.verzekinnovative.com': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export DOMAIN=verzekinnovative.com': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export ADMIN_EMAIL=verzekinnovativesolutionsltd@gmail.com': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: verzek-api.service: Ignoring invalid environment assignment 'export ENCRYPTION_KEY=vsNT9-dK8Ouhheo_Lj2b8NJU0aeOIhYl6CBe-95_jrc=': /root/api_server_env.sh
+Nov 12 15:07:03 vultr systemd[1]: Starting Verzek Auto Trader API (Gunicorn)...
+Nov 12 15:07:04 vultr gunicorn[598177]: [2025-11-12 15:07:04 +0000] [598177] [INFO] Starting gunicorn 22.0.0
+Nov 12 15:07:04 vultr gunicorn[598177]: [2025-11-12 15:07:04 +0000] [598177] [INFO] Listening at: http://0.0.0.0:8050 (598177)
+Nov 12 15:07:04 vultr gunicorn[598177]: [2025-11-12 15:07:04 +0000] [598177] [INFO] Using worker: sync
+Nov 12 15:07:04 vultr systemd[1]: Started Verzek Auto Trader API (Gunicorn).
+Nov 12 15:07:04 vultr gunicorn[598179]: [2025-11-12 15:07:04 +0000] [598179] [INFO] Booting worker with pid: 598179
+Nov 12 15:07:04 vultr gunicorn[598180]: [2025-11-12 15:07:04 +0000] [598180] [INFO] Booting worker with pid: 598180
+Nov 12 15:07:04 vultr gunicorn[598181]: [2025-11-12 15:07:04 +0000] [598181] [INFO] Booting worker with pid: 598181
+Nov 12 15:07:04 vultr gunicorn[598182]: [2025-11-12 15:07:04 +0000] [598182] [INFO] Booting worker with pid: 598182
+root@vultr:~/VerzekBackend# ps aux | grep gunicorn
+root      598211 28.0  5.3  70428 52160 ?        R    15:07   0:01 /usr/bin/python3 /usr/local/bin/gunicorn --bind 0.0.0.0:8050 --workers 4 --timeout 120 --chdir /root/VerzekBackend api_server:app
+root      598212 33.4  5.2  70148 51356 ?        R    15:07   0:01 /usr/bin/python3 /usr/local/bin/gunicorn --bind 0.0.0.0:8050 --workers 4 --timeout 120 --chdir /root/VerzekBackend api_server:app
+root      598217  2.2  1.8  31860 18452 ?        S    15:07   0:00 /usr/bin/python3 /usr/local/bin/gunicorn api_server:app --bind 127.0.0.1:8050 --workers 1 --threads 4 --worker-class gthread --timeout 120 --daemon --pid /tmp/verzek_api.pid --access-logfile /var/log/verzek_api_access.log --error-logfile /var/log/verzek_api_error.log
+root      598222  0.0  0.2   6612  2320 pts/2    S+   15:07   0:00 grep --color=auto gunicorn
+root@vultr:~/VerzekBackend# 
