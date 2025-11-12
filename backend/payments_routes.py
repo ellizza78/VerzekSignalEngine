@@ -27,7 +27,8 @@ def create_payment():
         user_id = get_jwt_identity()
         data = request.get_json()
         
-        plan_type = data.get('plan_type', '').upper()
+        # Accept both 'plan' (mobile app) and 'plan_type' (backend) for backward compatibility
+        plan_type = (data.get('plan_type') or data.get('plan', '')).upper()
         if plan_type not in ['VIP', 'PREMIUM']:
             return jsonify({"ok": False, "error": "Invalid plan type"}), 400
         
