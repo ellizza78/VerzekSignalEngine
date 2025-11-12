@@ -11,6 +11,7 @@ import uuid
 from db import SessionLocal
 from models import Payment, User
 from utils.logger import api_logger
+from utils.telegram_notifications import notify_payment_received
 
 bp = Blueprint('payments', __name__)
 
@@ -106,6 +107,17 @@ def verify_payment():
         payment.status = "PENDING_VERIFICATION"
         
         db.commit()
+        
+        # Notify Telegram subscribers group about payment received
+        try:
+            notify_payment_received(
+                amount_usdt=payment.amount_usdt,
+                plan_type=payment.plan_type,
+                tx_hash=tx_hash
+            )
+        except Exception as e:
+            api_logger.warning(f"Telegram notification failed: {e}")
+        
         db.close()
         
         api_logger.info(f"Payment {payment_id} submitted for verification by user {user_id}")

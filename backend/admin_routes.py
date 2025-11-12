@@ -13,6 +13,7 @@ import os
 from db import SessionLocal
 from models import User, UserSettings, Position, Signal, TradeLog, Payment
 from utils.logger import api_logger
+from utils.telegram_notifications import notify_new_subscription, notify_referral_success, test_notification
 
 bp = Blueprint('admin', __name__)
 
@@ -395,6 +396,16 @@ def approve_payment(payment_id):
             user.subscription_type = payment.plan_type
             
             api_logger.info(f"Admin {user_id} approved payment {payment_id}: User {user.id} upgraded from {old_plan} to {payment.plan_type}")
+            
+            # Notify Telegram subscribers group
+            try:
+                notify_new_subscription(
+                    user_name=user.full_name or "New User",
+                    plan_type=payment.plan_type,
+                    amount_usdt=payment.amount_usdt
+                )
+            except Exception as e:
+                api_logger.warning(f"Telegram notification failed: {e}")
         
         db.commit()
         db.close()
@@ -525,3 +536,40 @@ def get_subscriptions_overview():
     except Exception as e:
         api_logger.error(f"Get subscriptions overview error: {e}")
         return jsonify({"ok": False, "error": "Failed to fetch overview"}), 500
+
+
+@bp.route('/telegram/test', methods=['POST'])
+@jwt_required()
+def test_telegram_notification():
+    """
+    Test Telegram notification to subscribers group
+    Admin only - verifies bot configuration
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        db.close()
+        
+        # Send test notification
+        success = test_notification()
+        
+        if success:
+            return jsonify({
+                "ok": True,
+                "message": "Test notification sent to Telegram group successfully"
+            }), 200
+        else:
+            return jsonify({
+                "ok": False,
+                "error": "Failed to send notification. Check TELEGRAM_BOT_TOKEN configuration."
+            }), 500
+        
+    except Exception as e:
+        api_logger.error(f"Test Telegram notification error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500

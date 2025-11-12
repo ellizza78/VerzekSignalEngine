@@ -13,6 +13,7 @@ from utils.security import hash_password, verify_password
 from utils.logger import api_logger
 from utils.tokens import generate_reset_token, generate_verification_token, verify_token, invalidate_token, generate_referral_code
 from utils.email import send_password_reset_email, send_verification_email, send_welcome_email
+from utils.telegram_notifications import notify_referral_success
 
 bp = Blueprint('auth', __name__)
 
@@ -40,10 +41,12 @@ def register():
         
         # Validate referral code if provided
         referrer_id = None
+        referrer_user = None
         if referral_code_input:
             referrer = db.query(User).filter(User.referral_code == referral_code_input).first()
             if referrer:
                 referrer_id = referrer.id
+                referrer_user = referrer
                 api_logger.info(f"New user referred by user {referrer_id} with code {referral_code_input}")
         
         # Create user (unverified)
@@ -79,6 +82,17 @@ def register():
             api_logger.info(f"Verification email sent to {email}")
         except Exception as e:
             api_logger.error(f"Verification email failed for {email}: {e}")
+        
+        # Notify Telegram group if user was referred
+        if referrer_user:
+            try:
+                notify_referral_success(
+                    referrer_name=referrer_user.full_name or "User",
+                    new_user_name=user.full_name or "New User",
+                    new_user_plan=user.subscription_type
+                )
+            except Exception as e:
+                api_logger.warning(f"Telegram referral notification failed: {e}")
         
         # Generate tokens
         access_token = create_access_token(identity=user.id)
