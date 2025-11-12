@@ -9,6 +9,11 @@ from typing import List
 from models import User, UserSettings, Signal, Position, PositionTarget, TradeLog
 from trading.paper_client import paper_client
 from utils.logger import worker_logger
+from utils.notifications import (
+    send_trade_start_notification,
+    send_trade_end_notification,
+    get_user_push_tokens
+)
 
 
 def run_once(db: Session):
@@ -159,6 +164,25 @@ def open_position_for_signal(db: Session, user_id: int, signal: Signal):
         
         worker_logger.info(f"Position opened for user {user_id}, signal #{signal.id}")
         
+        # Send trade start notification (PREMIUM users only)
+        try:
+            user = db.query(User).filter(User.id == user_id).first()
+            
+            if user and user.subscription_type == 'PREMIUM' and user.notifications_enabled:
+                tokens = get_user_push_tokens(db, user_id)
+                
+                if tokens:
+                    position_data = {
+                        "id": position.id,
+                        "symbol": position.symbol,
+                        "direction": position.side,
+                        "entry_price": position.entry_price,
+                    }
+                    send_trade_start_notification(tokens, position_data)
+                    worker_logger.info(f"📱 Sent trade start notification to user {user_id}")
+        except Exception as notif_error:
+            worker_logger.error(f"Trade start notification failed: {notif_error}")
+        
     except Exception as e:
         worker_logger.error(f"Open position error: {e}")
         db.rollback()
@@ -278,6 +302,26 @@ def close_position_target(db: Session, position: Position, target_index: int, pr
             db.add(trade_log)
             
             worker_logger.info(f"Target {target_index} hit for position #{position.id}, PnL: {close_result.get('pnl_usdt')}")
+            
+            # Send trade end notification when position fully closes (PREMIUM users only)
+            if position.status == 'CLOSED':
+                try:
+                    user = db.query(User).filter(User.id == position.user_id).first()
+                    
+                    if user and user.subscription_type == 'PREMIUM' and user.notifications_enabled:
+                        tokens = get_user_push_tokens(db, position.user_id)
+                        
+                        if tokens:
+                            position_data = {
+                                "id": position.id,
+                                "symbol": position.symbol,
+                                "pnl": position.pnl_usdt,
+                                "pnl_percentage": position.pnl_pct,
+                            }
+                            send_trade_end_notification(tokens, position_data)
+                            worker_logger.info(f"📱 Sent trade end notification to user {position.user_id}")
+                except Exception as notif_error:
+                    worker_logger.error(f"Trade end notification failed: {notif_error}")
         
     except Exception as e:
         worker_logger.error(f"Close position target error: {e}")
@@ -317,6 +361,25 @@ def close_position_sl(db: Session, position: Position, sl_price: float):
             db.add(trade_log)
             
             worker_logger.info(f"Stop loss hit for position #{position.id}, PnL: {close_result.get('pnl_usdt')}")
+            
+            # Send trade end notification (PREMIUM users only)
+            try:
+                user = db.query(User).filter(User.id == position.user_id).first()
+                
+                if user and user.subscription_type == 'PREMIUM' and user.notifications_enabled:
+                    tokens = get_user_push_tokens(db, position.user_id)
+                    
+                    if tokens:
+                        position_data = {
+                            "id": position.id,
+                            "symbol": position.symbol,
+                            "pnl": position.pnl_usdt,
+                            "pnl_percentage": position.pnl_pct,
+                        }
+                        send_trade_end_notification(tokens, position_data)
+                        worker_logger.info(f"📱 Sent trade end notification to user {position.user_id}")
+            except Exception as notif_error:
+                worker_logger.error(f"Trade end notification failed: {notif_error}")
         
     except Exception as e:
         worker_logger.error(f"Close position SL error: {e}")

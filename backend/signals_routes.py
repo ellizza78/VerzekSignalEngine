@@ -12,6 +12,7 @@ from models import Signal, Position, TradeLog
 from broadcast import broadcast_signal, broadcast_target_hit, broadcast_stop_loss, broadcast_signal_cancelled
 from utils.logger import api_logger
 from utils.rate_limiter import rate_limiter
+from utils.notifications import send_signal_notification, get_subscription_user_tokens
 
 bp = Blueprint('signals', __name__)
 
@@ -112,6 +113,25 @@ def create_signal():
             "duration": signal.duration
         }
         broadcast_signal(signal_dict, target="both")
+        
+        # Send push notifications to VIP + PREMIUM users
+        try:
+            user_tokens = get_subscription_user_tokens(db, ['VIP', 'PREMIUM'])
+            
+            if user_tokens:
+                all_tokens = [token for tokens in user_tokens.values() for token in tokens]
+                
+                signal_notification_data = {
+                    "id": signal.id,
+                    "symbol": signal.symbol,
+                    "direction": signal.side,
+                    "entry_price": signal.entry,
+                }
+                
+                result = send_signal_notification(all_tokens, signal_notification_data)
+                api_logger.info(f"📱 Sent signal notifications to {len(all_tokens)} devices")
+        except Exception as e:
+            api_logger.error(f"Signal notification failed: {e}")
         
         db.close()
         
