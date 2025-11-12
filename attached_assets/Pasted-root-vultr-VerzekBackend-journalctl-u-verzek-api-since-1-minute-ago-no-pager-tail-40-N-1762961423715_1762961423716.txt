@@ -1,0 +1,38 @@
+root@vultr:~/VerzekBackend# journalctl -u verzek-api --since "1 minute ago" --no-pager | tail -40
+Nov 12 15:27:07 vultr systemd[1]: verzek-api.service: Current command vanished from the unit file, execution of the command list won't be resumed.
+Nov 12 15:27:07 vultr systemd[1]: Stopping Verzek Auto Trader API (Gunicorn)...
+Nov 12 15:27:07 vultr gunicorn[599456]: [2025-11-12 15:27:07 +0000] [599456] [INFO] Worker exiting (pid: 599456)
+Nov 12 15:27:07 vultr gunicorn[599457]: [2025-11-12 15:27:07 +0000] [599457] [INFO] Worker exiting (pid: 599457)
+Nov 12 15:27:07 vultr gunicorn[599454]: [2025-11-12 15:27:07 +0000] [599454] [INFO] Worker exiting (pid: 599454)
+Nov 12 15:27:07 vultr gunicorn[599455]: [2025-11-12 15:27:07 +0000] [599455] [INFO] Worker exiting (pid: 599455)
+Nov 12 15:27:07 vultr gunicorn[599451]: [2025-11-12 15:27:07 +0000] [599451] [INFO] Handling signal: term
+Nov 12 15:27:07 vultr gunicorn[599451]: [2025-11-12 15:27:07 +0000] [599451] [ERROR] Worker (pid:599455) was sent SIGTERM!
+Nov 12 15:27:07 vultr gunicorn[599451]: [2025-11-12 15:27:07 +0000] [599451] [ERROR] Worker (pid:599456) was sent SIGTERM!
+Nov 12 15:27:07 vultr gunicorn[599451]: [2025-11-12 15:27:07 +0000] [599451] [ERROR] Worker (pid:599457) was sent SIGTERM!
+Nov 12 15:27:08 vultr gunicorn[599451]: [2025-11-12 15:27:08 +0000] [599451] [ERROR] Worker (pid:599454) was sent SIGTERM!
+Nov 12 15:27:08 vultr gunicorn[599451]: [2025-11-12 15:27:08 +0000] [599451] [INFO] Shutting down: Master
+Nov 12 15:27:08 vultr systemd[1]: verzek-api.service: Deactivated successfully.
+Nov 12 15:27:08 vultr systemd[1]: Stopped Verzek Auto Trader API (Gunicorn).
+Nov 12 15:27:08 vultr systemd[1]: verzek-api.service: Consumed 11.553s CPU time.
+Nov 12 15:27:08 vultr systemd[1]: Starting Verzek Auto Trader API (Gunicorn)...
+Nov 12 15:27:08 vultr gunicorn[599860]: [2025-11-12 15:27:08 +0000] [599860] [INFO] Starting gunicorn 22.0.0
+Nov 12 15:27:08 vultr gunicorn[599860]: [2025-11-12 15:27:08 +0000] [599860] [INFO] Listening at: http://0.0.0.0:8050 (599860)
+Nov 12 15:27:08 vultr gunicorn[599860]: [2025-11-12 15:27:08 +0000] [599860] [INFO] Using worker: sync
+Nov 12 15:27:08 vultr systemd[1]: Started Verzek Auto Trader API (Gunicorn).
+Nov 12 15:27:08 vultr gunicorn[599862]: [2025-11-12 15:27:08 +0000] [599862] [INFO] Booting worker with pid: 599862
+Nov 12 15:27:12 vultr gunicorn[599862]: ✅ Database initialized successfully
+Nov 12 15:27:12 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:12 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+Nov 12 15:27:16 vultr gunicorn[599862]: 2025-11-12 15:27:16 - verzek_api - ERROR - Registration error: (sqlite3.OperationalError) no such column: users.full_name
+Nov 12 15:27:16 vultr gunicorn[599862]: [SQL: SELECT users.id AS users_id, users.email AS users_email, users.password_hash AS users_password_hash, users.full_name AS users_full_name, users.is_verified AS users_is_verified, users.auto_trade_enabled AS users_auto_trade_enabled, users.subscription_type AS users_subscription_type, users.referral_code AS users_referral_code, users.referred_by AS users_referred_by, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.notifications_enabled AS users_notifications_enabled
+Nov 12 15:27:16 vultr gunicorn[599862]: FROM users
+Nov 12 15:27:16 vultr gunicorn[599862]: WHERE users.email = ?
+Nov 12 15:27:16 vultr gunicorn[599862]:  LIMIT ? OFFSET ?]
+Nov 12 15:27:16 vultr gunicorn[599862]: [parameters: ('final1762961235@test.com', 1, 0)]
+Nov 12 15:27:16 vultr gunicorn[599862]: (Background on this error at: https://sqlalche.me/e/20/e3q8)
+Nov 12 15:27:16 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:16 +0000] "POST /api/auth/register HTTP/1.0" 500 43 "-" "curl/7.81.0"
+Nov 12 15:27:22 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:22 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+Nov 12 15:27:32 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:32 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+Nov 12 15:27:42 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:42 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+Nov 12 15:27:52 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:27:52 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+Nov 12 15:28:02 vultr gunicorn[599862]: 127.0.0.1 - - [12/Nov/2025:15:28:02 +0000] "GET /api/ping HTTP/1.1" 200 115 "-" "curl/7.81.0"
+root@vultr:~/VerzekBackend# 
