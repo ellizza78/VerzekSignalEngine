@@ -24,10 +24,13 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    notifications_enabled = Column(Boolean, default=True)
+    
     # Relationships
     settings = relationship("UserSettings", uselist=False, back_populates="user", cascade="all, delete-orphan")
     exchanges = relationship("ExchangeAccount", back_populates="user", cascade="all, delete-orphan")
     positions = relationship("Position", back_populates="user", cascade="all, delete-orphan")
+    device_tokens = relationship("DeviceToken", back_populates="user", cascade="all, delete-orphan")
 
 
 class UserSettings(Base):
@@ -188,3 +191,22 @@ class Payment(Base):
     
     created_at = Column(DateTime, default=datetime.utcnow)
     verified_at = Column(DateTime)
+
+
+class DeviceToken(Base):
+    """Push notification device tokens (multi-device support)"""
+    __tablename__ = "device_tokens"
+    
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    
+    push_token = Column(String(255), unique=True, nullable=False, index=True)
+    device_name = Column(String(100))  # e.g., "iPhone 13", "Samsung Galaxy S21"
+    device_platform = Column(String(20))  # ios, android
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_active = Column(DateTime, default=datetime.utcnow)
+    is_active = Column(Boolean, default=True, index=True)
+    
+    # Relationship
+    user = relationship("User", back_populates="device_tokens")

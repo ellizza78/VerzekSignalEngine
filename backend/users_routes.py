@@ -5,9 +5,10 @@ Handles user settings, exchanges, preferences, risk management
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from db import SessionLocal
-from models import User, UserSettings, ExchangeAccount
+from models import User, UserSettings, ExchangeAccount, DeviceToken
 from utils.security import encrypt_api_key, decrypt_api_key
 from utils.logger import api_logger
 
@@ -359,3 +360,143 @@ def manage_subscription(user_id):
     except Exception as e:
         api_logger.error(f"Manage subscription error: {e}")
         return jsonify({"ok": False, "error": "Failed to manage subscription"}), 500
+
+
+@bp.route('/<int:user_id>/device-token', methods=['POST', 'DELETE'])
+@jwt_required()
+def manage_device_token(user_id):
+    """Register or remove push notification device token"""
+    try:
+        current_user = get_jwt_identity()
+        if current_user != user_id:
+            return jsonify({"ok": False, "error": "Unauthorized"}), 403
+        
+        db: Session = SessionLocal()
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            db.close()
+            return jsonify({"ok": False, "error": "User not found"}), 404
+        
+        if request.method == 'POST':
+            data = request.get_json()
+            push_token = data.get('push_token')
+            device_name = data.get('device_name', 'Unknown Device')
+            device_platform = data.get('device_platform', 'unknown')
+            
+            if not push_token:
+                db.close()
+                return jsonify({"ok": False, "error": "Push token required"}), 400
+            
+            if not push_token.startswith('ExponentPushToken['):
+                db.close()
+                return jsonify({"ok": False, "error": "Invalid Expo push token format"}), 400
+            
+            # Check if user has notifications enabled
+            if not user.notifications_enabled:
+                db.close()
+                return jsonify({"ok": False, "error": "Notifications are disabled for this account"}), 403
+            
+            existing_token = db.query(DeviceToken).filter(
+                DeviceToken.push_token == push_token
+            ).first()
+            
+            if existing_token:
+                if existing_token.user_id != user_id:
+                    db.close()
+                    return jsonify({"ok": False, "error": "Token belongs to another user"}), 409
+                
+                existing_token.last_active = datetime.utcnow()
+                existing_token.is_active = True
+                existing_token.device_name = device_name
+                existing_token.device_platform = device_platform
+                db.commit()
+                
+                api_logger.info(f"User {user_id} updated device token")
+                db.close()
+                return jsonify({"ok": True, "message": "Device token updated"}), 200
+            
+            new_device_token = DeviceToken(
+                user_id=user_id,
+                push_token=push_token,
+                device_name=device_name,
+                device_platform=device_platform
+            )
+            
+            db.add(new_device_token)
+            db.commit()
+            db.close()
+            
+            api_logger.info(f"User {user_id} registered new device token")
+            return jsonify({"ok": True, "message": "Device token registered"}), 201
+        
+        elif request.method == 'DELETE':
+            data = request.get_json() or {}
+            push_token = data.get('push_token')
+            
+            if not push_token:
+                db.close()
+                return jsonify({"ok": False, "error": "Push token required for deletion"}), 400
+            
+            device_token = db.query(DeviceToken).filter(
+                DeviceToken.user_id == user_id,
+                DeviceToken.push_token == push_token
+            ).first()
+            
+            if device_token:
+                device_token.is_active = False
+                db.commit()
+                api_logger.info(f"User {user_id} deactivated device token")
+                db.close()
+                return jsonify({"ok": True, "message": "Device token removed"}), 200
+            else:
+                db.close()
+                return jsonify({"ok": False, "error": "Device token not found"}), 404
+            
+    except Exception as e:
+        api_logger.error(f"Device token error: {e}")
+        return jsonify({"ok": False, "error": "Failed to manage device token"}), 500
+
+
+@bp.route('/<int:user_id>/notifications/settings', methods=['GET', 'PUT'])
+@jwt_required()
+def notification_settings(user_id):
+    """Get or update notification settings"""
+    try:
+        current_user = get_jwt_identity()
+        if current_user != user_id:
+            return jsonify({"ok": False, "error": "Unauthorized"}), 403
+        
+        db: Session = SessionLocal()
+        user = db.query(User).filter(User.id == user_id).first()
+        
+        if not user:
+            db.close()
+            return jsonify({"ok": False, "error": "User not found"}), 404
+        
+        if request.method == 'GET':
+            settings_data = {
+                "notifications_enabled": user.notifications_enabled,
+                "subscription_type": user.subscription_type,
+                "features": {
+                    "signal_notifications": user.subscription_type in ["VIP", "PREMIUM"],
+                    "trade_notifications": user.subscription_type == "PREMIUM"
+                }
+            }
+            db.close()
+            return jsonify({"ok": True, "settings": settings_data}), 200
+        
+        elif request.method == 'PUT':
+            data = request.get_json()
+            
+            if 'notifications_enabled' in data:
+                user.notifications_enabled = bool(data['notifications_enabled'])
+                db.commit()
+                api_logger.info(f"User {user_id} updated notification settings: enabled={user.notifications_enabled}")
+            
+            db.close()
+            return jsonify({"ok": True, "message": "Notification settings updated"}), 200
+            
+    except Exception as e:
+        api_logger.error(f"Notification settings error: {e}")
+        return jsonify({"ok": False, "error": "Failed to manage notification settings"}), 500
