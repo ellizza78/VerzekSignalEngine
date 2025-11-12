@@ -1,0 +1,49 @@
+root@vultr:~/VerzekBackend# journalctl -u verzek-api -n 50 --no-pager | grep -i error
+Nov 12 15:01:25 vultr gunicorn[597521]: ValueError: Fernet key must be 32 url-safe base64-encoded bytes.
+Nov 12 15:01:29 vultr gunicorn[597550]: [2025-11-12 15:01:29 +0000] [597550] [ERROR] Connection in use: ('0.0.0.0', 8050)
+Nov 12 15:01:29 vultr gunicorn[597550]: [2025-11-12 15:01:29 +0000] [597550] [ERROR] Retrying in 1 second.
+root@vultr:~/VerzekBackend# systemctl cat verzek-api | grep -A5 Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+EnvironmentFile=/root/api_server_env.sh
+ExecStart=/usr/local/bin/gunicorn \
+    --bind 0.0.0.0:8050 \
+    --workers 4 \
+    --timeout 120 \
+    --chdir /root/VerzekBackend \
+root@vultr:~/VerzekBackend# cat /root/api_server_env.sh | grep ENCRYPTION_KEY
+ENCRYPTION_KEY="GENERATE_ONCE_AND_KEEP_SAFE"
+export ENCRYPTION_KEY="vsNT9-dK8Ouhheo_Lj2b8NJU0aeOIhYl6CBe-95_jrc="
+root@vultr:~/VerzekBackend# cat /root/api_server_env.sh
+#!/bin/bash
+export RESEND_API_KEY="re_ACMWmmPe_CHiR7EtPGbLFyzkNnYVh64qA"
+export EMAIL_FROM="support@verzekinnovative.com"
+export SUPPORT_EMAIL="support@verzekinnovative.com"
+export APP_NAME="VerzekAutoTrader"
+export API_BASE_URL="https://api.verzekinnovative.com"
+export DOMAIN="verzekinnovative.com"
+API_BASE_URL="https://api.verzekinnovative.com"
+API_KEY="Verzek2025AutoTrader"
+SUBSCRIPTION_SECRET_KEY="verz3k_prod_!@#_2025"
+ENCRYPTION_MASTER_KEY="M43XK9_F18dHGVNtq_Op6aUY4zXDnJUMNGaahMiTynM="
+API_BASE_URL="https://api.verzekinnovative.com"
+API_KEY="Verzek2025AutoTrader"
+JWT_SECRET="VerzekAutoTraderKey2025"
+SUBSCRIPTION_SECRET_KEY="verz3k_prod_key_2025"
+ENCRYPTION_MASTER_KEY="M43XK9_F18dHGV"
+ENCRYPTION_KEY="GENERATE_ONCE_AND_KEEP_SAFE"
+EXCHANGE_MODE="paper"
+TELEGRAM_BOT_TOKEN="8351047055:AAEqBFx5g0NJpEvUOCP_DCPD0VsGpEAjvRE"
+TELEGRAM_VIP_CHAT_ID="-1002721581400"
+TELEGRAM_TRIAL_CHAT_ID="-4971731996"
+WORKER_POLL_SECONDS="10"
+FLASK_ENV="production"
+PORT="8050"
+SERVER_IP="80.240.29.142"
+LOG_DIR="/root/api_server/logs"
+API_BASE_URL=https://api.verzekinnovative.com
+DATABASE_URL="postgresql://verzek_user:VerzekDB2025936a3956f34245c1@localhost/verzek_db"
+export ADMIN_EMAIL="verzekinnovativesolutionsltd@gmail.com"
+export ENCRYPTION_KEY="vsNT9-dK8Ouhheo_Lj2b8NJU0aeOIhYl6CBe-95_jrc="
+root@vultr:~/VerzekBackend# sed -i '/^ENCRYPTION_KEY="GENERATE_ONCE_AND_KEEP_SAFE"/d' /root/api_server_env.sh && systemctl restart verzek-api && sleep 5
+root@vultr:~/VerzekBackend# curl -s http://localhost:8050/api/ping
+root@vultr:~/VerzekBackend# 
