@@ -1,0 +1,74 @@
+root@vultr:~/VerzekBackend# bash << 'EOF'
+set -euo pipefail
+echo "🗄️ Installing PostgreSQL..."
+apt update -qq && apt install -y postgresql postgresql-contrib python3-psycopg2 -qq
+systemctl start postgresql && systemctl enable postgresql
+
+echo "👤 Creating database..."
+sudo -u postgres psql << 'PSQL'
+DROP DATABASE IF EXISTS verzek_db;
+DROP USER IF EXISTS verzek_user;
+CREATE USER verzek_user WITH PASSWORD 'VerzekDB2025!Secure#936a';
+CREATE DATABASE verzek_db OWNER verzek_user;
+GRANT ALL PRIVILEGES ON DATABASE verzek_db TO verzek_user;
+\c verzek_db
+GRANT ALL ON SCHEMA public TO verzek_user;
+PSQL
+
+echo "📝 Updating configuration..."
+sed -i '/^DATABASE_URL=/d' /root/api_server_env.sh
+echo 'DATABASE_URL=postgresql://verzek_user:VerzekDB2025!Secure#936a@localhost/verzek_db' >> /root/api_server_env.sh
+
+echo "🔄 Migrating schema..."
+cd /root/VerzekBackend && systemctl stop verzek-api
+python3 -c "from db import init_db; init_db(); print('✅ Schema created')"
+
+echo "⚙️ Scaling to 4 workers..."
+sed -i 's/--workers 1/--workers 4/' /etc/systemd/systEOFo "🎉 Migration complete - 4 workers running!"NT(*
+🗄️ Installing PostgreSQL...
+8 packages can be upgraded. Run 'apt list --upgradable' to see them.
+postgresql is already the newest version (14+238).
+postgresql-contrib is already the newest version (14+238).
+python3-psycopg2 is already the newest version (2.9.2-1build2).
+0 upgraded, 0 newly installed, 0 to remove and 8 not upgraded.
+Synchronizing state of postgresql.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable postgresql
+👤 Creating database...
+could not change directory to "/root/VerzekBackend": Permission denied
+DROP DATABASE
+DROP ROLE
+CREATE ROLE
+CREATE DATABASE
+GRANT
+You are now connected to database "verzek_db" as user "postgres".
+GRANT
+📝 Updating configuration...
+🔄 Migrating schema...
+✅ Database initialized successfully
+✅ Schema created
+⚙️ Scaling to 4 workers...
+✅ Testing...
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2Mjk2MTk1NCwianRpIjoiMjhhNzY5NGYtMjA0Yi00ZTUxLWJjYzItM2E5ZTIyZTM2MGJmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzYyOTYxOTU0LCJjc3JmIjoiZTQ0M2ZiYzktNTYwNC00ZjExLTlmZjctNzdmNzY1MDkzY2MyIiwiZXhwIjoxNzYyOTY1NTU0fQ.Nq-cCoZiqKAcKsn84SYHjnRoNKidIl0oz1AgZElYKx4",
+    "message": "Registration successful",
+    "ok": true,
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2Mjk2MTk1NCwianRpIjoiNWI1OGU1MGItNDc5Yy00Y2ZhLWJiMjYtMjFmZjU1YjRlNTg4IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOjEsIm5iZiI6MTc2Mjk2MTk1NCwiY3NyZiI6ImQ2ZTkzNzUxLTRiZTctNGViZS1iYWZhLWFhZWIxYTI5OGE4ZSIsImV4cCI6MTc2NTU1Mzk1NH0.GZrZA_8cq19cRyP77_5xXg82uNMuw0ZNNcRzWxheX3Y",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2Mjk2MTk1NCwianRpIjoiMjhhNzY5NGYtMjA0Yi00ZTUxLWJjYzItM2E5ZTIyZTM2MGJmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzYyOTYxOTU0LCJjc3JmIjoiZTQ0M2ZiYzktNTYwNC00ZjExLTlmZjctNzdmNzY1MDkzY2MyIiwiZXhwIjoxNzYyOTY1NTU0fQ.Nq-cCoZiqKAcKsn84SYHjnRoNKidIl0oz1AgZElYKx4",
+    "user": {
+        "created_at": "2025-11-12T15:39:13.693873",
+        "email": "pg1762961942@test.com",
+        "full_name": "PG Test",
+        "id": 1,
+        "is_verified": false,
+        "referral_code": "VZK2B3288",
+        "subscription_type": "TRIAL"
+    }
+}
+could not change directory to "/root/VerzekBackend": Permission denied
+ count 
+-------
+     1
+(1 row)
+
+🎉 Migration complete - 4 workers running!
+root@vultr:~/VerzekBackend# 
