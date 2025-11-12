@@ -4,12 +4,13 @@
 VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cost Averaging (DCA) strategies. It automates trading by monitoring Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across multiple exchanges. The platform includes a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to provide a secure, reliable, and automated trading environment with a strong focus on user experience and to enable users to participate in automated trading with sophisticated strategies.
 
 ## User Preferences
-- **Production Safety**: Enterprise-grade database with ACID compliance required
+- **Production Safety**: Enterprise-grade PostgreSQL database with ACID compliance
 - **Security First**: No hard-coded secrets, all environment variables mandatory
 - **Trade Capacity**: Default 50 concurrent positions per user (configurable)
 - **Build Process**: ALWAYS build Android APK from Replit Shell using `eas build` command (never use automated tools)
 - **Dynamic Updates**: Use OTA updates (eas update) for JavaScript changes; remote config for feature flags and settings; only rebuild APK for native changes
 - **Email Verification**: REQUIRED - All new users must verify email before login
+- **Concurrency**: 4 Gunicorn workers with PostgreSQL for production-scale traffic
 
 ## Production URLs
 - **Backend API**: https://verzekinnovative.com (Vultr VPS: 80.240.29.142)
@@ -41,16 +42,18 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Deployment Location**: /root/VerzekBackend on Vultr VPS (80.240.29.142)
 - **SSL Certificate**: Installed via certbot for https://api.verzekinnovative.com
 - **Deployment Method**: systemd service (verzek-api.service) - stable and reliable
-- **Service Configuration**: 1 worker (SQLite-safe), 120s timeout, auto-restart on failure
+- **Service Configuration**: 4 workers (production-scale), 120s timeout, auto-restart on failure
 - **Environment File**: /root/api_server_env.sh (KEY=value format, no "export" keywords for systemd compatibility)
-- **Database**: Fresh SQLite with correct schema at /root/VerzekBackend/database/verzek.db
+- **Database**: PostgreSQL 14 (verzek_db) - enterprise-grade, handles concurrent traffic
+- **Database Credentials**: verzek_user with secure password, full privileges on verzek_db
 - **Logging**: /root/api_server/logs/ directory with rotating file handlers
-- **Status**: ✅ FULLY OPERATIONAL - Registration, login, email verification all working
+- **Status**: ✅ FULLY OPERATIONAL - Registration, login, email verification, concurrent requests all working
+- **Concurrent Testing**: 5 simultaneous registrations completed successfully
 - **Key Fixes Applied**:
   - Removed "export" keywords from environment file (systemd incompatibility)
-  - Reduced workers from 4 to 1 (SQLite write-lock issue)
   - Created /root/api_server/logs directory (logger requirement)
-  - Deleted and rebuilt database with correct schema (missing full_name column)
+  - Migrated from SQLite to PostgreSQL for production scalability
+  - Scaled from 1 to 4 workers after PostgreSQL migration
   - Generated valid Fernet encryption key for API key encryption
 
 ### Phase 3 Complete & GitHub Push (COMPLETED - Nov 11, 2025)
@@ -95,12 +98,13 @@ The mobile application (React Native + Expo) utilizes a modern dark theme with T
 ### System Design Choices
 - **Multi-tenancy**: Isolated configurations and strategies per user.
 - **Microservices-like Components**: Separation of concerns into distinct modules.
-- **Production Database**: SQLite with ACID compliance, WAL mode, and concurrent write safety.
+- **Production Database**: PostgreSQL 14 with ACID compliance, full concurrency support, and connection pooling.
 - **Environment Variables**: All sensitive information is stored in environment variables.
-- **24/7 Operation**: Designed for continuous uptime.
+- **24/7 Operation**: Designed for continuous uptime with systemd auto-restart.
 - **Subscription Model**: Tiered access (FREE/TRIAL, VIP, PREMIUM) with varying features.
 - **Authentication**: JWT-based with secure password hashing and token refresh.
 - **Encryption**: Fernet (AES-128 CBC mode) for API keys, with master key stored in Replit Secrets.
+- **Scalability**: 4 Gunicorn workers handle concurrent traffic, tested with 5 simultaneous requests.
 
 ## External Dependencies
 - **Telegram API**: For signal monitoring and broadcasting.
