@@ -37,17 +37,21 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Error Messaging**: Clear user-facing error with upgrade prompt
 - **Telegram Trial Link**: https://t.me/+JObDSp1HOuxmMWQ0 (updated in SubscriptionScreen)
 - **Architect Approved**: All security checks passed, ready for OTA deployment
-### VPS Deployment with Watchdog (IN PROGRESS - Nov 11, 2025)
-- **Deployment Location**: /root/VerzekBackend/backend on Vultr VPS (80.240.29.142)
+### VPS Deployment - PRODUCTION READY (COMPLETED - Nov 12, 2025)
+- **Deployment Location**: /root/VerzekBackend on Vultr VPS (80.240.29.142)
 - **SSL Certificate**: Installed via certbot for https://api.verzekinnovative.com
-- **Deployment Method**: Background process (bypassing systemd due to crash-loop issues)
-- **Startup Script**: /root/start_verzek_api.sh (auto-start via crontab @reboot)
-- **Restart Script**: /root/restart_verzek_api.sh (manual restart)
-- **Watchdog**: /root/api_watchdog.sh monitors API every 10s, auto-restarts on failure
-- **Configuration**: 1 worker, 4 threads, WAL mode enabled for SQLite
-- **Known Issue**: API crashes frequently (within seconds/minutes) - root cause unknown
-- **Status**: Watchdog keeps API semi-operational, but needs application-level debugging
-- **Next Steps**: Debug Python application code (api_server.py, db.py) to find crash cause
+- **Deployment Method**: systemd service (verzek-api.service) - stable and reliable
+- **Service Configuration**: 1 worker (SQLite-safe), 120s timeout, auto-restart on failure
+- **Environment File**: /root/api_server_env.sh (KEY=value format, no "export" keywords for systemd compatibility)
+- **Database**: Fresh SQLite with correct schema at /root/VerzekBackend/database/verzek.db
+- **Logging**: /root/api_server/logs/ directory with rotating file handlers
+- **Status**: ✅ FULLY OPERATIONAL - Registration, login, email verification all working
+- **Key Fixes Applied**:
+  - Removed "export" keywords from environment file (systemd incompatibility)
+  - Reduced workers from 4 to 1 (SQLite write-lock issue)
+  - Created /root/api_server/logs directory (logger requirement)
+  - Deleted and rebuilt database with correct schema (missing full_name column)
+  - Generated valid Fernet encryption key for API key encryption
 
 ### Phase 3 Complete & GitHub Push (COMPLETED - Nov 11, 2025)
 - **GitHub Repository**: Successfully pushed to https://github.com/ellizza78/VerzekBackend (8,188 objects, 211 MB)
