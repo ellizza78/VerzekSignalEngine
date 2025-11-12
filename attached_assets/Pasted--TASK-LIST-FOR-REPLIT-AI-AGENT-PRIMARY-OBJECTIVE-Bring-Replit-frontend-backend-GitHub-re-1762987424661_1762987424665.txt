@@ -1,0 +1,197 @@
+
+✅ TASK LIST FOR REPLIT AI AGENT
+
+🔥 PRIMARY OBJECTIVE
+
+Bring Replit (frontend + backend), GitHub repositories, and Vultr deployment into full synchronization using a clean, unified, automatic workflow.
+
+
+---
+
+✅ TASKS FOR REPLIT AI AGENT
+
+1️⃣ Pull the latest files from Replit backend project
+
+Open the backend Replit workspace.
+
+Export ALL current backend files exactly as they exist (including folders, modules, config files, .env templates, etc.).
+
+Ensure NO files are missing (static, templates, utils, database, services, etc.).
+
+
+2️⃣ Update GitHub Backend Repo
+
+Repository:
+🔗 https://github.com/ellizza78/VerzekBackend
+
+Actions:
+
+Pull the latest version of the repo.
+
+Replace the entire repo contents with the latest Replit backend files.
+
+Remove outdated/duplicate/untracked files.
+
+Preserve .gitignore.
+
+Commit and push as: "Full backend sync from Replit – latest stable version"
+
+
+
+---
+
+3️⃣ Pull the latest files from Replit frontend (APK) project
+
+Frontend Repo:
+🔗 https://github.com/ellizza78/VerzekAutoTrader
+
+Actions:
+
+Export ALL current frontend files from Replit.
+
+Replace GitHub repo contents with Replit version.
+
+Keep only correct working source code.
+
+Commit and push as: "Full frontend sync from Replit – latest stable version"
+
+
+
+---
+
+4️⃣ Verify backend structure is correct
+
+Ensure the backend GitHub repo contains:
+
+/backend
+    /routes
+    /services
+    /utils
+    /database
+    api_server.py
+    config.py
+    auth.py
+    rate_limiter.py
+    requirements.txt
+    gunicorn conf if needed
+
+If the folder names differ, correct them so that:
+
+Required Flask entrypoint:
+
+api_server:app
+
+
+---
+
+5️⃣ Generate final requirements.txt
+
+Remove duplicate packages
+
+Add only EXACT packages needed
+
+Freeze versions
+
+Save updated file in GitHub backend
+
+
+
+---
+
+6️⃣ Create automatic deploy workflow
+
+Add a GitHub webhook/deployment script that:
+
+On every push to GitHub backend repo:
+
+SSH into Vultr
+
+Pull the latest repo version
+
+Reinstall dependencies
+
+Restart Gunicorn/Nginx
+
+Validate API health
+
+
+
+Make sure it matches the current Vultr service:
+
+verzek-api.service
+
+
+---
+
+7️⃣ Ensure Vultr backend uses ONLY the GitHub code
+
+Stop using Replit for live backend.
+
+Deployment steps:
+
+Sync GitHub backend → Vultr server
+
+Run Gunicorn with:
+
+/root/VerzekBackend/backend/api_server:app
+
+Keep environment variables in:
+
+/root/api_server_env.sh
+
+
+
+---
+
+8️⃣ Ensure APK connects perfectly
+
+Frontend code must use:
+
+https://api.verzekinnovative.com
+
+Check:
+
+Login
+
+Register
+
+OTP
+
+Email verify
+
+Auto trader endpoint calls
+
+Signal listener
+
+
+
+---
+
+9️⃣ Confirm database migrations
+
+Ensure SQLite/PostgreSQL usage in backend matches exactly what Replit backend uses.
+
+
+---
+
+🟩 Include This Note at the End
+
+📌 IMPORTANT NOTE FOR AI AGENT:
+
+All backend and frontend updates created today MUST be included.
+Do not use old GitHub files.
+Use ONLY the latest, working Replit versions as the source of truth.
+Replace GitHub repos completely.
+After syncing both repos, push updated backend to Vultr automatically
+and ensure the APK connects without needing rebuild.
+
+
+---
+
+🎉 You should 
+
+✔ Sync Replit → GitHub
+✔ Fix backend and frontend repos
+✔ Deploy backend cleanly to Vultr
+✔ Ensure APK works without rebuilding
+✔ Finally resolve ALL inconsistencies
