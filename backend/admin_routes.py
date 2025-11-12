@@ -1,6 +1,6 @@
 """
 Admin Routes
-Handles: referral tracking, user management, system stats
+Handles: referral tracking, user management, system stats, payment/subscription management
 Admin authentication via ADMIN_EMAIL in environment variables
 """
 from flask import Blueprint, request, jsonify
@@ -11,13 +11,23 @@ from datetime import datetime, timedelta
 import os
 
 from db import SessionLocal
-from models import User, UserSettings, Position, Signal, TradeLog
+from models import User, UserSettings, Position, Signal, TradeLog, Payment
 from utils.logger import api_logger
 
 bp = Blueprint('admin', __name__)
 
 # Admin email from environment
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', 'admin@verzekinnovative.com')
+
+# Security check: Warn if using default admin email
+if ADMIN_EMAIL == 'admin@verzekinnovative.com':
+    import warnings
+    warnings.warn(
+        "⚠️  SECURITY WARNING: Using default ADMIN_EMAIL. "
+        "Set ADMIN_EMAIL environment variable in production!",
+        RuntimeWarning
+    )
+    api_logger.warning("ADMIN_EMAIL not configured - using default (INSECURE for production)")
 
 
 def is_admin(user_id: int, db: Session) -> bool:
@@ -223,3 +233,295 @@ def get_system_stats():
     except Exception as e:
         api_logger.error(f"Get stats error: {e}")
         return jsonify({"ok": False, "error": "Failed to fetch stats"}), 500
+
+
+@bp.route('/payments/pending', methods=['GET'])
+@jwt_required()
+def get_pending_payments():
+    """
+    Get all pending payment verifications
+    Sorted by creation date (newest first)
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        # Get pending payments
+        pending_payments = db.query(Payment).filter(
+            Payment.status.in_(['PENDING', 'PENDING_VERIFICATION'])
+        ).order_by(Payment.created_at.desc()).all()
+        
+        payment_list = []
+        for payment in pending_payments:
+            # Get user info
+            user = db.query(User).filter(User.id == payment.user_id).first()
+            
+            payment_list.append({
+                "payment_id": payment.payment_id,
+                "user_id": payment.user_id,
+                "user_email": user.email if user else "Unknown",
+                "user_name": user.full_name if user else "Unknown",
+                "amount_usdt": payment.amount_usdt,
+                "plan_type": payment.plan_type,
+                "status": payment.status,
+                "tx_hash": payment.tx_hash,
+                "admin_wallet": payment.admin_wallet,
+                "created_at": payment.created_at.isoformat() if payment.created_at else None,
+                "waiting_hours": round((datetime.utcnow() - payment.created_at).total_seconds() / 3600, 1) if payment.created_at else None
+            })
+        
+        db.close()
+        
+        return jsonify({
+            "ok": True,
+            "total_pending": len(payment_list),
+            "payments": payment_list
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Get pending payments error: {e}")
+        return jsonify({"ok": False, "error": "Failed to fetch pending payments"}), 500
+
+
+@bp.route('/payments/all', methods=['GET'])
+@jwt_required()
+def get_all_payments():
+    """
+    Get all payments with optional filters
+    Query params: status, plan_type, limit
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        # Build query
+        query = db.query(Payment)
+        
+        # Apply filters
+        status_filter = request.args.get('status')
+        if status_filter:
+            query = query.filter(Payment.status == status_filter.upper())
+        
+        plan_filter = request.args.get('plan_type')
+        if plan_filter:
+            query = query.filter(Payment.plan_type == plan_filter.upper())
+        
+        # Limit results
+        limit = int(request.args.get('limit', 100))
+        
+        # Get payments
+        payments = query.order_by(Payment.created_at.desc()).limit(limit).all()
+        
+        payment_list = []
+        for payment in payments:
+            # Get user info
+            user = db.query(User).filter(User.id == payment.user_id).first()
+            
+            payment_list.append({
+                "payment_id": payment.payment_id,
+                "user_id": payment.user_id,
+                "user_email": user.email if user else "Unknown",
+                "user_name": user.full_name if user else "Unknown",
+                "amount_usdt": payment.amount_usdt,
+                "plan_type": payment.plan_type,
+                "status": payment.status,
+                "tx_hash": payment.tx_hash,
+                "created_at": payment.created_at.isoformat() if payment.created_at else None,
+                "verified_at": payment.verified_at.isoformat() if payment.verified_at else None
+            })
+        
+        db.close()
+        
+        return jsonify({
+            "ok": True,
+            "total_results": len(payment_list),
+            "filters_applied": {
+                "status": status_filter,
+                "plan_type": plan_filter,
+                "limit": limit
+            },
+            "payments": payment_list
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Get all payments error: {e}")
+        return jsonify({"ok": False, "error": "Failed to fetch payments"}), 500
+
+
+@bp.route('/payments/approve/<payment_id>', methods=['POST'])
+@jwt_required()
+def approve_payment(payment_id):
+    """
+    Approve a payment and upgrade user subscription
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        # Get payment
+        payment = db.query(Payment).filter(Payment.payment_id == payment_id).first()
+        
+        if not payment:
+            db.close()
+            return jsonify({"ok": False, "error": "Payment not found"}), 404
+        
+        if payment.status == "VERIFIED":
+            db.close()
+            return jsonify({"ok": False, "error": "Payment already verified"}), 400
+        
+        # Update payment
+        payment.status = "VERIFIED"
+        payment.verified_at = datetime.utcnow()
+        
+        # Upgrade user subscription
+        user = db.query(User).filter(User.id == payment.user_id).first()
+        if user:
+            old_plan = user.subscription_type
+            user.subscription_type = payment.plan_type
+            
+            api_logger.info(f"Admin {user_id} approved payment {payment_id}: User {user.id} upgraded from {old_plan} to {payment.plan_type}")
+        
+        db.commit()
+        db.close()
+        
+        return jsonify({
+            "ok": True,
+            "message": "Payment approved and user upgraded",
+            "payment_id": payment_id,
+            "user_id": payment.user_id,
+            "new_plan": payment.plan_type
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Approve payment error: {e}")
+        return jsonify({"ok": False, "error": "Failed to approve payment"}), 500
+
+
+@bp.route('/payments/reject/<payment_id>', methods=['POST'])
+@jwt_required()
+def reject_payment(payment_id):
+    """
+    Reject a payment (mark as FAILED)
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        data = request.get_json() or {}
+        reason = data.get('reason', 'Payment verification failed')
+        
+        # Get payment
+        payment = db.query(Payment).filter(Payment.payment_id == payment_id).first()
+        
+        if not payment:
+            db.close()
+            return jsonify({"ok": False, "error": "Payment not found"}), 404
+        
+        if payment.status == "VERIFIED":
+            db.close()
+            return jsonify({"ok": False, "error": "Cannot reject verified payment"}), 400
+        
+        # Update payment
+        payment.status = "FAILED"
+        
+        api_logger.info(f"Admin {user_id} rejected payment {payment_id}: {reason}")
+        
+        db.commit()
+        db.close()
+        
+        return jsonify({
+            "ok": True,
+            "message": "Payment rejected",
+            "payment_id": payment_id,
+            "reason": reason
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Reject payment error: {e}")
+        return jsonify({"ok": False, "error": "Failed to reject payment"}), 500
+
+
+@bp.route('/subscriptions/overview', methods=['GET'])
+@jwt_required()
+def get_subscriptions_overview():
+    """
+    Get subscription overview with breakdown by plan type
+    """
+    try:
+        user_id = get_jwt_identity()
+        db: Session = SessionLocal()
+        
+        # Check admin access
+        if not is_admin(user_id, db):
+            db.close()
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
+        # Count by subscription type
+        trial_count = db.query(User).filter(User.subscription_type == 'TRIAL').count()
+        vip_count = db.query(User).filter(User.subscription_type == 'VIP').count()
+        premium_count = db.query(User).filter(User.subscription_type == 'PREMIUM').count()
+        
+        # Payment stats
+        total_payments = db.query(Payment).count()
+        verified_payments = db.query(Payment).filter(Payment.status == 'VERIFIED').count()
+        pending_payments = db.query(Payment).filter(Payment.status.in_(['PENDING', 'PENDING_VERIFICATION'])).count()
+        
+        # Revenue calculation
+        verified_vip = db.query(func.count(Payment.id)).filter(
+            Payment.plan_type == 'VIP',
+            Payment.status == 'VERIFIED'
+        ).scalar()
+        
+        verified_premium = db.query(func.count(Payment.id)).filter(
+            Payment.plan_type == 'PREMIUM',
+            Payment.status == 'VERIFIED'
+        ).scalar()
+        
+        total_revenue = (verified_vip * 50) + (verified_premium * 100)
+        
+        db.close()
+        
+        return jsonify({
+            "ok": True,
+            "subscriptions": {
+                "trial": trial_count,
+                "vip": vip_count,
+                "premium": premium_count,
+                "total": trial_count + vip_count + premium_count
+            },
+            "payments": {
+                "total": total_payments,
+                "verified": verified_payments,
+                "pending": pending_payments,
+                "failed": total_payments - verified_payments - pending_payments
+            },
+            "revenue": {
+                "total_usdt": total_revenue,
+                "vip_payments": verified_vip,
+                "premium_payments": verified_premium
+            }
+        }), 200
+        
+    except Exception as e:
+        api_logger.error(f"Get subscriptions overview error: {e}")
+        return jsonify({"ok": False, "error": "Failed to fetch overview"}), 500

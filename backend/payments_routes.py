@@ -186,12 +186,24 @@ def get_my_payments():
 @bp.route('/admin/verify/<payment_id>', methods=['POST'])
 @jwt_required()
 def admin_verify_payment(payment_id):
-    """Admin endpoint to verify payment and upgrade user"""
+    """
+    DEPRECATED: Use /api/admin/payments/approve/<payment_id> instead
+    This endpoint is kept for backward compatibility but requires admin access
+    """
     try:
-        # TODO: Add admin role check
+        import os
         user_id = get_jwt_identity()
         
+        # CRITICAL: Admin authentication check
         db: Session = SessionLocal()
+        admin_user = db.query(User).filter(User.id == user_id).first()
+        admin_email = os.getenv('ADMIN_EMAIL', 'admin@verzekinnovative.com')
+        
+        if not admin_user or admin_user.email != admin_email:
+            db.close()
+            api_logger.warning(f"Unauthorized admin verify attempt by user {user_id}")
+            return jsonify({"ok": False, "error": "Admin access required"}), 403
+        
         payment = db.query(Payment).filter(Payment.payment_id == payment_id).first()
         
         if not payment:
