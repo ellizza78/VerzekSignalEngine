@@ -11,6 +11,7 @@ from utils.logger import api_logger
 # Telegram configuration
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 SUBSCRIBERS_CHAT_ID = os.getenv('SUBSCRIBERS_CHAT_ID', '-1002721581400')
+TELEGRAM_ENABLED = os.getenv('TELEGRAM_NOTIFICATIONS_ENABLED', 'true').lower() == 'true'
 
 
 def send_telegram_message(text: str, parse_mode: str = "HTML") -> bool:
@@ -24,6 +25,11 @@ def send_telegram_message(text: str, parse_mode: str = "HTML") -> bool:
     Returns:
         bool: True if sent successfully, False otherwise
     """
+    # Feature flag - can be disabled via environment variable
+    if not TELEGRAM_ENABLED:
+        api_logger.info("Telegram notifications disabled via TELEGRAM_NOTIFICATIONS_ENABLED=false")
+        return False
+    
     if not BOT_TOKEN:
         api_logger.warning("TELEGRAM_BOT_TOKEN not configured, skipping notification")
         return False
