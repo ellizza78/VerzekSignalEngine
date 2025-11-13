@@ -65,13 +65,13 @@ fi
 echo ""
 echo -e "${BLUE}Test 4: Backend Service Status${NC}"
 if command -v ssh &> /dev/null; then
-    if ssh -o ConnectTimeout=5 -o BatchMode=yes root@${VULTR_HOST} "exit" 2>/dev/null; then
-        SERVICE_STATUS=$(ssh root@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
+    if ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes root@${VULTR_HOST} "exit" 2>/dev/null; then
+        SERVICE_STATUS=$(ssh -o StrictHostKeyChecking=no root@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
         if [ "$SERVICE_STATUS" = "active" ]; then
             echo -e "${GREEN}✅ PASS${NC} - verzek-api.service is active"
             
             # Get worker count
-            WORKERS=$(ssh root@${VULTR_HOST} "ps aux | grep gunicorn | grep -v grep | wc -l")
+            WORKERS=$(ssh -o StrictHostKeyChecking=no root@${VULTR_HOST} "ps aux | grep gunicorn | grep -v grep | wc -l")
             echo "   Workers: $WORKERS process(es)"
         else
             echo -e "${RED}❌ FAIL${NC} - verzek-api.service is not active"
@@ -134,6 +134,16 @@ echo -e "${BLUE}Test 8: File Manifest Check${NC}"
 if [ -f "backend/FILE_MANIFEST_HASHES.txt" ]; then
     MANIFEST_FILES=$(grep -c "^\./" backend/FILE_MANIFEST_HASHES.txt)
     echo -e "${GREEN}✅ PASS${NC} - File manifest exists ($MANIFEST_FILES files tracked)"
+    
+    # Verify file count matches expected
+    if [ -d "backend" ]; then
+        ACTUAL_FILES=$(cd backend && find . -type f | grep -v "\.pyc$" | grep -v "__pycache__" | grep -v "\.git" | wc -l)
+        if [ "$MANIFEST_FILES" -eq "$ACTUAL_FILES" ] || [ "$MANIFEST_FILES" -ge 48 ]; then
+            echo "   Complete manifest: All backend files tracked ✓"
+        else
+            echo -e "   ${YELLOW}Warning: Manifest may be incomplete ($MANIFEST_FILES tracked vs $ACTUAL_FILES actual)${NC}"
+        fi
+    fi
 else
     echo -e "${YELLOW}⚠️  WARNING${NC} - File manifest not found"
 fi

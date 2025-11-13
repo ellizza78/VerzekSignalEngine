@@ -1,30 +1,45 @@
-# VerzekAutoTrader Backend - File Manifest with Hashes
+# VerzekAutoTrader Backend - COMPLETE File Manifest with Hashes
 # Generated: 2025-11-13
 # Commit: 55e0bdde6d9af35511d30036a81b6d659ca692e0
 # Version: 2.1
+# Total Files: 50 (ALL backend files tracked)
 
 # MD5 Hash Format: filepath:hash
 
+./.env.example:45c2abaa5d05ad2fc5ccea2c39f7cdf0
+./ADMIN_REFERRAL_GUIDE.md:0aef24f5add922d96f9b87f3a3acaa01
 ./admin_routes.py:8a7ed2113fa28c30e2fc6fa59f4007c7
 ./api_server.py:58249c92a4a8b757f822e49be67d4bec
 ./api_version.txt:5dcfcd6ea11e91f7351c4ccb56d7b7ae
 ./auth_routes.py:4786c2e2c1752863a3d54a56caa65bcc
 ./broadcast.py:7e9ffa76869eee3a317385e1a6f9bbfc
 ./config/keywords.json:fd4e7d34d33aa0b25600bdbfb2f89cc2
+./database/migrations/add_device_tokens.sql:7f34a27cb7a72993513c15aa21eeb16a
 ./db.py:23835f2b8ad257ed105b9570dbe8c593
 ./deploy/deploy_to_vultr.sh:511729607365b857c2d417d7659717d9
+./DEPLOYMENT_GUIDE.md:cb944256aa17ca95508f8c4fe921e333
+./DEPLOYMENT_NOTES.md:4db80d4bc344d917a77df093ab308097
 ./deploy_updates.sh:8057ea7f02e5f1e27dd19de1123795f9
+./deploy/verzek_api.service:3aa2ad50b6e764863a7ac76b3e25b636
+./deploy/verzek_worker.service:013bd67f1a9cbbd878edda94d150e9ed
+./FILE_MANIFEST_HASHES.txt:CURRENT_FILE
+./FILE_MANIFEST.md:787067dc9633579632de1067b84a6a80
 ./models.py:7296958da3fa9d209230292b06a00055
 ./payments_routes.py:3439021056f6afc3d5cbe7a82d8b306d
+./PHASE3_SUMMARY.md:5bda46f1008486a390c6f5da04c056d6
 ./positions_routes.py:5aae7bbd3bf25389087bb435a98d60f0
+./README.md:2bdea7cb0a4c89ffb5e8aa21ccbec435
 ./reports/daily_report.py:10d48e62184311d6268d99c8defde9af
 ./reports/__init__.py:47bcf8e622ef544e6e32a4b8ba1a289d
 ./requirements.txt:00deddaf00ab8620358397bd2e062116
 ./scripts/setup_watchdog_cron.sh:06b080760d14d875cdf3faea5a211701
 ./scripts/update_resend_key.sh:2f63b4bd1253e56a341941b4ee5259ab
 ./scripts/watchdog.sh:bf698ae49f9dfc3c92a13b952a74c888
+./SECURITY.md:86106a85eafa708265cdf059518747e2
 ./signal_listener.py:c99c2b1ff00be465451698bdde6ed784
+./SIGNAL_LISTENER_SETUP.md:360cb3bdbf31b2f29b3850c85cec0b48
 ./signals_routes.py:a4ed0e9f90b093b746c46d4dba7c088c
+./TELEGRAM_SETUP.md:b961cf71cda960bc38bb0a0a3a322426
 ./test_api.sh:8950de4312a54acade0d286497a0dfa1
 ./trading/executor.py:5623b7a6ccb25d42501cece6937dec98
 ./trading/__init__.py:91498e8d5d3bdf9e81694ef90e779d28
@@ -39,7 +54,12 @@
 ./utils/security.py:01447175df7b621075828cb16928ab47
 ./utils/telegram_notifications.py:2e06c58fdac1c55e2437a20ce7ec4a98
 ./utils/tokens.py:8097e8524ebe652f719f81a38fe70995
+./VULTR_DEPLOYMENT_GUIDE.md:89391ccdf3545fc469cd5870c451d189
 ./worker.py:d059ce9adaef198d07c10c5620f9a252
 
-# Total Files: 35
-# Critical Files Verified: ✅
+# ✅ ALL 50 BACKEND FILES TRACKED
+# This is the complete inventory of all backend files (excluding .pyc, __pycache__, .git)
+# Use this manifest to detect file drift or unauthorized changes
+#
+# To verify: cd backend && find . -type f | grep -v "\.pyc$" | grep -v "__pycache__" | grep -v "\.git" | wc -l
+# Expected: 50 files

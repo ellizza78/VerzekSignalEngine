@@ -31,7 +31,7 @@ NC='\033[0m' # No Color
 
 # Step 1: Verify SSH connection
 echo -e "${BLUE}📡 Step 1: Testing SSH connection to Vultr...${NC}"
-if ssh -o ConnectTimeout=10 -o BatchMode=yes ${VULTR_USER}@${VULTR_HOST} "echo 'Connected'" 2>/dev/null; then
+if ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o BatchMode=yes ${VULTR_USER}@${VULTR_HOST} "echo 'Connected'" 2>/dev/null; then
     echo -e "${GREEN}✅ SSH connection successful${NC}"
 else
     echo -e "${RED}❌ SSH connection failed!${NC}"
@@ -45,7 +45,7 @@ fi
 # Step 2: Verify deployment script exists
 echo ""
 echo -e "${BLUE}📄 Step 2: Verifying deployment script...${NC}"
-if ssh ${VULTR_USER}@${VULTR_HOST} "test -f ${DEPLOY_SCRIPT}"; then
+if ssh -o StrictHostKeyChecking=no ${VULTR_USER}@${VULTR_HOST} "test -f ${DEPLOY_SCRIPT}"; then
     echo -e "${GREEN}✅ Deployment script found: ${DEPLOY_SCRIPT}${NC}"
 else
     echo -e "${RED}❌ Deployment script not found!${NC}"
@@ -59,7 +59,7 @@ echo -e "${BLUE}🚀 Step 3: Executing deployment on Vultr...${NC}"
 echo -e "${YELLOW}This may take 1-2 minutes...${NC}"
 echo ""
 
-ssh -t ${VULTR_USER}@${VULTR_HOST} << 'ENDSSH'
+ssh -o StrictHostKeyChecking=no -t ${VULTR_USER}@${VULTR_HOST} << 'ENDSSH'
 cd /root
 echo "📥 Running reset deployment script..."
 bash /root/reset_deploy.sh
@@ -75,14 +75,14 @@ ENDSSH
 # Step 4: Verify service status
 echo ""
 echo -e "${BLUE}🔍 Step 4: Verifying service status...${NC}"
-SERVICE_STATUS=$(ssh ${VULTR_USER}@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
+SERVICE_STATUS=$(ssh -o StrictHostKeyChecking=no ${VULTR_USER}@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
 
 if [ "$SERVICE_STATUS" = "active" ]; then
     echo -e "${GREEN}✅ verzek-api.service is ACTIVE${NC}"
 else
     echo -e "${RED}❌ verzek-api.service is NOT active!${NC}"
     echo -e "${YELLOW}Checking logs...${NC}"
-    ssh ${VULTR_USER}@${VULTR_HOST} "journalctl -u verzek-api.service -n 20 --no-pager"
+    ssh -o StrictHostKeyChecking=no ${VULTR_USER}@${VULTR_HOST} "journalctl -u verzek-api.service -n 20 --no-pager"
     exit 1
 fi
 
