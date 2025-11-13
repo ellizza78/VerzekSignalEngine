@@ -8,7 +8,7 @@
 ./ADMIN_REFERRAL_GUIDE.md:0aef24f5add922d96f9b87f3a3acaa01
 ./admin_routes.py:8a7ed2113fa28c30e2fc6fa59f4007c7
 ./api_server.py:58249c92a4a8b757f822e49be67d4bec
-./api_version.txt:5dcfcd6ea11e91f7351c4ccb56d7b7ae
+./api_version.txt:015ba1cd6bbe77dda988faeec7fa4098
 ./auth_routes.py:4786c2e2c1752863a3d54a56caa65bcc
 ./broadcast.py:7e9ffa76869eee3a317385e1a6f9bbfc
 ./config/keywords.json:fd4e7d34d33aa0b25600bdbfb2f89cc2
