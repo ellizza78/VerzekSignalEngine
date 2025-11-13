@@ -65,13 +65,20 @@ fi
 echo ""
 echo -e "${BLUE}Test 4: Backend Service Status${NC}"
 if command -v ssh &> /dev/null; then
-    if ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -o BatchMode=yes root@${VULTR_HOST} "exit" 2>/dev/null; then
-        SERVICE_STATUS=$(ssh -o StrictHostKeyChecking=no root@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
+    # Pre-seed known_hosts to avoid first-run failures
+    if ! grep -q "${VULTR_HOST}" ~/.ssh/known_hosts 2>/dev/null; then
+        echo "   📝 Adding ${VULTR_HOST} to known_hosts..."
+        ssh-keyscan -H ${VULTR_HOST} >> ~/.ssh/known_hosts 2>/dev/null || true
+    fi
+    
+    # Attempt SSH connection
+    if ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new -o BatchMode=yes root@${VULTR_HOST} "exit" 2>/dev/null; then
+        SERVICE_STATUS=$(ssh -o StrictHostKeyChecking=accept-new root@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
         if [ "$SERVICE_STATUS" = "active" ]; then
             echo -e "${GREEN}✅ PASS${NC} - verzek-api.service is active"
             
             # Get worker count
-            WORKERS=$(ssh -o StrictHostKeyChecking=no root@${VULTR_HOST} "ps aux | grep gunicorn | grep -v grep | wc -l")
+            WORKERS=$(ssh -o StrictHostKeyChecking=accept-new root@${VULTR_HOST} "ps aux | grep gunicorn | grep -v grep | wc -l")
             echo "   Workers: $WORKERS process(es)"
         else
             echo -e "${RED}❌ FAIL${NC} - verzek-api.service is not active"
@@ -79,6 +86,7 @@ if command -v ssh &> /dev/null; then
         fi
     else
         echo -e "${YELLOW}⚠️  SKIP${NC} - SSH not configured or connection failed"
+        echo "   (This is normal in Replit environment without SSH keys)"
     fi
 else
     echo -e "${YELLOW}⚠️  SKIP${NC} - SSH not available"
