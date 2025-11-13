@@ -1,0 +1,3 @@
+[submodule "mobile_app/VerzekApp"]
+	path = mobile_app/VerzekApp
+	url = https://github.com/ellizza78/VerzekApp.git
