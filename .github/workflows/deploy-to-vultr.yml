@@ -1,14 +1,102 @@
-- name: 🔑 Prepare SSH key from base64
+name: Deploy Backend to Vultr
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-to-vultr.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔐 Checkout code (no submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
+
+      - name: 📋 Display deployment info
+        run: |
+          echo "🚀 Deploying VerzekAutoTrader Backend to Vultr"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+
+      #######################################
+      # 🔑 PREPARE BASE64 SSH KEY
+      #######################################
+      - name: 🔑 Prepare SSH key from base64
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
+          echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-      - name: 🧾 Add server to known_hosts
-        run: |
           ssh-keyscan -H 80.240.29.142 >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
 
+      #######################################
+      # 🧪 TEST SSH CONNECTION
+      #######################################
       - name: 🧪 Test SSH connection (verbose)
         run: |
           ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -vvv root@80.240.29.142 "echo '✅ SSH connection successful'" || true
+
+      #######################################
+      # 🚀 DEPLOY
+      #######################################
+      - name: 🚀 Execute deployment script
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@80.240.29.142 << 'ENDSSH'
+          cd /root
+          echo "📥 Running deployment script..."
+          bash /root/reset_deploy.sh
+          echo "⏳ Waiting for services to stabilize..."
+          sleep 5
+          echo "✅ Deployment complete!"
+          ENDSSH
+
+      #######################################
+      # 🔍 VERIFY SERVICE
+      #######################################
+      - name: 🔍 Verify service status
+        run: |
+          SERVICE_STATUS=$(ssh -i ~/.ssh/id_rsa -o BatchMode=yes root@80.240.29.142 "systemctl is-active verzek-api.service" || echo "unknown")
+          if [ "$SERVICE_STATUS" = "active" ]; then
+            echo "✅ verzek-api.service is ACTIVE"
+          else
+            echo "❌ verzek-api.service is NOT active! (status: $SERVICE_STATUS)"
+            ssh -i ~/.ssh/id_rsa root@80.240.29.142 "journalctl -u verzek-api.service -n 50" || true
+            exit 1
+          fi
+
+      #######################################
+      # 🧪 VALIDATION
+      #######################################
+      - name: 🧪 Run validation suite (STRICT mode)
+        run: |
+          chmod +x validate_deployment.sh
+          ./validate_deployment.sh --strict
+
+      #######################################
+      # SUMMARY
+      #######################################
+      - name: 📊 Deployment summary
+        if: success()
+        run: |
+          echo "✅ DEPLOYMENT SUCCESSFUL!"
+          BACKEND_VERSION=$(grep -E "^Version:" backend/api_version.txt | sed 's/Version: //')
+          echo "📦 Backend Version: ${BACKEND_VERSION}"
+          echo "🌐 Production URL: https://api.verzekinnovative.com"
+          echo "📅 Deployed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "📝 Commit: ${{ github.sha }}"
+
+      - name: 🆘 Deployment failure notice
+        if: failure()
+        run: |
+          echo "❌ DEPLOYMENT FAILED!"
+          echo "Check the logs above for error details"
+          echo "To rollback: ssh root@80.240.29.142; systemctl status verzek-api.service; journalctl -u verzek-api.service -n 50"
