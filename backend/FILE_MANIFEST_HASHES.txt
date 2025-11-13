@@ -1,12 +1,10 @@
 # VerzekAutoTrader Backend - COMPLETE File Manifest with Hashes
 # Generated: 2025-11-13
-# Commit: 55e0bdde6d9af35511d30036a81b6d659ca692e0
-# Version: 2.1
-# Total Files: 50 (ALL backend files tracked)
+# Total Files: 51
 
 # MD5 Hash Format: filepath:hash
+# Excludes: __pycache__, *.pyc, .git/, instance/, *.db, logs/
 
-./.env.example:45c2abaa5d05ad2fc5ccea2c39f7cdf0
 ./ADMIN_REFERRAL_GUIDE.md:0aef24f5add922d96f9b87f3a3acaa01
 ./admin_routes.py:8a7ed2113fa28c30e2fc6fa59f4007c7
 ./api_server.py:58249c92a4a8b757f822e49be67d4bec
@@ -14,7 +12,7 @@
 ./auth_routes.py:4786c2e2c1752863a3d54a56caa65bcc
 ./broadcast.py:7e9ffa76869eee3a317385e1a6f9bbfc
 ./config/keywords.json:fd4e7d34d33aa0b25600bdbfb2f89cc2
-./database/migrations/add_device_tokens.sql:7f34a27cb7a72993513c15aa21eeb16a
+./database/migrations/add_device_tokens.sql:a75f66778dc2f7266ad5d12230d1a8bc
 ./db.py:23835f2b8ad257ed105b9570dbe8c593
 ./deploy/deploy_to_vultr.sh:511729607365b857c2d417d7659717d9
 ./DEPLOYMENT_GUIDE.md:cb944256aa17ca95508f8c4fe921e333
@@ -22,8 +20,10 @@
 ./deploy_updates.sh:8057ea7f02e5f1e27dd19de1123795f9
 ./deploy/verzek_api.service:3aa2ad50b6e764863a7ac76b3e25b636
 ./deploy/verzek_worker.service:013bd67f1a9cbbd878edda94d150e9ed
-./FILE_MANIFEST_HASHES.txt:CURRENT_FILE
+./.env.example:0073f38fe005608aade2c802da7bffe3
+./FILE_MANIFEST_HASHES.txt:18361e163dbd9b92ae6ba0eaac4da857
 ./FILE_MANIFEST.md:787067dc9633579632de1067b84a6a80
+./.gitignore:cde5b015c959a4c4e8a7f048765f4ceb
 ./models.py:7296958da3fa9d209230292b06a00055
 ./payments_routes.py:3439021056f6afc3d5cbe7a82d8b306d
 ./PHASE3_SUMMARY.md:5bda46f1008486a390c6f5da04c056d6
@@ -57,9 +57,5 @@
 ./VULTR_DEPLOYMENT_GUIDE.md:89391ccdf3545fc469cd5870c451d189
 ./worker.py:d059ce9adaef198d07c10c5620f9a252
 
-# ✅ ALL 50 BACKEND FILES TRACKED
-# This is the complete inventory of all backend files (excluding .pyc, __pycache__, .git)
+# ✅ ALL 51 BACKEND FILES TRACKED
 # Use this manifest to detect file drift or unauthorized changes
-#
-# To verify: cd backend && find . -type f | grep -v "\.pyc$" | grep -v "__pycache__" | grep -v "\.git" | wc -l
-# Expected: 50 files
