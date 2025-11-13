@@ -148,8 +148,13 @@ git push origin main
 
 ### Validation:
 ```bash
-# After deployment, verify:
+# Local validation (version drift = warning):
 ./validate_deployment.sh
+
+# Strict validation (version drift = failure):
+./validate_deployment.sh --strict
+
+# GitHub Actions uses --strict automatically
 ```
 
 ## 🛠️ Utility Scripts
@@ -192,9 +197,17 @@ python3 tools/pre_push_guard.py --fix
 
 ### 5. Validation
 ```bash
-# Validate current deployment
+# Local validation (drift warnings only)
 ./validate_deployment.sh
+
+# Strict validation (drift = failure, for CI/CD)
+./validate_deployment.sh --strict
 ```
+
+**Modes:**
+- **Normal Mode**: Version drift shows as WARNING (for local development)
+- **Strict Mode**: Version drift shows as FAILURE (for CI/CD pipelines)
+- GitHub Actions automatically uses `--strict` to ensure deployments update versions correctly
 
 ## 📊 File Inventory
 

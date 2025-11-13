@@ -62,28 +62,13 @@ jobs:
             exit 1
           fi
           
-      - name: 🧪 Test API endpoints
+      - name: 🧪 Run validation suite (STRICT mode)
         run: |
-          echo "Testing /api/ping..."
-          PING_RESPONSE=$(curl -s -w "\n%{http_code}" https://api.verzekinnovative.com/api/ping | tail -1)
-          if [ "$PING_RESPONSE" = "200" ]; then
-            echo "✅ /api/ping responding (200 OK)"
-            curl -s https://api.verzekinnovative.com/api/ping
-          else
-            echo "❌ /api/ping failed (HTTP $PING_RESPONSE)"
-            exit 1
-          fi
-          
+          echo "Running complete validation suite in STRICT mode..."
+          echo "Version drift will cause deployment failure."
           echo ""
-          echo "Testing /api/health..."
-          HEALTH_RESPONSE=$(curl -s -w "\n%{http_code}" https://api.verzekinnovative.com/api/health | tail -1)
-          if [ "$HEALTH_RESPONSE" = "200" ]; then
-            echo "✅ /api/health responding (200 OK)"
-            curl -s https://api.verzekinnovative.com/api/health
-          else
-            echo "❌ /api/health failed (HTTP $HEALTH_RESPONSE)"
-            exit 1
-          fi
+          chmod +x validate_deployment.sh
+          ./validate_deployment.sh --strict
           
       - name: 📊 Deployment summary
         if: success()
@@ -92,7 +77,8 @@ jobs:
           echo "✅ DEPLOYMENT SUCCESSFUL!"
           echo "================================================"
           echo ""
-          echo "📦 Backend Version: 2.1"
+          BACKEND_VERSION=$(grep -E "^Version:" backend/api_version.txt | sed 's/Version: //')
+          echo "📦 Backend Version: ${BACKEND_VERSION}"
           echo "🌐 Production URL: https://api.verzekinnovative.com"
           echo "📅 Deployed at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
           echo "📝 Commit: ${{ github.sha }}"

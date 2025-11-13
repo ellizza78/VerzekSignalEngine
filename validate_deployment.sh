@@ -3,12 +3,23 @@
 # Validates that the deployment is working correctly
 #
 # Usage:
-#   chmod +x validate_deployment.sh
-#   ./validate_deployment.sh
+#   ./validate_deployment.sh           # Local mode (drift = warning)
+#   ./validate_deployment.sh --strict  # CI/CD mode (drift = failure)
 
 set -e
 
+# Parse arguments
+STRICT_MODE=false
+if [[ "$1" == "--strict" ]]; then
+    STRICT_MODE=true
+fi
+
 echo "🧪 VerzekAutoTrader - Deployment Validation"
+if [ "$STRICT_MODE" = true ]; then
+    echo "Mode: STRICT (CI/CD) - Version drift will fail validation"
+else
+    echo "Mode: NORMAL (Local) - Version drift will warn only"
+fi
 echo "==========================================="
 echo ""
 
@@ -112,10 +123,25 @@ echo -e "${BLUE}Test 6: API Version Check${NC}"
 VERSION_RESPONSE=$(curl -s ${API_URL}/api/ping | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
 if [ -n "$VERSION_RESPONSE" ]; then
     echo -e "${GREEN}✅ PASS${NC} - Backend version: $VERSION_RESPONSE"
-    if [ "$VERSION_RESPONSE" = "2.1" ]; then
-        echo "   Expected version detected ✓"
+    
+    # Read expected version from local file if available
+    if [ -f "backend/api_version.txt" ]; then
+        EXPECTED_VERSION=$(grep -E "^Version:|^VERSION=" backend/api_version.txt | head -1 | sed 's/Version: v//; s/Version: //; s/VERSION=//')
+        if [ -n "$EXPECTED_VERSION" ] && [ "$VERSION_RESPONSE" = "$EXPECTED_VERSION" ]; then
+            echo "   Matches local version file ✓"
+        elif [ -n "$EXPECTED_VERSION" ]; then
+            # Version drift detected
+            if [ "$STRICT_MODE" = true ]; then
+                echo -e "${RED}❌ FAIL${NC} - Version drift: Local v${EXPECTED_VERSION} != Deployed v${VERSION_RESPONSE}"
+                echo "   Deployment did not update the backend version correctly"
+                FAILURES=$((FAILURES + 1))
+            else
+                echo -e "${YELLOW}   Warning: Local version is v${EXPECTED_VERSION}, deployed is v${VERSION_RESPONSE}${NC}"
+                echo "   (Run with --strict to treat this as a failure)"
+            fi
+        fi
     else
-        echo -e "${YELLOW}   Warning: Expected v2.1, got v$VERSION_RESPONSE${NC}"
+        echo "   Valid semantic version format ✓"
     fi
 else
     echo -e "${RED}❌ FAIL${NC} - Could not determine backend version"

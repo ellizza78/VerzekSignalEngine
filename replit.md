@@ -19,27 +19,35 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 
 ## Recent Changes (November 2025)
 ### Complete Sync & Deployment Automation (COMPLETED - Nov 13, 2025)
-**VPS Status:** ✅ LIVE and operational at https://api.verzekinnovative.com (v2.1)
-**Automation Status:** Production-ready GitHub Actions workflow + Manual deployment scripts
+**VPS Status:** ✅ LIVE at https://api.verzekinnovative.com (v2.1 deployed, v2.1.1 ready)
+**Automation Status:** PRODUCTION-READY with strict validation enforcement
 **Solution Components:**
-- **GitHub Actions Workflow**: Auto-deployment on push (requires VULTR_SSH_KEY secret)
-- **File Manifests**: Complete hash-based tracking (50 backend files with MD5 hashes)
-- **Deployment Scripts**: Manual SSH deployment with full validation
-- **Validation Suite**: 8-test deployment verification script
+- **GitHub Actions Workflow**: Auto-deployment with --strict validation (blocks version drift)
+- **File Manifests**: Complete 51-file tracking with MD5 hashes
+- **Version Sync Utility**: tools/sync_versions.py (bump patch/minor/major)
+- **Pre-Push Guard**: tools/pre_push_guard.py (7 critical checks)
+- **Validation Suite**: validate_deployment.sh with strict mode support
 **Key Files Created:**
-  - .github/workflows/deploy-to-vultr.yml (auto-deployment workflow)
-  - backend/FILE_MANIFEST_HASHES.txt (50 files, complete inventory)
-  - deploy_to_vultr_automated.sh (manual deployment with SSH fixes)
-  - validate_deployment.sh (8-test validation suite)
-  - AUTOMATION_COMPLETE_GUIDE.md (comprehensive implementation guide)
-  - GITHUB_ACTIONS_SETUP.md (step-by-step setup instructions)
+  - .github/workflows/deploy-to-vultr.yml (auto-deploy with strict validation)
+  - backend/FILE_MANIFEST_HASHES.txt (51 files tracked)
+  - tools/generate_manifest.sh (manifest generator)
+  - tools/sync_versions.py (version automation)
+  - tools/pre_push_guard.py (pre-push protection)
+  - validate_deployment.sh (normal/strict modes)
+  - FINAL_AUTOMATION_GUIDE.md (complete user guide)
 **Features:**
   - Push-button deployment via GitHub Actions
-  - Hash-based drift detection for all backend files
-  - SSH host key handling for first-use compatibility
-  - Complete validation testing (API, SSL, services, configuration)
-**Architect Approved:** Production-ready, all security checks passed
-**Next Action:** User adds VULTR_SSH_KEY to GitHub Secrets → Push workflow → Auto-deploy enabled
+  - Strict mode validation (version drift = deployment failure)
+  - Complete file integrity tracking (51 files)
+  - Version sync automation (backend ↔ mobile)
+  - Pre-push protection (7 checks)
+  - SSH auto-configuration (known_hosts seeding)
+**Validation Modes:**
+  - Normal: `./validate_deployment.sh` (drift = warning, for local dev)
+  - Strict: `./validate_deployment.sh --strict` (drift = failure, for CI/CD)
+  - GitHub Actions uses strict mode automatically
+**Architect Approved:** Production-ready with strict validation enforcement
+**Next Action:** User adds VULTR_SSH_KEY → Pushes to GitHub → Auto-deploy with strict validation
 
 
 ### Email Verification & 4-Day Trial System (COMPLETED - Nov 11, 2025)
