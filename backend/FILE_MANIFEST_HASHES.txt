@@ -1,0 +1,45 @@
+# VerzekAutoTrader Backend - File Manifest with Hashes
+# Generated: 2025-11-13
+# Commit: 55e0bdde6d9af35511d30036a81b6d659ca692e0
+# Version: 2.1
+
+# MD5 Hash Format: filepath:hash
+
+./admin_routes.py:8a7ed2113fa28c30e2fc6fa59f4007c7
+./api_server.py:58249c92a4a8b757f822e49be67d4bec
+./api_version.txt:5dcfcd6ea11e91f7351c4ccb56d7b7ae
+./auth_routes.py:4786c2e2c1752863a3d54a56caa65bcc
+./broadcast.py:7e9ffa76869eee3a317385e1a6f9bbfc
+./config/keywords.json:fd4e7d34d33aa0b25600bdbfb2f89cc2
+./db.py:23835f2b8ad257ed105b9570dbe8c593
+./deploy/deploy_to_vultr.sh:511729607365b857c2d417d7659717d9
+./deploy_updates.sh:8057ea7f02e5f1e27dd19de1123795f9
+./models.py:7296958da3fa9d209230292b06a00055
+./payments_routes.py:3439021056f6afc3d5cbe7a82d8b306d
+./positions_routes.py:5aae7bbd3bf25389087bb435a98d60f0
+./reports/daily_report.py:10d48e62184311d6268d99c8defde9af
+./reports/__init__.py:47bcf8e622ef544e6e32a4b8ba1a289d
+./requirements.txt:00deddaf00ab8620358397bd2e062116
+./scripts/setup_watchdog_cron.sh:06b080760d14d875cdf3faea5a211701
+./scripts/update_resend_key.sh:2f63b4bd1253e56a341941b4ee5259ab
+./scripts/watchdog.sh:bf698ae49f9dfc3c92a13b952a74c888
+./signal_listener.py:c99c2b1ff00be465451698bdde6ed784
+./signals_routes.py:a4ed0e9f90b093b746c46d4dba7c088c
+./test_api.sh:8950de4312a54acade0d286497a0dfa1
+./trading/executor.py:5623b7a6ccb25d42501cece6937dec98
+./trading/__init__.py:91498e8d5d3bdf9e81694ef90e779d28
+./trading/paper_client.py:4e92b8059243d939ebb64542dfa4496d
+./users_routes.py:20cf136cbb37ac5defe2c96b44a5fe69
+./utils/email.py:028419bcc724bfde2db97cfa8cef5f0e
+./utils/__init__.py:b2ee9f3bd322a2a82a89be79adddb579
+./utils/logger.py:8bb1d4e3b8e21d814a96cb9ddafc3ad0
+./utils/notifications.py:baf659666ef182c3f09ff0ce878b68ba
+./utils/price_feed.py:5bd93f9913f619668e87e70589225e43
+./utils/rate_limiter.py:c610658b2bf907b4db63c842d2f666e8
+./utils/security.py:01447175df7b621075828cb16928ab47
+./utils/telegram_notifications.py:2e06c58fdac1c55e2437a20ce7ec4a98
+./utils/tokens.py:8097e8524ebe652f719f81a38fe70995
+./worker.py:d059ce9adaef198d07c10c5620f9a252
+
+# Total Files: 35
+# Critical Files Verified: ✅

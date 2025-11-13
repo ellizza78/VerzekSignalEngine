@@ -32,15 +32,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VULTR_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H 80.240.29.142 >> ~/.ssh/known_hosts
           
       - name: 🧪 Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VULTR_HOST }} "echo '✅ SSH connection successful'"
+          ssh -o StrictHostKeyChecking=no root@80.240.29.142 "echo '✅ SSH connection successful'"
           
       - name: 🚀 Execute deployment script
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VULTR_HOST }} << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no root@80.240.29.142 << 'ENDSSH'
           cd /root
           echo "📥 Running deployment script..."
           bash /root/reset_deploy.sh
@@ -54,7 +54,7 @@ jobs:
           
       - name: 🔍 Verify service status
         run: |
-          SERVICE_STATUS=$(ssh root@${{ secrets.VULTR_HOST }} "systemctl is-active verzek-api.service")
+          SERVICE_STATUS=$(ssh root@80.240.29.142 "systemctl is-active verzek-api.service")
           if [ "$SERVICE_STATUS" = "active" ]; then
             echo "✅ verzek-api.service is ACTIVE"
           else
@@ -107,7 +107,7 @@ jobs:
           echo ""
           echo "Check the logs above for error details"
           echo "To rollback:"
-          echo "  ssh root@${{ secrets.VULTR_HOST }}"
+          echo "  ssh root@80.240.29.142"
           echo "  systemctl status verzek-api.service"
           echo "  journalctl -u verzek-api.service -n 50"
           echo ""

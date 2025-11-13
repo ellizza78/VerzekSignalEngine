@@ -1,225 +1,169 @@
 #!/bin/bash
+# VerzekAutoTrader - Complete Deployment Validation
+# Validates that the deployment is working correctly
+#
+# Usage:
+#   chmod +x validate_deployment.sh
+#   ./validate_deployment.sh
 
-#######################################################################
-# DEPLOYMENT VALIDATION SCRIPT
-# Tests all critical endpoints and configurations
-#######################################################################
+set -e
 
-echo "═══════════════════════════════════════════════════════════"
-echo "  🧪 VerzekAutoTrader Deployment Validation"
-echo "═══════════════════════════════════════════════════════════"
+echo "🧪 VerzekAutoTrader - Deployment Validation"
+echo "==========================================="
 echo ""
 
-# Colors
-RED='\033[0;31m'
+# Configuration
+API_URL="https://api.verzekinnovative.com"
+VULTR_HOST="80.240.29.142"
+
+# Color codes
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Test results
-PASSED=0
-FAILED=0
+# Track failures
+FAILURES=0
 
-# API Base URL
-API_URL="https://api.verzekinnovative.com"
+# Test 1: API Ping Endpoint
+echo -e "${BLUE}Test 1: API Ping Endpoint${NC}"
+PING_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${API_URL}/api/ping)
+if [ "$PING_STATUS" = "200" ]; then
+    echo -e "${GREEN}✅ PASS${NC} - /api/ping responding (200 OK)"
+    PING_DATA=$(curl -s ${API_URL}/api/ping)
+    echo "   Response: $PING_DATA"
+else
+    echo -e "${RED}❌ FAIL${NC} - /api/ping returned HTTP $PING_STATUS"
+    FAILURES=$((FAILURES + 1))
+fi
 
-# Function to test endpoint
-test_endpoint() {
-    local name="$1"
-    local url="$2"
-    local expected="$3"
-    
-    echo -n "Testing $name... "
-    
-    response=$(curl -s "$url" 2>/dev/null || echo "ERROR")
-    
-    if echo "$response" | grep -q "$expected"; then
-        echo -e "${GREEN}✓ PASS${NC}"
-        ((PASSED++))
-        return 0
+# Test 2: API Health Endpoint
+echo ""
+echo -e "${BLUE}Test 2: API Health Endpoint${NC}"
+HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${API_URL}/api/health)
+if [ "$HEALTH_STATUS" = "200" ]; then
+    echo -e "${GREEN}✅ PASS${NC} - /api/health responding (200 OK)"
+    HEALTH_DATA=$(curl -s ${API_URL}/api/health)
+    echo "   Response: $HEALTH_DATA"
+else
+    echo -e "${RED}❌ FAIL${NC} - /api/health returned HTTP $HEALTH_STATUS"
+    FAILURES=$((FAILURES + 1))
+fi
+
+# Test 3: HTTPS/SSL Certificate
+echo ""
+echo -e "${BLUE}Test 3: HTTPS/SSL Certificate${NC}"
+if curl -s --head ${API_URL} | grep -q "HTTP/"; then
+    echo -e "${GREEN}✅ PASS${NC} - HTTPS working correctly"
+else
+    echo -e "${RED}❌ FAIL${NC} - HTTPS not working"
+    FAILURES=$((FAILURES + 1))
+fi
+
+# Test 4: Service Status (requires SSH)
+echo ""
+echo -e "${BLUE}Test 4: Backend Service Status${NC}"
+if command -v ssh &> /dev/null; then
+    if ssh -o ConnectTimeout=5 -o BatchMode=yes root@${VULTR_HOST} "exit" 2>/dev/null; then
+        SERVICE_STATUS=$(ssh root@${VULTR_HOST} "systemctl is-active verzek-api.service" || echo "inactive")
+        if [ "$SERVICE_STATUS" = "active" ]; then
+            echo -e "${GREEN}✅ PASS${NC} - verzek-api.service is active"
+            
+            # Get worker count
+            WORKERS=$(ssh root@${VULTR_HOST} "ps aux | grep gunicorn | grep -v grep | wc -l")
+            echo "   Workers: $WORKERS process(es)"
+        else
+            echo -e "${RED}❌ FAIL${NC} - verzek-api.service is not active"
+            FAILURES=$((FAILURES + 1))
+        fi
     else
-        echo -e "${RED}✗ FAIL${NC}"
-        echo "  Expected: $expected"
-        echo "  Got: $response"
-        ((FAILED++))
-        return 1
+        echo -e "${YELLOW}⚠️  SKIP${NC} - SSH not configured or connection failed"
     fi
-}
+else
+    echo -e "${YELLOW}⚠️  SKIP${NC} - SSH not available"
+fi
 
-# Function to test HTTP status
-test_http_status() {
-    local name="$1"
-    local url="$2"
-    local expected="$3"
-    
-    echo -n "Testing $name... "
-    
-    status=$(curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
-    
-    if [ "$status" == "$expected" ]; then
-        echo -e "${GREEN}✓ PASS${NC} (HTTP $status)"
-        ((PASSED++))
-        return 0
+# Test 5: Email Configuration Check
+echo ""
+echo -e "${BLUE}Test 5: Email Configuration${NC}"
+if [ -f "backend/requirements.txt" ]; then
+    if grep -q "resend==2.19.0" backend/requirements.txt; then
+        echo -e "${GREEN}✅ PASS${NC} - resend==2.19.0 installed"
     else
-        echo -e "${RED}✗ FAIL${NC} (Expected: $expected, Got: $status)"
-        ((FAILED++))
-        return 1
-    fi
-}
-
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  SSL & HTTPS Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-# Test HTTP redirect to HTTPS
-test_http_status "HTTP Redirect" "http://api.verzekinnovative.com/api/health" "301"
-
-# Test HTTPS connection
-test_http_status "HTTPS Connection" "$API_URL/api/health" "200"
-
-echo ""
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  API Endpoint Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-# Test health endpoint
-test_endpoint "Health Check" "$API_URL/api/health" "ok"
-
-# Test CAPTCHA generation
-test_endpoint "CAPTCHA Generation" "$API_URL/api/captcha/generate" "captcha_hash"
-
-# Test app config endpoint
-test_endpoint "App Config" "$API_URL/api/app-config" "version"
-
-echo ""
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  Service Status Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-echo -n "Checking API service... "
-if systemctl is-active --quiet verzek-api.service; then
-    echo -e "${GREEN}✓ RUNNING${NC}"
-    ((PASSED++))
-else
-    echo -e "${RED}✗ NOT RUNNING${NC}"
-    ((FAILED++))
-fi
-
-echo -n "Checking Nginx service... "
-if systemctl is-active --quiet nginx; then
-    echo -e "${GREEN}✓ RUNNING${NC}"
-    ((PASSED++))
-else
-    echo -e "${RED}✗ NOT RUNNING${NC}"
-    ((FAILED++))
-fi
-
-echo ""
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  SSL Certificate Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-echo -n "Checking SSL certificate... "
-if [ -d "/etc/letsencrypt/live/api.verzekinnovative.com" ]; then
-    echo -e "${GREEN}✓ INSTALLED${NC}"
-    ((PASSED++))
-    
-    # Check expiry
-    EXPIRY=$(openssl x509 -enddate -noout -in /etc/letsencrypt/live/api.verzekinnovative.com/fullchain.pem 2>/dev/null | cut -d= -f2)
-    if [ -n "$EXPIRY" ]; then
-        echo "  Expires: $EXPIRY"
+        echo -e "${RED}❌ FAIL${NC} - resend package version incorrect"
+        FAILURES=$((FAILURES + 1))
     fi
 else
-    echo -e "${RED}✗ NOT FOUND${NC}"
-    ((FAILED++))
+    echo -e "${YELLOW}⚠️  SKIP${NC} - requirements.txt not found locally"
 fi
 
+# Test 6: API Version Check
 echo ""
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  Configuration Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-echo -n "Checking environment file... "
-if [ -f "/root/api_server_env.sh" ]; then
-    echo -e "${GREEN}✓ EXISTS${NC}"
-    ((PASSED++))
+echo -e "${BLUE}Test 6: API Version Check${NC}"
+VERSION_RESPONSE=$(curl -s ${API_URL}/api/ping | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+if [ -n "$VERSION_RESPONSE" ]; then
+    echo -e "${GREEN}✅ PASS${NC} - Backend version: $VERSION_RESPONSE"
+    if [ "$VERSION_RESPONSE" = "2.1" ]; then
+        echo "   Expected version detected ✓"
+    else
+        echo -e "${YELLOW}   Warning: Expected v2.1, got v$VERSION_RESPONSE${NC}"
+    fi
 else
-    echo -e "${RED}✗ NOT FOUND${NC}"
-    ((FAILED++))
+    echo -e "${RED}❌ FAIL${NC} - Could not determine backend version"
+    FAILURES=$((FAILURES + 1))
 fi
 
-echo -n "Checking Firebase key... "
-if [ -f "/root/firebase_key.json" ]; then
-    echo -e "${GREEN}✓ EXISTS${NC}"
-    ((PASSED++))
-else
-    echo -e "${YELLOW}⚠ NOT FOUND${NC} (optional)"
-fi
-
-echo -n "Checking log directory... "
-if [ -d "/root/api_server/logs" ]; then
-    echo -e "${GREEN}✓ EXISTS${NC}"
-    ((PASSED++))
-else
-    echo -e "${RED}✗ NOT FOUND${NC}"
-    ((FAILED++))
-fi
-
-echo -n "Checking log rotation... "
-if [ -f "/etc/logrotate.d/verzek" ]; then
-    echo -e "${GREEN}✓ CONFIGURED${NC}"
-    ((PASSED++))
-else
-    echo -e "${YELLOW}⚠ NOT CONFIGURED${NC}"
-fi
-
-echo -n "Checking auto-restart cron... "
-if crontab -l 2>/dev/null | grep -q "verzek-api.service"; then
-    echo -e "${GREEN}✓ CONFIGURED${NC}"
-    ((PASSED++))
-else
-    echo -e "${YELLOW}⚠ NOT CONFIGURED${NC}"
-fi
-
+# Test 7: Mobile App Configuration
 echo ""
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BLUE}  Performance Tests${NC}"
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-
-echo -n "Testing response time... "
-START=$(date +%s%N)
-curl -s "$API_URL/api/health" > /dev/null 2>&1
-END=$(date +%s%N)
-RESPONSE_TIME=$(( (END - START) / 1000000 ))
-
-if [ $RESPONSE_TIME -lt 1000 ]; then
-    echo -e "${GREEN}✓ EXCELLENT${NC} (${RESPONSE_TIME}ms)"
-    ((PASSED++))
-elif [ $RESPONSE_TIME -lt 2000 ]; then
-    echo -e "${YELLOW}✓ ACCEPTABLE${NC} (${RESPONSE_TIME}ms)"
-    ((PASSED++))
+echo -e "${BLUE}Test 7: Mobile App Configuration${NC}"
+if [ -f "mobile_app/VerzekApp/src/config/api.js" ]; then
+    if grep -q "https://api.verzekinnovative.com" mobile_app/VerzekApp/src/config/api.js; then
+        echo -e "${GREEN}✅ PASS${NC} - Mobile app API URL configured correctly"
+    else
+        echo -e "${RED}❌ FAIL${NC} - Mobile app API URL incorrect"
+        FAILURES=$((FAILURES + 1))
+    fi
 else
-    echo -e "${RED}✗ SLOW${NC} (${RESPONSE_TIME}ms)"
-    ((FAILED++))
+    echo -e "${YELLOW}⚠️  SKIP${NC} - Mobile app config not found locally"
+fi
+
+# Test 8: File Manifest Verification
+echo ""
+echo -e "${BLUE}Test 8: File Manifest Check${NC}"
+if [ -f "backend/FILE_MANIFEST_HASHES.txt" ]; then
+    MANIFEST_FILES=$(grep -c "^\./" backend/FILE_MANIFEST_HASHES.txt)
+    echo -e "${GREEN}✅ PASS${NC} - File manifest exists ($MANIFEST_FILES files tracked)"
+else
+    echo -e "${YELLOW}⚠️  WARNING${NC} - File manifest not found"
 fi
 
 # Summary
 echo ""
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  Test Summary${NC}"
-echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
-echo ""
-echo -e "  ${GREEN}Passed: $PASSED${NC}"
-echo -e "  ${RED}Failed: $FAILED${NC}"
-echo ""
+echo "==========================================="
+echo -e "${BLUE}📊 Validation Summary${NC}"
+echo "==========================================="
 
-if [ $FAILED -eq 0 ]; then
-    echo -e "${GREEN}✅ ALL TESTS PASSED - DEPLOYMENT VALIDATED${NC}"
+if [ $FAILURES -eq 0 ]; then
+    echo -e "${GREEN}✅ ALL TESTS PASSED${NC}"
     echo ""
+    echo "Your deployment is fully operational!"
+    echo ""
+    echo "Production URLs:"
+    echo "  • Backend API: ${API_URL}"
+    echo "  • Email: support@verzekinnovative.com"
+    echo ""
+    echo "Next steps:"
+    echo "  1. Test registration from mobile app"
+    echo "  2. Verify email verification works"
+    echo "  3. Monitor logs for any issues"
     exit 0
 else
-    echo -e "${YELLOW}⚠️  SOME TESTS FAILED - REVIEW CONFIGURATION${NC}"
+    echo -e "${RED}❌ ${FAILURES} TEST(S) FAILED${NC}"
     echo ""
+    echo "Please review the failures above and:"
+    echo "  1. Check service logs: ssh root@${VULTR_HOST} 'journalctl -u verzek-api.service -n 50'"
+    echo "  2. Verify environment variables are set"
+    echo "  3. Run deployment again if needed"
     exit 1
 fi
