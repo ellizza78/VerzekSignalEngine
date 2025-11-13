@@ -29,10 +29,6 @@ args = "cd mobile_app/VerzekApp && rm -rf .expo && EXPO_DEVTOOLS_LISTEN_ADDRESS=
 waitForPort = 8080
 
 [[ports]]
-localPort = 5000
-externalPort = 5000
-
-[[ports]]
 localPort = 8080
 externalPort = 80
 

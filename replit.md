@@ -18,6 +18,18 @@ VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cos
 - **Legacy Bridge** (deprecated): https://verzek-auto-trader.replit.app (no longer used in production)
 
 ## Recent Changes (November 2025)
+### Auth Routes Defensive JSON Parsing Fix (COMPLETED - Nov 13, 2025)
+**Problem:** "NoneType has no attribute 'strip'" errors when request.get_json() returned None or non-dict payloads
+**Solution:** Added defensive JSON parsing with isinstance() checks to all auth endpoints
+**Files Modified:** backend/auth_routes.py
+**Pattern Applied:**
+  - request.get_json(silent=True) with isinstance(data, dict) validation
+  - Returns HTTP 400 "Invalid request payload" for malformed JSON
+  - All data.get() calls use defensive pattern: (data.get('field') or '').strip()
+**Endpoints Fixed:** register, login, verify-email, resend-verification, forgot-password, reset-password
+**Architect Approved:** No security issues, all edge cases handled (None, lists, numbers, invalid JSON)
+**Testing:** Python syntax verified, LSP type warnings expected (SQLAlchemy Column types)
+
 ### Complete Sync & Deployment Automation (COMPLETED - Nov 13, 2025)
 **VPS Status:** ✅ LIVE at https://api.verzekinnovative.com (v2.1 deployed, v2.1.1 ready)
 **Automation Status:** PRODUCTION-READY with strict validation enforcement

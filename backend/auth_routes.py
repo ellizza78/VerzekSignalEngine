@@ -22,11 +22,14 @@ bp = Blueprint('auth', __name__)
 def register():
     """Register a new user"""
     try:
-        data = request.get_json()
-        email = data.get('email', '').strip().lower()
-        password = data.get('password', '')
-        full_name = data.get('full_name', data.get('username', ''))
-        referral_code_input = data.get('referral_code', '').strip().upper()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+        
+        email = (data.get('email') or '').strip().lower()
+        password = data.get('password') or ''
+        full_name = (data.get('full_name') or data.get('username') or '').strip()
+        referral_code_input = (data.get('referral_code') or '').strip().upper()
         
         if not email or not password:
             return jsonify({"ok": False, "error": "Email and password required"}), 400
@@ -128,9 +131,12 @@ def register():
 def login():
     """User login"""
     try:
-        data = request.get_json()
-        email = data.get('email', '').strip().lower()
-        password = data.get('password', '')
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+        
+        email = (data.get('email') or '').strip().lower()
+        password = data.get('password') or ''
         
         if not email or not password:
             return jsonify({"ok": False, "error": "Email and password required"}), 400
@@ -238,8 +244,11 @@ def get_current_user():
 def verify_email():
     """Verify email address with token"""
     try:
-        data = request.get_json()
-        token = data.get('token', '').strip()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+        
+        token = (data.get('token') or '').strip()
         
         if not token:
             return jsonify({"ok": False, "error": "Verification token required"}), 400
@@ -294,8 +303,12 @@ def resend_verification():
         
         # If not authenticated, get email from request body
         if not user:
-            data = request.get_json()
-            email = data.get('email', '').strip().lower()
+            data = request.get_json(silent=True)
+            if not isinstance(data, dict):
+                db.close()
+                return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+            
+            email = (data.get('email') or '').strip().lower()
             
             if not email:
                 db.close()
@@ -341,8 +354,11 @@ def resend_verification():
 def forgot_password():
     """Password reset request - sends email with reset token"""
     try:
-        data = request.get_json()
-        email = data.get('email', '').strip().lower()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+        
+        email = (data.get('email') or '').strip().lower()
         
         if not email:
             return jsonify({"ok": False, "error": "Email required"}), 400
@@ -377,9 +393,12 @@ def forgot_password():
 def reset_password():
     """Reset password with token"""
     try:
-        data = request.get_json()
-        token = data.get('token', '').strip()
-        new_password = data.get('password', '')
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+        
+        token = (data.get('token') or '').strip()
+        new_password = data.get('password') or ''
         
         if not token or not new_password:
             return jsonify({"ok": False, "error": "Token and new password required"}), 400
