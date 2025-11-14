@@ -12,8 +12,8 @@ on:
 
 jobs:
   deploy:
-    # Only run deploy when at least one of the SSH secrets exists
-    if: ${{ secrets.VULTR_SSH_KEY_B64 != '' || secrets.VULTR_SSH_PRIVATE_KEY != '' }}
+    # Only run deploy when SSH key secret exists
+    if: ${{ secrets.VULTR_SSH_KEY }}
     runs-on: ubuntu-latest
     env:
       VULTR_HOST: 80.240.29.142
@@ -38,10 +38,9 @@ jobs:
           mkdir -p "$HOME/.ssh"
           chmod 700 "$HOME/.ssh" || true
 
-      - name: 🔑 Restore SSH private key (base64 or raw)
+      - name: 🔑 Restore SSH private key (corrected)
         env:
-          VULTR_SSH_KEY_B64: ${{ secrets.VULTR_SSH_KEY_B64 }}
-          VULTR_SSH_PRIVATE_KEY: ${{ secrets.VULTR_SSH_PRIVATE_KEY }}
+          VULTR_SSH_KEY: ${{ secrets.VULTR_SSH_KEY }}
         run: |
           set -euo pipefail
 
@@ -49,23 +48,19 @@ jobs:
           mkdir -p "$(dirname "$SSH_KEY_PATH")"
           chmod 700 "$(dirname "$SSH_KEY_PATH")" || true
 
-          if [ -n "${VULTR_SSH_KEY_B64:-}" ]; then
-            echo "Using VULTR_SSH_KEY_B64"
-            # Decode base64 safely; ignore whitespace issues
-            printf '%s' "$VULTR_SSH_KEY_B64" | base64 --decode > "$SSH_KEY_PATH"
-          elif [ -n "${VULTR_SSH_PRIVATE_KEY:-}" ]; then
-            echo "Using VULTR_SSH_PRIVATE_KEY"
-            printf '%s\n' "$VULTR_SSH_PRIVATE_KEY" > "$SSH_KEY_PATH"
+          if [ -n "${VULTR_SSH_KEY:-}" ]; then
+            echo "Using VULTR_SSH_KEY"
+            printf '%s\n' "$VULTR_SSH_KEY" > "$SSH_KEY_PATH"
           else
-            echo "ERROR: No SSH private key provided. Set the secret VULTR_SSH_KEY_B64 (preferred) or VULTR_SSH_PRIVATE_KEY." >&2
+            echo "❌ ERROR: No SSH private key provided. Set the secret VULTR_SSH_KEY." >&2
             exit 1
           fi
 
           chmod 600 "$SSH_KEY_PATH"
 
-          # Quick validity check of the private key
+          # Validate the SSH key
           if ! ssh-keygen -lf "$SSH_KEY_PATH" >/dev/null 2>&1; then
-            echo "ERROR: The SSH private key is invalid or cannot be parsed by ssh-keygen." >&2
+            echo "❌ ERROR: Invalid SSH key" >&2
             exit 1
           fi
 
@@ -77,20 +72,32 @@ jobs:
       - name: 🧪 Test SSH connection
         run: |
           set -o pipefail
-          ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo 'SSH OK'" || (
-            echo "SSH connection failed. Running verbose diagnostic..." >&2
-            ssh -vvv -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
+          ssh -i "$HOME/.ssh/id_rsa" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+            -o ConnectTimeout=10 \
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo 'SSH OK'" \
+          || (
+            echo "SSH failed, running verbose mode..." >&2
+            ssh -vvv -i "$HOME/.ssh/id_rsa" \
+              -o BatchMode=yes \
+              -o ConnectTimeout=10 \
+              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
             exit 1
           )
 
       - name: 🚀 Execute deployment on server
         run: |
-          ssh -i "$HOME/.ssh/id_rsa" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
+          ssh -i "$HOME/.ssh/id_rsa" \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
           set -euo pipefail
 
-          # Ensure repo directory exists and is on the correct branch
+          # Ensure repo directory exists
           if [ ! -d "/root/VerzekBackend" ]; then
-            echo "Remote directory not found. Cloning repository..."
+            echo "Remote directory missing. Cloning fresh..."
             git clone https://github.com/ellizza78/VerzekBackend.git /root/VerzekBackend
           fi
 
@@ -98,37 +105,61 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
 
-          # Ensure reset_deploy.sh is executable; try local copy if missing in /root
+          # Run reset_deploy script if available
           if [ -x /root/reset_deploy.sh ]; then
             bash /root/reset_deploy.sh
           elif [ -x ./reset_deploy.sh ]; then
             bash ./reset_deploy.sh
           else
-            echo "Warning: reset_deploy.sh not found or not executable. Skipping script execution."
+            echo "⚠️ reset_deploy.sh not found; skipping"
           fi
           ENDSSH
 
       - name: 🔍 Verify service status
         run: |
-          STATUS=$(ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "systemctl is-active verzek-api.service || true")
+          STATUS=$(ssh -i "$HOME/.ssh/id_rsa" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
+            "systemctl is-active verzek-api.service || true")
+
           if [ "$STATUS" != "active" ]; then
-            echo "❌ Service is DOWN (status=$STATUS)"
-            ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 || true"
+            echo "❌ Service is DOWN ($STATUS)"
+            ssh -i "$HOME/.ssh/id_rsa" \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
+              "journalctl -u verzek-api.service -n 200 || true"
             exit 1
           fi
+
           echo "✅ Service is ACTIVE"
 
       - name: 🧪 Test API endpoint
         run: |
           sleep 3
-          RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "curl -sS --max-time 5 http://localhost:8080/health || true")
+          RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
+            "curl -sS --max-time 5 http://localhost:8080/health || true")
+
           echo "API Response: $RESPONSE"
+
           if echo "$RESPONSE" | grep -q '"status":"ok"'; then
             VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4 || true)
-            echo "✅ API responding - Version: $VERSION"
+            echo "✅ API OK - Version: $VERSION"
           else
-            echo "❌ API test failed; dumping recent container logs and journal output"
-            ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 || true"
+            echo "❌ API test FAILED — showing logs:"
+            ssh -i "$HOME/.ssh/id_rsa" \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
+              "journalctl -u verzek-api.service -n 200 || true"
             exit 1
           fi
 
@@ -136,6 +167,6 @@ jobs:
         if: success()
         run: |
           echo "✅ DEPLOYMENT SUCCESSFUL!"
-          echo "Production URL: https://api.verzekinnovative.com"
+          echo "URL: https://api.verzekinnovative.com"
           echo "Deployed at: $(date -u)"
           echo "Commit: ${{ github.sha }}"
