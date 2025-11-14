@@ -12,12 +12,13 @@ on:
 
 jobs:
   deploy:
+    # Only run deploy when at least one of the SSH secrets exists
+    if: ${{ secrets.VULTR_SSH_KEY_B64 != '' || secrets.VULTR_SSH_PRIVATE_KEY != '' }}
     runs-on: ubuntu-latest
     env:
       VULTR_HOST: 80.240.29.142
       VULTR_USER: root
       REMOTE_DIR: /root/VerzekBackend
-      SSH_KEY_PATH: ~/.ssh/id_rsa
 
     steps:
       - name: 🔐 Checkout code
@@ -34,18 +35,27 @@ jobs:
 
       - name: 🔧 Prepare SSH directory
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh" || true
 
       - name: 🔑 Restore SSH private key (base64 or raw)
+        env:
+          VULTR_SSH_KEY_B64: ${{ secrets.VULTR_SSH_KEY_B64 }}
+          VULTR_SSH_PRIVATE_KEY: ${{ secrets.VULTR_SSH_PRIVATE_KEY }}
         run: |
-          # Prefer base64 secret to avoid newline corruption in GH secrets UI
-          if [ -n "${{ secrets.VULTR_SSH_KEY_B64 }}" ]; then
+          set -euo pipefail
+
+          SSH_KEY_PATH="$HOME/.ssh/id_rsa"
+          mkdir -p "$(dirname "$SSH_KEY_PATH")"
+          chmod 700 "$(dirname "$SSH_KEY_PATH")" || true
+
+          if [ -n "${VULTR_SSH_KEY_B64:-}" ]; then
             echo "Using VULTR_SSH_KEY_B64"
-            echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > "$SSH_KEY_PATH"
-          elif [ -n "${{ secrets.VULTR_SSH_PRIVATE_KEY }}" ]; then
+            # Decode base64 safely; ignore whitespace issues
+            printf '%s' "$VULTR_SSH_KEY_B64" | base64 --decode > "$SSH_KEY_PATH"
+          elif [ -n "${VULTR_SSH_PRIVATE_KEY:-}" ]; then
             echo "Using VULTR_SSH_PRIVATE_KEY"
-            printf '%s\n' "${{ secrets.VULTR_SSH_PRIVATE_KEY }}" > "$SSH_KEY_PATH"
+            printf '%s\n' "$VULTR_SSH_PRIVATE_KEY" > "$SSH_KEY_PATH"
           else
             echo "ERROR: No SSH private key provided. Set the secret VULTR_SSH_KEY_B64 (preferred) or VULTR_SSH_PRIVATE_KEY." >&2
             exit 1
@@ -61,21 +71,21 @@ jobs:
 
       - name: 🗝️ Add host to known_hosts
         run: |
-          ssh-keyscan -H "${{ env.VULTR_HOST }}" >> ~/.ssh/known_hosts || true
-          chmod 644 ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ env.VULTR_HOST }}" > "$HOME/.ssh/known_hosts" || true
+          chmod 644 "$HOME/.ssh/known_hosts" || true
 
       - name: 🧪 Test SSH connection
         run: |
           set -o pipefail
-          ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo 'SSH OK'" || (
+          ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo 'SSH OK'" || (
             echo "SSH connection failed. Running verbose diagnostic..." >&2
-            ssh -vvv -i "$SSH_KEY_PATH" -o BatchMode=yes -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
+            ssh -vvv -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
             exit 1
           )
 
       - name: 🚀 Execute deployment on server
         run: |
-          ssh -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
+          ssh -i "$HOME/.ssh/id_rsa" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
           set -euo pipefail
 
           # Ensure repo directory exists and is on the correct branch
@@ -100,10 +110,10 @@ jobs:
 
       - name: 🔍 Verify service status
         run: |
-          STATUS=$(ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "systemctl is-active verzek-api.service" || true)
+          STATUS=$(ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "systemctl is-active verzek-api.service || true")
           if [ "$STATUS" != "active" ]; then
             echo "❌ Service is DOWN (status=$STATUS)"
-            ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 --no-pager"
+            ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 || true"
             exit 1
           fi
           echo "✅ Service is ACTIVE"
@@ -111,14 +121,14 @@ jobs:
       - name: 🧪 Test API endpoint
         run: |
           sleep 3
-          RESPONSE=$(ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "curl -sS --max-time 10 http://localhost:8050/api/ping" || true)
+          RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "curl -sS --max-time 5 http://localhost:8080/health || true")
           echo "API Response: $RESPONSE"
           if echo "$RESPONSE" | grep -q '"status":"ok"'; then
             VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4 || true)
             echo "✅ API responding - Version: $VERSION"
           else
             echo "❌ API test failed; dumping recent container logs and journal output"
-            ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 --no-pager"
+            ssh -i "$HOME/.ssh/id_rsa" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$HOME/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 || true"
             exit 1
           fi
 
