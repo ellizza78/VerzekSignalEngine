@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    paths:
+paths:
       - 'backend/**'
       - '.github/workflows/deploy-to-vultr.yml'
       - 'reset_deploy.sh'
