@@ -1,0 +1,148 @@
+
+REPLIT TASK: Fix GitHub Actions Deployment Errors (SSH Key + Health Check)
+
+You already configured my Vultr server and deployment system successfully.
+Now fix the GitHub Actions workflow so it passes without errors.
+
+Here’s what you must do:
+
+
+---
+
+1️⃣ Fix SSH key handling
+
+GitHub Actions is still looking for VULTR_SSH_KEY but you upgraded everything to use:
+
+VULTR_SSH_KEY_B64 (base64 encoded ED25519 key)
+
+Please:
+
+Update the workflow file .github/workflows/deploy-to-vultr.yml
+
+Remove any reference to VULTR_SSH_KEY
+
+Replace with the correct secret variable name:
+
+
+${{ secrets.VULTR_SSH_KEY_B64 }}
+
+Add decoding step:
+
+
+echo "$VULTR_SSH_KEY_B64" | base64 -d > ~/.ssh/id_ed25519
+chmod 600 ~/.ssh/id_ed25519
+
+Ensure SSH commands use:
+
+
+ssh -i ~/.ssh/id_ed25519
+
+
+---
+
+2️⃣ Fix health check test
+
+GitHub Actions is still checking the old wrong endpoint.
+
+Correct endpoint:
+
+http://localhost:8050/api/health
+
+Expected JSON response:
+
+{"ok": true, "status": "healthy"}
+
+Please update the workflow's health check step to:
+
+RESPONSE=$(curl -sS http://localhost:8050/api/health)
+
+if echo "$RESPONSE" | grep -q '"ok": true'; then
+   echo "API health check passed"
+else
+   echo "API health check FAILED: $RESPONSE"
+   exit 1
+fi
+
+
+---
+
+3️⃣ Fix repository pulling
+
+Make sure GitHub Actions uses SSH, not HTTPS:
+
+Replace:
+
+git clone https://github.com/ellizza78/VerzekBackend.git
+
+With:
+
+git clone git@github.com:ellizza78/VerzekBackend.git
+
+Also update:
+
+git fetch origin main
+git reset --hard origin/main
+
+to use SSH remote:
+
+git remote set-url origin git@github.com:ellizza78/VerzekBackend.git
+
+
+---
+
+4️⃣ Validate everything
+
+After updating the workflow, test by:
+
+Running the workflow manually
+
+Confirming:
+
+SSH authentication succeeds
+
+Repo is pulled correctly
+
+Service restarts successfully
+
+Health check passes
+
+
+
+
+---
+
+📌 What you already know as Replit AI Agent:
+
+Server is running on port 8050
+
+Service name: verzek-api.service
+
+Health endpoint: /api/health
+
+Python backend directory: /root/VerzekBackend
+
+Deployment script: /root/reset_deploy.sh
+
+Environment file: /root/api_server_env.sh
+
+Correct SSH keypair: github_deploy_v2
+
+Private key (base64): already available in Replit secrets
+
+Public key already added to authorized_keys
+
+
+So please fully repair .github/workflows/deploy-to-vultr.yml using the correct configuration above.
+
+
+---
+
+🚀 FINAL GOAL
+
+✔ Every push to main deploys automatically
+✔ GitHub Actions completes SUCCESSFULLY
+✔ Health check passes
+✔ SSH connection works
+✔ Repo pulls correctly
+✔ No more errors
+

@@ -47,7 +47,7 @@ jobs:
             exit 1
           fi
 
-          SSH_KEY_PATH="$HOME/.ssh/id_rsa"
+          SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
           echo "$VULTR_SSH_KEY_B64" | base64 -d > "$SSH_KEY_PATH"
           chmod 600 "$SSH_KEY_PATH"
 
@@ -55,6 +55,8 @@ jobs:
             echo "❌ ERROR: SSH key is invalid"
             exit 1
           fi
+          
+          echo "✅ SSH key loaded successfully (ED25519)"
 
       - name: 🗝️ Add host to known_hosts
         run: |
@@ -64,22 +66,22 @@ jobs:
       - name: 🧪 Test SSH connection
         run: |
           set -o pipefail
-          ssh -i "$HOME/.ssh/id_rsa" \
+          ssh -i "$HOME/.ssh/id_ed25519" \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
             -o ConnectTimeout=10 \
-            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo SSH OK" \
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo '✅ SSH OK'" \
           || (
-            echo "SSH FAILED — running verbose diagnostics..."
-            ssh -vvv -i "$HOME/.ssh/id_rsa" \
+            echo "❌ SSH FAILED — running verbose diagnostics..."
+            ssh -vvv -i "$HOME/.ssh/id_ed25519" \
               "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
             exit 1
           )
 
       - name: 🚀 Execute deployment on server
         run: |
-          ssh -i "$HOME/.ssh/id_rsa" \
+          ssh -i "$HOME/.ssh/id_ed25519" \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
             "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
@@ -87,29 +89,37 @@ jobs:
 
           # Clone repo if missing
           if [ ! -d "/root/VerzekBackend" ]; then
-            echo "Repo directory missing — cloning fresh using SSH"
+            echo "📦 Repo directory missing — cloning fresh using SSH"
             git clone git@github.com:ellizza78/VerzekBackend.git /root/VerzekBackend
           fi
 
           cd /root/VerzekBackend
 
-          echo "Pulling latest code..."
+          # Ensure remote uses SSH (not HTTPS)
+          echo "🔧 Setting Git remote to SSH..."
+          git remote set-url origin git@github.com:ellizza78/VerzekBackend.git
+
+          echo "📥 Pulling latest code..."
           git fetch origin main
           git reset --hard origin/main
 
           # Run reset script if available
           if [ -x /root/reset_deploy.sh ]; then
+            echo "🚀 Running deployment script..."
             bash /root/reset_deploy.sh
           elif [ -x ./reset_deploy.sh ]; then
+            echo "🚀 Running deployment script..."
             bash ./reset_deploy.sh
           else
-            echo "⚠️ reset_deploy.sh not found — skipping"
+            echo "⚠️  reset_deploy.sh not found — skipping"
           fi
+          
+          echo "✅ Deployment commands completed"
           ENDSSH
 
       - name: 🔍 Verify service status
         run: |
-          STATUS=$(ssh -i "$HOME/.ssh/id_rsa" \
+          STATUS=$(ssh -i "$HOME/.ssh/id_ed25519" \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
@@ -118,7 +128,7 @@ jobs:
 
           if [ "$STATUS" != "active" ]; then
             echo "❌ Service is DOWN ($STATUS)"
-            ssh -i "$HOME/.ssh/id_rsa" \
+            ssh -i "$HOME/.ssh/id_ed25519" \
               -o BatchMode=yes \
               -o StrictHostKeyChecking=yes \
               -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
@@ -132,7 +142,7 @@ jobs:
       - name: 🧪 Test API endpoint
         run: |
           sleep 3
-          RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" \
+          RESPONSE=$(ssh -i "$HOME/.ssh/id_ed25519" \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
@@ -141,19 +151,21 @@ jobs:
 
           echo "API Response: $RESPONSE"
 
-          if echo "$RESPONSE" | grep -q '"ok":true'; then
-            echo "✅ API OK — Health check passed"
-            PING_RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" \
+          if echo "$RESPONSE" | grep -qE '"ok":\s*true'; then
+            echo "✅ API Health Check PASSED"
+            PING_RESPONSE=$(ssh -i "$HOME/.ssh/id_ed25519" \
               -o BatchMode=yes \
               -o StrictHostKeyChecking=yes \
               -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
               "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
               "curl -sS --max-time 5 http://localhost:8050/api/ping || true")
             VERSION=$(echo "$PING_RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-            echo "Backend Version: $VERSION"
+            echo "✅ Backend Version: $VERSION"
           else
-            echo "❌ API FAILED — dumping logs"
-            ssh -i "$HOME/.ssh/id_rsa" \
+            echo "❌ API Health Check FAILED"
+            echo "Response was: $RESPONSE"
+            echo "Dumping service logs..."
+            ssh -i "$HOME/.ssh/id_ed25519" \
               -o BatchMode=yes \
               -o StrictHostKeyChecking=yes \
               -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
