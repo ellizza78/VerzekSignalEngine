@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/api_server/backend
-EnvironmentFile=/root/api_server_env.sh
-ExecStart=/root/api_server/backend/venv/bin/gunicorn --bind 127.0.0.1:8050 --workers 4 --threads 2 --timeout 120 --reuse-port --access-logfile /var/log/verzek_api_access.log --error-logfile /var/log/verzek_api_error.log api_server:app
+WorkingDirectory=/root/VerzekBackend/backend
+EnvironmentFile=/root/VerzekBackend/backend/.env
+ExecStart=/usr/local/bin/gunicorn -c gunicorn.conf.py api_server:app
 Restart=always
 RestartSec=10
 

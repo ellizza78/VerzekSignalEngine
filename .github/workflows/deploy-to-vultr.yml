@@ -1,32 +1,78 @@
-name: Deploy to Vultr
+name: Deploy Backend to Vultr
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-to-vultr.yml'
+      - 'reset_deploy.sh'
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🔐 Checkout code
         uses: actions/checkout@v4
-
-      - name: Start SSH agent
-        uses: webfactory/ssh-agent@v0.8.0
         with:
-          ssh-private-key: ${{ secrets.VULTR_SSH_KEY }}
+          fetch-depth: 0
 
-      - name: Add Vultr server to known_hosts
+      - name: 📋 Display deployment info
         run: |
+          echo "🚀 Deploying VerzekAutoTrader Backend to Vultr"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Actor: ${{ github.actor }}"
+
+      - name: 🔑 Prepare SSH key from base64
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 80.240.29.142 >> ~/.ssh/known_hosts
 
-      - name: Execute deployment script on server
+      - name: 🧪 Test SSH connection
         run: |
-          ssh root@80.240.29.142 << 'EOF'
-          cd /root/api_server
+          ssh -i ~/.ssh/id_rsa root@80.240.29.142 "echo 'SSH OK'" || exit 1
+
+      - name: 🚀 Execute deployment script
+        run: |
+          ssh -i ~/.ssh/id_rsa root@80.240.29.142 << 'ENDSSH'
+          cd /root/VerzekBackend
           git pull origin main
-          systemctl restart verzek_api.service
-          systemctl restart nginx
-          EOF
+          bash /root/reset_deploy.sh
+          ENDSSH
+
+      - name: 🔍 Verify service status
+        run: |
+          STATUS=$(ssh -i ~/.ssh/id_rsa root@80.240.29.142 "systemctl is-active verzek-api.service")
+          if [ "$STATUS" != "active" ]; then
+            echo "❌ Service is DOWN"
+            ssh -i ~/.ssh/id_rsa root@80.240.29.142 "journalctl -u verzek-api.service -n 50"
+            exit 1
+          fi
+          echo "✅ Service is ACTIVE"
+
+      - name: 🧪 Test API endpoint
+        run: |
+          sleep 3
+          RESPONSE=$(ssh -i ~/.ssh/id_rsa root@80.240.29.142 "curl -s http://localhost:8050/api/ping")
+          echo "API Response: $RESPONSE"
+          if echo "$RESPONSE" | grep -q '"status":"ok"'; then
+            VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+            echo "✅ API responding - Version: $VERSION"
+          else
+            echo "❌ API test failed"
+            exit 1
+          fi
+
+      - name: 📊 Deployment summary
+        if: success()
+        run: |
+          echo "✅ DEPLOYMENT SUCCESSFUL!"
+          echo "Production URL: https://api.verzekinnovative.com"
+          echo "Deployed at: $(date -u)"
+          echo "Commit: ${{ github.sha }}"
