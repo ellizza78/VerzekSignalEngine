@@ -26,13 +26,41 @@ jobs:
           echo "Actor: ${{ github.actor }}"
 
       #######################################
-      # PREPARE BASE64 SSH KEY
+      # LOAD SSH KEY (robust)
       #######################################
-      - name: Prepare SSH key from base64
+      - name: Load SSH key
         run: |
+          set -euo pipefail
           mkdir -p ~/.ssh
-          echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
+
+          if [ -z "${{ secrets.VULTR_SSH_KEY_B64 }}" ]; then
+            echo "ERROR: VULTR_SSH_KEY_B64 secret is empty" >&2
+            exit 1
+          fi
+
+          # Preserve bytes exactly
+          printf "%s" "${{ secrets.VULTR_SSH_KEY_B64 }}" > /tmp/vultr_key_input
+
+          # Try to decode as base64; if that fails, treat the secret as a raw key
+          if base64 --decode /tmp/vultr_key_input > ~/.ssh/id_rsa 2>/dev/null; then
+            echo "Decoded SSH key from base64"
+          elif openssl base64 -d -in /tmp/vultr_key_input -out ~/.ssh/id_rsa 2>/dev/null; then
+            echo "Decoded SSH key from openssl base64"
+          else
+            echo "Base64 decode failed — writing secret as raw key (assuming PEM format)"
+            printf "%s" "${{ secrets.VULTR_SSH_KEY_B64 }}" > ~/.ssh/id_rsa
+          fi
+
           chmod 600 ~/.ssh/id_rsa
+
+          # Sanity check that the file looks like a private key
+          if ! head -n1 ~/.ssh/id_rsa | grep -E '^-----BEGIN (OPENSSH|RSA) PRIVATE KEY-----' >/dev/null 2>&1; then
+            echo "ERROR: decoded file does not look like an SSH private key" >&2
+            echo "First line:" >&2
+            head -n1 ~/.ssh/id_rsa >&2
+            exit 1
+          fi
+
           ssh-keyscan -H 80.240.29.142 >> ~/.ssh/known_hosts
 
       #######################################
