@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-    - 'backend/**'
-    - 'reset_deploy.sh'
+      - 'backend/**'
+      - 'reset_deploy.sh'
   workflow_dispatch:
 
 jobs:
@@ -84,15 +84,19 @@ jobs:
             "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
           set -euo pipefail
 
+          # Clone repo if missing
           if [ ! -d "/root/VerzekBackend" ]; then
-            echo "Repo directory missing — cloning fresh"
-            git clone https://github.com/ellizza78/VerzekBackend.git /root/VerzekBackend
+            echo "Repo directory missing — cloning fresh using SSH"
+            git clone git@github.com:ellizza78/VerzekBackend.git /root/VerzekBackend
           fi
 
           cd /root/VerzekBackend
+
+          echo "Pulling latest code..."
           git fetch origin main
           git reset --hard origin/main
 
+          # Run reset script if available
           if [ -x /root/reset_deploy.sh ]; then
             bash /root/reset_deploy.sh
           elif [ -x ./reset_deploy.sh ]; then
