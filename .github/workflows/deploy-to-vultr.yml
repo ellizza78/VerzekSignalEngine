@@ -38,17 +38,17 @@ jobs:
 
       - name: 🔑 Restore SSH private key
         env:
-          VULTR_SSH_KEY: ${{ secrets.VULTR_SSH_KEY }}
+          VULTR_SSH_KEY_B64: ${{ secrets.VULTR_SSH_KEY_B64 }}
         run: |
           set -euo pipefail
 
-          if [ -z "${VULTR_SSH_KEY:-}" ]; then
-            echo "❌ ERROR: No SSH private key provided. Set secret VULTR_SSH_KEY."
+          if [ -z "${VULTR_SSH_KEY_B64:-}" ]; then
+            echo "❌ ERROR: No SSH private key provided. Set secret VULTR_SSH_KEY_B64."
             exit 1
           fi
 
           SSH_KEY_PATH="$HOME/.ssh/id_rsa"
-          printf '%s\n' "$VULTR_SSH_KEY" > "$SSH_KEY_PATH"
+          echo "$VULTR_SSH_KEY_B64" | base64 -d > "$SSH_KEY_PATH"
           chmod 600 "$SSH_KEY_PATH"
 
           if ! ssh-keygen -lf "$SSH_KEY_PATH" >/dev/null 2>&1; then
@@ -137,13 +137,20 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
             "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
-            "curl -sS --max-time 5 http://localhost:8080/health || true")
+            "curl -sS --max-time 5 http://localhost:8050/api/health || true")
 
           echo "API Response: $RESPONSE"
 
-          if echo "$RESPONSE" | grep -q '"status":"ok"'; then
-            VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-            echo "✅ API OK — Version: $VERSION"
+          if echo "$RESPONSE" | grep -q '"ok":true'; then
+            echo "✅ API OK — Health check passed"
+            PING_RESPONSE=$(ssh -i "$HOME/.ssh/id_rsa" \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
+              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
+              "curl -sS --max-time 5 http://localhost:8050/api/ping || true")
+            VERSION=$(echo "$PING_RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+            echo "Backend Version: $VERSION"
           else
             echo "❌ API FAILED — dumping logs"
             ssh -i "$HOME/.ssh/id_rsa" \
