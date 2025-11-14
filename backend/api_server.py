@@ -69,7 +69,7 @@ def ping():
     return jsonify({
         "status": "ok",
         "service": "VerzekBackend",
-        "version": "2.1",
+        "version": "2.1.1",
         "message": "Backend responding successfully 🚀"
     }), 200
 
@@ -131,7 +131,7 @@ def internal_error(error):
 # Flask app runner (for development)
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8050"))
-    print(f"🚀 Starting Verzek Auto Trader API Server (v2.1)...")
+    print(f"🚀 Starting Verzek Auto Trader API Server (v2.1.1)...")
     print(f"📍 Running on http://0.0.0.0:{port}")
     print(f"🔧 Mode: {os.getenv('EXCHANGE_MODE', 'paper')}")
     print(f"📋 Registered routes:")
