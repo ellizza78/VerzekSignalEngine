@@ -13,6 +13,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      VULTR_HOST: 80.240.29.142
+      VULTR_USER: root
+      REMOTE_DIR: /root/VerzekBackend
+      SSH_KEY_PATH: ~/.ssh/id_rsa
 
     steps:
       - name: 🔐 Checkout code
@@ -27,31 +32,78 @@ jobs:
           echo "Branch: ${{ github.ref_name }}"
           echo "Actor: ${{ github.actor }}"
 
-      - name: 🔑 Prepare SSH key from base64
+      - name: 🔧 Prepare SSH directory
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 80.240.29.142 >> ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
+
+      - name: 🔑 Restore SSH private key (base64 or raw)
+        run: |
+          # Prefer base64 secret to avoid newline corruption in GH secrets UI
+          if [ -n "${{ secrets.VULTR_SSH_KEY_B64 }}" ]; then
+            echo "Using VULTR_SSH_KEY_B64"
+            echo "${{ secrets.VULTR_SSH_KEY_B64 }}" | base64 --decode > "$SSH_KEY_PATH"
+          elif [ -n "${{ secrets.VULTR_SSH_PRIVATE_KEY }}" ]; then
+            echo "Using VULTR_SSH_PRIVATE_KEY"
+            printf '%s\n' "${{ secrets.VULTR_SSH_PRIVATE_KEY }}" > "$SSH_KEY_PATH"
+          else
+            echo "ERROR: No SSH private key provided. Set the secret VULTR_SSH_KEY_B64 (preferred) or VULTR_SSH_PRIVATE_KEY." >&2
+            exit 1
+          fi
+
+          chmod 600 "$SSH_KEY_PATH"
+
+          # Quick validity check of the private key
+          if ! ssh-keygen -lf "$SSH_KEY_PATH" >/dev/null 2>&1; then
+            echo "ERROR: The SSH private key is invalid or cannot be parsed by ssh-keygen." >&2
+            exit 1
+          fi
+
+      - name: 🗝️ Add host to known_hosts
+        run: |
+          ssh-keyscan -H "${{ env.VULTR_HOST }}" >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
 
       - name: 🧪 Test SSH connection
         run: |
-          ssh -i ~/.ssh/id_rsa root@80.240.29.142 "echo 'SSH OK'" || exit 1
+          set -o pipefail
+          ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "echo 'SSH OK'" || (
+            echo "SSH connection failed. Running verbose diagnostic..." >&2
+            ssh -vvv -i "$SSH_KEY_PATH" -o BatchMode=yes -o ConnectTimeout=10 "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" || true
+            exit 1
+          )
 
-      - name: 🚀 Execute deployment script
+      - name: 🚀 Execute deployment on server
         run: |
-          ssh -i ~/.ssh/id_rsa root@80.240.29.142 << 'ENDSSH'
+          ssh -i "$SSH_KEY_PATH" -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
+          set -euo pipefail
+
+          # Ensure repo directory exists and is on the correct branch
+          if [ ! -d "/root/VerzekBackend" ]; then
+            echo "Remote directory not found. Cloning repository..."
+            git clone https://github.com/ellizza78/VerzekBackend.git /root/VerzekBackend
+          fi
+
           cd /root/VerzekBackend
-          git pull origin main
-          bash /root/reset_deploy.sh
+          git fetch origin main
+          git reset --hard origin/main
+
+          # Ensure reset_deploy.sh is executable; try local copy if missing in /root
+          if [ -x /root/reset_deploy.sh ]; then
+            bash /root/reset_deploy.sh
+          elif [ -x ./reset_deploy.sh ]; then
+            bash ./reset_deploy.sh
+          else
+            echo "Warning: reset_deploy.sh not found or not executable. Skipping script execution."
+          fi
           ENDSSH
 
       - name: 🔍 Verify service status
         run: |
-          STATUS=$(ssh -i ~/.ssh/id_rsa root@80.240.29.142 "systemctl is-active verzek-api.service")
+          STATUS=$(ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "systemctl is-active verzek-api.service" || true)
           if [ "$STATUS" != "active" ]; then
-            echo "❌ Service is DOWN"
-            ssh -i ~/.ssh/id_rsa root@80.240.29.142 "journalctl -u verzek-api.service -n 50"
+            echo "❌ Service is DOWN (status=$STATUS)"
+            ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 --no-pager"
             exit 1
           fi
           echo "✅ Service is ACTIVE"
@@ -59,13 +111,14 @@ jobs:
       - name: 🧪 Test API endpoint
         run: |
           sleep 3
-          RESPONSE=$(ssh -i ~/.ssh/id_rsa root@80.240.29.142 "curl -s http://localhost:8050/api/ping")
+          RESPONSE=$(ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "curl -sS --max-time 10 http://localhost:8050/api/ping" || true)
           echo "API Response: $RESPONSE"
           if echo "$RESPONSE" | grep -q '"status":"ok"'; then
-            VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+            VERSION=$(echo "$RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4 || true)
             echo "✅ API responding - Version: $VERSION"
           else
-            echo "❌ API test failed"
+            echo "❌ API test failed; dumping recent container logs and journal output"
+            ssh -i "$SSH_KEY_PATH" -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=~/.ssh/known_hosts "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" "journalctl -u verzek-api.service -n 200 --no-pager"
             exit 1
           fi
 
