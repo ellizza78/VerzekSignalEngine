@@ -47,16 +47,24 @@ jobs:
             exit 1
           fi
 
+          # Debug: Show secret length (not content)
+          echo "🔍 Secret length: $(echo -n "$VULTR_SSH_KEY_B64" | wc -c) characters"
+
           SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
-          echo "$VULTR_SSH_KEY_B64" | base64 -d > "$SSH_KEY_PATH"
+          
+          # Normalize line endings (CRLF → LF) and write key
+          printf '%s\n' "$VULTR_SSH_KEY_B64" | base64 -d > "$SSH_KEY_PATH"
           chmod 600 "$SSH_KEY_PATH"
 
-          if ! ssh-keygen -lf "$SSH_KEY_PATH" >/dev/null 2>&1; then
+          # Verify key validity and show fingerprint
+          if ! FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PATH" 2>&1); then
             echo "❌ ERROR: SSH key is invalid"
+            echo "Error: $FINGERPRINT"
             exit 1
           fi
           
           echo "✅ SSH key loaded successfully (ED25519)"
+          echo "🔑 Key fingerprint (SHA256): ${FINGERPRINT}"
 
       - name: 🗝️ Add host to known_hosts
         run: |
@@ -142,37 +150,43 @@ jobs:
       - name: 🧪 Test API endpoint
         run: |
           sleep 3
-          RESPONSE=$(ssh -i "$HOME/.ssh/id_ed25519" \
+          
+          # Capture both HTTP status and response body
+          ssh -i "$HOME/.ssh/id_ed25519" \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
-            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
-            "curl -sS --max-time 5 http://localhost:8050/api/health || true")
-
-          echo "API Response: $RESPONSE"
-
-          if echo "$RESPONSE" | grep -qE '"ok":\s*true'; then
-            echo "✅ API Health Check PASSED"
-            PING_RESPONSE=$(ssh -i "$HOME/.ssh/id_ed25519" \
-              -o BatchMode=yes \
-              -o StrictHostKeyChecking=yes \
-              -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
-              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
-              "curl -sS --max-time 5 http://localhost:8050/api/ping || true")
-            VERSION=$(echo "$PING_RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-            echo "✅ Backend Version: $VERSION"
-          else
-            echo "❌ API Health Check FAILED"
-            echo "Response was: $RESPONSE"
-            echo "Dumping service logs..."
-            ssh -i "$HOME/.ssh/id_ed25519" \
-              -o BatchMode=yes \
-              -o StrictHostKeyChecking=yes \
-              -o UserKnownHostsFile=$HOME/.ssh/known_hosts \
-              "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" \
-              "journalctl -u verzek-api.service -n 200"
+            "${{ env.VULTR_USER }}@${{ env.VULTR_HOST }}" << 'ENDSSH'
+          set -o pipefail
+          
+          # Test health endpoint with verbose output
+          HTTP_CODE=$(curl -sS -w '%{http_code}' -o /tmp/health_response.txt --max-time 10 http://localhost:8050/api/health || echo "000")
+          RESPONSE=$(cat /tmp/health_response.txt 2>/dev/null || echo "No response")
+          
+          echo "🔍 HTTP Status: $HTTP_CODE"
+          echo "📄 Response Body: $RESPONSE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ API test failed! HTTP $HTTP_CODE"
+            echo "📋 Last 50 lines of service logs:"
+            journalctl -u verzek-api.service -n 50 --no-pager
             exit 1
           fi
+          
+          if echo "$RESPONSE" | grep -qE '"ok":\s*true'; then
+            echo "✅ API Health Check PASSED"
+            
+            # Get version from /api/ping
+            PING_RESPONSE=$(curl -sS --max-time 5 http://localhost:8050/api/ping || echo "{}")
+            VERSION=$(echo "$PING_RESPONSE" | grep -o '"version":"[^"]*"' | cut -d'"' -f4 || echo "unknown")
+            echo "✅ Backend Version: $VERSION"
+          else
+            echo "❌ Health check response invalid (missing 'ok':true)"
+            echo "📋 Last 50 lines of service logs:"
+            journalctl -u verzek-api.service -n 50 --no-pager
+            exit 1
+          fi
+          ENDSSH
 
       - name: 📊 Deployment summary
         if: success()
