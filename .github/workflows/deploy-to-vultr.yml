@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'backend/**'
-      - 'reset_deploy.sh'
+    - 'backend/**'
+    - 'reset_deploy.sh'
   workflow_dispatch:
 
 jobs:
