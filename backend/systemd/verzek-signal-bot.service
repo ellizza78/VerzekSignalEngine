@@ -1,0 +1,17 @@
+[Unit]
+Description=VerzekAutoTrader Telegram Signal Bot
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/VerzekBackend/backend
+EnvironmentFile=/root/api_server_env.sh
+ExecStart=/usr/bin/python3 /root/VerzekBackend/backend/telegram_signal_bot.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
