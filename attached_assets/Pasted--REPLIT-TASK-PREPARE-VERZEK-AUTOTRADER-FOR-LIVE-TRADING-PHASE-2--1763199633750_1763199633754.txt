@@ -1,0 +1,806 @@
+
+REPLIT TASK: PREPARE VERZEK AUTOTRADER FOR LIVE TRADING (PHASE 2)
+================================================================
+
+OBJECTIVE:
+Prepare the entire backend system for LIVE crypto trading using user exchange API
+keys (Binance, Bybit, Phemex, Kraken). Before enabling any real trading, perform
+ALL safety checks, data integrity checks, API connectivity tests, and build the
+full exchange integration layer WITHOUT executing real trades.
+
+IMPORTANT:
+➡ DO NOT activate real orders yet.
+➡ DO NOT place any live trades.
+➡ Only build structure, validation, and test endpoints.
+
+================================================================
+STEP 1 — VALIDATE CORE BACKEND WORKFLOWS
+================================================================
+
+Perform automated backend tests:
+
+1. Registration  
+2. Email verification  
+3. Login (JWT auth)  
+4. Token refresh  
+5. Logout  
+6. Trial expiration (4-day enforcement)  
+7. Subscription enforcement  
+   - TRIAL → View signals only  
+   - VIP → View VIP signals  
+   - PREMIUM → Auto-trading enabled  
+8. Add/remove exchange accounts  
+9. Check encryption/decryption of API keys  
+10. Payment creation  
+11. Payment verification (manual OK)  
+12. Device token registration  
+13. Error handling for invalid tokens  
+
+Ensure all endpoints return correct JSON and HTTP status codes.
+
+================================================================
+STEP 2 — VALIDATE DATABASE SCHEMA + INTEGRITY
+================================================================
+
+Check these tables exist and have correct schema:
+
+- users  
+- user_settings  
+- verification_tokens  
+- signals  
+- positions  
+- position_targets  
+- exchange_accounts  
+- payments  
+- trade_logs  
+- live_trades  
+- subscription_history  
+
+Perform:
+
+- PK/FK validation  
+- Check for missing constraints  
+- Check for orphan rows  
+- Confirm PostgreSQL user/password match environment  
+- Confirm connection pool is stable  
+
+================================================================
+STEP 3 — VALIDATE SERVER ENVIRONMENT
+================================================================
+
+Confirm:
+
+- /root/api_server_env.sh contains all variables  
+- Gunicorn loads environment variables correctly  
+- Systemd service `verzek-api.service` passes reload tests  
+- Nginx reverse proxy mapped correctly to port 8050  
+- SSL certificates active  
+- Logs working: /root/api_server/logs  
+
+================================================================
+STEP 4 — BUILD EXCHANGE CONNECTOR LAYER (NO TRADING YET)
+================================================================
+
+Create folder:
+    /root/api_server/exchanges/
+
+Create files:
+    binance.py
+    bybit.py
+    phemex.py
+    kraken.py
+    exchange_router.py
+
+Each exchange client MUST contain these functions
+(but DO NOT enable real orders — return mock responses):
+
+def test_connection(api_key, secret, **kwargs) def set_leverage(symbol, leverage) def get_balance() def get_positions() def place_market_order(symbol, side, size) def place_limit_order(symbol, side, size, limit_price) def place_stop_loss(symbol, size, stop_price) def close_position(symbol) def cancel_order(order_id)
+
+The test_connection() MUST authenticate with each exchange using real API keys
+BUT DO NOT PLACE ANY ORDER.
+
+================================================================
+STEP 5 — CREATE UNIFIED TRADE EXECUTOR (SHELL ONLY)
+================================================================
+
+Create file:
+    /root/api_server/utils/exchange_executor.py
+
+Implement:
+
+- Validate user subscription (Premium only)
+- Validate user API keys exist
+- Validate risk settings
+- Select correct exchange client from exchange_router
+- Simulate order (dry-run only)
+- Log intent without executing a trade
+
+NO ACTUAL TRADING.
+
+================================================================
+STEP 6 — BUILD TELEGRAM SIGNAL INTAKE LAYER (SAFE MODE)
+================================================================
+
+IMPORTANT:
+You MUST NOT use Telethon client with personal account
+(it caused previous account bans).
+
+Instead:
+
+1. Use **Pyrogram BOT API**  
+2. Create a new Telegram bot token  
+3. Use the bot ONLY to read messages from:  
+   - Personal forward  
+   - VIP signal channel (if allowed)  
+   - Your own Trial group  
+
+4. Bot should:
+   - Parse messages  
+   - Extract symbol/entry/sl/tp  
+   - Send them into backend via /api/signals  
+   - Broadcast to trial/vip groups  
+   - Trigger auto-trading for premium users  
+
+IMPORTANT:
+DO NOT use your personal Telegram account for reading messages.
+Only the Bot API is safe.
+
+================================================================
+STEP 7 — ENFORCE ROLE PERMISSIONS
+================================================================
+
+Enforce:
+
+- TRIAL → View signals for 4 days only  
+- VIP → View signals + alerts  
+- PREMIUM → Auto-trading access  
+
+Ensure backend rejects auto-trading for Trial/VIP.
+
+================================================================
+STEP 8 — COMPLETE END-TO-END SYSTEM VALIDATION (DRY RUN)
+================================================================
+
+Simulate full workflow:
+
+1. Register a new user  
+2. Verify email  
+3. Login  
+4. Upgrade them to PREMIUM  
+5. Add exchange API keys  
+6. Test API keys with each exchange  
+7. Simulate receiving a signal  
+8. Backend should create a DRY RUN trade  
+9. Log output to trade_logs  
+10. No trade should be sent to exchange  
+
+================================================================
+STEP 9 — GENERATE FINAL READINESS REPORT
+================================================================
+
+Create this file:
+
+    LIVE_TRADING_PRECHECK_REPORT.md
+
+Include:
+
+- All passing components  
+- Any failing components  
+- Missing environment variables  
+- Recommended fixes  
+- API endpoints needing improvement  
+- Exchange tests summary  
+- Telegram listener readiness  
+- Live trading activation checklist  
+
+================================================================
+STEP 10 — WAIT FOR APPROVAL BEFORE ACTIVATING REAL TRADING
+================================================================
+
+After all tests PASS and the report is generated:
+
+STOP and wait.
+
+Do NOT activate real trading until instructed.
+
+================================================================
+END TASK
+================================================================
+
+
+---
+
+✅ This is the COMPLETE REPLIT TASK — nothing missing.
+
+It includes:
+
+✔ Backend validation
+✔ Signal intake system
+✔ Exchange integration
+✔ Premium-role enforcement
+✔ End-to-end dry-run engine
+✔ Final readiness report
+
+
+🔵 PHASE 3 – REPLIT AI AGENT TASK (COPY + PASTE THIS)
+
+REPLIT TASK: IMPLEMENT REAL LIVE TRADING ENGINE (PHASE 3)
+=========================================================
+
+OBJECTIVE:
+We have:
+- Backend API live on Vultr with PostgreSQL
+- Paper trading engine working
+- Exchange connector skeletons built (Binance / Bybit / Phemex / Kraken)
+- Signal flow + roles (TRIAL / VIP / PREMIUM)
+
+Now implement **REAL LIVE ORDER EXECUTION** with HARD SAFETY LIMITS.
+
+IMPORTANT:
+- Default must still be SAFE: live trading OFF until explicitly enabled.
+- All live trading must go through strict risk checks and kill switches.
+- TRIAL + VIP = VIEW ONLY. Only PREMIUM users get live auto-trading.
+
+=========================================================
+STEP 0 — CREATE LIVE TRADING CONFIG + FLAGS
+=========================================================
+
+Add environment variables in /root/api_server_env.sh:
+
+LIVE_TRADING_ENABLED=false
+LIVE_TRADING_MODE=paper   # allowed: paper, live
+LIVE_TRADING_GLOBAL_MAX_RISK_PER_TRADE=0.01       # 1% of account/equity
+LIVE_TRADING_GLOBAL_MAX_DAILY_DRAWDOWN=0.05       # 5% per day
+LIVE_TRADING_GLOBAL_MAX_OPEN_POSITIONS=10
+LIVE_TRADING_ALLOWED_EXCHANGES=binance,bybit,phemex,kraken
+LIVE_TRADING_DEFAULT_LEVERAGE=10
+
+Reload env + service after edits (systemctl daemon-reload && systemctl restart verzek-api.service).
+
+Also ensure user_settings / subscription tables support:
+
+- user_settings.auto_trading_enabled (bool)
+- user_settings.max_risk_per_trade (float, %)
+- user_settings.max_daily_loss (float, %)
+- user_settings.max_open_positions (int)
+- user_settings.preferred_exchange (string)
+- user_settings.preferred_leverage (int, optional)
+
+If missing, add migration or safe defaults.
+
+=========================================================
+STEP 1 — IMPLEMENT RISK ENGINE
+=========================================================
+
+Create file:
+    backend/utils/risk_engine.py
+(or equivalent path you are using already for utils in the backend repo.)
+
+Implement functions:
+
+1) validate_user_can_trade(user, settings, subscription):
+
+- Reject if:
+  - user.subscription_tier != "premium"
+  - settings.auto_trading_enabled is False
+  - LIVE_TRADING_ENABLED == false
+  - LIVE_TRADING_MODE != "live"
+
+- Return clear error codes/messages like:
+  - "TRIAL_USER"
+  - "VIP_VIEW_ONLY"
+  - "AUTO_TRADING_DISABLED"
+  - "LIVE_TRADING_DISABLED_GLOBALLY"
+
+2) get_user_risk_limits(user, settings):
+
+- Use:
+  - user_settings.max_risk_per_trade or fallback to LIVE_TRADING_GLOBAL_MAX_RISK_PER_TRADE
+  - user_settings.max_daily_loss or fallback to LIVE_TRADING_GLOBAL_MAX_DAILY_DRAWDOWN
+  - user_settings.max_open_positions or fallback to LIVE_TRADING_GLOBAL_MAX_OPEN_POSITIONS
+
+3) compute_position_size(balance, entry_price, stop_price, risk_pct):
+
+- Calculate position size based on distance from entry → stop_loss.
+- Make sure:
+  - If stop_price is invalid or too close, lower size or reject.
+  - NEVER exceed available balance or exchange minimums.
+- Return: { size, notional_value, risk_amount }
+
+4) check_daily_loss_limit(user_id):
+
+- Look into trade_logs / live_trades for today's P&L.
+- If user has hit daily loss limit -> block further trading for that day.
+- Return boolean + reason.
+
+=========================================================
+STEP 2 — FINALIZE EXCHANGE CLIENTS FOR REAL TRADING
+=========================================================
+
+In:
+    exchanges/binance.py
+    exchanges/bybit.py
+    exchanges/phemex.py
+    exchanges/kraken.py
+    exchanges/exchange_router.py
+
+Make sure each exchange client has **REAL** implementations:
+
+Required public methods:
+
+- test_connection(api_key, secret, **kwargs)
+- get_balance()
+- get_positions()
+- place_market_order(symbol, side, size, leverage=None)
+- place_limit_order(symbol, side, size, limit_price, leverage=None)
+- place_stop_loss(symbol, size, stop_price, side=None)
+- close_position(symbol)
+- cancel_order(order_id)
+
+Requirements:
+
+- Use official REST APIs or CCXT-style logic (if CCXT is allowed in this stack).
+- Respect exchange-specific position modes (one-way vs hedge) and contract symbols.
+- Do NOT use testnet endpoints (user confirmed only live markets are available).
+- Add proper error handling and return structured results, e.g.:
+
+{
+  "ok": true/false,
+  "error": "...",
+  "exchange_order_id": "...",
+  "symbol": "...",
+  "side": "buy"/"sell",
+  "price": ...,
+  "size": ...,
+  "raw": {... full API response ...}
+}
+
+=========================================================
+STEP 3 — UNIFIED LIVE TRADE EXECUTOR
+=========================================================
+
+Create file:
+    backend/services/live_trade_service.py
+
+Responsibilities:
+
+- Entry point: execute_live_trade(signal, user, settings)
+- Steps:
+
+1) Validate:
+   - Subscription is PREMIUM
+   - auto_trading_enabled = True
+   - live trading globally enabled
+   - user not blocked by daily loss
+
+2) Determine:
+   - exchange from user_settings.preferred_exchange
+   - leverage (user_settings or LIVE_TRADING_DEFAULT_LEVERAGE)
+   - side (long / short) from signal
+   - entry, TP, SL from signal payload
+
+3) Fetch:
+   - exchange client from exchange_router
+   - current balance and/or equity
+
+4) Compute:
+   - position size using risk_engine.compute_position_size
+
+5) Execute:
+   - Place initial order (market or limit)
+   - Place protective stop loss
+   - Place TP (single TP or laddered)
+
+6) Persist:
+   - Create live trade record in live_trades table
+   - Link with positions/position_targets
+   - Save exchange_order_id / stop_loss_id / tp_id
+
+7) Notify:
+   - Write to trade_logs with type="LIVE_TRADE"
+   - Optionally send Telegram/Email notification to admin with summary
+
+IMPORTANT:
+- On any error after initial order, attempt to cancel order or close position to neutralize risk.
+- All errors must be logged with enough detail for debugging, but without exposing secrets.
+
+=========================================================
+STEP 4 — CONNECT SIGNALS → LIVE TRADES (PREMIUM ONLY)
+=========================================================
+
+In the existing /api/signals route handler (or signal processing pipeline):
+
+- When a new signal is created/received:
+  - Save it as usual (paper trading flow stays intact).
+  - For each PREMIUM user with:
+      - auto_trading_enabled=True
+      - valid exchange account
+  - Call live_trade_service.execute_live_trade(signal, user, settings).
+
+Make sure:
+
+- TRIAL users → never auto-traded.
+- VIP users → never auto-traded (view only).
+- PREMIUM with invalid API keys → skip and log error.
+
+You can process auto-trades either:
+
+- Synchronously (within signal handler), or
+- Better: push to a background worker / thread / task queue if that already exists.
+
+=========================================================
+STEP 5 — ADD ADMIN KILL SWITCH & STATUS ENDPOINTS
+=========================================================
+
+Add Admin-only endpoints:
+
+1) GET /api/admin/live-trading/status
+
+Return:
+{
+  "live_trading_enabled": true/false,
+  "mode": "paper" / "live",
+  "global_limits": { ... },
+  "active_live_positions": N,
+  "today_pnl_summary": { overall, by_user }
+}
+
+2) POST /api/admin/live-trading/toggle
+
+Body:
+{
+  "enabled": true/false,
+  "mode": "paper" or "live"
+}
+
+- When disabling:
+  - Stop executing new live trades immediately.
+- When switching mode:
+  - Only allow "live" if all precheck conditions are met.
+
+3) POST /api/admin/live-trading/kill-switch
+
+- Immediately:
+  - Set LIVE_TRADING_ENABLED=false in memory (config/service level).
+  - Optionally write to env file if safe.
+  - Log "KILL_SWITCH_ACTIVATED".
+  - Stop any further order execution.
+
+Access control:
+- Only admins should be allowed to use these endpoints.
+- Enforce via existing admin auth mechanisms or a static admin email.
+
+=========================================================
+STEP 6 — LOGGING & TELEMETRY
+=========================================================
+
+Ensure every live order creates a log entry in trade_logs, e.g.:
+
+- user_id
+- subscription_tier
+- exchange
+- symbol
+- side
+- entry_price
+- sl
+- tp
+- size
+- notional
+- leverage
+- risk_pct
+- time_opened
+- time_closed (when closed)
+- pnl (when closed)
+- status (open / closed / error)
+
+Add optional admin alert:
+
+- On each LIVE trade:
+  - Send Telegram message to admin group or specific admin ID summarizing:
+    - user, symbol, side, size, leverage, risk%, TP/SL
+
+=========================================================
+STEP 7 — END-TO-END SMOKE TEST (WITH “LIVE” MODE BUT TINY SIZE)
+=========================================================
+
+Create a safe internal test function or route:
+
+- Use a dedicated TEST user:
+  - PREMIUM
+  - auto_trading_enabled=True
+  - Exchange API keys for a small test account
+  - HARD-CODED minimum risk (like $5–10 per trade)
+
+Simulate:
+
+1) A single LONG signal (e.g. BTCUSDT)  
+2) A single SHORT signal  
+3) Confirm:
+   - Orders reach exchange
+   - SL + TP are created
+   - Positions appear in DB
+   - P&L updates correctly on close
+
+After verification, keep live trading OFF by default and wait for manual enable.
+
+=========================================================
+STEP 8 — FINAL REPORT
+=========================================================
+
+Create:
+
+    LIVE_TRADING_READINESS_V2.md
+
+Include:
+
+- Summary of implemented features
+- Risk controls implemented
+- How to enable live trading (step-by-step)
+- How to use kill switch
+- How to onboard a new PREMIUM user safely
+- Suggested starting configuration:
+  - Very small risk per trade (e.g. 0.25–0.5%)
+  - Max 1–2 open positions per user initially
+
+=========================================================
+STRICT RULES
+=========================================================
+
+- DO NOT remove the existing paper trading engine.
+- DO NOT enable live trading by default.
+- DO NOT place any large-size orders.
+- If in doubt: default to blocking the trade rather than letting it go through.
+
+END TASK.
+
+=========================================================
+
+TASK FOR REPLIT AI AGENT — PYROGRAM SIGNAL BRIDGE + TELETHON REMOVAL + SIGNAL INGESTION
+
+(Use existing parsing logic, do NOT create new parsing rules)
+
+
+---
+
+1️⃣ REMOVE ALL TELETHON CODE COMPLETELY
+
+Remove the entire old monitoring system that used Telethon.
+Specifically:
+
+Search the whole repo for:
+
+telethon
+
+TelegramClient
+
+events.NewMessage
+
+old files like:
+
+telegram_listener.py
+
+telethon_listener.py
+
+signal_listener_telethon.py
+
+anything referencing “telethon”
+
+
+
+Remove Telethon from requirements.txt
+
+Add instead:
+
+
+pyrogram>=2.0.0
+tgcrypto
+
+Remove any telethon startup scripts, systemd entries, tools, etc.
+
+
+📌 Goal: The system must contain zero Telethon reference because Telethon got my account banned before.
+
+
+---
+
+2️⃣ ADD THE NEW PYROGRAM SIGNAL BRIDGE BOT
+
+Create a new file:
+
+signal_bridge_bot.py
+
+Insert the exact code that ChatGPT provided (the full Pyrogram code).
+Do not modify message processing or raw payload format.
+
+
+---
+
+3️⃣ CONNECT THE BOT TO THE BACKEND USING THE EXISTING SIGNAL PARSER
+
+We already have a complete signal parser in the backend.
+
+So do NOT create new parsing logic.
+Instead, simply:
+
+Create this endpoint in Flask:
+
+POST /api/signals/ingest-raw
+
+But implement it like this:
+
+✔️ This endpoint must:
+
+1. Receive:
+
+raw_text
+
+metadata: chat_id, message_id, timestamps, etc.
+
+
+
+2. Pass raw_text directly into the existing signal-parsing pipeline
+(the same parser REPLIT AI Agent already knows).
+
+
+3. Store the signal exactly as existing backend logic does.
+
+
+4. Reuse:
+
+existing validation
+
+existing normalization
+
+existing trading logic
+
+existing auto-execution
+
+existing push notification pipeline
+
+
+
+5. Use the existing logic that determines:
+
+TRIAL users → view signals only
+
+VIP users → view signals
+
+PREMIUM users → auto-trade
+
+
+
+6. Return JSON:
+
+
+
+{"ok": true, "message": "signal processed", "auto_trades": N}
+
+Important:
+Do not duplicate or replace the current parsing code.
+This endpoint must simply feed raw text into the same signal engine that the app uses today.
+
+
+---
+
+4️⃣ BOT MUST WORK ONLY IN MY OWN GROUPS
+
+Use the prompt settings:
+
+SIGNAL_SOURCE_CHAT_IDS = "-100xxxxxxxxx,-100yyyyyyyyy"
+
+The bot must only listen for messages in:
+
+My TRIAL Telegram group
+
+My VIP Telegram group
+
+
+This is legal and safe.
+
+Do NOT attempt to read external paid channels directly.
+
+
+---
+
+5️⃣ APPLY NECESSARY ENVIRONMENT VARIABLES
+
+Add these to Replit Secrets (or environment file):
+
+TELEGRAM_API_ID
+TELEGRAM_API_HASH
+TELEGRAM_SIGNAL_BRIDGE_BOT_TOKEN
+
+SIGNAL_SOURCE_CHAT_IDS="-100TRIALGROUPID,-100VIPGROUPID"
+
+BACKEND_API_BASE_URL="https://api.verzekinnovative.com"
+BACKEND_SIGNAL_API_KEY="(optional custom header)"
+SIGNAL_INGEST_PATH="/api/signals/ingest-raw"
+
+Ensure they load correctly in signal_bridge_bot.py.
+
+
+---
+
+6️⃣ MAKE THE BOT RUNNABLE
+
+Create a runner script:
+
+python signal_bridge_bot.py
+
+Ensure the bot starts cleanly.
+
+(optional but recommended):
+Create a new systemd service on Vultr:
+
+/etc/systemd/system/verzek-signal-bridge.service
+
+to auto-start the bot.
+
+
+---
+
+7️⃣ TESTING SEQUENCE
+
+Please perform these tests:
+
+Test 1 — Bot Connectivity
+
+Start bot
+
+Add bot to TRIAL + VIP groups
+
+Send any message
+
+Confirm /api/signals/ingest-raw receives payload
+
+
+Test 2 — Parsing
+
+Send a REAL signal sample
+
+Backend should:
+
+Parse it using existing parser
+
+Insert into database
+
+Send updates to VIP + TRIAL feeds
+
+Trigger auto-trade (PREMIUM only)
+
+
+
+Test 3 — Mobile App
+
+Open signals on the App
+
+Confirm signal appears instantly
+
+If logged in as PREMIUM:
+
+Confirm a position is created in database
+
+Confirm P&L updates
+
+Confirm TP/SL automation triggers
+
+
+
+
+---
+
+8️⃣ REMOVE ANY OLD TELEGRAM LISTENER SERVICE
+
+If a systemd service was running Telethon before, disable and delete it.
+
+We will now only use:
+
+verzek-signal-bridge.service
+
+
+---
+
+End of Task.
+
+Do not modify any existing parsing logic.
+Just feed the raw signals into the system that already works.
