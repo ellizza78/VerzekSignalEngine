@@ -36,10 +36,6 @@ externalPort = 80
 localPort = 8081
 externalPort = 8081
 
-[[ports]]
-localPort = 33555
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "vm"
 run = ["gunicorn", "--worker-class", "gevent", "--workers", "1", "--bind", "0.0.0.0:5000", "--timeout", "120", "--preload", "api_server:app"]
