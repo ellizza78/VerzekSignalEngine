@@ -18,8 +18,12 @@ except ImportError:
     print("⚠️  python-telegram-bot not installed. Install with: pip install python-telegram-bot")
     sys.exit(1)
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils.logger import api_logger
+import logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 
 class SignalParser:
@@ -159,7 +163,7 @@ class SignalBot:
                 await update.message.reply_text("⚠️ Could not parse signal. Please check format.")
                 return
             
-            api_logger.info(f"📨 Signal received: {signal['symbol']} {signal['type']}")
+            logger.info(f"📨 Signal received: {signal['symbol']} {signal['type']}")
             
             confirm_text = (
                 f"✅ Signal Parsed:\n"
@@ -176,7 +180,7 @@ class SignalBot:
             await self.save_signal_to_file(signal)
             
         except Exception as e:
-            api_logger.error(f"Error processing signal: {str(e)}")
+            logger.error(f"Error processing signal: {str(e)}")
             await update.message.reply_text(f"❌ Error: {str(e)}")
     
     async def save_signal_to_file(self, signal: Dict):
@@ -186,7 +190,7 @@ class SignalBot:
         with open(filename, 'w') as f:
             json.dump(signal, f, indent=2)
         
-        api_logger.info(f"💾 Signal saved to {filename}")
+        logger.info(f"💾 Signal saved to {filename}")
     
     def run(self):
         """Start the bot"""
@@ -198,7 +202,7 @@ class SignalBot:
         print(f"Admin Chat ID: {self.admin_chat_id or 'Not configured'}")
         print("="*70 + "\n")
         
-        api_logger.info("🤖 Signal bot started (python-telegram-bot)")
+        logger.info("🤖 Signal bot started (python-telegram-bot)")
         self.application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
@@ -211,7 +215,7 @@ def main():
         print("\n👋 Bot stopped by user")
     except Exception as e:
         print(f"❌ Bot error: {str(e)}")
-        api_logger.error(f"Bot crashed: {str(e)}")
+        logger.error(f"Bot crashed: {str(e)}")
         sys.exit(1)
 
 
