@@ -1,0 +1,878 @@
+This includes EVERYTHING required to:
+
+✅ Prepare the mobile app for production
+✅ Fix deep linking
+✅ Sync backend + frontend
+✅ Build a real APK
+✅ Test the full user experience
+✅ Remove Telethon and switch to Pyrogram
+✅ Ensure autotrading + signals flow will work later
+
+
+---
+
+🚀 TASK LIST FOR REPLIT AI AGENT
+
+(Copy and paste exactly as is into REPLIT)
+
+
+---
+
+✅ REPLIT TASK: Prepare VerzekAutoTrader for Production Build
+
+Hello REPLIT AI Agent,
+Please complete the following tasks carefully and without changing the backend logic.
+This work is preparing the mobile app for production and syncing it with the backend.
+
+
+---
+
+🧩 SECTION 1 — Deep Linking & App Scheme (CRITICAL)
+
+Please update the app’s deep linking so that:
+
+✔ Email verification links open inside the app
+
+✔ Password reset links open inside the app
+
+✔ “verzek-app://” scheme works globally
+
+✔ Android production build uses the same scheme
+
+✔ Expo Router handles verification/reset screens correctly
+
+Steps:
+
+1. In app.json, add the following:
+
+
+
+"scheme": "verzek-app",
+"deeplinks": ["verzek-app://"],
+"android": {
+  "package": "com.verzek.autotrader",
+  "intentFilters": [
+    {
+      "action": "VIEW",
+      "autoVerify": true,
+      "data": [
+        { "scheme": "https", "host": "verzek-app" },
+        { "scheme": "verzek-app" }
+      ],
+      "category": ["BROWSABLE", "DEFAULT"]
+    }
+  ]
+}
+
+2. Ensure these paths resolve inside Expo Router:
+
+
+
+/verify-email
+/reset-password
+
+3. Fix the mobile screens so they correctly extract tokens from:
+
+
+
+verzek-app://verify-email?token=xxxx
+verzek-app://reset-password?token=xxxx
+
+
+---
+
+🧩 SECTION 2 — Sync API Base URL
+
+Confirm the production API URL is set everywhere:
+
+https://api.verzekinnovative.com
+
+Check inside:
+
+/src/config/api.js
+
+/screens/auth/*
+
+/screens/dashboard/*
+
+/screens/subscriptions/*
+
+/screens/exchange/*
+
+/hooks/useApi.js
+
+Any other file referencing the backend
+
+
+Remove all localhost URLs.
+
+
+---
+
+🧩 SECTION 3 — Replace Telethon With Pyrogram
+
+Remove all previous Telethon logic completely:
+
+Remove any Telethon installation
+
+Remove any Telethon listeners
+
+Remove unused Telegram scripts
+
+
+And ensure the NEW Pyrogram signal bridge bot is installed and configured under:
+
+/server/signal_bridge
+
+Requirements:
+
+pip install pyrogram tgcrypto
+
+Confirm that:
+
+Bot reads signals
+
+Bot sends signals to backend via REST
+
+Bot broadcasts to designated groups
+
+Autotrade runner receives signals
+
+NO direct interaction with Telegram user account (bot only)
+
+
+
+---
+
+🧩 SECTION 4 — Final App Sync (Backend + Frontend)
+
+Ensure all these features sync perfectly:
+
+🟢 Registration
+
+🟢 Login
+
+🟢 Email verification via deep link
+
+🟢 Reset password via deep link
+
+🟢 Trial system (4 days auto-expire)
+
+🟢 Subscription upgrade UI
+
+🟢 Payment screens
+
+🟢 Exchange API input pages
+
+🟢 Signals page consuming /api/signals
+
+🟢 Positions page consuming /api/positions
+
+🟢 Settings syncing with backend DB
+
+🟢 Profile & device-token registration
+
+🟢 ”Remember me” stays logged in
+
+🟢 Error handling screens
+
+This should be fully functional before release.
+
+
+---
+
+🧩 SECTION 5 — Prepare EAS Build for APK
+
+Update eas.json:
+
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}
+
+Then:
+
+✔ Install EAS CLI if missing
+
+✔ Login to Expo account
+
+✔ Configure keystore automatically
+
+
+---
+
+🧩 SECTION 6 — Build the Production APK
+
+Run:
+
+eas build -p android --profile production --clear-cache
+
+After build:
+
+✔ Download the APK
+
+✔ Install on phone
+
+✔ Test full user experience end-to-end
+
+
+---
+
+🧩 SECTION 7 — Verify APP ↔ BACKEND Sync
+
+Test the following:
+
+✔ Register new user
+
+✔ Receive email
+
+✔ Tap “Verify Email” → App opens correctly
+
+✔ Login works
+
+✔ Dashboard loads
+
+✔ Signals load
+
+✔ Positions load
+
+✔ Subscription pages load
+
+✔ Payments create correctly
+
+✔ Exchange API key input pages load
+
+✔ Test logout/login
+
+✔ Reset password deep link
+
+✔ Trial countdown works
+
+✔ Update settings and verify API call
+
+✔ Verify bot & backend receive signals
+
+
+---
+
+🧩 SECTION 8 — DO NOT CHANGE BACKEND CODE
+
+Only:
+
+✔ Add /api/open-verification-link if missing
+
+✔ Confirm deep link logic
+
+✔ Confirm email tokens work
+
+Do NOT alter:
+
+Database schema
+
+Trading logic
+
+Signal parsing
+
+User models
+
+
+These are already correct.
+
+
+---
+
+🧩 SECTION 9 — CLEANUP
+
+Remove unused:
+
+Telethon code
+
+Old listener scripts
+
+Deprecated folders
+
+Debug prints
+
+Old environment constants
+
+
+Ensure /utils, /hooks, /screens structure is tidy.
+
+
+---
+
+🧩 SECTION 10 — FINAL DEPLOYMENT
+
+When finished:
+
+1. Commit changes
+
+
+2. Push to GitHub
+
+
+3. Ensure GitHub Actions auto-deploys to Vultr
+
+
+4. Confirm /api/health returns OK
+
+
+5. Send me confirmation
+
+
+
+
+---
+
+🎉 END OF TASK LIST
+
+
+TASK:
+Finalize VerzekAutoTrader for Phase 4: real-life app experience, synced frontend + backend, Telegram signal bridge ready for external signal source channel + future internal signal bot, and exchanges wired in DRY-RUN mode (no real orders until explicitly enabled).
+
+Please follow these steps exactly in order.
+
+
+---
+
+1️⃣ PROJECT CONTEXT (DO NOT CHANGE, JUST READ)
+
+Backend: Flask API (VerzekBackend) – already live on Vultr
+
+Domain: https://api.verzekinnovative.com
+
+Version: 2.1.1
+
+DB: PostgreSQL 14
+
+Service: verzek-api.service
+
+
+Mobile App: React Native + Expo – dev build working
+
+Telegram Bot: VerzekAutoTrader Signal Bot running on Vultr
+
+Currently in DRY-RUN / Phase 2 mode
+
+
+GitHub Repos:
+
+Backend: ellizza78/VerzekBackend
+
+Mobile App: ellizza78/VerzekAutoTrader
+
+
+
+Goal of this phase:
+Make the whole system feel like production for real users (APK build, real signals flowing, full app experience), while keeping live trading guarded behind explicit flags so it can be turned on safely later.
+
+
+---
+
+2️⃣ CLEANUP & SAFETY CHECKS
+
+1. In the backend codebase (Replit + Vultr), confirm we have a global safety switch, something like:
+
+LIVE_TRADING_ENABLED=false
+
+If not present, add an equivalent boolean flag in the env file (/root/api_server_env.sh on Vultr and .env / config on Replit).
+
+
+2. Make sure:
+
+When LIVE_TRADING_ENABLED=false, no exchange connector (Binance / Bybit / Phemex / Kraken) sends any real order.
+
+All trade execution functions run in paper/DRY-RUN mode only (just logging + DB positions).
+
+
+
+3. Ensure no old Telethon code exists anywhere:
+
+No telethon pip dependency
+
+No Telethon import or usage in any Python file
+
+If anything is still there → remove it.
+
+
+
+
+
+---
+
+3️⃣ UPGRADE TELEGRAM SIGNAL BRIDGE BOT
+
+We now want the Telegram bot to:
+
+Sit in same group as:
+
+External signal source bot
+
+Our future internal signal bot
+
+Human manual users
+
+
+Listen to group messages, parse signals, and forward them to the backend for autotrading.
+
+
+3.1. Bot Behaviour Requirements
+
+Update the existing VerzekAutoTrader Signal Bot (currently python-telegram-bot) to:
+
+Read messages from configured groups only:
+
+TRIAL_GROUP_ID
+
+VIP_GROUP_ID
+
+Optional: ADMIN_DEBUG_GROUP_ID
+
+
+Accept messages from:
+
+External signal source bot (we will whitelist its username / ID later)
+
+Our own internal signal bot (future)
+
+Admin human account (for manual testing)
+
+
+Ignore everything else:
+
+Stickers, photos, emojis, greetings, random chat, etc.
+
+
+
+Please add a config section (env or config file) for:
+
+TELEGRAM_TRIAL_GROUP_ID=...
+TELEGRAM_VIP_GROUP_ID=...
+TELEGRAM_ADMIN_DEBUG_GROUP_ID=...
+AUTHORIZED_SIGNAL_BOT_USERNAMES=source_signal_bot_username,verzeksignalbot
+AUTHORIZED_ADMIN_USER_IDS=572038606
+
+> Use placeholders where needed and document where to fill the real values.
+
+
+
+3.2. Signal Parsing
+
+Reuse / extend the existing signal parsing logic so that it works when:
+
+Message sender is a bot
+
+Message is posted in a group
+
+Message may contain hashtags, emojis, or mild formatting
+
+
+Supported patterns should at least handle:
+
+BUY BTCUSDT @ 50000
+
+SELL ETHUSDT entry: 3000, sl: 2900, tp: 3100
+
+#LONG #BTCUSDT Entry: 50000 SL: 48000 TP: 52000
+
+Variations with lowercase, extra spaces, etc.
+
+
+For a valid signal, extract:
+
+symbol (e.g. BTCUSDT)
+
+side (BUY/SELL or LONG/SHORT normalized to BUY/SELL)
+
+entry
+
+stop_loss
+
+take_profits (list of 1–3 TPs)
+
+optional: leverage if present in text
+
+
+Store AND send:
+
+Raw message text
+
+Telegram chat_id, message_id
+
+Sender user_id, is_bot
+
+Origin: TRIAL / VIP
+
+source_type: external_bot, internal_bot, admin_manual
+
+
+3.3. Forward to Backend
+
+For each valid, accepted signal, call the backend via HTTPS:
+
+POST https://api.verzekinnovative.com/api/signals/incoming-telegram
+Content-Type: application/json
+Authorization: Bearer <SERVER_INTERNAL_TOKEN>   # use internal secret token if needed
+
+Payload example:
+
+{
+  "symbol": "BTCUSDT",
+  "side": "BUY",
+  "entry": 50000.0,
+  "stop_loss": 49000.0,
+  "take_profits": [50500.0, 51000.0],
+  "source": {
+    "group_id": -1001234567890,
+    "group_type": "VIP",
+    "sender_id": 111111111,
+    "sender_is_bot": true,
+    "sender_username": "source_signal_bot",
+    "origin": "external_bot"
+  },
+  "raw_text": "BUY BTCUSDT @ 50000 SL 49000 TP 50500 51000"
+}
+
+If /api/signals/incoming-telegram doesn’t exist yet:
+
+Create a new backend endpoint for this
+
+Or adapt to the current equivalent (/api/signals/incoming), but make sure:
+
+It validates the payload
+
+It logs every signal
+
+It returns JSON with success/error
+
+
+
+3.4. De-duplication & Multi-Source Coexistence
+
+Implement simple de-duplication in the backend:
+
+If two signals with same symbol + side + similar entry arrive within e.g. 60 seconds, treat them as duplicates and:
+
+Either ignore the second
+
+Or mark it as duplicate_of=<signal_id>
+
+
+
+The system must support:
+
+External signal bot in group
+
+Our internal future signal bot in same group
+
+Admin manual signals
+
+
+All without double-trading.
+
+
+---
+
+4️⃣ BACKEND AUTOTRADING PIPELINE (DRY-RUN)
+
+For signals coming from Telegram:
+
+1. Validate against:
+
+Supported symbol list
+
+User subscription (TRIAL/VIP/PREMIUM)
+
+User risk settings (capital %, leverage caps)
+
+
+
+2. Create paper positions for eligible PREMIUM users:
+
+Insert into positions table
+
+Respect max positions per user
+
+Respect global safety limits
+
+
+
+3. If LIVE_TRADING_ENABLED=false:
+
+DO NOT send real orders to exchanges
+
+Only create DB position + logs
+
+Mark positions as mode: "paper" or execution_mode: "DRY_RUN"
+
+
+
+4. Ensure these updates are visible in:
+
+/api/positions
+
+/api/signals
+
+Mobile app’s Positions and Signals screens
+
+
+
+
+
+---
+
+5️⃣ EXCHANGE CONNECTORS – HARDEN & DOCUMENT
+
+For each exchange (Binance, Bybit, Phemex, Kraken):
+
+1. Confirm there is a single place where real API calls are made.
+Introduce per-exchange flags (if not already):
+
+
+
+BINANCE_ENABLED=true
+BYBIT_ENABLED=true
+PHEMEX_ENABLED=true
+KRAKEN_ENABLED=true
+
+LIVE_TRADING_ENABLED=false
+
+2. When LIVE_TRADING_ENABLED=false:
+
+All “order place” functions must short-circuit into DRY-RUN mode.
+
+Log something like: "LIVE_TRADING_DISABLED: would place BINANCE order: ..."
+
+
+
+3. Add comments / docs in code for how to later safely enable live trading for:
+
+Single internal account (e.g. admin only)
+
+Single exchange at a time
+
+
+
+
+
+---
+
+6️⃣ MOBILE APP – FINAL PRODUCTION BUILD PREP
+
+Work in the mobile app project (inside Replit):
+
+6.1. API Configuration
+
+Ensure production build uses ONLY:
+
+https://api.verzekinnovative.com
+
+for all API calls (no localhost, no 10.0.2.2, no staging URL).
+
+Confirm:
+
+Auth routes wired (/api/auth/register, /api/auth/login, /api/auth/verify-email, etc.)
+
+Dashboard uses real backend stats
+
+Signals screen uses /api/signals (or appropriate endpoint)
+
+Positions screen uses /api/positions
+
+Subscription & payment screens use live endpoints (even if payments are still manually verified by admin)
+
+
+
+6.2. Minimal E2E Test Flow (DEV BUILD)
+
+From Expo dev mode (if still available):
+
+1. Create a NEW user via mobile app:
+
+Register
+
+Receive verification email
+
+Click verification link
+
+Log in
+
+
+
+2. Check:
+
+Dashboard loads
+
+Signals page loads (even if empty)
+
+Positions page doesn’t crash
+
+Settings page loads
+
+Subscription screen loads
+
+
+
+
+Fix any API / navigation errors before production build.
+
+6.3. Production APK Build (EAS)
+
+Then:
+
+1. In the app directory (e.g. mobile_app/VerzekApp), run via Replit:
+
+eas build -p android --profile production --clear-cache
+
+
+2. Ensure:
+
+The production profile points to the correct bundle ID / package name.
+
+OTA update channel (if used) is set appropriately (e.g. production).
+
+
+
+3. After build:
+
+Get the APK / AAB download link.
+
+Save & document it clearly (e.g. in APP_RELEASE_NOTES.md).
+
+
+
+
+
+---
+
+7️⃣ FULL SYNC: REPLIT ⇄ GITHUB ⇄ VULTR
+
+Make sure everything is consistent:
+
+Backend (VerzekBackend)
+
+1. In Replit backend project:
+
+git status
+git add .
+git commit -m "Phase 4: Telegram signal bridge + DRY-RUN autotrade wiring"
+git push origin main
+
+
+2. Confirm GitHub Actions Deploy Backend to Vultr workflow:
+
+Runs successfully
+
+Connects via SSH using VULTR_SSH_KEY_B64
+
+Restarts verzek-api.service
+
+Health check passes on https://api.verzekinnovative.com/api/health
+
+
+
+
+Mobile App (VerzekAutoTrader)
+
+1. In Replit mobile app project:
+
+git status
+git add .
+git commit -m "Phase 4: Production-ready mobile app for VerzekAutoTrader"
+git push origin main
+
+
+2. Confirm repo ellizza78/VerzekAutoTrader is up to date.
+
+
+
+
+---
+
+8️⃣ FINAL REPORT & CHECKLIST
+
+Please create a markdown file in the backend repo root:
+
+PHASE4_LIVE_READY_REPORT.md
+
+Include:
+
+1. Summary of all changes in Phase 4.
+
+
+2. Exact:
+
+Env flags controlling live trading
+
+Endpoints used by the Telegram bot
+
+Group IDs / config keys that I (the owner) must fill in manually.
+
+
+
+3. Instructions titled:
+
+HOW TO CONNECT EXTERNAL SIGNAL SOURCE BOT TO VIP GROUP
+
+HOW TO ENSURE MY BOT CAN READ SIGNALS BUT NOT GET ME BANNED
+
+HOW TO ENABLE LIVE TRADING FOR ONE INTERNAL ACCOUNT (WHEN READY)
+
+
+
+4. A short “Owner Checklist”:
+
+[ ] Add real TRIAL_GROUP_ID and VIP_GROUP_ID
+
+[ ] Add external signal bot username to AUTHORIZED_SIGNAL_BOT_USERNAMES
+
+[ ] Confirm LIVE_TRADING_ENABLED is still false
+
+[ ] Install APK on phone and log in
+
+[ ] Verify signals appear in app
+
+[ ] Decide later when to switch from DRY-RUN to LIVE
+
+
+
+
+
+---
+
+9️⃣ VERY IMPORTANT RULES
+
+❌ Do NOT enable real live trading automatically.
+
+✅ Keep DRY-RUN / PAPER mode ON by default.
+
+✅ Only wire everything so it is ready when I flip the switch later.
+
+✅ Do not break or rename existing services, repos, or domains.
+
+
+
+---
+
+🟢 GOAL:
+When you’re done, I should be able to:
+
+Install the APK on any Android phone (no Play Store required).
+
+Log in, register, reset password, see dashboard, signals, positions, subscription page, and settings.
+
+Have the backend fully synced, deployed, and stable.
+
+Add the external signal source bot + my own bot into the VIP group and KNOW that my bot will see and parse signals safely, and send them to the backend in DRY-RUN mode.
+
+
+Please confirm completion with:
+
+Summary in PHASE4_LIVE_READY_REPORT.md
+
+Any notes you think I must read before attempting live trading.
