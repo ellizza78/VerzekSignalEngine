@@ -31,7 +31,11 @@ python3 -c "import secrets; print('HOUSE_ENGINE_TOKEN=' + secrets.token_urlsafe(
 HOUSE_ENGINE_TOKEN=gK9mP3xR7vZ2nL4wQ8bC5tY6hJ1fS0dA
 ```
 
-**Save this token** - you'll need it for both backend and signal engine configuration.
+**Save this token securely** - you'll need it for both backend and signal engine configuration.
+
+**IMPORTANT**: Never commit this token to Git or share it publicly. Store it only in:
+- Replit Secrets (for backend)
+- Vultr server environment variables (for signal engine)
 
 ---
 
@@ -157,11 +161,11 @@ nano config/.env
 BACKEND_API_URL=https://api.verzekinnovative.com
 HOUSE_ENGINE_TOKEN=gK9mP3xR7vZ2nL4wQ8bC5tY6hJ1fS0dA
 
-# Telegram Bot
-TELEGRAM_BOT_TOKEN=7516420499:AAHkf1VIt-uYZQ33eJLQRcF6Vnw-IJ8OLWE
-TELEGRAM_VIP_GROUP_ID=-1001234567890
-TELEGRAM_TRIAL_GROUP_ID=-1009876543210
-TELEGRAM_ADMIN_GROUP_ID=572038606
+# Telegram Bot (use your actual values)
+TELEGRAM_BOT_TOKEN=<your-telegram-bot-token>
+TELEGRAM_VIP_GROUP_ID=<your-vip-group-id>
+TELEGRAM_TRIAL_GROUP_ID=<your-trial-group-id>
+TELEGRAM_ADMIN_GROUP_ID=<your-admin-user-id>
 ```
 
 ### Setup Systemd Service
