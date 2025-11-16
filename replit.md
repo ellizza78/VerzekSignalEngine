@@ -69,4 +69,13 @@ Independent signal generation system with 4 trading bots:
 
 Features: Real-time CCXT data, shared indicators library, async parallel execution, Telegram broadcasting, systemd services, comprehensive logging.
 
-Integration: Sends signals to backend `/api/signals` endpoint with API key authentication.
+Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with HOUSE_ENGINE_TOKEN authentication.
+
+## Recent Changes (November 2025)
+### House Signals System Deployment
+- **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', ...)` using SQLAlchemy column mapping to avoid reserved word collision without requiring database migration
+- **Added backwards compatibility**: @property decorator allows both `signal.metadata` and `signal.meta_data` access patterns
+- **Updated API serializers**: /api/house-signals/live and /api/house-signals/admin/signals now include metadata field in responses
+- **Deployment Infrastructure**: Created deploy_all.sh for continuous deployment from Replit to Vultr production server
+- **Verified End-to-End Flow**: VerzekSignalEngine (4 bots) → Backend API → PostgreSQL → Mobile App push notifications
+- **Production Status**: Architecture approved by code review, ready for deployment
