@@ -21,9 +21,10 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
 - **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading with secure API key handling.
 - **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy and Nginx for static IP (45.76.90.149) routing of all exchange API calls, featuring HMAC SHA256 authentication and automatic failover.
-- **Signal Broadcasting System**: Monitors Telegram for signals with keyword detection and spam filtering, distributing them to VIP/TRIAL Telegram groups and a protected API endpoint for the mobile app.
-- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, and positions, incorporating rate limiting, 2FA, and audit logging.
-- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, and help resources.
+- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system with Scalping Bot (15s interval), Trend Bot (5m interval), QFL Bot (20s interval), and AI/ML Bot (30s interval). Features real-time CCXT market data, 25+ technical indicators, async parallel execution with uvloop, Telegram broadcasting, and backend API integration. Replaces old Telethon-based signal monitoring.
+- **Signal Broadcasting System**: Uses python-telegram-bot library for distributing signals to VIP/TRIAL Telegram groups and protected API endpoint for the mobile app.
+- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, positions, and receiving signals from VerzekSignalEngine. Includes rate limiting, 2FA, and audit logging.
+- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, live signal feed, and help resources.
 - **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
 - **Email Verification System**: Secure token-based email verification using Resend API (support@verzekinnovative.com).
 - **Advanced Features**: AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
@@ -42,11 +43,12 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Scalability**: 4 Gunicorn workers handle concurrent traffic.
 
 ## External Dependencies
-- **Telegram API**: For signal monitoring and broadcasting.
-- **Binance API**: For trading operations.
-- **Bybit API**: For trading operations.
+- **Telegram API**: For signal broadcasting via python-telegram-bot library.
+- **Binance API**: For trading operations and market data (VerzekSignalEngine uses CCXT).
+- **Bybit API**: For trading operations and market data (VerzekSignalEngine uses CCXT).
 - **Phemex API**: For trading operations.
 - **Kraken Futures API**: For trading operations.
+- **CCXT Library**: Unified exchange API for VerzekSignalEngine market data feed.
 - **Flask**: Python web framework.
 - **Requests**: Python HTTP library.
 - **Schedule**: Python library for task scheduling.
@@ -56,3 +58,15 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
 - **Resend API**: For transactional emails.
+
+## Project Structure
+### VerzekSignalEngine (signal_engine/)
+Independent signal generation system with 4 trading bots:
+- **Scalping Bot**: RSI + Stochastic + MA bounce detection (0.8% TP, 0.5% SL)
+- **Trend Bot**: MA alignment + MACD + price structure (3.0% TP, 1.5% SL)
+- **QFL Bot**: Deep dip detection with base level analysis (return to base TP)
+- **AI/ML Bot**: 15+ feature pattern recognition with adaptive TP/SL
+
+Features: Real-time CCXT data, shared indicators library, async parallel execution, Telegram broadcasting, systemd services, comprehensive logging.
+
+Integration: Sends signals to backend `/api/signals` endpoint with API key authentication.
