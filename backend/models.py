@@ -188,13 +188,23 @@ class HouseSignal(Base):
     timeframe = Column(String(10), nullable=False)  # M5, M15, H1, H4
     confidence = Column(Integer, nullable=False)  # 0-100
     version = Column(String(20), default="SE.v1.0")
-    meta_data = Column(JSON, default=dict)  # Additional bot-specific data (renamed from metadata)
+    meta_data = Column('metadata', JSON, default=dict)  # Python attr: meta_data, DB column: metadata (avoiding reserved word)
     
     status = Column(String(20), default="ACTIVE", index=True)  # ACTIVE, CLOSED, CANCELLED, EXPIRED
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     closed_at = Column(DateTime)
     
     positions = relationship("HouseSignalPosition", back_populates="signal", cascade="all, delete-orphan")
+    
+    @property
+    def metadata(self):
+        """Backwards-compatible property for accessing meta_data"""
+        return self.meta_data
+    
+    @metadata.setter
+    def metadata(self, value):
+        """Backwards-compatible setter for meta_data"""
+        self.meta_data = value
 
 
 class HouseSignalPosition(Base):

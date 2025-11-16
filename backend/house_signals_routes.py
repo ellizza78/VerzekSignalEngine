@@ -195,6 +195,7 @@ def get_live_signals():
             "timeframe": sig.timeframe,
             "confidence": sig.confidence,
             "version": sig.version,
+            "metadata": sig.metadata,
             "created_at": sig.created_at.isoformat() if sig.created_at else None
         } for sig in signals]
         
@@ -250,6 +251,7 @@ def admin_get_signals():
             "take_profits": sig.take_profits,
             "timeframe": sig.timeframe,
             "confidence": sig.confidence,
+            "metadata": sig.metadata,
             "status": sig.status,
             "created_at": sig.created_at.isoformat() if sig.created_at else None,
             "closed_at": sig.closed_at.isoformat() if sig.closed_at else None
