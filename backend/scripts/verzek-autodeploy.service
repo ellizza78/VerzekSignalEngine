@@ -1,0 +1,13 @@
+[Unit]
+Description=VerzekAutoTrader Auto-Deploy Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /root/VerzekBackend/backend/scripts/auto_pull_deploy.sh
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=verzek-autodeploy
+
+[Install]
+WantedBy=multi-user.target
