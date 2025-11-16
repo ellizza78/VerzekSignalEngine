@@ -1,0 +1,25 @@
+[Unit]
+Description=VerzekSignalEngine - Multi-Bot Trading Signal System
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/VerzekSignalEngine
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+ExecStart=/usr/bin/python3 main.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/root/VerzekSignalEngine/logs/systemd.log
+StandardError=append:/root/VerzekSignalEngine/logs/systemd_error.log
+
+# Resource limits
+LimitNOFILE=65536
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

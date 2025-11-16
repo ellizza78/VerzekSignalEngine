@@ -1,0 +1,1709 @@
+Ellize:
+📌 
+
+“Please create the full VerzekSignalEngine v1 using the tasks below.
+Implement 4 independent strategy bots: Scalping Bot, Trend Bot, QFL Bot, AI Bot.
+Use the SIGNAL RESEARCH file for formulas and logic.
+Integrate with VerzekAutoTrader backend via /api/signals.
+Add a broadcast bot to send signals to VIP and Trial groups.
+Remove all previous Telethon code permanently.
+Ensure full systemd services, schedulers, and logging.
+Make everything sync with GitHub repos and Vultr server.”
+
+I want to build 4 independent trading strategy bots (Scalping, Trend-Following, QFL, AI/ML) that will produce my own Verzek signals and connect easily with my existing VerzekAutoTrader.
+
+Create the VerzekSignalEngine with 4 bots, using the SIGNAL RESEARCH document (attached) and my existing app ecosystem.
+
+
+✅ — MASTER TASK LIST
+
+Project: VerzekSignalEngine v1 (4-Bot Strategy Suite)
+
+Integrate into VerzekAutoTrader ecosystem
+
+Use the attached SIGNAL RESEARCH document as a reference
+
+
+---
+
+🚀 PHASE A — PROJECT SETUP
+
+Task A1 — Create New Folder Structure
+
+Create a new project folder on Vultr OR inside an isolated folder of the backend:
+
+/root/VerzekSignalEngine/
+/root/VerzekSignalEngine/bots/
+/root/VerzekSignalEngine/indicators/
+/root/VerzekSignalEngine/utils/
+/root/VerzekSignalEngine/services/
+/root/VerzekSignalEngine/logs/
+
+Task A2 — Create Base Python Environment
+
+Install:
+
+python3.11
+
+pipenv or venv
+
+numpy
+
+pandas
+
+ta (Technical Analysis library)
+
+ccxt
+
+joblib (for ML bot)
+
+requests
+
+python-telegram-bot (broadcast bot)
+
+aiohttp
+
+uvloop (speed)
+
+
+
+---
+
+🚀 PHASE B — CORE SYSTEM
+
+Task B1 — Create a Base Strategy Class
+
+A generic parent class:
+
+class BaseStrategy:
+    def fetch_market_data()
+    def analyze()
+    def generate_signal()
+    def format_signal()
+    def send_to_backend()
+
+All bots will inherit this.
+
+Task B2 — Build Shared Indicator Library
+
+In /indicators/indicators.py implement:
+
+RSI
+
+Stochastic
+
+MA (7, 14, 50, 100, 200)
+
+MACD
+
+Bollinger Bands
+
+ATR
+
+Volume Surge Detection
+
+Drop Percentage calculation
+
+QFL base detection functions
+
+Candle pattern functions
+
+
+Use the SIGNAL RESEARCH file for formulas.
+
+
+---
+
+🚀 PHASE C — BUILD THE 4 STRATEGY BOTS
+
+
+---
+
+1️⃣ Scalping Bot (Fast 1m/5m/15m)
+
+Path: /bots/scalping_bot.py
+
+Use criteria:
+
+RSI oversold/overbought
+
+Stochastic cross
+
+MA7/25 trend confirmation
+
+Volume burst
+
+Quick correction patterns
+
+Small TP/SL (0.5–1.5%)
+
+
+Strategy:
+
+Detect oversold bounce → LONG
+
+Detect overbought rejection → SHORT
+
+Detect MA bounce
+
+Detect momentum shift
+
+
+Generate:
+
+BUY/SELL SIGNAL
+Entry: last_price
+TP: entry * 0.8% or AI based
+SL: entry * -0.5%
+Symbol: COINUSDT
+Timeframe: 1m or 5m
+
+This bot produces signals every few minutes.
+
+
+---
+
+2️⃣ Trend-Following Bot (1H/4H Strong Moves)
+
+Path: /bots/trend_bot.py
+
+Use criteria:
+
+MA50, MA100, MA200 alignment
+
+MACD cross
+
+Volume confirmation
+
+Higher-highs, higher-lows structure
+
+Breakout + retest logic
+
+
+Strategy:
+
+Detect trend continuation
+
+Detect trend reversals
+
+Use big timeframes to avoid noise
+
+
+Produces slow but reliable signals.
+
+
+---
+
+3️⃣ QFL (Quick Fingers Luc) Bot (Deep Dip Sniper)
+
+Path: /bots/qfl_bot.py
+
+Use:
+
+Detect base levels
+
+Price drops 6–12% below base
+
+Quick reversal bounce
+
+Volume absorption
+
+
+Strategy:
+
+Spot major dips
+
+Only buy crashes
+
+TP when price returns to base
+
+SL below crash low
+
+
+QFL is excellent for futures countertrend.
+
+
+---
+
+4️⃣ AI/ML Pattern Bot (Smart Bot)
+
+Path: /bots/ai_bot.py
+
+Use:
+
+Load trained ML model (joblib)
+
+Inputs:
+
+RSI
+
+MACD
+
+MA spreads
+
+Volume delta
+
+Candle patterns
+
+Volatility clusters
+
+
+Predict:
+
+Probability of up move
+
+Probability of down move
+
+
+Output:
+
+Long or Short with confidence score
+
+
+
+This bot improves over time.
+
+Model training folder:
+
+/root/VerzekSignalEngine/models/
+
+
+---
+
+🚀 PHASE D — BACKEND COMMUNICATION
+
+Task D1 — Build Dispatcher Module
+
+Path: /services/dispatcher.py
+
+Functionality:
+
+Accept signal from any bot
+
+Attach metadata:
+
+strategy name
+
+timeframe
+
+confidence
+
+version
+
+
+Send to:
+
+VerzekAutoTrader backend (/api/signals)
+
+Broadcast bot
+
+Logging
+
+
+
+
+---
+
+🚀 PHASE E — BROADCAST SYSTEM
+
+Task E1 — Build Broadcast Bot
+
+Path: /bots/broadcaster_bot.py
+
+Purpose:
+
+Broadcast all generated signals to:
+
+VIP group
+
+Admin monitoring group
+
+(optional) Trial group
+
+
+
+Use python-telegram-bot, NOT telethon.
+
+Format message:
+
+🔥 VERZEK SIGNAL — Scalping v1
+PAIR: BTCUSDT
+DIRECTION: LONG
+ENTRY: 51210
+TP: 51780
+SL: 50800
+TIMEFRAME: 5m
+CONFIDENCE: 81%
+EXCHANGE: Binance Futures
+VERSION: SE.v1.0
+
+
+---
+
+🚀 PHASE F — BOT SCHEDULERS
+
+Task:
+
+Use asyncio and uvloop.
+
+Scheduler file: /services/scheduler.py
+
+Rules:
+
+Scalping bot: run every 15 seconds
+
+Trend bot: run every 5 minutes
+
+QFL bot: run every 20 seconds
+
+AI bot: run every 30 seconds
+
+
+All run in parallel.
+
+
+---
+
+🚀 PHASE G — LOGGING & MONITORING
+
+Task:
+
+Create log files:
+
+/logs/scalping.log
+/logs/trend.log
+/logs/qfl.log
+/logs/ai.log
+/logs/dispatcher.log
+/logs/errors.log
+
+
+---
+
+🚀 PHASE H — SYSTEMD SERVICE SETUP
+
+Task:
+
+Create systemd services:
+
+verzek-scalping.service
+verzek-trend.service
+verzek-qfl.service
+verzek-ai.service
+verzek-signalengine-master.service
+
+Each bot should restart automatically.
+
+
+---
+
+🚀 PHASE I — FINAL INTEGRATION WITH VERZEKAUTOTRADER
+
+Task:
+
+Make sure:
+
+All bots send signals to backend /api/signals
+
+Backend publishes signals to app immediately
+
+AutoTrader receives signals instantly
+
+VIP and Trial group separation works
+
+Admin receives monitoring alerts
+
+
+
+---
+
+🧠 PHASE J — REMOVE ALL OLD TELETHON CODE
+
+Tasks:
+
+Remove all Telethon scripts
+
+Remove previous Telegram listener
+
+Replace with python-telegram-bot only
+
+Verify no old Telethon references remain
+
+✅ REPLIT AI AGENT — EXECUTE FULL SIGNAL ENGINE BUILD (VerzekSignalEngine v1)
+
+You are to build VerzekSignalEngine v1, a multi-bot signal generation engine fully integrated with VerzekAutoTrader backend + Telegram relay bot + exchange live market data.
+
+This project must be created inside the Vultr server AND synced to GitHub AND integrated with the existing VerzekAutoTrader backend.
+
+Follow all instructions exactly.
+
+
+---
+
+📁 PHASE A — Create Project Structure
+
+Create folder:
+
+/root/VerzekSignalEngine/
+
+Inside create:
+
+/bots/scalper/
+/bots/trend/
+/bots/qfl/
+/bots/ai_ml/
+/engine/
+/data_feed/
+/performance/
+/common/
+/config/
+/logs/
+/tests/
+
+Create config files:
+
+config/watchlist.json
+
+config/exchange_keys.json
+
+config/engine_settings.json
+
+config/performance_settings.json
+
+config/.env (PRIVATE)
+
+
+
+---
+
+📡 PHASE B — Unified Market Data System (CCXT)
+
+Create file:
+
+data_feed/live_data.py
+
+Implement:
+
+Core Functions
+
+get_ohlcv(symbol, timeframe="1m", limit=200)
+get_orderbook(symbol)
+get_ticker(symbol)
+
+Exchange Priority List
+
+1. Binance Futures
+
+
+2. Bybit
+
+
+3. Phemex
+
+
+4. Kraken
+
+
+
+Features required:
+
+Automatic fallback
+
+Auto rate-limit handling
+
+WebSocket option for scalp bot
+
+
+
+---
+
+🤖 PHASE C — Build 4 Trading Bots
+
+Build each bot in its folder with its own logic:
+
+
+---
+
+1️⃣ Scalper Bot — FAST 1m/5m/15m Signals
+
+Folder: /bots/scalper/
+
+Strategy components:
+
+RSI(14)
+
+Stoch RSI
+
+MA 7/14/21
+
+Volume burst detection
+
+Breakout finder
+
+Momentum score (0–100)
+
+
+Output example:
+
+LONG BTCUSDT
+Entry: 38520.10
+SL: 38410.00
+TP1: 0.20%
+TP2: 0.45%
+TP3: 0.75%
+Confidence: 83%
+
+
+---
+
+2️⃣ Trend-Following Bot — Slow & Accurate
+
+Folder: /bots/trend/
+
+Strategy components:
+
+MA50, MA100, MA200
+
+Break + retest detection
+
+MACD confirmation
+
+Volume slope confirmation
+
+Trend strength score
+
+
+
+---
+
+3️⃣ QFL Bot — Base Level Reversal Strategy
+
+Folder: /bots/qfl/
+
+Logic:
+
+Identify base levels (support shelves)
+
+Detect deep drops (5–12%)
+
+Detect bounce + return to mean
+
+Volatility filter
+
+Risk rating
+
+
+
+---
+
+4️⃣ AI/ML Pattern Bot
+
+Folder: /bots/ai_ml/
+
+Use:
+
+Last 500 candles
+
+Pattern recognition
+
+Breakout probability
+
+Reversal probability
+
+Trend continuation score
+
+All 7 pattern types from SIGNAL RESEARCH.txt
+
+
+
+---
+
+⚙️ PHASE D — Core Signal Engine (Shared)
+
+Folder: /engine/
+
+Create:
+
+1. signal_validator.py
+
+Remove duplicates
+
+Verify liquidity thresholds
+
+Verify volatility is acceptable
+
+
+2. tp_sl_calculator.py
+
+Generate TP1/TP2/TP3
+
+Dynamic SL
+
+Risk-based sizing
+
+
+3. trade_monitor.py
+
+Monitor trade live until:
+
+TP hit
+
+SL hit
+
+Signal invalidated
+
+
+Send updates to backend:
+
+/api/signals/new
+/api/signals/update
+/api/signals/tp
+/api/signals/sl
+/api/signals/close
+
+
+---
+
+📊 PHASE E — 24-Hour Performance Engine
+
+Folder: /performance/
+
+Create file:
+
+daily_performance.py
+
+Must generate:
+
+📊 DAILY PERFORMANCE REPORT — VerzekSignalEngine
+
+Scalper Bot: X signals | Winrate XX%
+Trend Bot: X signals | Winrate XX%
+QFL Bot: X signals | Winrate XX%
+AI/ML Bot: X signals | Winrate XX%
+
+Overall Winrate: XX%
+Total Day PNL: +X.XX%
+Best coin: SYMBOL
+
+Auto-send to:
+
+Admin Telegram
+
+Backend /api/admin/performance-report
+
+
+
+---
+
+🛰️ PHASE F — Signal Broadcasting Layer
+
+Every signal produced by any bot must be sent to:
+
+1. Backend API
+
+For app display + autotrading.
+
+Endpoints:
+
+POST /api/signals/new
+POST /api/signals/update
+POST /api/signals/close
+
+2. Telegram VIP Group (real time)
+
+3. Telegram Trial Group
+
+Apply filtering or delay rules.
+
+
+---
+
+🤖 PHASE G — Pyrogram Telegram Signal Relay
+
+Replace ALL Telethon code.
+
+Implement Pyrogram-based listener for:
+
+VIP Group → auto-forward to backend
+
+Internal bots → broadcast signals
+
+Admin control commands
+
+
+Bot must detect:
+
+BUY/SELL
+LONG/SHORT
+Entry:
+SL:
+TP1/TP2/TP3
+
+and forward automatically.
+
+
+---
+
+🔐 PHASE H — Secrets
+
+Place all credentials in:
+
+/config/.env
+
+Environment variables must include:
+
+API keys for Binance, Bybit, Phemex, Kraken
+
+Bot token
+
+Backend API key
+
+Backend URL
+
+Admin Telegram ID
+
+
+Ensure safe access only.
+
+
+---
+
+🧪 PHASE I — Required Testing
+
+Before enabling production:
+
+1. Test all 4 bots with sample data
+
+2. Run 5-minute forward test on 1 symbol
+
+
+3. Verify backend receives signals
+
+
+4. Verify autotrading receives signals
+
+
+5. Verify trade monitor detects SL/TP
+
+
+6. Verify Telegram relay
+
+
+7. Verify daily performance reports
+
+
+
+
+---
+
+🚀 PHASE J — Deploy as Systemd Services
+
+Install these services on Vultr:
+
+verzek-scalper.service
+
+verzek-trend.service
+
+verzek-qfl.service
+
+verzek-ml.service
+
+verzek-signal-relay.service
+
+verzek-performance.service
+
+
+Enable auto-restart.
+
+
+---
+
+🧩 PHASE K — Sync With Existing App + Backend
+
+You must ensure:
+
+Signals appear in app instantly
+
+Positions update correctly
+
+Autotrading triggers instantly
+
+Trial vs VIP filtering works
+
+Repos synced to GitHub
+
+Deployed to Vultr (CI/CD integrated)
+
+
+
+---
+
+📌 BONUS REQUIREMENT (IMPORTANT)
+
+Each bot must strictly:
+
+✔ Monitor trades from OPEN → TP/SL
+✔ Use live market data
+✔ Send updates to backend
+✔ Store logs in /logs/
+✔ Avoid duplicate trades
+
+Market data source = CCXT (Binance → fallback)
+Watchlist from: config/watchlist.json
+
+
+---
+
+🧨 FINAL REQUIREMENT
+
+Ensure everything is:
+
+Synced to GitHub (both repos)
+
+Synced to Vultr backend
+
+Compatible with VerzekAutoTrader mobile app
+
+Fully deployed & tested
+
+
+
+---
+
+✅ Begin implementing VerzekSignalEngine v1 now.
+
+🧠 Message for Replit AI Agent
+
+Goal: Implement Phase 5 (House Signal Engine) + Phase 6 (Cornix-style Autotrader) for VerzekAutoTrader
+
+> Important:
+
+Keep LIVE_TRADING_ENABLED = false everywhere (DRY-RUN / paper mode only).
+
+Do not place real orders on any exchange yet.
+
+Use our existing structure, files, and safety system – don’t break what’s working.
+
+
+
+
+
+---
+
+0. Context (Do NOT skip)
+
+We already have:
+
+Backend API (Flask, Gunicorn, PostgreSQL) under backend/
+
+Mobile App under mobile_app/VerzekApp/
+
+Telegram signal listener bot under backend/telegram_signal_bot.py
+
+Safety & config modules:
+
+backend/config/safety.py (LIVE_TRADING_ENABLED, safety flags)
+
+backend/config/email_templates.py
+
+
+Paper-trading engine & positions DB
+
+Multi-exchange connector skeleton (Binance, Bybit, Phemex, Kraken; all currently DRY-RUN/mock)
+
+Environment already configured on Vultr and synced via GitHub Actions
+
+
+We now want to:
+
+1. Phase 5 – Build our internal “House” signal engine (4 bots) that generate signals automatically and feed them into our existing backend signal pipeline.
+
+
+2. Phase 6 – Turn VerzekAutoTrader into a Cornix-style autotrader inside the app itself (using user API keys + risk settings), but still in paper mode for now.
+
+
+
+Use the uploaded “SIGNAL RESEARCH .txt” document plus the previous project files as references.
+
+
+---
+
+✅ PHASE 5 – VerzekSignalEngine (House Signal Bots)
+
+5.1 Create Core Engine Module
+
+Task:
+
+Add a new module folder: backend/signal_engine/
+
+Inside it, create:
+
+init.py
+
+engine_core.py
+
+models.py
+
+data_provider.py
+
+runner.py
+
+
+
+Requirements:
+
+1. Unified Signal Schema
+
+In models.py define Pydantic (or dataclass) models:
+
+SignalSource (enum: SCALPER, TREND, QFL, AI_ML)
+
+SignalSide (LONG / SHORT)
+
+Timeframe (M1, M5, M15, M30, H1, H4, D1, etc.)
+
+TradeSignal fields:
+
+id: str                   # unique uuid4
+source: SignalSource
+symbol: str               # e.g. "BTCUSDT"
+timeframe: Timeframe
+side: SignalSide
+entry_price: float
+stop_loss: float
+take_profits: list[float] # e.g. [TP1, TP2, TP3]
+confidence: float         # 0–100 score
+created_at: datetime
+expires_at: Optional[datetime]
+meta: dict                # extra info (indicators, notes, etc.)
+
+TrackedPosition for lifecycle monitoring:
+
+class TrackedPosition(BaseModel):
+    signal_id: str
+    symbol: str
+    side: SignalSide
+    entry_price: float
+    stop_loss: float
+    take_profits: list[float]
+    opened_at: datetime
+    closed_at: Optional[datetime]
+    exit_price: Optional[float]
+    status: Literal["OPEN", "TP_HIT", "SL_HIT", "EXPIRED", "CANCELLED"]
+    tps_hit: int            # how many TP levels hit
+    max_favourable_excursion: float  # best profit %
+    max_adverse_excursion: float     # worst drawdown %
+
+
+
+2. Engine Core
+
+In engine_core.py create:
+
+Abstract base class BaseStrategyBot with methods:
+
+name
+
+supported_timeframes
+
+generate_signals(market_snapshot) -> list[TradeSignal]
+
+update_positions(market_snapshot) -> list[TrackedPosition]
+(for monitoring TP/SL and updating status)
+
+
+SignalEngine manager:
+
+Holds list of bots (BaseStrategyBot instances)
+
+Periodically:
+
+fetches live market data (from data_provider.py)
+
+calls bot.generate_signals(...)
+
+normalizes signals
+
+forwards them into:
+
+DB (new table house_signals)
+
+existing backend signal ingestion endpoint
+
+optional JSON log file in /root/api_server/logs/house_signals/
+
+
+
+
+
+
+3. Data Provider
+
+In data_provider.py:
+
+Implement a unified market data provider that can pull OHLCV + order book snapshot from one primary source (Binance) with room to add Bybit/Phemex/Kraken later.
+
+Functions like:
+
+get_ohlcv(symbol: str, timeframe: Timeframe, limit: int = 200) -> list[Candle]
+get_ticker(symbol: str) -> Ticker
+get_symbols() -> list[str]  # from a configured list or exchange fetch
+
+Use REST APIs only, keep it simple.
+
+Respect rate-limits and add small sleeps / batching if necessary.
+
+For now, only fetch the USDT-perp futures symbols we already support in the autotrader.
+
+
+
+4. Runner / Scheduler
+
+In runner.py:
+
+CLI entrypoint:
+
+python -m backend.signal_engine.runner
+
+Reads config from environment or backend/config/signal_engine.json:
+
+ENABLED_BOTS = ["SCALPER", "TREND", "QFL", "AI_ML"]
+
+SCAN_INTERVAL_SECONDS (e.g. 60)
+
+MAX_SYMBOLS_PER_RUN (e.g. 50–100)
+
+
+Loop:
+
+For each enabled bot → generate signals → push into backend.
+
+For each open TrackedPosition → update using current prices:
+
+If TP price reached → mark as TP_HIT, record time, update stats
+
+If SL price reached → mark as SL_HIT
+
+Keep full trade lifecycle from entry to TP/SL
+
+
+
+Integrate with systemd later (you can leave a small doc stub for that).
+
+
+
+
+
+---
+
+5.2 Implement the 4 Strategy Bots
+
+Create backend/signal_engine/bots/ with:
+
+init.py
+
+scalper_bot.py
+
+trend_bot.py
+
+qfl_bot.py
+
+ai_ml_bot.py (skeleton)
+
+
+5.2.1 Scalping Bot (Bot 1)
+
+File: scalper_bot.py
+
+Timeframes: M1, M5, M15
+
+Indicators (use TA-Lib or pandas-ta; if not available roll simple implementations):
+
+RSI(14)
+
+Stochastic (K, D)
+
+EMA 7/25/50
+
+Volume spike (current volume vs N-period average)
+
+
+Long conditions example (you are free to optimise using SIGNAL RESEARCH file):
+
+Trend mildly up (price above EMA 25 or 50)
+
+RSI ≤ 30 from oversold
+
+Stoch K < 20 and turning up
+
+Volume spike or strong bullish candle
+
+
+Short conditions:
+
+Opposite: RSI ≥ 70, overbought, stoch > 80, etc.
+
+
+Entry/TP/SL logic:
+
+Entry: current price or small limit offset
+
+SL: recent swing low/high or % risk (e.g. 0.5–1.5%)
+
+TP levels:
+
+TP1: +0.5–0.75%
+
+TP2: +1–1.5%
+
+TP3: +2–3%
+
+
+
+Output TradeSignal with:
+
+Side (LONG/SHORT)
+
+Entry, SL, TPs computed
+
+Confidence score (0–100) based on number of conditions met.
+
+
+
+5.2.2 Trend-Following Bot (Bot 2)
+
+File: trend_bot.py
+
+Timeframes: H1, H4
+
+Indicators:
+
+EMA 50/100/200
+
+MACD
+
+ATR for SL/TP
+
+
+Long example idea:
+
+Price above EMA 200 (macro uptrend)
+
+Bullish cross of EMA 50 > 100
+
+MACD > 0 and rising
+
+Pullback near EMA 50 or 100 with bullish candle
+
+
+Short: mirror conditions below EMAs.
+
+Entry near EMA pullback; SL below recent swing / ATR multiple; TPs 2–4x risk.
+
+Fewer signals, higher confidence.
+
+
+5.2.3 QFL Bot (Bot 3)
+
+File: qfl_bot.py
+
+Timeframes: M15, H1
+
+Strategy:
+
+Identify “bases” (local support levels) using pivot lows / consolidation zones.
+
+Trigger BUY when price dumps deeply below last base (e.g. 8–20%) and starts to bounce.
+
+TP near base re-test or halfway back.
+
+SL slightly below dump low.
+
+
+This bot must only pick extreme dump / bounce scenarios on volatile coins.
+
+
+5.2.4 AI/ML Bot (Bot 4) – Skeleton
+
+File: ai_ml_bot.py
+
+For now, just:
+
+Load historical candles + indicators
+
+A simple logistic regression / random forest stub OR even a rule-based placeholder that returns signals with source=AI_ML but low volume.
+
+Ensure structure is ready to drop in a proper model later.
+
+
+
+
+---
+
+5.3 Integration With Backend & App
+
+1. Backend ingestion endpoint
+
+If there isn’t one yet, add POST /api/internal/house-signal in the backend (protected by internal auth token).
+
+When SignalEngine creates a TradeSignal, call this endpoint OR directly call an internal Python function that:
+
+Saves the signal to house_signals table.
+
+Optionally also creates a “paper trade” in the existing positions system for tracking.
+
+
+
+
+2. 24-Hour Performance Stats
+
+Create new table house_signal_stats or reuse existing analytics schema.
+
+Every 24 hours (or at midnight UTC) compute per-bot stats:
+
+Number of signals
+
+Win rate (TP vs SL)
+
+Average R:R
+
+Best/worst trade
+
+Profit factor (if paper allocation is known)
+
+
+Add endpoint: GET /api/admin/house-stats?from=...&to=... returning per-bot performance.
+
+
+
+3. App Integration (minimal for now)
+
+Add a placeholder screen in the app (e.g. under “Signals” or “Bots”) that can show:
+
+Bot name
+
+Last 24h win rate
+
+Number of trades
+
+Status (active / experimental)
+
+
+It’s okay if this is simple for now; main focus is backend.
+
+
+
+
+
+---
+
+5.4 Safety & Testing for Phase 5
+
+Ensure NO real orders are placed; bots must only:
+
+Generate signals
+
+Save to DB
+
+Simulate positions using existing paper engine
+
+
+Add a setting in backend/config/safety.py:
+
+HOUSE_ENGINE_ENABLED = True
+
+Add tests:
+
+Unit tests for each bot generating valid TradeSignal.
+
+One integration script that runs engine once and prints number of signals per bot (for manual check).
+
+
+
+
+---
+
+✅ PHASE 6 – Cornix-Style Autotrader Inside VerzekAutoTrader
+
+Now we wire signals → user settings → exchange execution (still in paper mode, but full logic in place).
+
+6.1 Design Autotrader Core
+
+Create folder: backend/autotrader/
+
+Files:
+
+init.py
+
+core.py
+
+order_router.py
+
+risk_manager.py
+
+position_manager.py
+
+models.py
+
+scheduler.py
+
+
+6.1.1 Models
+
+In models.py define:
+
+AutoTradeConfig (per user):
+
+user_id: UUID
+enabled: bool
+max_daily_trades: int
+max_risk_per_trade_pct: float
+max_daily_loss_pct: float
+max_leverage: int
+allowed_sources: list[SignalSource]  # e.g. [SCALPER, TREND, EXTERNAL_TG]
+allowed_symbols: list[str] | None
+exchange_account_id: UUID  # link to existing exchange account record
+dca_enabled: bool
+dca_steps: int
+dca_step_pct: float
+trailing_sl_enabled: bool
+trailing_sl_pct: float
+
+AutoTradeOrder representing a planned order from a signal.
+
+LivePosition representing an open realtime position (mapped to positions table).
+
+
+6.1.2 Core Autotrader Flow
+
+In core.py:
+
+Function handle_new_signal(trade_signal: TradeSignal):
+
+1. Find all users with autotrading enabled for that signal’s source and symbol.
+
+
+2. For each user:
+
+Load AutoTradeConfig and linked exchange account.
+
+Ask risk_manager to compute:
+
+position size (qty/USDT) based on risk% + SL distance
+
+leverage (capped by config & exchange)
+
+
+Run global + user safety checks from safety.py (e.g. LIVE_TRADING_ENABLED, max open positions, etc.).
+
+If checks pass → build AutoTradeOrder.
+
+
+
+3. Send AutoTradeOrder to order_router.
+
+
+
+This function must be callable from:
+
+House bots (Phase 5),
+
+Telegram signal bridge,
+
+Future external webhooks (TradingView).
+
+
+
+> Important: For now, router must execute in PAPER MODE: write to DB + simulate.
+
+
+
+
+---
+
+6.2 Order Router & Exchange Adapters
+
+In order_router.py:
+
+Implement:
+
+def execute_order(order: AutoTradeOrder) -> LivePosition:
+    if not safety.LIVE_TRADING_ENABLED:
+        return simulate_order(order)
+    else:
+        return place_real_order(order)
+
+simulate_order:
+
+Create position record in DB with status OPEN and paper prices from last ticker.
+
+No real exchange call.
+
+
+place_real_order (for future):
+
+Stub out logic to call exchange connector (exchanges/binance.py, etc.).
+
+Must not be called while LIVE_TRADING_ENABLED = False.
+
+
+
+Add debug logs everywhere so we can see decision path in logs.
+
+
+---
+
+6.3 Risk Manager
+
+In risk_manager.py:
+
+Functions:
+
+check_daily_limits(user_id, config) -> bool
+
+compute_position_size(config, signal, account_balance) -> float
+
+apply_leverage_limits(config, signal, exchange_max_leverage) -> int
+
+
+Use SL distance in % to compute position size:
+
+Risk per trade = balance * (max_risk_per_trade_pct / 100)
+Position size = Risk per trade / SL_distance_pct
+
+
+Cap at some max (e.g. config + exchange rules).
+
+
+---
+
+6.4 Position Manager (Trade Lifecycle)
+
+In position_manager.py:
+
+Periodically (every 10–30 seconds or so, configurable):
+
+Fetch all OPEN positions.
+
+Get current price per symbol.
+
+For each position:
+
+Update unrealized PnL.
+
+Check TP levels:
+
+If price crosses TP1/TP2/TP3 → mark TP hit, partial close if desired.
+
+
+Check SL:
+
+If price crosses SL → close position with SL_HIT.
+
+
+If trailing SL is enabled:
+
+Move SL up/down as price moves favourably.
+
+
+
+
+Reuse/extend the existing paper trading engine if one is already implemented to avoid duplication.
+
+
+
+---
+
+6.5 API & App Integration for Autotrader
+
+Backend:
+
+Create or extend endpoints under /api/autotrader:
+
+1. GET /api/autotrader/config – get logged-in user’s autotrader config.
+
+
+2. PUT /api/autotrader/config – update config (enable/disable, risk %, max trades, allowed sources, etc.).
+
+
+3. GET /api/autotrader/status – shows:
+
+number of active strategies
+
+today’s trades
+
+today’s PnL (paper)
+
+last error (if any)
+
+
+
+4. GET /api/autotrader/performance?from=...&to=... – historical performance per strategy and symbol.
+
+
+
+Mobile App:
+
+Under mobile_app/VerzekApp/src/screens/:
+
+Add:
+
+AutoTraderDashboardScreen.js
+
+AutoTraderSettingsScreen.js
+
+Simple navigation entry e.g. under “Trading” tab.
+
+
+
+Features for now:
+
+Toggle: Auto-Trading ON/OFF (actually just updates config field).
+
+Select risk per trade (slider).
+
+Select max daily loss (%).
+
+Choose which signal sources to auto-follow:
+
+House Scalper
+
+House Trend
+
+House QFL
+
+External Telegram Source
+
+(Future) AI-ML
+
+
+Show:
+
+Today’s trades (count, win/loss)
+
+Today’s PnL (paper)
+
+Status badges: “PAPER MODE ONLY – NO REAL TRADING YET”.
+
+
+
+
+---
+
+6.6 Safety System Integration
+
+In backend/config/safety.py ensure these flags exist and are respected:
+
+LIVE_TRADING_ENABLED = False   # global master switch
+ALLOW_PAPER_TRADING = True
+MAX_GLOBAL_OPEN_POSITIONS = 200  # or reasonable limit
+EMERGENCY_STOP_ENABLED = False   # admin can flip to true
+
+All new code must check LIVE_TRADING_ENABLED before any real order attempts.
+
+Add an admin-only endpoint (already present or add new) to view these safety flags (read-only for now).
+
+
+
+---
+
+6.7 Daily Performance Report (All Bots + Autotrader)
+
+Extend the performance logic from Phase 5:
+
+Once per day (cron/scheduled job):
+
+For each bot (Scalper/Trend/QFL/AI_ML/External_TG) and per user:
+
+Total trades
+
+Wins / losses
+
+Win rate
+
+Average R:R
+
+Net paper PnL
+
+Max drawdown
+
+
+
+Save snapshots to daily_performance table.
+
+Expose under admin endpoint: GET /api/admin/daily-performance?date=YYYY-MM-DD.
+
+Optionally create user endpoint: GET /api/autotrader/my-performance?date=....
+
+
+The App can later use this to show charts.
+
+
+---
+
+6.8 Testing / Validation Checklist
+
+Please do end-to-end tests:
+
+1. Generate fake signals (using a small script or existing signal bots) and ensure:
+
+They’re stored in DB.
+
+Autotrader receives them.
+
+Risk manager creates position sizes.
+
+Router creates paper positions.
+
+Position manager updates them as price moves (simulate price feed where needed).
+
+
+
+2. Use my test account (or create one yourself) to:
+
+Enable autotrading in the app.
+
+Set risk settings.
+
+Confirm trades appear in “Positions” and “Autotrader Dashboard”.
+
+
+
+3. Confirm:
+
+No real API call with real orders is executed (log which function would be called in “real mode” for future).
+
+Safety flags prevent any accidental live trading.
+
+
+
+4. Update docs:
+
+PHASE_5_SIGNAL_ENGINE.md
+
+PHASE_6_AUTOTRADER.md
+
+
+
+
+Each should describe:
+
+Files, architecture, main flows
+
+How to run locally
+
+How to monitor logs on Vultr
+
+
+
+---
+
+FINAL REMINDERS
+
+DO NOT enable live trading. The whole system must remain in DRY-RUN / paper mode until I explicitly request otherwise.
+
+Keep existing working features intact.
+
+Reuse existing positions/trading logic instead of re-inventing where possible.
+
+Maintain consistent logging format and error handling.

@@ -1,0 +1,53 @@
+{
+  "version": "1.0.0",
+  "engine_name": "VerzekSignalEngine",
+  "bots": {
+    "scalping": {
+      "enabled": true,
+      "timeframes": ["1m", "5m", "15m"],
+      "primary_timeframe": "5m",
+      "min_volume_24h": 50000000,
+      "tp_range": [0.5, 1.5],
+      "sl_range": [0.3, 0.8],
+      "confidence_threshold": 70
+    },
+    "trend": {
+      "enabled": true,
+      "timeframes": ["1h", "4h"],
+      "primary_timeframe": "1h",
+      "min_volume_24h": 100000000,
+      "tp_range": [2.0, 5.0],
+      "sl_range": [1.0, 2.0],
+      "confidence_threshold": 75
+    },
+    "qfl": {
+      "enabled": true,
+      "timeframes": ["15m", "1h"],
+      "primary_timeframe": "15m",
+      "drop_threshold_min": 6.0,
+      "drop_threshold_max": 15.0,
+      "base_lookback_candles": 100,
+      "tp_to_base": true,
+      "confidence_threshold": 80
+    },
+    "ai_ml": {
+      "enabled": true,
+      "model_path": "./models/signal_predictor_v1.joblib",
+      "feature_count": 15,
+      "prediction_threshold": 0.65,
+      "confidence_threshold": 72
+    }
+  },
+  "exchange": {
+    "default": "binance",
+    "testnet": false,
+    "rate_limit": true,
+    "retry_attempts": 3
+  },
+  "signal_output": {
+    "backend_api": true,
+    "telegram_broadcast": true,
+    "local_file": true,
+    "max_signals_per_hour": 12
+  }
+}
