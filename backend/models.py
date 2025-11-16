@@ -174,6 +174,52 @@ class VerificationToken(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class HouseSignal(Base):
+    """Verzek House Trading Signals from VerzekSignalEngine"""
+    __tablename__ = "house_signals"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    source = Column(String(50), nullable=False, index=True)  # SCALPER, TREND, QFL, AI_ML
+    symbol = Column(String(50), nullable=False, index=True)
+    side = Column(String(10), nullable=False)  # LONG/SHORT
+    entry = Column(Float, nullable=False)
+    stop_loss = Column(Float, nullable=False)
+    take_profits = Column(JSON, nullable=False)  # [tp1, tp2, ...]
+    timeframe = Column(String(10), nullable=False)  # M5, M15, H1, H4
+    confidence = Column(Integer, nullable=False)  # 0-100
+    version = Column(String(20), default="SE.v1.0")
+    metadata = Column(JSON, default=dict)  # Additional bot-specific data
+    
+    status = Column(String(20), default="ACTIVE", index=True)  # ACTIVE, CLOSED, CANCELLED, EXPIRED
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    closed_at = Column(DateTime)
+    
+    positions = relationship("HouseSignalPosition", back_populates="signal", cascade="all, delete-orphan")
+
+
+class HouseSignalPosition(Base):
+    """Position tracking for house signals (paper trading)"""
+    __tablename__ = "house_signal_positions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    signal_id = Column(Integer, ForeignKey("house_signals.id"), nullable=False, index=True)
+    
+    status = Column(String(20), default="OPEN", index=True)  # OPEN, TP_HIT, SL_HIT, CANCELLED, EXPIRED
+    entry_price = Column(Float)
+    exit_price = Column(Float)
+    tps_hit = Column(JSON, default=list)  # [1, 2] - which TPs were hit
+    
+    mfe = Column(Float, default=0)  # Maximum Favorable Excursion (%)
+    mae = Column(Float, default=0)  # Maximum Adverse Excursion (%)
+    pnl_pct = Column(Float, default=0)  # Final P&L percentage
+    
+    opened_at = Column(DateTime)
+    closed_at = Column(DateTime)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    signal = relationship("HouseSignal", back_populates="positions")
+
+
 class Payment(Base):
     """Payment tracking for subscription upgrades"""
     __tablename__ = "payments"

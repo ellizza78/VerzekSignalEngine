@@ -38,6 +38,7 @@ def get_db():
 
 def init_db():
     """Initialize database tables"""
-    from models import User, UserSettings, ExchangeAccount, Signal, Position, PositionTarget, TradeLog
+    from models import (User, UserSettings, ExchangeAccount, Signal, Position, PositionTarget, TradeLog,
+                        HouseSignal, HouseSignalPosition, VerificationToken, Payment, DeviceToken)
     Base.metadata.create_all(bind=engine)
     print("✅ Database initialized successfully")

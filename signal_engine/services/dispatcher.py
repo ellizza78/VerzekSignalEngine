@@ -19,7 +19,7 @@ class SignalDispatcher:
     
     def __init__(self):
         self.backend_url = os.getenv('BACKEND_API_URL', 'https://api.verzekinnovative.com')
-        self.api_key = os.getenv('BACKEND_API_KEY', '')
+        self.internal_token = os.getenv('HOUSE_ENGINE_TOKEN', '')
         self.signals_sent = 0
         self.signals_failed = 0
         
@@ -62,35 +62,68 @@ class SignalDispatcher:
             return False
     
     async def _send_to_backend(self, payload: Dict) -> bool:
-        """Send signal to VerzekAutoTrader backend"""
-        try:
-            url = f"{self.backend_url}/api/signals"
-            
-            headers = {
-                'Content-Type': 'application/json',
-                'X-API-Key': self.api_key
-            }
-            
-            response = requests.post(
-                url,
-                json=payload,
-                headers=headers,
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                logger.debug(f"Backend responded: {response.json()}")
-                return True
-            else:
-                logger.warning(f"Backend returned {response.status_code}: {response.text}")
-                return False
+        """
+        Send signal to VerzekAutoTrader backend house signals endpoint
+        Retries up to 3 times on failure
+        """
+        max_retries = 3
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                url = f"{self.backend_url}/api/house-signals/ingest"
                 
-        except requests.exceptions.Timeout:
-            logger.error("Backend API timeout")
-            return False
-        except Exception as e:
-            logger.error(f"Backend API error: {e}")
-            return False
+                headers = {
+                    'Content-Type': 'application/json',
+                    'X-INTERNAL-TOKEN': self.internal_token
+                }
+                
+                # Map signal_data to backend expected format
+                backend_payload = {
+                    'source': payload.get('strategy', 'UNKNOWN').upper().split()[0],
+                    'symbol': payload['symbol'].replace('/', ''),
+                    'side': payload['direction'],
+                    'entry': float(payload['entry_price']),
+                    'stop_loss': float(payload['sl_price']),
+                    'take_profits': [float(payload['tp_price'])],
+                    'timeframe': payload.get('timeframe', 'M5').upper(),
+                    'confidence': int(payload.get('confidence', 75)),
+                    'version': payload.get('version', 'SE.v1.0'),
+                    'metadata': {
+                        'strategy': payload.get('strategy', ''),
+                        'timestamp': payload.get('dispatcher_timestamp', '')
+                    }
+                }
+                
+                response = requests.post(
+                    url,
+                    json=backend_payload,
+                    headers=headers,
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    logger.info(f"Backend accepted signal (ID: {result.get('signal_id', 'N/A')})")
+                    return True
+                else:
+                    logger.warning(f"Backend returned {response.status_code}: {response.text}")
+                    if attempt < max_retries:
+                        logger.info(f"Retrying... (attempt {attempt + 1}/{max_retries})")
+                        continue
+                    return False
+                    
+            except requests.exceptions.Timeout:
+                logger.error(f"Backend API timeout (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    continue
+                return False
+            except Exception as e:
+                logger.error(f"Backend API error (attempt {attempt}/{max_retries}): {e}")
+                if attempt < max_retries:
+                    continue
+                return False
+        
+        return False
     
     def _log_signal_to_file(self, signal_data: Dict):
         """Save signal to local file for backup"""

@@ -27,6 +27,7 @@ from db import init_db, engine, Base
 from auth_routes import bp as auth_bp
 from users_routes import bp as users_bp
 from signals_routes import bp as signals_bp
+from house_signals_routes import bp as house_signals_bp
 from positions_routes import bp as positions_bp
 from payments_routes import bp as payments_bp
 from admin_routes import bp as admin_bp
@@ -57,6 +58,7 @@ except Exception as e:
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(users_bp, url_prefix="/api/users")
 app.register_blueprint(signals_bp, url_prefix="/api/signals")
+app.register_blueprint(house_signals_bp, url_prefix="/api/house-signals")
 app.register_blueprint(positions_bp, url_prefix="/api/positions")
 app.register_blueprint(payments_bp, url_prefix="/api/payments")
 app.register_blueprint(admin_bp, url_prefix="/api/admin")
