@@ -20,7 +20,7 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Core Trading Modules**: DCA Engine, Safety Manager, DCA Orchestrator, and Position Tracker with target-based take-profit.
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
 - **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading with secure API key handling.
-- **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy and Nginx for static IP (45.76.90.149) routing of all exchange API calls, featuring HMAC SHA256 authentication and automatic failover.
+- **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy and Nginx for static IP (80.240.29.142) routing of all exchange API calls, featuring HMAC SHA256 authentication and automatic failover.
 - **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system with Scalping Bot (15s interval), Trend Bot (5m interval), QFL Bot (20s interval), and AI/ML Bot (30s interval). Features real-time CCXT market data, 25+ technical indicators, async parallel execution with uvloop, Telegram broadcasting, and backend API integration. Replaces old Telethon-based signal monitoring.
 - **Signal Broadcasting System**: Uses python-telegram-bot library for distributing signals to VIP/TRIAL Telegram groups and protected API endpoint for the mobile app.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, positions, and receiving signals from VerzekSignalEngine. Includes rate limiting, 2FA, and audit logging.

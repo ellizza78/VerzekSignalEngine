@@ -15,22 +15,22 @@
 
 Connect to your Vultr server:
 ```bash
-ssh root@45.76.90.149
+ssh root@80.240.29.142
 ```
 
 Upload these directories to Vultr:
 ```bash
 # From your local machine (NOT Replit):
-scp -r backend/ root@45.76.90.149:/root/api_server/
-scp -r signal_engine/ root@45.76.90.149:/root/
-scp deploy_to_vultr.sh root@45.76.90.149:/root/
+scp -r backend/ root@80.240.29.142:/root/api_server/
+scp -r signal_engine/ root@80.240.29.142:/root/
+scp deploy_to_vultr.sh root@80.240.29.142:/root/
 ```
 
 ### Step 2: Set Environment Variables
 
 **CRITICAL**: Set secrets as environment variables (never hardcode them):
 ```bash
-ssh root@45.76.90.149
+ssh root@80.240.29.142
 
 # Set secrets from your Replit Secrets
 export HOUSE_ENGINE_TOKEN="<copy from Replit Secrets>"

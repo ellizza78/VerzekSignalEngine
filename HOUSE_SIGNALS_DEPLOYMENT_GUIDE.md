@@ -119,7 +119,7 @@ curl -X POST https://api.verzekinnovative.com/api/house-signals/ingest \
 ### Connect to Vultr VPS
 
 ```bash
-ssh root@45.76.90.149
+ssh root@80.240.29.142
 ```
 
 ### Clone or Upload Signal Engine
@@ -132,7 +132,7 @@ git clone https://github.com/your-repo/VerzekAutoTrader.git
 cd VerzekAutoTrader/signal_engine
 
 # Option B: Upload via SCP (from local machine)
-# scp -r signal_engine/ root@45.76.90.149:/root/
+# scp -r signal_engine/ root@80.240.29.142:/root/
 ```
 
 ### Install Dependencies
