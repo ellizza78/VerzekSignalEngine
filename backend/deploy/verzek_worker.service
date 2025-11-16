@@ -5,11 +5,13 @@ After=network.target verzek_api.service
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/api_server/backend
-EnvironmentFile=/root/api_server_env.sh
-ExecStart=/root/api_server/backend/venv/bin/python worker.py
+WorkingDirectory=/root/VerzekBackend/backend
+EnvironmentFile=/root/VerzekBackend/backend/.env
+ExecStart=/usr/bin/python3 worker.py
 Restart=always
 RestartSec=10
+StandardOutput=append:/root/VerzekBackend/backend/logs/worker.log
+StandardError=append:/root/VerzekBackend/backend/logs/worker_error.log
 
 [Install]
 WantedBy=multi-user.target

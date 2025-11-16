@@ -6,10 +6,12 @@ After=network.target postgresql.service
 Type=simple
 User=root
 WorkingDirectory=/root/VerzekBackend/backend
-EnvironmentFile=/root/api_server_env.sh
+EnvironmentFile=/root/VerzekBackend/backend/.env
 ExecStart=/usr/local/bin/gunicorn -c gunicorn.conf.py api_server:app
 Restart=always
 RestartSec=10
+StandardOutput=append:/root/VerzekBackend/backend/logs/api_server.log
+StandardError=append:/root/VerzekBackend/backend/logs/api_server_error.log
 
 [Install]
 WantedBy=multi-user.target
