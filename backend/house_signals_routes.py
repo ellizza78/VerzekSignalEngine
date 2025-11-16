@@ -89,7 +89,7 @@ def ingest_signal():
             timeframe=data['timeframe'].upper(),
             confidence=int(data['confidence']),
             version=data.get('version', 'SE.v1.0'),
-            metadata=data.get('metadata', {}),
+            meta_data=data.get('metadata', {}),
             status='ACTIVE'
         )
         

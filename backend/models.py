@@ -188,7 +188,7 @@ class HouseSignal(Base):
     timeframe = Column(String(10), nullable=False)  # M5, M15, H1, H4
     confidence = Column(Integer, nullable=False)  # 0-100
     version = Column(String(20), default="SE.v1.0")
-    metadata = Column(JSON, default=dict)  # Additional bot-specific data
+    meta_data = Column(JSON, default=dict)  # Additional bot-specific data (renamed from metadata)
     
     status = Column(String(20), default="ACTIVE", index=True)  # ACTIVE, CLOSED, CANCELLED, EXPIRED
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
