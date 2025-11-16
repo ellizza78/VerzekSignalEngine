@@ -6,13 +6,14 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/VerzekSignalEngine
+WorkingDirectory=/root/signal_engine
 Environment="PATH=/usr/local/bin:/usr/bin:/bin"
-ExecStart=/usr/bin/python3 main.py
+Environment="PYTHONPATH=/root/signal_engine"
+ExecStart=/usr/bin/python3 -m main
 Restart=always
 RestartSec=10
-StandardOutput=append:/root/VerzekSignalEngine/logs/systemd.log
-StandardError=append:/root/VerzekSignalEngine/logs/systemd_error.log
+StandardOutput=append:/root/signal_engine/logs/systemd.log
+StandardError=append:/root/signal_engine/logs/systemd_error.log
 
 # Resource limits
 LimitNOFILE=65536
