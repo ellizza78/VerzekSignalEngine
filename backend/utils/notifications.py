@@ -236,7 +236,7 @@ def get_user_push_tokens(db_session, user_id: int) -> List[str]:
         List of active push tokens for the user
     """
     try:
-        from backend.models import DeviceToken
+        from models import DeviceToken
         
         device_tokens = db_session.query(DeviceToken).filter(
             DeviceToken.user_id == user_id,
@@ -261,7 +261,7 @@ def get_subscription_user_tokens(db_session, subscription_types: List[str]) -> D
         Dictionary mapping user_id to list of push tokens
     """
     try:
-        from backend.models import User, DeviceToken
+        from models import User, DeviceToken
         
         users = db_session.query(User).filter(
             User.subscription_type.in_(subscription_types),
