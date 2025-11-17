@@ -19,10 +19,11 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 ### Technical Implementations
 - **Core Trading Modules**: DCA Engine, Safety Manager, DCA Orchestrator, and Position Tracker with target-based take-profit.
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
-- **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading with secure API key handling.
-- **Static IP Proxy Infrastructure**: Vultr-based WireGuard VPN mesh with HAProxy and Nginx for static IP (80.240.29.142) routing of all exchange API calls, featuring HMAC SHA256 authentication and automatic failover.
-- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system with Scalping Bot (15s interval), Trend Bot (5m interval), QFL Bot (20s interval), and AI/ML Bot (30s interval). Features real-time CCXT market data, 25+ technical indicators, async parallel execution with uvloop, Telegram broadcasting, and backend API integration. Replaces old Telethon-based signal monitoring.
-- **Signal Broadcasting System**: Uses python-telegram-bot library for distributing signals to VIP/TRIAL Telegram groups and protected API endpoint for the mobile app.
+- **Per-User Exchange API Keys**: Premium users connect their own Exchange API keys inside the mobile app. Keys are encrypted at rest using Fernet (AES-128) and stored in PostgreSQL. DCA Engine retrieves and decrypts keys per-user for trading.
+- **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading. All exchange API calls route through ProxyHelper for static IP support.
+- **Static IP Proxy Infrastructure (Code Ready, Not Deployed)**: ProxyHelper routes all users' exchange API calls through shared static IP proxy. Two deployment options: (1) Vultr WireGuard VPN mesh with HAProxy/Nginx (80.240.29.142), or (2) Cloudflare Workers proxy. Features HMAC SHA256 authentication and automatic failover to direct connection.
+- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system with Scalping Bot (15s interval), Trend Bot (5m interval), QFL Bot (20s interval), and AI/ML Bot (30s interval). Features real-time CCXT market data, 25+ technical indicators, async parallel execution with uvloop, Telegram broadcasting, and backend API integration.
+- **Signal Broadcasting System - Bot-to-Bot Architecture**: Uses official Telegram Bot API (@VerzekSignalBridgeBot) for distributing signals. External VIP signal providers connect their bots to user's VIP group, broadcast bot listens and forwards to VIP/TRIAL groups and backend API. NO Telethon/Pyrogram user account monitoring (account ban risk eliminated).
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, positions, and receiving signals from VerzekSignalEngine. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, live signal feed, and help resources.
 - **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
@@ -72,6 +73,13 @@ Features: Real-time CCXT data, shared indicators library, async parallel executi
 Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with HOUSE_ENGINE_TOKEN authentication.
 
 ## Recent Changes (November 2025)
+### Architecture Cleanup - Telethon/Pyrogram Removed ✅
+- **Removed ALL Telethon/Pyrogram Files**: User's Telegram account was banned for using Telethon. Completely removed telethon_forwarder.py, signal_listener.py, setup_telethon.py, and all related files.
+- **Bot-to-Bot Architecture Verified**: External VIP signal providers connect their bots directly to user's VIP group. Broadcast bot (@VerzekSignalBridgeBot) uses official Bot API only - NO user account monitoring.
+- **Per-User Exchange API Keys Confirmed**: Mobile app allows premium users to connect their own exchange API keys. Backend encrypts keys using Fernet AES-128 and stores in PostgreSQL. DCA Engine decrypts per-user for trading.
+- **Static IP Proxy Status**: ProxyHelper code ready and integrated into all exchange clients. Infrastructure deployment scripts available (Vultr + Cloudflare Workers). NOT deployed - deploy when users need IP whitelisting for exchanges.
+- **Date Cleaned**: November 17, 2025
+
 ### House Signals System - PRODUCTION DEPLOYED ✅
 - **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', JSON)` using SQLAlchemy column mapping to avoid reserved word collision
 - **Resolved import path issues**: Fixed `from backend.models` to `from models` in utils/notifications.py for proper module resolution
