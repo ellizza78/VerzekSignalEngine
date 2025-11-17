@@ -14,6 +14,7 @@ from db import SessionLocal
 from models import HouseSignal, HouseSignalPosition, User
 from utils.logger import api_logger
 from utils.notifications import send_signal_notification, get_subscription_user_tokens
+from broadcast import broadcast_signal
 
 bp = Blueprint('house_signals', __name__)
 
@@ -117,6 +118,24 @@ def ingest_signal():
         db.commit()
         
         api_logger.info(f"House position opened for signal {signal_id}")
+        
+        # Broadcast to Telegram VIP/TRIAL groups
+        try:
+            telegram_signal_data = {
+                "symbol": signal.symbol,
+                "side": signal.side,
+                "entry": signal.entry,
+                "tp": signal.take_profits,
+                "sl": signal.stop_loss,
+                "leverage": data.get('leverage', 1),
+                "trade_type": "FUTURES",
+                "duration": signal.timeframe,
+                "confidence": signal.confidence
+            }
+            broadcast_signal(telegram_signal_data, target="both")
+            api_logger.info(f"Telegram broadcast sent for house signal {signal_id}")
+        except Exception as e:
+            api_logger.error(f"Failed to broadcast to Telegram for signal {signal_id}: {e}")
         
         # Broadcast to mobile app subscribers (VIP + PREMIUM only)
         try:
