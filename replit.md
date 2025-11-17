@@ -72,10 +72,12 @@ Features: Real-time CCXT data, shared indicators library, async parallel executi
 Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with HOUSE_ENGINE_TOKEN authentication.
 
 ## Recent Changes (November 2025)
-### House Signals System Deployment
-- **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', ...)` using SQLAlchemy column mapping to avoid reserved word collision without requiring database migration
-- **Added backwards compatibility**: @property decorator allows both `signal.metadata` and `signal.meta_data` access patterns
-- **Updated API serializers**: /api/house-signals/live and /api/house-signals/admin/signals now include metadata field in responses
-- **Deployment Infrastructure**: Created deploy_all.sh for continuous deployment from Replit to Vultr production server
-- **Verified End-to-End Flow**: VerzekSignalEngine (4 bots) → Backend API → PostgreSQL → Mobile App push notifications
-- **Production Status**: Architecture approved by code review, ready for deployment
+### House Signals System - PRODUCTION DEPLOYED ✅
+- **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', JSON)` using SQLAlchemy column mapping to avoid reserved word collision
+- **Resolved import path issues**: Fixed `from backend.models` to `from models` in utils/notifications.py for proper module resolution
+- **Fixed systemd service**: Configured verzek_api.service to run Gunicorn with 4 workers (was running Python directly)
+- **Deployment Infrastructure**: Auto-deployment via systemd timer checks GitHub every 2 minutes and deploys automatically
+- **Production Server**: Vultr 80.240.29.142, port 8050, PostgreSQL database, 4 Gunicorn workers
+- **Verified End-to-End Flow**: VerzekSignalEngine (4 bots) → /api/house-signals/ingest → PostgreSQL → Mobile App push notifications
+- **Production Status**: LIVE - Successfully ingesting signals (signal_id=2 confirmed), ready for VerzekSignalEngine v1.0 integration
+- **Date Deployed**: November 17, 2025
