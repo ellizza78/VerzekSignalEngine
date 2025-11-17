@@ -195,16 +195,6 @@ class HouseSignal(Base):
     closed_at = Column(DateTime)
     
     positions = relationship("HouseSignalPosition", back_populates="signal", cascade="all, delete-orphan")
-    
-    @property
-    def metadata(self):
-        """Backwards-compatible property for accessing meta_data"""
-        return self.meta_data
-    
-    @metadata.setter
-    def metadata(self, value):
-        """Backwards-compatible setter for meta_data"""
-        self.meta_data = value
 
 
 class HouseSignalPosition(Base):
