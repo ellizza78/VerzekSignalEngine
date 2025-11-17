@@ -1,0 +1,11 @@
+[Unit]
+Description=VerzekSignalEngine Health Check
+After=verzek-signalengine.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/signal_engine
+ExecStart=/bin/bash /root/signal_engine/health_check.sh
+StandardOutput=append:/root/signal_engine/logs/health_check.log
+StandardError=append:/root/signal_engine/logs/health_check.log
