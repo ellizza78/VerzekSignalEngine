@@ -75,10 +75,11 @@ Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with 
 ## Recent Changes (November 2025)
 ### Architecture Cleanup - Telethon/Pyrogram Removed ✅
 - **Removed ALL Telethon/Pyrogram Files**: User's Telegram account was banned for using Telethon. Completely removed telethon_forwarder.py, signal_listener.py, setup_telethon.py, and all related files.
-- **Bot-to-Bot Architecture Verified**: External VIP signal providers connect their bots directly to user's VIP group. Broadcast bot (@VerzekSignalBridgeBot) uses official Bot API only - NO user account monitoring.
+- **Bot-to-Bot Architecture Verified**: External VIP signal providers connect their bots directly to user's VIP group. Broadcast bot (ID: 8401236648) uses official Bot API only - NO user account monitoring.
 - **Per-User Exchange API Keys Confirmed**: Mobile app allows premium users to connect their own exchange API keys. Backend encrypts keys using Fernet AES-128 and stores in PostgreSQL. DCA Engine decrypts per-user for trading.
-- **Static IP Proxy Status**: ProxyHelper code ready and integrated into all exchange clients. Infrastructure deployment scripts available (Vultr + Cloudflare Workers). NOT deployed - deploy when users need IP whitelisting for exchanges.
-- **Date Cleaned**: November 17, 2025
+- **Static IP Proxy READY FOR DEPLOYMENT**: ProxyHelper integrated in all 4 exchange clients (Binance, Bybit, Phemex, Kraken). Deployment options ready: (1) Cloudflare Workers (5min, FREE), (2) Vultr VPN (30min, dedicated IP 80.240.29.142). Run `./deploy_cloudflare_proxy.sh` or see `documentation/DEPLOY_STATIC_IP_PROXY.md`. System works without proxy (automatic fallback to direct connection).
+- **APK Build Ready**: Mobile app configured for production. Command: `cd mobile_app/VerzekApp && eas build --platform android --profile production`
+- **Date Updated**: November 17, 2025
 
 ### House Signals System - PRODUCTION DEPLOYED ✅
 - **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', JSON)` using SQLAlchemy column mapping to avoid reserved word collision
