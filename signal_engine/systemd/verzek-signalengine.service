@@ -6,10 +6,11 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/signal_engine
+WorkingDirectory=/root/workspace
 Environment="PATH=/usr/local/bin:/usr/bin:/bin"
-Environment="PYTHONPATH=/root/signal_engine"
-ExecStart=/usr/bin/python3 -m main
+Environment="PYTHONPATH=/root/workspace"
+EnvironmentFile=/root/signal_engine/.env
+ExecStart=/usr/bin/python3 -m signal_engine.main
 Restart=always
 RestartSec=10
 StandardOutput=append:/root/signal_engine/logs/systemd.log
