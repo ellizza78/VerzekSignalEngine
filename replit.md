@@ -107,3 +107,12 @@ Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with 
 - **Deployment Method**: Auto-deploys when changes pushed to GitHub (systemd timer polls every 2 minutes)
 - **Status**: All deployment files created, ready for automatic deployment to Vultr
 - **Date Prepared**: November 17, 2025
+
+### Email Verification & Security Updates - DEPLOYED ✅
+- **Token Expiration Fixed**: Changed verification and password reset tokens from 24 hours to 15 minutes for improved security
+- **Email Link Format**: Updated email templates to show correct expiration time (15 minutes)
+- **GET Endpoint Support**: Added GET handlers to `/api/auth/verify-email` and `/api/auth/reset-password` for email link clicks
+- **Deep Link Redirects**: Email links redirect to app via `verzek-app://` custom URL scheme after token verification
+- **Login Protection**: Email verification required before login (returns 403 if not verified)
+- **Status**: LIVE - All authentication flows secured with shorter token expiration
+- **Date Deployed**: November 17, 2025
