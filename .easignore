@@ -1,0 +1,47 @@
+# VerzekAutoTrader Monorepo - EAS Build Exclusions
+# Workspace root .easignore for EAS_NO_VCS=1
+
+# Exclude all workspace directories except mobile_app
+/backend
+/signal_engine
+/scripts
+/config
+/database
+/utils
+/venv
+/.local
+/.pythonlibs
+/attached_assets
+/modules
+/exchanges
+/examples
+/templates
+/cloudflare_proxy
+/.config
+/services
+/logs
+/vultr_infrastructure
+/.upm
+/.github
+/vultr_setup
+/.cache
+
+# Exclude workspace root files
+/*.md
+/*.sh
+/*.py
+/*.json
+/*.txt
+/DEPLOY_NOW.md
+
+# Exclude build artifacts and caches
+node_modules
+.expo
+.expo-shared
+android
+ios
+dist
+*.log
+
+# But keep the entire mobile_app directory (don't exclude anything inside it)
+# EAS will process mobile_app/VerzekApp as the project root
