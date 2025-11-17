@@ -33,9 +33,23 @@ cd $WORKSPACE || {
 
 # Pull latest changes
 log "Pulling latest changes from GitHub..."
-git pull origin main >> $LOG_FILE 2>&1 || {
-    log "WARNING: Git pull failed, continuing with existing code"
-}
+
+# Reset any local changes first
+git reset --hard HEAD >> $LOG_FILE 2>&1 || true
+git clean -fd >> $LOG_FILE 2>&1 || true
+
+# Pull latest changes
+if git pull origin main >> $LOG_FILE 2>&1; then
+    log "✅ Git pull successful"
+else
+    log "⚠️  Git pull failed, attempting force fetch..."
+    git fetch --all >> $LOG_FILE 2>&1
+    git reset --hard origin/main >> $LOG_FILE 2>&1 || {
+        log "ERROR: Failed to sync with GitHub"
+        exit 1
+    }
+    log "✅ Force sync successful"
+fi
 
 # Check if backend needs deployment
 if [ -f "$WORKSPACE/backend/api_server.py" ]; then
