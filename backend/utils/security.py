@@ -18,10 +18,10 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 # API key encryption (for exchange credentials)
-ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_MASTER_KEY") or os.getenv("ENCRYPTION_KEY")
 if not ENCRYPTION_KEY:
     raise ValueError(
-        "ENCRYPTION_KEY environment variable is required. "
+        "ENCRYPTION_MASTER_KEY environment variable is required. "
         "Generate one with: python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'"
     )
 

@@ -47,7 +47,8 @@ def setup_logger(name: str, log_file: str = None, level=logging.INFO):
 
 
 # Determine log directory based on environment
-LOG_DIR = os.getenv("LOG_DIR", "/root/api_server/logs")
+# Use /tmp/logs for Replit, /root/api_server/logs for production
+LOG_DIR = os.getenv("LOG_DIR", "/tmp/logs" if os.path.exists("/home/runner") else "/root/api_server/logs")
 
 # Default loggers
 api_logger = setup_logger('verzek_api', f'{LOG_DIR}/api.log')
