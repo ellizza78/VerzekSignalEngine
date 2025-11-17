@@ -67,7 +67,7 @@ def send_verification_email(email: str, verification_token: str, user_id: int):
                 <p style="color: #666;">Or copy this link:</p>
                 <p style="background: #f5f5f5; padding: 10px; border-radius: 5px; word-break: break-all;">{verification_url}</p>
                 <p style="color: #999; font-size: 12px; margin-top: 30px;">
-                    This link expires in 24 hours.
+                    This link expires in 15 minutes.
                 </p>
                 <p style="color: #999; font-size: 12px;">
                     - VerzekAutoTrader Team

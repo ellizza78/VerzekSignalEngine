@@ -29,11 +29,11 @@ def generate_reset_token(user_id: int, db: Session) -> str:
 
 
 def generate_verification_token(user_id: int, db: Session) -> str:
-    """Generate email verification token (24-hour expiration)"""
+    """Generate email verification token (15-minute expiration)"""
     from models import VerificationToken
     
     token = secrets.token_urlsafe(32)
-    expiry = datetime.utcnow() + timedelta(hours=24)
+    expiry = datetime.utcnow() + timedelta(minutes=15)
     
     db_token = VerificationToken(
         token=token,

@@ -241,15 +241,21 @@ def get_current_user():
         return jsonify({"ok": False, "error": "Failed to get user"}), 500
 
 
-@bp.route('/verify-email', methods=['POST'])
+@bp.route('/verify-email', methods=['GET', 'POST'])
 def verify_email():
-    """Verify email address with token"""
+    """Verify email address with token (GET for email links, POST for API calls)"""
     try:
-        data = request.get_json(silent=True)
-        if not isinstance(data, dict):
-            return jsonify({"ok": False, "error": "Invalid request payload"}), 400
-        
-        token = (data.get('token') or '').strip()
+        # GET request from email link
+        if request.method == 'GET':
+            token = request.args.get('token', '').strip()
+            user_id_param = request.args.get('user_id', '').strip()
+        # POST request from API
+        else:
+            data = request.get_json(silent=True)
+            if not isinstance(data, dict):
+                return jsonify({"ok": False, "error": "Invalid request payload"}), 400
+            token = (data.get('token') or '').strip()
+            user_id_param = None
         
         if not token:
             return jsonify({"ok": False, "error": "Verification token required"}), 400
@@ -277,6 +283,12 @@ def verify_email():
         
         api_logger.info(f"Email verified for user {user_id}")
         
+        # If GET request from email, redirect to app
+        if request.method == 'GET':
+            from flask import redirect
+            return redirect(f"verzek-app://verify-email-success?user_id={user_id}&email={user.email}"), 302
+        
+        # If POST request from API, return JSON
         return jsonify({
             "ok": True,
             "message": "Email verified successfully! You can now log in."
@@ -390,16 +402,29 @@ def forgot_password():
         return jsonify({"ok": False, "error": "Failed to process request"}), 500
 
 
-@bp.route('/reset-password', methods=['POST'])
+@bp.route('/reset-password', methods=['GET', 'POST'])
 def reset_password():
-    """Reset password with token"""
+    """Reset password with token (GET redirects to app, POST processes reset)"""
     try:
+        # GET request from email link - redirect to app
+        if request.method == 'GET':
+            token = request.args.get('token', '').strip()
+            user_id_param = request.args.get('user_id', '').strip()
+            
+            if not token:
+                return jsonify({"ok": False, "error": "Token required"}), 400
+            
+            # Redirect to app with token
+            from flask import redirect
+            return redirect(f"verzek-app://reset-password?token={token}&user_id={user_id_param}"), 302
+        
+        # POST request from API - process password reset
         data = request.get_json(silent=True)
         if not isinstance(data, dict):
             return jsonify({"ok": False, "error": "Invalid request payload"}), 400
         
         token = (data.get('token') or '').strip()
-        new_password = data.get('password') or ''
+        new_password = data.get('new_password') or data.get('password') or ''
         
         if not token or not new_password:
             return jsonify({"ok": False, "error": "Token and new password required"}), 400
