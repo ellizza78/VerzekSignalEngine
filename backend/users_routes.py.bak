@@ -64,7 +64,7 @@ def get_user(user_id):
 def update_general_settings(user_id):
     """Update general user settings"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -99,7 +99,7 @@ def update_general_settings(user_id):
 def update_risk_settings(user_id):
     """Update risk management settings"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -138,7 +138,7 @@ def update_risk_settings(user_id):
 def update_strategy_settings(user_id):
     """Update strategy settings"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -168,7 +168,7 @@ def update_strategy_settings(user_id):
 def update_dca_settings(user_id):
     """Update DCA settings"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -202,7 +202,7 @@ def update_dca_settings(user_id):
 def update_preferences(user_id):
     """Update user preferences"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -234,7 +234,7 @@ def update_preferences(user_id):
 def manage_exchanges(user_id):
     """Manage exchange accounts"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -323,7 +323,7 @@ def manage_exchanges(user_id):
 def manage_subscription(user_id):
     """Get or update subscription"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -367,7 +367,7 @@ def manage_subscription(user_id):
 def manage_device_token(user_id):
     """Register or remove push notification device token"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         
@@ -463,7 +463,7 @@ def manage_device_token(user_id):
 def notification_settings(user_id):
     """Get or update notification settings"""
     try:
-        current_user = int(get_jwt_identity())  # Convert string to int
+        current_user = get_jwt_identity()
         if current_user != user_id:
             return jsonify({"ok": False, "error": "Unauthorized"}), 403
         

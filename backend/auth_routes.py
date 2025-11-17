@@ -97,9 +97,9 @@ def register():
             except Exception as e:
                 api_logger.warning(f"Telegram referral notification failed: {e}")
         
-        # Generate tokens
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        # Generate tokens (identity must be string for Flask-JWT-Extended)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
         
         api_logger.info(f"New user registered: {email} with referral code {user.referral_code}")
         
@@ -157,9 +157,9 @@ def login():
                 "needs_verification": True
             }), 403
         
-        # Generate tokens
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        # Generate tokens (identity must be string for Flask-JWT-Extended)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
         
         api_logger.info(f"User logged in: {email}")
         
@@ -192,7 +192,8 @@ def refresh():
     """Refresh access token"""
     try:
         user_id = get_jwt_identity()
-        access_token = create_access_token(identity=user_id)
+        # user_id is already a string from JWT, but ensure it stays string
+        access_token = create_access_token(identity=str(user_id))
         
         return jsonify({
             "ok": True,
@@ -209,9 +210,9 @@ def refresh():
 def get_current_user():
     """Get current user info"""
     try:
-        user_id = get_jwt_identity()
+        user_id = get_jwt_identity()  # Returns string
         db: Session = SessionLocal()
-        user = db.query(User).filter(User.id == user_id).first()
+        user = db.query(User).filter(User.id == int(user_id)).first()
         
         if not user:
             db.close()
