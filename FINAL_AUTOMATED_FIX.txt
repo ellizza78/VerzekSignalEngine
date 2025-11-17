@@ -1,0 +1,66 @@
+=============================================================================
+🚀 FINAL AUTOMATED FIX - Copy and run this on Vultr server
+=============================================================================
+
+cd /root/VerzekBackend/backend && cat > /tmp/final_fix.sh << 'FINALFIX'
+#!/bin/bash
+echo "🔧 VerzekAutoTrader Final Automated Fix"
+echo ""
+
+# Create correct systemd service
+cat > /etc/systemd/system/verzek_api.service << 'SVCEOF'
+[Unit]
+Description=Verzek AutoTrader API Server
+After=network.target postgresql.service
+
+[Service]
+Type=notify
+User=root
+WorkingDirectory=/root/VerzekBackend/backend
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+
+ExecStart=/usr/local/bin/gunicorn \
+    --bind 0.0.0.0:8050 \
+    --workers 4 \
+    --timeout 120 \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level info \
+    api_server:app
+
+Restart=always
+RestartSec=5
+
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+SVCEOF
+
+echo "✅ Service file created"
+systemctl daemon-reload
+systemctl stop verzek_api
+pkill -9 -f gunicorn 2>/dev/null || true
+sleep 2
+systemctl start verzek_api
+sleep 8
+
+echo ""
+echo "📊 Service status:"
+systemctl status verzek_api --no-pager | head -20
+
+echo ""
+echo "🧪 Final test:"
+curl -s -X POST http://localhost:8050/api/house-signals/ingest -H "Content-Type: application/json" -H "X-INTERNAL-TOKEN: EXEE_TueWz6vSSUlWus3jStZKFM8JCP1mPuUjQ6SX5o" -d '{"source":"PRODUCTION","symbol":"BTCUSDT","side":"LONG","entry":50000,"stop_loss":49500,"take_profits":[50500,51000],"timeframe":"M5","confidence":98,"metadata":{"production_ready":true}}' | python3 -m json.tool
+
+echo ""
+echo "🎉 DEPLOYMENT COMPLETE!"
+FINALFIX
+
+chmod +x /tmp/final_fix.sh && bash /tmp/final_fix.sh
+
+=============================================================================
+✅ Expected output: {"ok": true, "signal_id": X, "message": "Signal ingested and position opened"}
+=============================================================================
