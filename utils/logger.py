@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import logging
 
 LOG_FILE = "database/logs.txt"
 
@@ -22,4 +23,8 @@ def log_json(data, filename="database/debug.json"):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
+
+# Create loggers for backend services
+api_logger = logging.getLogger('api')
+worker_logger = logging.getLogger('worker')
 

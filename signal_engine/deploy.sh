@@ -60,10 +60,37 @@ log_info "Installing Python dependencies..."
 cd $DEPLOY_DIR
 pip3 install -r requirements.txt --quiet
 
-# Create environment file if not exists
-if [ ! -f "$DEPLOY_DIR/.env" ]; then
-    log_info "Creating environment configuration..."
-    cat > $DEPLOY_DIR/.env << EOF
+# Load and validate secrets before creating .env
+log_info "Loading secrets..."
+SECRETS_FILE="/root/.verzek_secrets"
+
+if [ ! -f "$SECRETS_FILE" ]; then
+    log_error "❌ Secrets file not found at $SECRETS_FILE"
+    log_info "Please create $SECRETS_FILE with:"
+    echo "export HOUSE_ENGINE_TOKEN='your-token'"
+    echo "export TELEGRAM_BOT_TOKEN='your-bot-token'"
+    echo "export TELEGRAM_VIP_CHAT_ID='your-vip-chat-id'"
+    echo "export TELEGRAM_TRIAL_CHAT_ID='your-trial-chat-id'"
+    exit 1
+fi
+
+# Source secrets
+source $SECRETS_FILE
+
+# Validate required secrets are set
+REQUIRED_SECRETS=("HOUSE_ENGINE_TOKEN" "TELEGRAM_BOT_TOKEN" "TELEGRAM_VIP_CHAT_ID" "TELEGRAM_TRIAL_CHAT_ID")
+for SECRET in "${REQUIRED_SECRETS[@]}"; do
+    if [ -z "${!SECRET}" ]; then
+        log_error "❌ Required secret $SECRET is not set in $SECRETS_FILE"
+        exit 1
+    fi
+done
+
+log_info "✅ All required secrets validated"
+
+# Create environment file with validated secrets
+log_info "Creating environment configuration..."
+cat > $DEPLOY_DIR/.env << EOF
 # VerzekSignalEngine Environment Configuration
 BACKEND_API_URL=https://api.verzekinnovative.com
 HOUSE_ENGINE_TOKEN=${HOUSE_ENGINE_TOKEN}
@@ -83,9 +110,14 @@ TRADING_SYMBOLS=BTCUSDT,ETHUSDT,BNBUSDT,SOLUSDT,XRPUSDT
 # Logging
 LOG_LEVEL=INFO
 EOF
-    log_info "Environment file created"
+
+# Verify .env file contains actual values (not empty)
+if grep -q "HOUSE_ENGINE_TOKEN=${HOUSE_ENGINE_TOKEN}$" $DEPLOY_DIR/.env && [ -n "$HOUSE_ENGINE_TOKEN" ]; then
+    log_info "✅ Environment file created with valid secrets"
 else
-    log_info "Using existing environment file"
+    log_error "❌ Environment file validation failed!"
+    rm -f $DEPLOY_DIR/.env
+    exit 1
 fi
 
 # Install systemd service
