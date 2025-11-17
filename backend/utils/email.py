@@ -13,7 +13,7 @@ EMAIL_FROM = os.getenv("EMAIL_FROM", "support@verzekinnovative.com")
 def send_password_reset_email(email: str, reset_token: str, user_id: int):
     """Send password reset email with token"""
     try:
-        reset_url = f"https://verzek-app://reset-password?token={reset_token}&user_id={user_id}"
+        reset_url = f"https://api.verzekinnovative.com/api/auth/reset-password?token={reset_token}&user_id={user_id}"
         
         params = {
             "from": EMAIL_FROM,
@@ -51,7 +51,7 @@ def send_password_reset_email(email: str, reset_token: str, user_id: int):
 def send_verification_email(email: str, verification_token: str, user_id: int):
     """Send email verification link"""
     try:
-        verification_url = f"https://verzek-app://verify-email?token={verification_token}&user_id={user_id}"
+        verification_url = f"https://api.verzekinnovative.com/api/auth/verify-email?token={verification_token}&user_id={user_id}"
         
         params = {
             "from": EMAIL_FROM,
