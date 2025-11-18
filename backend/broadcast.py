@@ -8,7 +8,7 @@ from typing import Dict, Optional
 from utils.logger import api_logger
 
 
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+BOT_TOKEN = os.getenv("BROADCAST_BOT_TOKEN", os.getenv("TELEGRAM_BOT_TOKEN", ""))
 VIP_CHAT_ID = os.getenv("TELEGRAM_VIP_CHAT_ID", "")
 TRIAL_CHAT_ID = os.getenv("TELEGRAM_TRIAL_CHAT_ID", "")
 

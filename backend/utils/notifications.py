@@ -265,8 +265,7 @@ def get_subscription_user_tokens(db_session, subscription_types: List[str]) -> D
         
         users = db_session.query(User).filter(
             User.subscription_type.in_(subscription_types),
-            User.notifications_enabled == True,
-            User.is_active == True
+            User.notifications_enabled == True
         ).all()
         
         user_tokens = {}
