@@ -274,6 +274,9 @@ def verify_email():
             db.close()
             return jsonify({"ok": False, "error": "User not found"}), 404
         
+        # Get email BEFORE closing session (to avoid SQLAlchemy detached instance error)
+        user_email = user.email
+        
         user.is_verified = True
         db.commit()
         
@@ -286,7 +289,7 @@ def verify_email():
         # If GET request from email, return HTML success page
         if request.method == 'GET':
             import html as html_module
-            safe_email = html_module.escape(user.email)
+            safe_email = html_module.escape(user_email)
             html = f"""
             <!DOCTYPE html>
             <html>
