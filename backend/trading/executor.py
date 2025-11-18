@@ -14,6 +14,7 @@ from utils.notifications import (
     send_trade_end_notification,
     get_user_push_tokens
 )
+from broadcast import broadcast_signal_cancelled
 
 
 def run_once(db: Session):
@@ -200,6 +201,19 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
                     if not target.hit:
                         target.hit = True
                         target.hit_at = datetime.utcnow()
+                
+                # Send Telegram cancellation notification
+                try:
+                    signal = db.query(Signal).filter(Signal.id == position.signal_id).first()
+                    if signal:
+                        broadcast_signal_cancelled(
+                            signal_id=signal.id,
+                            symbol=position.symbol,
+                            reason=f"Signal Reversal: {position.side} → {new_signal.side}"
+                        )
+                        worker_logger.info(f"📢 Sent reversal notification to Telegram for {position.symbol}")
+                except Exception as broadcast_error:
+                    worker_logger.error(f"Telegram reversal notification failed: {broadcast_error}")
                 
                 db.flush()  # Commit the reversal before opening new position
             else:

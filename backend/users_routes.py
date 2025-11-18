@@ -46,6 +46,8 @@ def get_user(user_id):
                 "leverage": settings.leverage if settings else 1,
                 "max_concurrent_trades": settings.max_concurrent_trades if settings else 5,
                 "dca_enabled": settings.dca_enabled if settings else False,
+                "auto_reversal_enabled": settings.auto_reversal_enabled if settings else True,
+                "reversal_window_minutes": settings.reversal_window_minutes if settings else 15,
                 "preferences": settings.preferences if settings else {}
             } if settings else {}
         }
@@ -195,6 +197,45 @@ def update_dca_settings(user_id):
     except Exception as e:
         api_logger.error(f"Update DCA settings error: {e}")
         return jsonify({"ok": False, "error": "Failed to update DCA settings"}), 500
+
+
+@bp.route('/<int:user_id>/reversal', methods=['PUT'])
+@jwt_required()
+def update_reversal_settings(user_id):
+    """Update signal reversal settings"""
+    try:
+        current_user = int(get_jwt_identity())
+        if current_user != user_id:
+            return jsonify({"ok": False, "error": "Unauthorized"}), 403
+        
+        data = request.get_json()
+        db: Session = SessionLocal()
+        settings = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
+        
+        if not settings:
+            db.close()
+            return jsonify({"ok": False, "error": "Settings not found"}), 404
+        
+        # Update reversal settings
+        if 'auto_reversal_enabled' in data:
+            settings.auto_reversal_enabled = bool(data['auto_reversal_enabled'])
+        if 'reversal_window_minutes' in data:
+            # Validate window (1-60 minutes)
+            window = int(data['reversal_window_minutes'])
+            settings.reversal_window_minutes = min(max(window, 1), 60)
+        
+        db.commit()
+        db.close()
+        
+        api_logger.info(f"User {user_id} updated reversal settings: "
+                       f"enabled={settings.auto_reversal_enabled}, "
+                       f"window={settings.reversal_window_minutes}min")
+        
+        return jsonify({"ok": True, "message": "Reversal settings updated"}), 200
+        
+    except Exception as e:
+        api_logger.error(f"Update reversal settings error: {e}")
+        return jsonify({"ok": False, "error": "Failed to update reversal settings"}), 500
 
 
 @bp.route('/<int:user_id>/preferences', methods=['PUT'])
