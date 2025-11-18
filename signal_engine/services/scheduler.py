@@ -8,12 +8,12 @@ import logging
 import json
 from datetime import datetime
 from typing import Dict, List
-from ..bots.scalper.scalping_bot import ScalpingBot
-from ..bots.trend.trend_bot import TrendBot
-from ..bots.qfl.qfl_bot import QFLBot
-from ..bots.ai_ml.ai_bot import AIBot
-from .dispatcher import get_dispatcher
-from .telegram_broadcaster import get_broadcaster
+from bots.scalper.scalping_bot import ScalpingBot
+from bots.trend.trend_bot import TrendBot
+from bots.qfl.qfl_bot import QFLBot
+from bots.ai_ml.ai_bot import AIBot
+from services.dispatcher import get_dispatcher
+from services.telegram_broadcaster import get_broadcaster
 
 logger = logging.getLogger(__name__)
 

@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 from typing import Dict, Optional
 from datetime import datetime
 import logging
-from ..data_feed.live_data import get_market_feed
-from ..common.indicators import Indicators
+from data_feed.live_data import get_market_feed
+from common.indicators import Indicators
 
 logger = logging.getLogger(__name__)
 
