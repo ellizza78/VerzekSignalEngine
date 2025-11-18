@@ -1,0 +1,11 @@
+[Unit]
+Description=VerzekAutoTrader Daily Report Timer (9 AM UTC)
+Requires=verzek_daily_report.service
+
+[Timer]
+OnCalendar=*-*-* 09:00:00
+Persistent=true
+Unit=verzek_daily_report.service
+
+[Install]
+WantedBy=timers.target

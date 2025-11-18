@@ -1,330 +1,335 @@
-# VerzekAutoTrader - Production Deployment Guide
+# 🚀 PRODUCTION DEPLOYMENT GUIDE
+**VerzekAutoTrader - Production Operations Manual**
 
-## 📋 Answers to Your Questions
+---
 
-### 1️⃣ **Can we move to real money (not paper)?**
+## 📋 QUICK STATUS CHECK
 
-**Current Status**: Both Replit and Vultr are in **PAPER MODE** 📄
+### Current Production Status
+- **Server:** Vultr 80.240.29.142:8050
+- **Database:** PostgreSQL (verzek_db) - LIVE
+- **Trading Mode:** PAPER (simulation)
+- **Auto-Trading:** Disabled (0 users enabled)
+- **Daily Reports:** Not scheduled
+- **Worker Service:** ✅ RUNNING
 
-**To Switch to LIVE TRADING** 💰:
+---
 
-**Option A: Switch Vultr Production Server to LIVE (RECOMMENDED)**
+## 🔧 DEPLOYMENT TASKS
+
+### 1️⃣ Deploy Daily Report System
+
+**Purpose:** Send trading summary to Telegram at 9 AM UTC daily
+
+**Command:**
 ```bash
-# SSH to Vultr server
-ssh root@80.240.29.142
-
-# Edit secrets file
-nano /root/.verzek_secrets
-
-# Change this line:
-export MODE="live"  # Change from "paper" to "live"
-
-# Restart backend API
-sudo systemctl restart verzek_api
-
-# Verify
-curl https://api.verzekinnovative.com/api/safety/status
-# Should show: "mode": "live"
+./vultr_infrastructure/deploy_daily_report.sh
 ```
 
-**Option B: Switch Replit to LIVE (NOT RECOMMENDED - for testing only)**
-- Add to Replit Secrets: `MODE=live`
-- Restart Backend API Server workflow
-- ⚠️ **WARNING**: Replit is NOT production-ready for real money!
+**What it does:**
+- Installs systemd timer (verzek_daily_report.timer)
+- Schedules daily execution at 9:00 AM UTC
+- Broadcasts report to VIP + TRIAL Telegram groups
+- Sends summary to mobile app
 
-**⚠️ IMPORTANT BEFORE SWITCHING TO LIVE**:
-1. ✅ Verify all exchange API keys are correct and have trading permissions
-2. ✅ Test with SMALL amounts first (set position_size = $5-10)
-3. ✅ Enable all safety features (max_investment, max_concurrent_trades)
-4. ✅ Verify VerzekSignalEngine is generating quality signals
-5. ✅ Set up monitoring and alerts
-6. ✅ Have emergency stop procedures in place
+**Verify deployment:**
+```bash
+ssh root@80.240.29.142 "systemctl list-timers verzek_daily_report.timer"
+```
+
+**Manual test run:**
+```bash
+ssh root@80.240.29.142 "systemctl start verzek_daily_report.service"
+ssh root@80.240.29.142 "journalctl -u verzek_daily_report.service -n 50"
+```
 
 ---
 
-### 2️⃣ **How many users can Replit accommodate?**
+### 2️⃣ Enable Auto-Trading for Premium Users
 
-**REPLIT CAPACITY** 🔴 **NOT PRODUCTION-READY**:
-- **Server**: Flask Development Server (single-threaded)
-- **Concurrent Users**: ~5-10 users maximum
-- **Requests/sec**: ~10-20 req/sec
-- **Database**: Development PostgreSQL (not optimized)
-- **Purpose**: **TESTING & DEVELOPMENT ONLY**
-- **Recommendation**: ❌ **DO NOT USE FOR PRODUCTION**
+**Purpose:** Allow PREMIUM/VIP users to auto-trade signals
 
-**VULTR PRODUCTION CAPACITY** 🟢 **PRODUCTION-READY**:
-- **Server**: Gunicorn with 4 workers (multi-process)
-- **Concurrent Users**: **1,000 - 5,000+ users**
-- **Requests/sec**: 100-500 req/sec
-- **Database**: Production PostgreSQL with connection pooling
-- **Static IP**: 80.240.29.142
-- **Purpose**: **PRODUCTION DEPLOYMENT**
-- **Recommendation**: ✅ **USE THIS FOR REAL USERS**
+**Command:**
+```bash
+./vultr_infrastructure/enable_auto_trading.sh
+```
 
-**Scaling Beyond 5,000 Users**:
-- Increase Gunicorn workers: `workers = (2 x CPU cores) + 1`
-- Add Redis for caching and sessions
-- Set up load balancer (Nginx)
-- Database connection pooling (PgBouncer)
-- Consider horizontal scaling (multiple servers)
+**Interactive Menu:**
+```
+1) Enable auto-trading for specific user (by email)
+2) Enable auto-trading for all PREMIUM users
+3) Disable auto-trading for specific user (by email)
+4) List all users with auto-trading enabled
+5) Check auto-trading status for user (by email)
+```
+
+**Requirements for Auto-Trading:**
+- ✅ Subscription tier: VIP or PREMIUM
+- ✅ Email verified: `is_verified = true`
+- ✅ Exchange account connected
+- ✅ Sufficient balance on exchange
+- ✅ `auto_trade_enabled = true` (set via script)
+
+**Example Usage:**
+```bash
+# Check specific user status
+./vultr_infrastructure/enable_auto_trading.sh
+# Select: 5
+# Enter email: user@example.com
+
+# Enable for specific user
+./vultr_infrastructure/enable_auto_trading.sh
+# Select: 1
+# Enter email: user@example.com
+
+# List all enabled users
+./vultr_infrastructure/enable_auto_trading.sh
+# Select: 4
+```
 
 ---
 
-### 3️⃣ **Do we need to rebuild the APP?**
+### 3️⃣ Switch to LIVE TRADING MODE
 
-**Answer**: ❌ **NO - No rebuild needed!**
+**⚠️ CRITICAL: This enables REAL MONEY trading!**
 
-**Reason**:
-```javascript
-// mobile_app/VerzekApp/src/config/api.js
-export const API_BASE_URL = 'https://api.verzekinnovative.com';
+**Pre-Flight Checklist:**
+- [ ] Daily reports deployed and tested
+- [ ] At least 1 premium user enabled for auto-trading
+- [ ] Premium user has exchange account connected
+- [ ] Premium user has verified sufficient exchange balance
+- [ ] House signals monitoring confirmed working (5 positions tracked)
+- [ ] Worker service running smoothly (no errors in logs)
+- [ ] Telegram broadcasting tested
+- [ ] Mobile app tested end-to-end
+
+**Command:**
+```bash
+./vultr_infrastructure/switch_to_live_trading.sh
 ```
 
-The mobile app is **already hardcoded** to point to Vultr production server!
+**Confirmation required:** Type `ENABLE LIVE TRADING` to proceed
 
-**When to Rebuild APK**:
-- ✅ Adding new native dependencies (camera, location, etc.)
-- ✅ Changing app.json (permissions, package name, etc.)
-- ✅ Major native code changes
-- ❌ Backend API changes (use OTA updates instead)
-- ❌ JavaScript-only changes (use `eas update`)
+**What it changes:**
+```bash
+LIVE_TRADING_ENABLED=false  →  true
+EXCHANGE_MODE=paper         →  live
+USE_TESTNET=true            →  false
+```
 
-**For JavaScript Changes** (no rebuild needed):
+**Verify mode:**
+```bash
+ssh root@80.240.29.142 "grep -E 'LIVE_TRADING|EXCHANGE_MODE|USE_TESTNET' /root/VerzekBackend/.env"
+```
+
+---
+
+### 4️⃣ Switch BACK to Paper Trading (If Needed)
+
+**Purpose:** Revert to simulation mode
+
+**Command:**
+```bash
+./vultr_infrastructure/switch_to_paper_trading.sh
+```
+
+**Use cases:**
+- Testing new features
+- Debugging issues
+- System maintenance
+- Emergency stop
+
+---
+
+## 🚨 EMERGENCY PROCEDURES
+
+### Emergency Stop (IMMEDIATE)
+
+**Stop all trading instantly:**
+```bash
+ssh root@80.240.29.142 'echo "EMERGENCY_STOP=true" >> /root/VerzekBackend/.env && systemctl restart verzek_worker.service'
+```
+
+**Verify stopped:**
+```bash
+ssh root@80.240.29.142 "grep EMERGENCY_STOP /root/VerzekBackend/.env"
+```
+
+**Resume trading:**
+```bash
+ssh root@80.240.29.142 'sed -i "s/EMERGENCY_STOP=true/EMERGENCY_STOP=false/" /root/VerzekBackend/.env && systemctl restart verzek_worker.service'
+```
+
+---
+
+## 📊 MONITORING & LOGS
+
+### Check Worker Status
+```bash
+ssh root@80.240.29.142 "systemctl status verzek_worker.service"
+```
+
+### View Worker Logs (Real-time)
+```bash
+ssh root@80.240.29.142 "journalctl -u verzek_worker.service -f"
+```
+
+### View API Server Logs
+```bash
+ssh root@80.240.29.142 "journalctl -u verzek_api.service -f"
+```
+
+### Check Daily Report Timer
+```bash
+ssh root@80.240.29.142 "systemctl list-timers verzek_daily_report.timer"
+```
+
+### Database Query (Position Monitoring)
+```bash
+ssh root@80.240.29.142 'psql -U verzek_user -d verzek_db -c "SELECT id, signal_id, symbol, status, entry_price, pnl_pct FROM house_signal_positions ORDER BY id DESC LIMIT 10;"'
+```
+
+### Check Auto-Trading Users
+```bash
+ssh root@80.240.29.142 'psql -U verzek_user -d verzek_db -c "SELECT email, subscription_tier, auto_trade_enabled, capital_usdt FROM users WHERE auto_trade_enabled = true;"'
+```
+
+---
+
+## 🔐 SECURITY CHECKLIST
+
+### Before Going Live:
+- [ ] All API keys encrypted in database (Fernet AES-128)
+- [ ] JWT tokens working correctly
+- [ ] Email verification enforced
+- [ ] CAPTCHA active on login/register
+- [ ] Admin endpoints protected
+- [ ] Environment variables secured (no hard-coded secrets)
+- [ ] Database backups configured
+- [ ] SSL/TLS certificates valid
+
+---
+
+## 📱 MOBILE APP BUILD
+
+### Production APK Build
+
+**Command (from Replit):**
 ```bash
 cd mobile_app/VerzekApp
-eas update --branch production
+eas build --platform android --profile production
 ```
 
----
-
-### 4️⃣ **Do we need to push to Vultr server?**
-
-**Answer**: ⚠️ **PARTIALLY DEPLOYED - Needs Verification**
-
-**Current Vultr Deployment Status**:
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| **Backend API** | ✅ **LIVE** | Running on port 8050 with Gunicorn |
-| **PostgreSQL Database** | ✅ **LIVE** | Production database operational |
-| **Static IP** | ✅ **CONFIGURED** | 80.240.29.142 |
-| **VerzekSignalEngine** | ⚠️ **NEEDS VERIFICATION** | Service configured but not confirmed running |
-| **Telegram Broadcasting** | ⚠️ **NEEDS TESTING** | Bot configured, not verified |
-| **Auto-Deployment** | ✅ **CONFIGURED** | Systemd timer pulls from GitHub every 2 min |
-
-**What's ALREADY on Vultr**:
-- ✅ Backend API (Gunicorn + 4 workers)
-- ✅ PostgreSQL production database
-- ✅ House Signals system
-- ✅ All API endpoints
-- ✅ Auto-deployment from GitHub
-
-**What NEEDS Verification**:
-1. ⚠️ **VerzekSignalEngine Service Status**
-   ```bash
-   ssh root@80.240.29.142
-   sudo systemctl status verzek-signalengine
-   ```
-
-2. ⚠️ **Signal Generation**
-   - Check if 4 bots (Scalping, Trend, QFL, AI/ML) are running
-   - Verify signals are being sent to backend
-   - Confirm Telegram broadcasting is working
-
-3. ⚠️ **Database Signal Records**
-   - Currently: 0 signals found
-   - Should have: Recent signals from all 4 bots
-
----
-
-### 5️⃣ **Have you confirmed that the 4 signal generation bots are working?**
-
-**Answer**: ❌ **NOT YET CONFIRMED**
-
-**Current Status**:
-- ✅ VerzekSignalEngine code deployed to Vultr
-- ✅ Systemd service file configured
-- ✅ Environment variables set
-- ⚠️ **Service status: UNKNOWN**
-- ❌ **Signals in database: 0 found**
-- ❌ **Telegram broadcasts: Not verified**
-- ❌ **Mobile app signals: None appearing**
-
-**What Needs Verification**:
-
-**1. Check Service Status on Vultr**:
+**OTA Update (JavaScript changes only):**
 ```bash
-ssh root@80.240.29.142
-
-# Check if service is running
-sudo systemctl status verzek-signalengine
-
-# Check logs
-tail -f /root/signal_engine/logs/systemd.log
-tail -f /root/signal_engine/logs/signalengine.log
-
-# If not running, start it
-sudo systemctl start verzek-signalengine
-sudo systemctl enable verzek-signalengine
+cd mobile_app/VerzekApp
+eas update --branch production --message "Update description"
 ```
 
-**2. Verify 4 Bots Are Running**:
-The system should show:
-- 🔸 **Scalping Bot** (15s interval) - RSI + Stochastic signals
-- 🔸 **Trend Bot** (5m interval) - MA alignment signals
-- 🔸 **QFL Bot** (20s interval) - Deep dip detection
-- 🔸 **AI/ML Bot** (30s interval) - Pattern recognition
-
-**3. Check Signal Flow**:
-```
-VerzekSignalEngine (4 Bots)
-    ↓
-Backend API (/api/house-signals/ingest)
-    ↓
-PostgreSQL Database (house_signals table)
-    ↓
-Telegram Broadcasting (VIP + TRIAL groups)
-    ↓
-Mobile App (/api/house-signals/live)
-```
-
-**4. Test Telegram Broadcasting**:
-- Join VERZEK SUBSCRIBERS (VIP) group
-- Join VERZEK TRIAL SIGNALS (TRIAL) group
-- Verify signals appear in both groups
-- Check message formatting
-
-**5. Verify Mobile App Integration**:
-- Open VerzekAutoTrader mobile app
-- Navigate to "House Signals" tab
-- Should see real-time signals from all 4 bots
-- Each signal should show: Bot name, Symbol, Direction, Entry, Targets, Stop-Loss
+**When to rebuild vs OTA:**
+- **Rebuild APK:** Native changes, new packages, SDK updates
+- **OTA Update:** JavaScript/React changes, UI updates, bug fixes
 
 ---
 
-## 🚀 RECOMMENDED NEXT STEPS
+## 📈 PERFORMANCE METRICS
 
-### **IMMEDIATE ACTIONS** (Before Going Live):
+### Key Metrics to Monitor:
+1. **Active Users:** Users with auto-trading enabled
+2. **Position Count:** Open positions across all users
+3. **Win Rate:** Closed positions with profit
+4. **Daily PnL:** Total profit/loss per day
+5. **API Response Time:** Average request latency
+6. **Worker Health:** Uptime percentage
+7. **Telegram Broadcasting:** Message delivery rate
+8. **Email Delivery:** Verification/reset email success rate
 
-1. **SSH to Vultr and Verify VerzekSignalEngine**:
-   ```bash
-   ssh root@80.240.29.142
-   
-   # Check service status
-   sudo systemctl status verzek-signalengine
-   
-   # View live logs
-   tail -f /root/signal_engine/logs/systemd.log
-   
-   # If not running, start it
-   sudo systemctl start verzek-signalengine
-   ```
-
-2. **Monitor Signal Generation** (wait 5-10 minutes):
-   ```bash
-   # Check database for signals
-   curl https://api.verzekinnovative.com/api/house-signals/live
-   
-   # Should show signals from all 4 bots
-   ```
-
-3. **Test Telegram Broadcasting**:
-   - Check VIP group for signal messages
-   - Check TRIAL group for signal messages
-   - Verify formatting is correct
-
-4. **Test Mobile App**:
-   - Open app → House Signals tab
-   - Refresh to see new signals
-   - Verify signal data is complete
-
-5. **Test End-to-End Trading Flow** (PAPER MODE):
-   - Enable auto-trading in mobile app
-   - Wait for signal from VerzekSignalEngine
-   - Verify backend creates position
-   - Check exchange for paper trade
-   - Verify position appears in mobile app
-
-6. **Only After All Tests Pass**:
-   - Switch to LIVE mode (edit `/root/.verzek_secrets`)
-   - Start with SMALL position sizes ($5-10)
-   - Monitor first 10-20 trades closely
-   - Gradually increase position sizes
-
----
-
-## 📊 PRODUCTION DEPLOYMENT CHECKLIST
-
-- [x] Backend API deployed to Vultr (Gunicorn)
-- [x] PostgreSQL production database configured
-- [x] Static IP configured (80.240.29.142)
-- [x] SSL/HTTPS configured (api.verzekinnovative.com)
-- [x] Mobile app points to production URL
-- [x] House Signals endpoint implemented
-- [x] Telegram bot configured
-- [ ] **VerzekSignalEngine service verified running** ⚠️
-- [ ] **Signal generation confirmed** ⚠️
-- [ ] **Telegram broadcasting tested** ⚠️
-- [ ] **Mobile app receiving signals** ⚠️
-- [ ] **End-to-end trading flow tested (PAPER)** ⚠️
-- [ ] **Safety limits configured** ⚠️
-- [ ] **Monitoring and alerts set up** ⚠️
-
----
-
-## ⚠️ CRITICAL SAFETY REMINDERS
-
-1. **NEVER switch to LIVE mode without testing**
-2. **Start with SMALL position sizes** ($5-10)
-3. **Set strict max_investment limits**
-4. **Monitor first 24 hours continuously**
-5. **Have emergency stop procedures ready**
-6. **Keep backup of all configurations**
-7. **Log all trades for audit trail**
-
----
-
-## 🔧 TROUBLESHOOTING
-
-### If VerzekSignalEngine is Not Running:
-
+### Database Performance:
 ```bash
-# Check service status
-sudo systemctl status verzek-signalengine
-
-# Check error logs
-cat /root/signal_engine/logs/systemd_error.log
-
-# Common issues:
-# 1. Missing secrets in /root/.verzek_secrets
-# 2. Python dependencies not installed
-# 3. CCXT exchange connection issues
-# 4. Telegram bot token invalid
-
-# Restart service
-sudo systemctl restart verzek-signalengine
-
-# Enable auto-start on boot
-sudo systemctl enable verzek-signalengine
+ssh root@80.240.29.142 'psql -U verzek_user -d verzek_db -c "SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'"'.'"'||tablename)) AS size FROM pg_tables WHERE schemaname = '"'public'"' ORDER BY pg_total_relation_size(schemaname||'"'.'"'||tablename) DESC;"'
 ```
 
-### If No Signals Appearing:
+---
 
-1. Check bot logs: `/root/signal_engine/logs/scalping_bot.log`
-2. Verify market data feed (CCXT) is working
-3. Check signal filters (min volatility, volume)
-4. Verify backend API token (HOUSE_ENGINE_TOKEN)
+## 🎯 DEPLOYMENT SEQUENCE
+
+**Recommended order for going live:**
+
+```
+1. Deploy Daily Reports
+   └─ ./vultr_infrastructure/deploy_daily_report.sh
+   └─ Test: systemctl start verzek_daily_report.service
+
+2. Enable Auto-Trading for Test User
+   └─ ./vultr_infrastructure/enable_auto_trading.sh
+   └─ Verify user has exchange account + balance
+
+3. Monitor Paper Trading (24-48 hours)
+   └─ Watch logs: journalctl -u verzek_worker.service -f
+   └─ Check positions: SELECT * FROM house_signal_positions;
+   └─ Verify Telegram broadcasts
+
+4. Switch to Live Trading
+   └─ ./vultr_infrastructure/switch_to_live_trading.sh
+   └─ Monitor closely for 24 hours
+
+5. Gradually Enable More Users
+   └─ Add 1-2 users per day
+   └─ Monitor each user's performance
+   └─ Ensure no issues before scaling
+```
 
 ---
 
-## 📞 SUPPORT
+## 📞 SUPPORT CONTACTS
 
-For deployment issues, check:
-- Backend logs: `journalctl -u verzek_api -f`
-- Signal engine logs: `tail -f /root/signal_engine/logs/*.log`
-- Database: `psql -U verzek_user -d verzek_production`
+**Telegram Groups:**
+- VIP Signals: VERZEK SUBSCRIBERS
+- Trial Signals: VERZEK TRIAL SIGNALS
+- Admin Alerts: Configured in ADMIN_CHAT_ID
+
+**Email:**
+- Support: support@verzekinnovative.com
+- Admin: Configured in ADMIN_EMAIL
 
 ---
 
-**Last Updated**: November 17, 2025
-**Status**: Ready for Production (pending VerzekSignalEngine verification)
+## 🔄 BACKUP & RECOVERY
+
+### Database Backup
+```bash
+ssh root@80.240.29.142 "pg_dump -U verzek_user verzek_db > /root/backups/verzek_db_$(date +%Y%m%d_%H%M%S).sql"
+```
+
+### Download Backup to Local
+```bash
+scp -i ~/.ssh/vultr_verzek root@80.240.29.142:/root/backups/verzek_db_*.sql ./backups/
+```
+
+### Restore Database
+```bash
+ssh root@80.240.29.142 "psql -U verzek_user -d verzek_db < /root/backups/verzek_db_TIMESTAMP.sql"
+```
+
+---
+
+## ✅ POST-DEPLOYMENT CHECKLIST
+
+After deploying to production:
+
+- [ ] Daily report timer running
+- [ ] Worker service healthy (no errors)
+- [ ] API server responding (port 8050)
+- [ ] Database connections stable
+- [ ] Telegram broadcasting working
+- [ ] Email delivery working
+- [ ] Position monitoring active
+- [ ] Auto-trading users configured
+- [ ] Mobile app connecting to API
+- [ ] Push notifications working
+- [ ] Logs clean (no critical errors)
+- [ ] Trading mode confirmed (paper/live)
+
+---
+
+**System Ready for Production! 🚀**

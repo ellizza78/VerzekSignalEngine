@@ -1,0 +1,21 @@
+[Unit]
+Description=VerzekAutoTrader Daily Trading Report
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/VerzekBackend
+Environment="PATH=/usr/bin:/usr/local/bin"
+Environment="PYTHONUNBUFFERED=1"
+EnvironmentFile=/root/VerzekBackend/.env
+
+ExecStart=/usr/bin/python3 /root/VerzekBackend/backend/reports/daily_report.py
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=verzek_daily_report
+
+[Install]
+WantedBy=multi-user.target
