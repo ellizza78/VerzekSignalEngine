@@ -6,7 +6,7 @@ Based on SIGNAL RESEARCH formulas
 import pandas as pd
 import numpy as np
 import ta
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict
 import logging
 
 logger = logging.getLogger(__name__)
