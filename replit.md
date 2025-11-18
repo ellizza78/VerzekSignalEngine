@@ -74,5 +74,5 @@ The mobile application (React Native + Expo) features a modern dark theme with T
   - 2:39 PM: BTCUSDT LONG signal arrives → Position opened
   - 2:42 PM: BTCUSDT SHORT signal arrives (3 minutes later, within 15-min window)
   - Auto-reversal: Closes LONG position, sends Telegram notification, opens SHORT position
-- **Status**: LIVE - Feature ready for production use, fully tested with architect review
+- **Status**: LIVE - Instant reversals (no time restrictions), position stacking enabled
 - **Date Implemented**: November 18, 2025
