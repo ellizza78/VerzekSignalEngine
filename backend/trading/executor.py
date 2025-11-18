@@ -121,9 +121,7 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
         if not active_positions:
             return  # No active positions on this symbol
         
-        # Check if any position is in opposite direction
-        reversal_window_seconds = settings.reversal_window_minutes * 60
-        
+        # Check if any position is in opposite direction (instant reversal, no time window)
         for position in active_positions:
             # Normalize sides to handle both BUY/SELL and LONG/SHORT formats
             position_side = position.side.upper()
@@ -147,22 +145,14 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
             )
             
             if not is_opposite:
-                continue  # Same direction, no reversal
+                continue  # Same direction, allow multiple positions (position stacking)
             
-            # Check if within reversal window
+            # REVERSAL DETECTED - Close the opposite position immediately
             time_diff = (datetime.utcnow() - position.created_at).total_seconds()
-            if time_diff > reversal_window_seconds:
-                worker_logger.info(
-                    f"Position #{position.id} is outside reversal window "
-                    f"({time_diff}s > {reversal_window_seconds}s), keeping both positions"
-                )
-                continue
-            
-            # REVERSAL DETECTED - Close the opposite position
             worker_logger.warning(
-                f"🔄 SIGNAL REVERSAL DETECTED for user {user_id}: "
+                f"🔄 INSTANT SIGNAL REVERSAL DETECTED for user {user_id}: "
                 f"{position.symbol} {position_side} → {signal_side} "
-                f"(within {time_diff:.0f}s, window: {reversal_window_seconds}s)"
+                f"(position age: {time_diff:.0f}s, no time restriction)"
             )
             
             # Get current market price for exit
@@ -195,12 +185,13 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
                     position_id=position.id,
                     signal_id=position.signal_id,
                     type='REVERSAL',
-                    message=f"Position closed due to signal reversal: {position.side} → {new_signal.side}",
+                    message=f"Position closed due to instant market reversal: {position_side} → {signal_side}",
                     meta={
-                        'reversal_reason': 'opposite_direction',
+                        'reversal_reason': 'market_direction_change',
                         'new_signal_id': new_signal.id,
-                        'time_diff_seconds': time_diff,
+                        'position_age_seconds': time_diff,
                         'close_price': current_price,
+                        'instant_reversal': True,
                         **close_result
                     }
                 )
