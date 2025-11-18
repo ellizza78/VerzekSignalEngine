@@ -54,6 +54,10 @@ class UserSettings(Base):
     dca_steps = Column(Integer, default=3)
     dca_step_percent = Column(Float, default=2.0)
     
+    # Signal Reversal Settings
+    auto_reversal_enabled = Column(Boolean, default=True)  # Auto-cancel opposite direction trades
+    reversal_window_minutes = Column(Integer, default=15)  # Time window to detect reversals
+    
     # Preferences
     preferences = Column(JSON, default=dict)  # UI settings, notifications, etc.
     
