@@ -57,22 +57,25 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
 - **Resend API**: For transactional emails.
-### Signal Auto-Reversal System - IMPLEMENTED ✅
+### Signal Auto-Reversal System - LIVE ✅
 - **Smart Position Management**: Automatically detects and closes opposite direction positions when reversal signals arrive
-- **Database Schema Updates**: Added `auto_reversal_enabled` (boolean, default: true) and `reversal_window_minutes` (integer, default: 15) columns to user_settings table
+- **Database Schema**: Added `auto_reversal_enabled` (boolean, default: true) to user_settings table
 - **Reversal Detection Logic**: Implemented in `backend/trading/executor.py` with handle_signal_reversal() function
   - Normalizes BUY/SELL and LONG/SHORT formats for compatibility
-  - Checks time window (configurable 1-60 minutes, default 15 minutes)
-  - Closes opposite positions at current market price
+  - **INSTANT detection** (no time windows) - market-based reversal logic
+  - Closes opposite positions at current market price before opening new position
   - Logs reversal events with detailed metadata
-- **Telegram Notifications**: Broadcasts cancellation messages to VIP/TRIAL groups when reversals occur (e.g., "Signal Reversal: LONG → SHORT")
-- **API Endpoint**: Created `/users/{id}/reversal` PUT endpoint for managing reversal settings
+- **Position Stacking**: Multiple positions allowed for same symbol/direction (e.g., BTCUSDT SHORT + BTCUSDT SHORT)
+- **Telegram Notifications**: Broadcasts to VIP/TRIAL groups for:
+  - Signal reversals (e.g., "Signal Reversal: LONG → SHORT")
+  - Take-profit hits (e.g., "TARGET 1 HIT! BTCUSDT @ 50200")
+  - Stop-loss hits (e.g., "STOP LOSS TRIGGERED BTCUSDT @ 49750")
+- **API Endpoint**: `/users/{id}/reversal` PUT endpoint for managing reversal settings
   - Requires JWT authentication and user ownership validation
-  - Validates reversal_window_minutes (1-60 range)
   - Returns reversal settings in GET `/users/{id}` response
 - **Example Flow**: 
-  - 2:39 PM: BTCUSDT LONG signal arrives → Position opened
-  - 2:42 PM: BTCUSDT SHORT signal arrives (3 minutes later, within 15-min window)
-  - Auto-reversal: Closes LONG position, sends Telegram notification, opens SHORT position
-- **Status**: LIVE - Instant reversals (no time restrictions), position stacking enabled
+  - 2:39 PM: BTCUSDT LONG signal → Position opened
+  - 2:42 PM: BTCUSDT SHORT signal → **INSTANT reversal**: Close LONG, notify Telegram, open SHORT
+  - 3:10 PM: BTCUSDT SHORT signal → **Position stacking**: Open 2nd SHORT position (no reversal)
+- **Status**: LIVE in Replit + Production Deployment Pending
 - **Date Implemented**: November 18, 2025

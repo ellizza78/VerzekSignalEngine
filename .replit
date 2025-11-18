@@ -20,6 +20,10 @@ args = "Expo Dev Server"
 task = "workflow.run"
 args = "Backend API Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Auto-Trader Worker"
+
 [[workflows.workflow]]
 name = "Expo Dev Server"
 author = "agent"
@@ -44,6 +48,17 @@ task = "shell.exec"
 args = "cd backend && PORT=8000 python3 api_server.py"
 waitForPort = 8000
 
+[[workflows.workflow]]
+name = "Auto-Trader Worker"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && python3 worker.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 8000
 externalPort = 8000
@@ -55,6 +70,10 @@ externalPort = 80
 [[ports]]
 localPort = 8081
 externalPort = 8081
+
+[[ports]]
+localPort = 35857
+externalPort = 3002
 
 [[ports]]
 localPort = 40249

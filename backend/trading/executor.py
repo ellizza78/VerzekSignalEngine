@@ -442,6 +442,22 @@ def close_position_target(db: Session, position: Position, target_index: int, pr
             
             worker_logger.info(f"Target {target_index} hit for position #{position.id}, PnL: {close_result.get('pnl_usdt')}")
             
+            # Broadcast TP hit to Telegram
+            try:
+                from broadcast import broadcast_target_hit
+                signal = db.query(Signal).filter(Signal.id == position.signal_id).first()
+                if signal:
+                    broadcast_target_hit(
+                        signal_id=signal.id,
+                        symbol=position.symbol,
+                        target_index=target_index,
+                        price=price,
+                        target="both"
+                    )
+                    worker_logger.info(f"📢 Telegram: TP{target_index} hit notification sent")
+            except Exception as tg_error:
+                worker_logger.error(f"Telegram TP notification failed: {tg_error}")
+            
             # Send trade end notification when position fully closes (PREMIUM users only)
             if position.status == 'CLOSED':
                 try:
@@ -500,6 +516,21 @@ def close_position_sl(db: Session, position: Position, sl_price: float):
             db.add(trade_log)
             
             worker_logger.info(f"Stop loss hit for position #{position.id}, PnL: {close_result.get('pnl_usdt')}")
+            
+            # Broadcast SL hit to Telegram
+            try:
+                from broadcast import broadcast_stop_loss
+                signal = db.query(Signal).filter(Signal.id == position.signal_id).first()
+                if signal:
+                    broadcast_stop_loss(
+                        signal_id=signal.id,
+                        symbol=position.symbol,
+                        price=sl_price,
+                        target="both"
+                    )
+                    worker_logger.info(f"📢 Telegram: Stop loss hit notification sent")
+            except Exception as tg_error:
+                worker_logger.error(f"Telegram SL notification failed: {tg_error}")
             
             # Send trade end notification (PREMIUM users only)
             try:
