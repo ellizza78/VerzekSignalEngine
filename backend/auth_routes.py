@@ -283,10 +283,45 @@ def verify_email():
         
         api_logger.info(f"Email verified for user {user_id}")
         
-        # If GET request from email, redirect to app
+        # If GET request from email, return HTML success page
         if request.method == 'GET':
-            from flask import redirect
-            return redirect(f"verzek-app://verify-email-success?user_id={user_id}&email={user.email}"), 302
+            import html as html_module
+            safe_email = html_module.escape(user.email)
+            html = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Email Verified - VerzekAutoTrader</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; background: linear-gradient(135deg, #0A4A5C, #1A6A7C); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }}
+                    .container {{ background: white; border-radius: 15px; padding: 40px; max-width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }}
+                    .icon {{ font-size: 60px; margin-bottom: 20px; }}
+                    h1 {{ color: #0A4A5C; margin-bottom: 15px; }}
+                    p {{ color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px; }}
+                    .btn {{ display: inline-block; background: linear-gradient(135deg, #D4AF37, #F4C842); color: #0A4A5C; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 10px; transition: transform 0.2s; }}
+                    .btn:hover {{ transform: scale(1.05); }}
+                    .btn-secondary {{ background: #f0f0f0; color: #666; }}
+                    .email {{ background: #f5f5f5; padding: 10px; border-radius: 5px; font-family: monospace; margin: 20px 0; word-break: break-all; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="icon">✅</div>
+                    <h1>Email Verified!</h1>
+                    <p>Your email address has been successfully verified.</p>
+                    <div class="email">{safe_email}</div>
+                    <p>You can now log in to VerzekAutoTrader with your credentials.</p>
+                    <a href="verzek-app://login" class="btn">Open VerzekAutoTrader App</a>
+                    <p style="margin-top: 30px; font-size: 14px; color: #999;">
+                        If the app doesn't open automatically, please open it manually from your home screen.
+                    </p>
+                </div>
+            </body>
+            </html>
+            """
+            return html, 200
         
         # If POST request from API, return JSON
         return jsonify({
