@@ -133,6 +133,18 @@ class PaperTradingClient:
             worker_logger.error(f"Close position error: {e}")
             return {"success": False, "error": str(e)}
     
+    def get_current_price(self, symbol: str) -> Optional[float]:
+        """
+        Get current market price for a symbol
+        
+        Args:
+            symbol: Trading pair (BTCUSDT, ETHUSDT, etc.)
+        
+        Returns:
+            Current price or None if unavailable
+        """
+        return price_feed.get_price(symbol)
+    
     def check_price_targets(self, symbol: str, targets: List[float], sl: float, 
                            entry: float, side: str) -> Dict:
         """

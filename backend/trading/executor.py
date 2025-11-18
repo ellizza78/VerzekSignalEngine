@@ -53,6 +53,9 @@ def process_new_signals(db: Session):
                 if not can_user_trade(db, user.id):
                     continue
                 
+                # Check for signal reversal (opposite direction on same symbol)
+                handle_signal_reversal(db, user.id, signal)
+                
                 # Open position
                 open_position_for_signal(db, user.id, signal)
             
@@ -90,6 +93,122 @@ def can_user_trade(db: Session, user_id: int) -> bool:
     except Exception as e:
         worker_logger.error(f"Can user trade check error: {e}")
         return False
+
+
+def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
+    """
+    Detect and handle signal reversals (opposite direction on same symbol)
+    If user has auto_reversal enabled and an opposite position exists within the reversal window,
+    close the existing position before opening the new one.
+    
+    Example: BTCUSDT LONG at 2:39 PM → BTCUSDT SHORT at 2:42 PM
+    Result: Close LONG position, then open SHORT position
+    """
+    try:
+        # Get user settings
+        settings = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
+        if not settings or not settings.auto_reversal_enabled:
+            return  # Auto-reversal disabled
+        
+        # Find active positions for this symbol
+        active_positions = db.query(Position).filter(
+            Position.user_id == user_id,
+            Position.symbol == new_signal.symbol,
+            Position.status.in_(['OPEN', 'PARTIAL'])
+        ).all()
+        
+        if not active_positions:
+            return  # No active positions on this symbol
+        
+        # Check if any position is in opposite direction
+        reversal_window_seconds = settings.reversal_window_minutes * 60
+        
+        for position in active_positions:
+            # Check if direction is opposite
+            is_opposite = (
+                (position.side == 'LONG' and new_signal.side == 'SHORT') or
+                (position.side == 'SHORT' and new_signal.side == 'LONG')
+            )
+            
+            if not is_opposite:
+                continue  # Same direction, no reversal
+            
+            # Check if within reversal window
+            time_diff = (datetime.utcnow() - position.created_at).total_seconds()
+            if time_diff > reversal_window_seconds:
+                worker_logger.info(
+                    f"Position #{position.id} is outside reversal window "
+                    f"({time_diff}s > {reversal_window_seconds}s), keeping both positions"
+                )
+                continue
+            
+            # REVERSAL DETECTED - Close the opposite position
+            worker_logger.warning(
+                f"🔄 SIGNAL REVERSAL DETECTED for user {user_id}: "
+                f"{position.symbol} {position.side} → {new_signal.side} "
+                f"(within {time_diff:.0f}s, window: {reversal_window_seconds}s)"
+            )
+            
+            # Get current market price for exit
+            current_price = paper_client.get_current_price(position.symbol)
+            if not current_price:
+                worker_logger.error(f"Failed to get current price for {position.symbol}, skipping reversal")
+                continue
+            
+            # Close the opposite position at market price
+            close_result = paper_client.close_position(
+                user_id=user_id,
+                symbol=position.symbol,
+                side=position.side,
+                qty=position.remaining_qty,
+                entry_price=position.entry_price,
+                exit_price=current_price,
+                leverage=position.leverage
+            )
+            
+            if close_result.get('success'):
+                position.status = 'CANCELLED'
+                position.closed_at = datetime.utcnow()
+                position.remaining_qty = 0
+                position.pnl_usdt = close_result.get('pnl_usdt', 0)
+                position.pnl_pct = close_result.get('pnl_pct', 0)
+                
+                # Log reversal event
+                trade_log = TradeLog(
+                    user_id=user_id,
+                    position_id=position.id,
+                    signal_id=position.signal_id,
+                    type='REVERSAL',
+                    message=f"Position closed due to signal reversal: {position.side} → {new_signal.side}",
+                    meta={
+                        'reversal_reason': 'opposite_direction',
+                        'new_signal_id': new_signal.id,
+                        'time_diff_seconds': time_diff,
+                        'close_price': current_price,
+                        **close_result
+                    }
+                )
+                db.add(trade_log)
+                
+                worker_logger.info(
+                    f"✅ Reversed position #{position.id}: {position.side} @ {position.entry_price} → "
+                    f"Closed @ {current_price}, PnL: {close_result.get('pnl_usdt', 0):.2f} USDT"
+                )
+                
+                # Mark all targets as cancelled
+                for target in position.targets:
+                    if not target.hit:
+                        target.hit = True
+                        target.hit_at = datetime.utcnow()
+                
+                db.flush()  # Commit the reversal before opening new position
+            else:
+                worker_logger.error(
+                    f"Failed to close position #{position.id} for reversal: {close_result.get('error')}"
+                )
+        
+    except Exception as e:
+        worker_logger.error(f"Signal reversal handling error: {e}", exc_info=True)
 
 
 def open_position_for_signal(db: Session, user_id: int, signal: Signal):
