@@ -1,7 +1,7 @@
 # VerzekAutoTrader
 
 ## Overview
-VerzekAutoTrader is a multi-tenant auto-trading platform specializing in Dollar Cost Averaging (DCA) strategies. It automates trading by monitoring Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across multiple exchanges. The platform includes a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to deliver a secure, reliable, and automated trading environment with a focus on user experience, enabling sophisticated automated trading strategies.
+VerzekAutoTrader is a multi-tenant auto-trading platform focused on Dollar Cost Averaging (DCA) strategies. It automates trading by processing Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across multiple exchanges. The platform offers a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to provide a secure, reliable, and automated trading environment with a strong emphasis on user experience, enabling sophisticated automated trading strategies.
 
 ## User Preferences
 - **Production Safety**: Enterprise-grade PostgreSQL database with ACID compliance
@@ -19,15 +19,15 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 ### Technical Implementations
 - **Core Trading Modules**: DCA Engine, Safety Manager, DCA Orchestrator, and Position Tracker with target-based take-profit.
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
-- **Per-User Exchange API Keys**: Premium users connect their own Exchange API keys inside the mobile app. Keys are encrypted at rest using Fernet (AES-128) and stored in PostgreSQL. DCA Engine retrieves and decrypts keys per-user for trading.
+- **Per-User Exchange API Keys**: Premium users connect their own Exchange API keys, encrypted at rest using Fernet (AES-128) and stored in PostgreSQL.
 - **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading. All exchange API calls route through ProxyHelper for static IP support.
-- **Static IP Proxy Infrastructure (Code Ready, Not Deployed)**: ProxyHelper routes all users' exchange API calls through shared static IP proxy. Two deployment options: (1) Vultr WireGuard VPN mesh with HAProxy/Nginx (80.240.29.142), or (2) Cloudflare Workers proxy. Features HMAC SHA256 authentication and automatic failover to direct connection.
-- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system with Scalping Bot (15s interval), Trend Bot (5m interval), QFL Bot (20s interval), and AI/ML Bot (30s interval). Features real-time CCXT market data, 25+ technical indicators, async parallel execution with uvloop, Telegram broadcasting, and backend API integration.
-- **Signal Broadcasting System - Bot-to-Bot Architecture**: Uses official Telegram Bot API (@VerzekSignalBridgeBot) for distributing signals. External VIP signal providers connect their bots to user's VIP group, broadcast bot listens and forwards to VIP/TRIAL groups and backend API. NO Telethon/Pyrogram user account monitoring (account ban risk eliminated).
-- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for managing users, settings, subscriptions, exchange accounts, positions, and receiving signals from VerzekSignalEngine. Includes rate limiting, 2FA, and audit logging.
+- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system (Scalping, Trend, QFL, AI/ML bots) using CCXT market data, 25+ technical indicators, async parallel execution, and Telegram broadcasting.
+- **Signal Broadcasting System**: Uses official Telegram Bot API for distributing signals from external VIP providers to user groups and the backend API, avoiding user account monitoring.
+- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for users, settings, subscriptions, exchange accounts, positions, and signal ingestion. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, live signal feed, and help resources.
-- **Security & Payments**: Multi-layer security with JWT authentication, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
-- **Email Verification System**: Secure token-based email verification using Resend API (support@verzekinnovative.com).
+- **Security & Payments**: Multi-layer security with JWT, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
+- **Email Verification System**: Secure token-based email verification using Resend API.
+- **Signal Auto-Reversal System**: Automatically closes positions upon receiving opposite signals within a configurable time window, with Telegram notifications.
 - **Advanced Features**: AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
 - **Health Monitoring System**: Heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts.
 - **Dynamic Update Architecture**: Remote config system for instant updates, including feature flags, OTA updates via Expo EAS Update, force update flows, and auto-refresh.
@@ -44,100 +44,35 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Scalability**: 4 Gunicorn workers handle concurrent traffic.
 
 ## External Dependencies
-- **Telegram API**: For signal broadcasting via python-telegram-bot library.
-- **Binance API**: For trading operations and market data (VerzekSignalEngine uses CCXT).
-- **Bybit API**: For trading operations and market data (VerzekSignalEngine uses CCXT).
+- **Telegram API**: For signal broadcasting.
+- **Binance API**: For trading operations and market data.
+- **Bybit API**: For trading operations and market data.
 - **Phemex API**: For trading operations.
 - **Kraken Futures API**: For trading operations.
-- **CCXT Library**: Unified exchange API for VerzekSignalEngine market data feed.
+- **CCXT Library**: Unified exchange API for market data feed.
 - **Flask**: Python web framework.
-- **Requests**: Python HTTP library.
-- **Schedule**: Python library for task scheduling.
 - **PyJWT**: For JWT authentication.
 - **Bcrypt**: For password hashing.
 - **OpenAI API**: For AI Trade Assistant (GPT-4o-mini).
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
 - **Resend API**: For transactional emails.
-
-## Project Structure
-### VerzekSignalEngine (signal_engine/)
-Independent signal generation system with 4 trading bots:
-- **Scalping Bot**: RSI + Stochastic + MA bounce detection (0.8% TP, 0.5% SL)
-- **Trend Bot**: MA alignment + MACD + price structure (3.0% TP, 1.5% SL)
-- **QFL Bot**: Deep dip detection with base level analysis (return to base TP)
-- **AI/ML Bot**: 15+ feature pattern recognition with adaptive TP/SL
-
-Features: Real-time CCXT data, shared indicators library, async parallel execution, Telegram broadcasting, systemd services, comprehensive logging.
-
-Integration: Sends signals to backend `/api/house-signals/ingest` endpoint with HOUSE_ENGINE_TOKEN authentication.
-
-## Recent Changes (November 2025)
-### Architecture Cleanup - Telethon/Pyrogram Removed ✅
-- **Removed ALL Telethon/Pyrogram Files**: User's Telegram account was banned for using Telethon. Completely removed telethon_forwarder.py, signal_listener.py, setup_telethon.py, and all related files.
-- **Bot-to-Bot Architecture Verified**: External VIP signal providers connect their bots directly to user's VIP group. Broadcast bot (ID: 8401236648) uses official Bot API only - NO user account monitoring.
-- **Per-User Exchange API Keys Confirmed**: Mobile app allows premium users to connect their own exchange API keys. Backend encrypts keys using Fernet AES-128 and stores in PostgreSQL. DCA Engine decrypts per-user for trading.
-- **Static IP Proxy READY FOR DEPLOYMENT**: ProxyHelper integrated in all 4 exchange clients (Binance, Bybit, Phemex, Kraken). Deployment options ready: (1) Cloudflare Workers (5min, FREE), (2) Vultr VPN (30min, dedicated IP 80.240.29.142). Run `./deploy_cloudflare_proxy.sh` or see `documentation/DEPLOY_STATIC_IP_PROXY.md`. System works without proxy (automatic fallback to direct connection).
-- **APK Build Ready**: Mobile app configured for production. Command: `cd mobile_app/VerzekApp && eas build --platform android --profile production`
-- **Date Updated**: November 17, 2025
-
-### House Signals System - PRODUCTION DEPLOYED ✅
-- **Fixed critical metadata column bug**: Changed from `metadata = Column()` to `meta_data = Column('metadata', JSON)` using SQLAlchemy column mapping to avoid reserved word collision
-- **Resolved import path issues**: Fixed `from backend.models` to `from models` in utils/notifications.py for proper module resolution
-- **Fixed systemd service**: Configured verzek_api.service to run Gunicorn with 4 workers (was running Python directly)
-- **Deployment Infrastructure**: Auto-deployment via systemd timer checks GitHub every 2 minutes and deploys automatically
-- **Production Server**: Vultr 80.240.29.142, port 8050, PostgreSQL database, 4 Gunicorn workers
-- **Verified End-to-End Flow**: VerzekSignalEngine (4 bots) → /api/house-signals/ingest → PostgreSQL → Mobile App push notifications
-- **Production Status**: LIVE - Successfully ingesting signals (signal_id=2 confirmed), ready for VerzekSignalEngine v1.0 integration
-- **Date Deployed**: November 17, 2025
-
-### Telegram Broadcasting Integration - DEPLOYED ✅
-- **Integrated Telegram Broadcasting**: Added `broadcast_signal()` to `/api/house-signals/ingest` endpoint for automatic Telegram distribution
-- **Bot Configuration**: Using @VerzekSignalBridgeBot (ID: 7516420499) for signal broadcasting
-- **Target Groups**: VIP Group (VERZEK SUBSCRIBERS) + TRIAL Group (VERZEK TRIAL SIGNALS)
-- **Tested End-to-End**: Successfully sent test signals to both Telegram groups
-- **Signal Format**: Formatted messages with HTML markup for professional presentation
-- **Date Deployed**: November 17, 2025
-
-### VerzekSignalEngine v1.0 - DEPLOYMENT READY ✅
-- **Created Auto-Deployment Scripts**: `signal_engine/deploy.sh`, `vultr_infrastructure/auto_deploy.sh`, `signal_engine/health_check.sh`
-- **Systemd Services**: verzek-signalengine.service with health monitoring timer (5-minute checks)
-- **Environment Configuration**: Production environment file with all required secrets from Replit
-- **Health Monitoring**: Auto-restart on failure, Telegram admin alerts, comprehensive logging
-- **Deployment Method**: Auto-deploys when changes pushed to GitHub (systemd timer polls every 2 minutes)
-- **Status**: All deployment files created, ready for automatic deployment to Vultr
-- **Date Prepared**: November 17, 2025
-
-### Email Verification & Security Updates - DEPLOYED ✅
-- **Token Expiration Fixed**: Changed verification and password reset tokens from 24 hours to 15 minutes for improved security
-- **Email Link Format**: Updated email templates to show correct expiration time (15 minutes)
-- **GET Endpoint Support**: Added GET handlers to `/api/auth/verify-email` and `/api/auth/reset-password` for email link clicks
-- **Deep Link Redirects**: Email links redirect to app via `verzek-app://` custom URL scheme after token verification
-- **Login Protection**: Email verification required before login (returns 403 if not verified)
-- **Status**: LIVE - All authentication flows secured with shorter token expiration
-- **Date Deployed**: November 17, 2025
-
-### Complete Feature Audit & Deployment Tools - CREATED ✅
-- **Comprehensive System Audit**: Completed full audit of all 10 major systems (8/10 fully operational)
-- **Deployment Scripts Created**: 6 production-ready scripts for complete deployment automation
-- **Daily Report System**: Systemd timer configuration for 9 AM UTC daily trading summary broadcasts
-- **Auto-Trading Management**: Interactive script for enabling/disabling auto-trading for premium users
-- **Trading Mode Switcher**: Safe scripts for switching between PAPER and LIVE trading modes
-- **Documentation**: PRODUCTION_AUDIT_REPORT.md (detailed audit), PRODUCTION_DEPLOYMENT_GUIDE.md (operations manual), DEPLOYMENT_SUMMARY.md (executive summary), GO_LIVE_GUIDE.md (complete deployment checklist)
-- **Status**: All tools ready for deployment, system 90% production-ready
-- **Date Created**: November 18, 2025
-
-### 100% Production Deployment Ready - FINAL ✅
-- **Registration Data Cleaned**: Replit database verified clean (0 users, 0 tokens, 0 payments)
-- **Deployment Scripts Ready**: 6 comprehensive scripts for full production deployment
-  1. `clear_registration_data.sh` - Clear all user data from Vultr (preserves house signals)
-  2. `FULL_DEPLOYMENT.sh` - Complete production deployment in one script
-  3. `deploy_daily_report.sh` - Deploy daily reports system
-  4. `enable_auto_trading.sh` - Manage auto-trading for premium users
-  5. `switch_to_live_trading.sh` - Switch to real money trading
-  6. `switch_to_paper_trading.sh` - Revert to simulation mode
-- **Signal Flow Investigation**: Confirmed Telegram broadcasting working, LINKUSDT and BNBUSDT signals from Vultr production server
-- **Replit vs Vultr Sync**: Code sync verified, auto-deployment active (every 2 minutes from GitHub)
-- **Complete Documentation**: 9 comprehensive guides created (audit reports, deployment guides, sync status, signal flow investigation, go-live checklist)
-- **Status**: Ready for 100% production deployment - execute deployment scripts to go live
-- **Date Completed**: November 18, 2025
+### Signal Auto-Reversal System - IMPLEMENTED ✅
+- **Smart Position Management**: Automatically detects and closes opposite direction positions when reversal signals arrive
+- **Database Schema Updates**: Added `auto_reversal_enabled` (boolean, default: true) and `reversal_window_minutes` (integer, default: 15) columns to user_settings table
+- **Reversal Detection Logic**: Implemented in `backend/trading/executor.py` with handle_signal_reversal() function
+  - Normalizes BUY/SELL and LONG/SHORT formats for compatibility
+  - Checks time window (configurable 1-60 minutes, default 15 minutes)
+  - Closes opposite positions at current market price
+  - Logs reversal events with detailed metadata
+- **Telegram Notifications**: Broadcasts cancellation messages to VIP/TRIAL groups when reversals occur (e.g., "Signal Reversal: LONG → SHORT")
+- **API Endpoint**: Created `/users/{id}/reversal` PUT endpoint for managing reversal settings
+  - Requires JWT authentication and user ownership validation
+  - Validates reversal_window_minutes (1-60 range)
+  - Returns reversal settings in GET `/users/{id}` response
+- **Example Flow**: 
+  - 2:39 PM: BTCUSDT LONG signal arrives → Position opened
+  - 2:42 PM: BTCUSDT SHORT signal arrives (3 minutes later, within 15-min window)
+  - Auto-reversal: Closes LONG position, sends Telegram notification, opens SHORT position
+- **Status**: LIVE - Feature ready for production use, fully tested with architect review
+- **Date Implemented**: November 18, 2025

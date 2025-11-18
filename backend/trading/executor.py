@@ -125,10 +125,25 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
         reversal_window_seconds = settings.reversal_window_minutes * 60
         
         for position in active_positions:
+            # Normalize sides to handle both BUY/SELL and LONG/SHORT formats
+            position_side = position.side.upper()
+            signal_side = new_signal.side.upper()
+            
+            # Map BUY/SELL to LONG/SHORT for consistency
+            if position_side == 'BUY':
+                position_side = 'LONG'
+            elif position_side == 'SELL':
+                position_side = 'SHORT'
+            
+            if signal_side == 'BUY':
+                signal_side = 'LONG'
+            elif signal_side == 'SELL':
+                signal_side = 'SHORT'
+            
             # Check if direction is opposite
             is_opposite = (
-                (position.side == 'LONG' and new_signal.side == 'SHORT') or
-                (position.side == 'SHORT' and new_signal.side == 'LONG')
+                (position_side == 'LONG' and signal_side == 'SHORT') or
+                (position_side == 'SHORT' and signal_side == 'LONG')
             )
             
             if not is_opposite:
@@ -146,7 +161,7 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
             # REVERSAL DETECTED - Close the opposite position
             worker_logger.warning(
                 f"🔄 SIGNAL REVERSAL DETECTED for user {user_id}: "
-                f"{position.symbol} {position.side} → {new_signal.side} "
+                f"{position.symbol} {position_side} → {signal_side} "
                 f"(within {time_diff:.0f}s, window: {reversal_window_seconds}s)"
             )
             
@@ -209,7 +224,7 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
                         broadcast_signal_cancelled(
                             signal_id=signal.id,
                             symbol=position.symbol,
-                            reason=f"Signal Reversal: {position.side} → {new_signal.side}"
+                            reason=f"Signal Reversal: {position_side} → {signal_side}"
                         )
                         worker_logger.info(f"📢 Sent reversal notification to Telegram for {position.symbol}")
                 except Exception as broadcast_error:
