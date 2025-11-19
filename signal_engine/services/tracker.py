@@ -238,6 +238,60 @@ class SignalTracker:
             logger.error(f"Failed to get active signals: {e}")
             return []
     
+    def get_stats(self) -> Dict:
+        """
+        Get overall signal statistics
+        
+        Returns:
+            Dictionary with overall statistics
+        """
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Get counts
+            cursor.execute('SELECT COUNT(*) FROM signals WHERE status = "ACTIVE"')
+            active_count = cursor.fetchone()[0]
+            
+            cursor.execute('SELECT COUNT(*) FROM signals WHERE status = "CLOSED"')
+            closed_count = cursor.fetchone()[0]
+            
+            # Get win rate and avg profit for closed signals
+            cursor.execute('''
+                SELECT
+                    SUM(CASE WHEN profit_pct > 0 THEN 1 ELSE 0 END) as winners,
+                    AVG(profit_pct) as avg_profit
+                FROM signals
+                WHERE status = 'CLOSED'
+            ''')
+            
+            row = cursor.fetchone()
+            conn.close()
+            
+            winners = row[0] or 0
+            avg_profit = row[1] or 0.0
+            
+            total_signals = active_count + closed_count
+            win_rate = (winners / closed_count * 100) if closed_count > 0 else 0.0
+            
+            return {
+                'active_signals': active_count,
+                'closed_signals': closed_count,
+                'total_signals': total_signals,
+                'win_rate': round(win_rate, 2),
+                'avg_profit': round(avg_profit, 2)
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to get stats: {e}")
+            return {
+                'active_signals': 0,
+                'closed_signals': 0,
+                'total_signals': 0,
+                'win_rate': 0.0,
+                'avg_profit': 0.0
+            }
+    
     def get_daily_stats(self, date: Optional[str] = None) -> Dict:
         """
         Get performance statistics for a specific day
