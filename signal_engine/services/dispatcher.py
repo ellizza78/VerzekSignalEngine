@@ -38,33 +38,21 @@ class SignalDispatcher:
             True if successfully sent, False otherwise
         """
         try:
-            # Calculate TP/SL prices from percentages
-            entry = candidate.entry_price
-            
-            if candidate.side in ['LONG', 'BUY']:
-                tp_price = entry * (1 + candidate.tp_pct / 100)
-                sl_price = entry * (1 - candidate.sl_pct / 100)
-            else:  # SHORT/SELL
-                tp_price = entry * (1 - candidate.tp_pct / 100)
-                sl_price = entry * (1 + candidate.sl_pct / 100)
-            
-            # Build backend payload
+            # Build backend payload (SignalCandidate already has calculated prices)
             backend_payload = {
                 'source': candidate.bot_source,
                 'symbol': candidate.symbol,
                 'side': candidate.side,
-                'entry': float(entry),
-                'stop_loss': float(sl_price),
-                'take_profits': [float(tp_price)],
+                'entry': float(candidate.entry),
+                'stop_loss': float(candidate.stop_loss),
+                'take_profits': [float(tp) for tp in candidate.take_profits],
                 'timeframe': candidate.timeframe,
                 'confidence': int(candidate.confidence),
                 'version': 'SE.v2.0-FUSION',
                 'metadata': {
                     'signal_id': candidate.signal_id,
                     'bot_source': candidate.bot_source,
-                    'tp_pct': candidate.tp_pct,
-                    'sl_pct': candidate.sl_pct,
-                    'timestamp': candidate.timestamp.isoformat(),
+                    'timestamp': candidate.created_at.isoformat(),
                     'fusion_approved': True
                 }
             }

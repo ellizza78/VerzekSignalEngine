@@ -81,6 +81,20 @@ class SignalTracker:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
+            # Validate take_profits list
+            if not candidate.take_profits or len(candidate.take_profits) == 0:
+                logger.error(f"Cannot track signal {candidate.signal_id[:8]}: empty take_profits list")
+                conn.close()
+                return False
+            
+            # Calculate TP/SL percentages from prices for tracking
+            if candidate.side in ['LONG', 'BUY']:
+                tp_pct = ((candidate.take_profits[0] - candidate.entry) / candidate.entry) * 100
+                sl_pct = ((candidate.entry - candidate.stop_loss) / candidate.entry) * 100
+            else:  # SHORT/SELL
+                tp_pct = ((candidate.entry - candidate.take_profits[0]) / candidate.entry) * 100
+                sl_pct = ((candidate.stop_loss - candidate.entry) / candidate.entry) * 100
+            
             cursor.execute('''
                 INSERT INTO signals (
                     signal_id, symbol, side, entry_price, tp_pct, sl_pct,
@@ -90,13 +104,13 @@ class SignalTracker:
                 candidate.signal_id,
                 candidate.symbol,
                 candidate.side,
-                candidate.entry_price,
-                candidate.tp_pct,
-                candidate.sl_pct,
+                candidate.entry,
+                tp_pct,
+                sl_pct,
                 candidate.confidence,
                 candidate.bot_source,
                 candidate.timeframe,
-                candidate.timestamp.isoformat(),
+                candidate.created_at.isoformat(),
                 'ACTIVE'
             ))
             
@@ -183,11 +197,12 @@ class SignalTracker:
                 signal_id=signal_id,
                 symbol=symbol,
                 side=side,
-                entry_price=entry_price,
+                entry=entry_price,
                 exit_price=exit_price,
                 profit_pct=profit_pct,
-                duration_seconds=duration_seconds,
                 close_reason=close_reason,
+                opened_at=opened_time,
+                closed_at=closed_time,
                 bot_source=bot_source
             )
             

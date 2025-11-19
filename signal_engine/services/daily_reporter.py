@@ -4,7 +4,7 @@ Generates and sends daily signal performance reports to Telegram
 """
 import logging
 from datetime import datetime, timedelta
-from typing import Dict
+from typing import Dict, Optional
 import os
 from services.tracker import get_tracker
 from services.telegram_broadcaster import get_broadcaster
@@ -20,7 +20,7 @@ class DailyReporter:
         self.broadcaster = get_broadcaster()
         logger.info("✅ Daily Reporter initialized")
     
-    async def generate_and_send_report(self, date: str = None):
+    async def generate_and_send_report(self, date: Optional[str] = None):
         """
         Generate daily report and send to VIP Telegram group
         

@@ -90,14 +90,19 @@ class AIBot(BaseStrategy):
                 return None
             
             current_price = df['close'].iloc[-1]
-            signal = self._create_signal(
-                symbol, direction, current_price, confidence, prediction
+            candidate = self.create_signal_candidate(
+                symbol=symbol,
+                side=direction,
+                entry_price=current_price,
+                confidence=confidence,
+                tp_pct=1.5,  # AI/ML bot moderate targets
+                sl_pct=0.8
             )
             
-            if self.validate_signal(signal):
+            if self.validate_signal(candidate):
                 self.record_signal(symbol)
-                self.log_signal(signal)
-                return signal
+                self.log_signal(candidate)
+                return candidate
             
             return None
             

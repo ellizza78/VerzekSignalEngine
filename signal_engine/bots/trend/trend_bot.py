@@ -82,14 +82,19 @@ class TrendBot(BaseStrategy):
                 )
                 
                 if confidence >= self.min_confidence:
-                    signal = self._create_signal(
-                        symbol, 'LONG', current_price, confidence, atr.iloc[-1]
+                    candidate = self.create_signal_candidate(
+                        symbol=symbol,
+                        side='LONG',
+                        entry_price=current_price,
+                        confidence=confidence,
+                        tp_pct=3.0,  # Trend bot uses larger targets
+                        sl_pct=1.5
                     )
                     
-                    if self.validate_signal(signal):
+                    if self.validate_signal(candidate):
                         self.record_signal(symbol)
-                        self.log_signal(signal)
-                        return signal
+                        self.log_signal(candidate)
+                        return candidate
             
             elif trend_direction == 'BEARISH' and macd_signal == 'BEARISH' and price_structure == 'BEARISH':
                 confidence = self._calculate_confidence(
@@ -97,14 +102,19 @@ class TrendBot(BaseStrategy):
                 )
                 
                 if confidence >= self.min_confidence:
-                    signal = self._create_signal(
-                        symbol, 'SHORT', current_price, confidence, atr.iloc[-1]
+                    candidate = self.create_signal_candidate(
+                        symbol=symbol,
+                        side='SHORT',
+                        entry_price=current_price,
+                        confidence=confidence,
+                        tp_pct=3.0,  # Trend bot uses larger targets
+                        sl_pct=1.5
                     )
                     
-                    if self.validate_signal(signal):
+                    if self.validate_signal(candidate):
                         self.record_signal(symbol)
-                        self.log_signal(signal)
-                        return signal
+                        self.log_signal(candidate)
+                        return candidate
             
             return None
             

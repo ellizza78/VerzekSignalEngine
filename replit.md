@@ -21,7 +21,12 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
 - **Per-User Exchange API Keys**: Premium users connect their own Exchange API keys, encrypted at rest using Fernet (AES-128) and stored in PostgreSQL.
 - **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading. All exchange API calls route through ProxyHelper for static IP support.
-- **VerzekSignalEngine v1.0**: Independent 4-bot signal generation system (Scalping, Trend, QFL, AI/ML bots) using CCXT market data, 25+ technical indicators, async parallel execution, and Telegram broadcasting.
+- **VerzekSignalEngine v2.0 - Master Fusion Engine**: Intelligent 4-bot signal generation system with centralized filtering and coordination. Features include:
+  - **4 Independent Bots**: Scalping (15s), Trend (5m), QFL (20s), AI/ML (30s) using CCXT market data and 25+ technical indicators
+  - **Fusion Engine (Balanced Mode)**: Centralized signal filtering with cooldown management (10min same direction, 20min opposite), trend bias filtering, rate limiting (12/hour global, 4/hour per symbol), opposite signal blocking, and bot priority weighting
+  - **Signal Tracking**: SQLite database for performance monitoring with SignalCandidate/SignalOutcome models
+  - **Daily Performance Reporting**: Automated daily stats (win rate, avg profit, best/worst trades) sent to VIP Telegram groups
+  - **59-Symbol Watchlist**: Comprehensive coverage across Layer 1s, DeFi, Memes, Gaming/Metaverse, and Infrastructure tokens
 - **Signal Broadcasting System**: Uses official Telegram Bot API for distributing signals from external VIP providers to user groups and the backend API, avoiding user account monitoring.
 - **REST API Server (Flask)**: Provides JWT-authenticated endpoints for users, settings, subscriptions, exchange accounts, positions, and signal ingestion. Includes rate limiting, 2FA, and audit logging.
 - **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, live signal feed, and help resources.
@@ -79,3 +84,27 @@ The mobile application (React Native + Expo) features a modern dark theme with T
   - 3:10 PM: BTCUSDT SHORT signal → **Position stacking**: Open 2nd SHORT position (no reversal)
 - **Status**: LIVE in Replit + Production Deployment Pending
 - **Date Implemented**: November 18, 2025
+
+### Master Fusion Engine v2.0 - INTEGRATED ✅
+- **Intelligent Signal Coordination**: All 4 bots now route through centralized Fusion Engine for intelligent filtering
+- **Core Models**: SignalCandidate and SignalOutcome dataclasses replace legacy Signal format
+- **Fusion Engine Rules** (Balanced Mode):
+  - **Rate Limiting**: 12 signals/hour globally, 4 signals/hour per symbol
+  - **Cooldown Management**: 10 minutes same direction (bypass with 92%+ confidence), 20 minutes opposite direction (strict)
+  - **Trend Bias**: Follows Trend Bot direction, blocks counter-trend signals unless 90%+ confidence
+  - **Opposite Blocking**: Rejects opposite signals if active signal exists (Balanced Mode - Option A)
+  - **Bot Priority**: TREND (4) > AI_ML (3) > SCALPING (2) > QFL (1)
+- **Integration Pipeline**: Bot → Fusion Engine → Tracker → Dispatcher → Backend + Telegram
+- **Signal Tracking System**: SQLite database (`signal_engine/data/signals.db`) tracks opened/closed signals
+  - Tracks entry/exit prices, profit percentages, duration, close reasons (TP/SL/CANCEL/REVERSAL)
+  - Provides daily statistics: total signals, win rate, avg profit, best/worst trades
+  - **Note**: Signal closure requires backend webhook integration (see SIGNAL_CLOSURE_MECHANISM.md)
+- **Daily Performance Reporter**: Automated reports sent to VIP Telegram groups with performance metrics
+- **Deployment Ready**: Phases 1-10 complete, integration tested, ready for Vultr deployment
+- **Documentation**: 
+  - README_FUSION_ENGINE.md - Technical overview
+  - FUSION_ENGINE_UPGRADE_PROGRESS.md - Implementation phases
+  - DEPLOYMENT_CHECKLIST.md - Deployment procedures
+  - SIGNAL_CLOSURE_MECHANISM.md - Backend webhook integration guide
+- **Status**: INTEGRATED in Replit, Vultr Deployment Pending
+- **Date Implemented**: November 19, 2025

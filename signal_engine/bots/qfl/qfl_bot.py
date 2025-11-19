@@ -82,14 +82,23 @@ class QFLBot(BaseStrategy):
             )
             
             if confidence >= self.min_confidence:
-                signal = self._create_qfl_signal(
-                    symbol, current_price, base_level, confidence, drop_pct
+                # Calculate TP to base level
+                tp_pct = abs((base_level - current_price) / current_price * 100)
+                sl_pct = abs(drop_pct) / 2  # SL below crash low
+                
+                candidate = self.create_signal_candidate(
+                    symbol=symbol,
+                    side='LONG',
+                    entry_price=current_price,
+                    confidence=confidence,
+                    tp_pct=tp_pct,
+                    sl_pct=sl_pct
                 )
                 
-                if self.validate_signal(signal):
+                if self.validate_signal(candidate):
                     self.record_signal(symbol)
-                    self.log_signal(signal)
-                    return signal
+                    self.log_signal(candidate)
+                    return candidate
             
             return None
             

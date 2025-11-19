@@ -15,6 +15,7 @@ from bots.qfl.qfl_bot import QFLBot
 from bots.ai_ml.ai_bot import AIBot
 from services.dispatcher import get_dispatcher
 from services.telegram_broadcaster import get_broadcaster
+from services.tracker import get_tracker
 from core.fusion_engine import FusionEngineBalanced
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class BotScheduler:
         self.watchlist = self._load_watchlist()
         self.dispatcher = get_dispatcher()
         self.broadcaster = get_broadcaster()
+        self.tracker = get_tracker()
         self.running = False
         
         # Initialize Master Fusion Engine v2.0
@@ -108,8 +110,19 @@ class BotScheduler:
             try:
                 logger.info(f"🎯 {signal.bot_source} signal approved: {signal.symbol} {signal.side}")
                 
+                # Track signal in database (CRITICAL - must happen before dispatch)
+                track_success = self.tracker.open_signal(signal)
+                if not track_success:
+                    logger.error(f"⚠️  Failed to track signal {signal.signal_id[:8]}, skipping dispatch")
+                    continue
+                
                 # Dispatch to backend API
-                await self.dispatcher.dispatch_candidate(signal)
+                dispatch_success = await self.dispatcher.dispatch_candidate(signal)
+                
+                if not dispatch_success:
+                    logger.error(f"⚠️  Failed to dispatch signal {signal.signal_id[:8]}")
+                    # Signal is tracked but dispatch failed - will remain ACTIVE in DB
+                    continue
                 
                 # Broadcast to Telegram
                 telegram_message = signal.to_telegram_message()
@@ -119,7 +132,7 @@ class BotScheduler:
                 )
                 
             except Exception as e:
-                logger.error(f"Error dispatching signal {signal.signal_id}: {e}")
+                logger.error(f"Error processing signal {signal.signal_id}: {e}")
     
     async def scalping_task(self):
         """Scalping bot runs every 15 seconds"""
@@ -178,6 +191,7 @@ class BotScheduler:
                 dispatcher_stats = self.dispatcher.get_stats()
                 broadcaster_stats = self.broadcaster.get_stats()
                 fusion_stats = self.fusion_engine.get_stats()
+                active_signals = self.tracker.get_active_signals()
                 
                 logger.info("=" * 60)
                 logger.info("📊 SIGNAL ENGINE STATISTICS (Fusion Engine v2.0)")
@@ -195,7 +209,10 @@ class BotScheduler:
                 logger.info(f"Rejected (Trend Bias): {fusion_stats['rejected_trend']}")
                 logger.info(f"Rejected (Opposite Signal): {fusion_stats['rejected_opposite']}")
                 logger.info(f"Rejected (Rate Limit): {fusion_stats['rejected_rate_limit']}")
-                logger.info(f"Active Signals: {fusion_stats['active_signals']}")
+                logger.info(f"Active Signals (Fusion): {fusion_stats['active_signals']}")
+                logger.info("-" * 60)
+                logger.info("📈 SIGNAL TRACKER STATISTICS")
+                logger.info(f"Active Signals (Tracked): {len(active_signals)}")
                 logger.info("=" * 60)
                 
             except Exception as e:
