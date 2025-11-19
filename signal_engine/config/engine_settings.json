@@ -44,6 +44,15 @@
     "rate_limit": true,
     "retry_attempts": 3
   },
+  "master_engine": {
+    "mode": "BALANCED",
+    "cooldown_same_direction_minutes": 10,
+    "cooldown_opposite_direction_minutes": 20,
+    "reversal_min_confidence": 90,
+    "very_strong_confidence": 92,
+    "max_signals_per_hour_per_symbol": 4,
+    "max_signals_per_hour_global": 12
+  },
   "signal_output": {
     "backend_api": true,
     "telegram_broadcast": true,

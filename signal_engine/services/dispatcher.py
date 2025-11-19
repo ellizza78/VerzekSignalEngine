@@ -1,6 +1,7 @@
 """
 Signal Dispatcher
 Sends generated signals to backend API and Telegram
+Master Fusion Engine v2.0 - SignalCandidate Support
 """
 import requests
 import logging
@@ -8,6 +9,9 @@ from typing import Dict, Optional
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from core.models import SignalCandidate
 
 load_dotenv()
 
@@ -23,9 +27,71 @@ class SignalDispatcher:
         self.signals_sent = 0
         self.signals_failed = 0
         
+    async def dispatch_candidate(self, candidate: SignalCandidate) -> bool:
+        """
+        Send SignalCandidate to backend API (Fusion Engine v2.0)
+        
+        Args:
+            candidate: SignalCandidate object from fusion engine
+            
+        Returns:
+            True if successfully sent, False otherwise
+        """
+        try:
+            # Calculate TP/SL prices from percentages
+            entry = candidate.entry_price
+            
+            if candidate.side in ['LONG', 'BUY']:
+                tp_price = entry * (1 + candidate.tp_pct / 100)
+                sl_price = entry * (1 - candidate.sl_pct / 100)
+            else:  # SHORT/SELL
+                tp_price = entry * (1 - candidate.tp_pct / 100)
+                sl_price = entry * (1 + candidate.sl_pct / 100)
+            
+            # Build backend payload
+            backend_payload = {
+                'source': candidate.bot_source,
+                'symbol': candidate.symbol,
+                'side': candidate.side,
+                'entry': float(entry),
+                'stop_loss': float(sl_price),
+                'take_profits': [float(tp_price)],
+                'timeframe': candidate.timeframe,
+                'confidence': int(candidate.confidence),
+                'version': 'SE.v2.0-FUSION',
+                'metadata': {
+                    'signal_id': candidate.signal_id,
+                    'bot_source': candidate.bot_source,
+                    'tp_pct': candidate.tp_pct,
+                    'sl_pct': candidate.sl_pct,
+                    'timestamp': candidate.timestamp.isoformat(),
+                    'fusion_approved': True
+                }
+            }
+            
+            # Send to backend
+            success = await self._send_candidate_to_backend(backend_payload)
+            
+            if success:
+                self.signals_sent += 1
+                logger.info(f"✅ Signal dispatched: {candidate.symbol} {candidate.side} (ID: {candidate.signal_id[:8]})")
+                
+                # Log to file for backup
+                self._log_signal_to_file(backend_payload)
+            else:
+                self.signals_failed += 1
+                logger.error(f"❌ Failed to dispatch signal: {candidate.symbol}")
+            
+            return success
+            
+        except Exception as e:
+            self.signals_failed += 1
+            logger.error(f"❌ Dispatcher error: {e}")
+            return False
+    
     async def dispatch(self, signal_data: Dict) -> bool:
         """
-        Send signal to backend API
+        Send signal to backend API (Legacy format)
         
         Args:
             signal_data: Signal dictionary from Signal.to_dict()
@@ -60,6 +126,53 @@ class SignalDispatcher:
             self.signals_failed += 1
             logger.error(f"❌ Dispatcher error: {e}")
             return False
+    
+    async def _send_candidate_to_backend(self, payload: Dict) -> bool:
+        """
+        Send SignalCandidate to VerzekAutoTrader backend (Fusion Engine v2.0)
+        Retries up to 3 times on failure
+        """
+        max_retries = 3
+        
+        for attempt in range(1, max_retries + 1):
+            try:
+                url = f"{self.backend_url}/api/house-signals/ingest"
+                
+                headers = {
+                    'Content-Type': 'application/json',
+                    'X-INTERNAL-TOKEN': self.internal_token
+                }
+                
+                response = requests.post(
+                    url,
+                    json=payload,
+                    headers=headers,
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    logger.info(f"Backend accepted signal (ID: {result.get('signal_id', 'N/A')})")
+                    return True
+                else:
+                    logger.warning(f"Backend returned {response.status_code}: {response.text}")
+                    if attempt < max_retries:
+                        logger.info(f"Retrying... (attempt {attempt + 1}/{max_retries})")
+                        continue
+                    return False
+                    
+            except requests.exceptions.Timeout:
+                logger.error(f"Backend API timeout (attempt {attempt}/{max_retries})")
+                if attempt < max_retries:
+                    continue
+                return False
+            except Exception as e:
+                logger.error(f"Backend API error (attempt {attempt}/{max_retries}): {e}")
+                if attempt < max_retries:
+                    continue
+                return False
+        
+        return False
     
     async def _send_to_backend(self, payload: Dict) -> bool:
         """

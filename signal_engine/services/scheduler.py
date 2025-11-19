@@ -1,6 +1,7 @@
 """
 Async Scheduler for Running Multiple Bots in Parallel
 Uses asyncio and uvloop for high performance
+Master Fusion Engine v2.0 - Intelligent Signal Filtering
 """
 import asyncio
 import uvloop
@@ -14,6 +15,7 @@ from bots.qfl.qfl_bot import QFLBot
 from bots.ai_ml.ai_bot import AIBot
 from services.dispatcher import get_dispatcher
 from services.telegram_broadcaster import get_broadcaster
+from core.fusion_engine import FusionEngineBalanced
 
 logger = logging.getLogger(__name__)
 
@@ -28,12 +30,16 @@ class BotScheduler:
         self.broadcaster = get_broadcaster()
         self.running = False
         
+        # Initialize Master Fusion Engine v2.0
+        self.fusion_engine = FusionEngineBalanced(self.config['master_engine'])
+        
         # Initialize bots
         self.scalping_bot = ScalpingBot(self.config['bots']['scalping'])
         self.trend_bot = TrendBot(self.config['bots']['trend'])
         self.qfl_bot = QFLBot(self.config['bots']['qfl'])
         self.ai_bot = AIBot(self.config['bots']['ai_ml'])
         
+        logger.info("✅ Master Fusion Engine v2.0 initialized")
         logger.info("✅ All bots initialized")
     
     def _load_config(self, config_path: str) -> Dict:
@@ -65,34 +71,63 @@ class BotScheduler:
             }
         }
     
-    async def run_bot_cycle(self, bot, symbols: List[str], bot_name: str):
-        """Run one cycle of a bot across all symbols"""
+    async def collect_candidates(self, bot, symbols: List[str], bot_name: str) -> List:
+        """Collect signal candidates from a bot across all symbols"""
+        candidates = []
         for symbol in symbols:
             try:
-                signal = await bot.analyze(symbol)
-                
-                if signal:
-                    logger.info(f"🎯 {bot_name} generated signal for {symbol}")
-                    
-                    # Dispatch to backend API
-                    await self.dispatcher.dispatch(signal.to_dict())
-                    
-                    # Broadcast to Telegram
-                    telegram_message = signal.to_telegram_message()
-                    await self.broadcaster.broadcast_signal(
-                        telegram_message,
-                        to_groups=['vip', 'trial', 'admin']
-                    )
-                    
+                candidate = await bot.analyze(symbol)
+                if candidate:
+                    candidates.append(candidate)
+                    logger.debug(f"🔍 {bot_name} generated candidate for {symbol}")
             except Exception as e:
                 logger.error(f"Error in {bot_name} for {symbol}: {e}")
+        return candidates
+    
+    async def process_and_dispatch_signals(self, all_candidates: List):
+        """Process candidates through Fusion Engine and dispatch approved signals"""
+        if not all_candidates:
+            return
+        
+        # Update trend bias from Trend Bot signals
+        for candidate in all_candidates:
+            if candidate.bot_source == "TREND":
+                self.fusion_engine.update_trend_bias(candidate.symbol, candidate.side)
+        
+        # Process through Fusion Engine
+        approved_signals = self.fusion_engine.process_candidates(all_candidates)
+        
+        if not approved_signals:
+            logger.debug("🔒 No signals approved by Fusion Engine this cycle")
+            return
+        
+        logger.info(f"✅ Fusion Engine approved {len(approved_signals)}/{len(all_candidates)} signals")
+        
+        # Dispatch approved signals
+        for signal in approved_signals:
+            try:
+                logger.info(f"🎯 {signal.bot_source} signal approved: {signal.symbol} {signal.side}")
+                
+                # Dispatch to backend API
+                await self.dispatcher.dispatch_candidate(signal)
+                
+                # Broadcast to Telegram
+                telegram_message = signal.to_telegram_message()
+                await self.broadcaster.broadcast_signal(
+                    telegram_message,
+                    to_groups=['vip', 'trial', 'admin']
+                )
+                
+            except Exception as e:
+                logger.error(f"Error dispatching signal {signal.signal_id}: {e}")
     
     async def scalping_task(self):
         """Scalping bot runs every 15 seconds"""
         while self.running:
             try:
-                symbols = self.watchlist.get('scalping_whitelist', ['BTC/USDT', 'ETH/USDT'])
-                await self.run_bot_cycle(self.scalping_bot, symbols, 'Scalping Bot')
+                symbols = self.watchlist.get('scalping_whitelist', ['BTCUSDT', 'ETHUSDT'])
+                candidates = await self.collect_candidates(self.scalping_bot, symbols, 'Scalping Bot')
+                await self.process_and_dispatch_signals(candidates)
                 await asyncio.sleep(15)  # 15 seconds
             except Exception as e:
                 logger.error(f"Scalping task error: {e}")
@@ -102,8 +137,9 @@ class BotScheduler:
         """Trend bot runs every 5 minutes"""
         while self.running:
             try:
-                symbols = self.watchlist.get('trend_whitelist', ['BTC/USDT', 'ETH/USDT', 'SOL/USDT'])
-                await self.run_bot_cycle(self.trend_bot, symbols, 'Trend Bot')
+                symbols = self.watchlist.get('trend_whitelist', ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'])
+                candidates = await self.collect_candidates(self.trend_bot, symbols, 'Trend Bot')
+                await self.process_and_dispatch_signals(candidates)
                 await asyncio.sleep(300)  # 5 minutes
             except Exception as e:
                 logger.error(f"Trend task error: {e}")
@@ -113,8 +149,9 @@ class BotScheduler:
         """QFL bot runs every 20 seconds"""
         while self.running:
             try:
-                symbols = self.watchlist.get('qfl_whitelist', ['BTC/USDT', 'ETH/USDT', 'BNB/USDT'])
-                await self.run_bot_cycle(self.qfl_bot, symbols, 'QFL Bot')
+                symbols = self.watchlist.get('qfl_whitelist', ['BTCUSDT', 'ETHUSDT', 'BNBUSDT'])
+                candidates = await self.collect_candidates(self.qfl_bot, symbols, 'QFL Bot')
+                await self.process_and_dispatch_signals(candidates)
                 await asyncio.sleep(20)  # 20 seconds
             except Exception as e:
                 logger.error(f"QFL task error: {e}")
@@ -124,8 +161,9 @@ class BotScheduler:
         """AI bot runs every 30 seconds"""
         while self.running:
             try:
-                symbols = self.watchlist.get('priority', ['BTC/USDT', 'ETH/USDT'])
-                await self.run_bot_cycle(self.ai_bot, symbols, 'AI/ML Bot')
+                symbols = self.watchlist.get('priority', ['BTCUSDT', 'ETHUSDT'])
+                candidates = await self.collect_candidates(self.ai_bot, symbols, 'AI/ML Bot')
+                await self.process_and_dispatch_signals(candidates)
                 await asyncio.sleep(30)  # 30 seconds
             except Exception as e:
                 logger.error(f"AI task error: {e}")
@@ -139,13 +177,25 @@ class BotScheduler:
                 
                 dispatcher_stats = self.dispatcher.get_stats()
                 broadcaster_stats = self.broadcaster.get_stats()
+                fusion_stats = self.fusion_engine.get_stats()
                 
                 logger.info("=" * 60)
-                logger.info("📊 SIGNAL ENGINE STATISTICS")
+                logger.info("📊 SIGNAL ENGINE STATISTICS (Fusion Engine v2.0)")
                 logger.info(f"Signals Sent: {dispatcher_stats['signals_sent']}")
                 logger.info(f"Signals Failed: {dispatcher_stats['signals_failed']}")
                 logger.info(f"Success Rate: {dispatcher_stats['success_rate']:.1f}%")
                 logger.info(f"Telegram Messages: {broadcaster_stats['messages_sent']}")
+                logger.info("-" * 60)
+                logger.info("🔥 FUSION ENGINE STATISTICS")
+                logger.info(f"Total Candidates: {fusion_stats['total_candidates']}")
+                logger.info(f"Approved Signals: {fusion_stats['approved']}")
+                logger.info(f"Approval Rate: {fusion_stats['approval_rate']:.1f}%")
+                logger.info(f"Rejected (Confidence): {fusion_stats['rejected_confidence']}")
+                logger.info(f"Rejected (Cooldown): {fusion_stats['rejected_cooldown']}")
+                logger.info(f"Rejected (Trend Bias): {fusion_stats['rejected_trend']}")
+                logger.info(f"Rejected (Opposite Signal): {fusion_stats['rejected_opposite']}")
+                logger.info(f"Rejected (Rate Limit): {fusion_stats['rejected_rate_limit']}")
+                logger.info(f"Active Signals: {fusion_stats['active_signals']}")
                 logger.info("=" * 60)
                 
             except Exception as e:
@@ -155,7 +205,7 @@ class BotScheduler:
         """Start all bots in parallel"""
         self.running = True
         
-        logger.info("🚀 Starting VerzekSignalEngine v1.0")
+        logger.info("🚀 Starting VerzekSignalEngine v2.0 - Master Fusion Engine")
         logger.info("=" * 60)
         
         # Send startup notification
