@@ -5,6 +5,8 @@ Processes signals, opens positions, manages TP/SL for users with auto_trade_enab
 from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import List
+import requests
+import os
 
 from models import User, UserSettings, Signal, Position, PositionTarget, TradeLog
 from trading.paper_client import paper_client
@@ -15,6 +17,41 @@ from utils.notifications import (
     get_user_push_tokens
 )
 from broadcast import broadcast_signal_cancelled
+
+
+def notify_signal_engine_closure(signal_id: str, exit_price: float, close_reason: str):
+    """
+    Send webhook to Signal Engine to close tracked signal
+    
+    Args:
+        signal_id: Signal ID from signal engine
+        exit_price: Actual exit price
+        close_reason: TP, SL, CANCEL, or REVERSAL
+    """
+    try:
+        webhook_url = os.getenv('SIGNAL_ENGINE_WEBHOOK_URL', 'http://localhost:8050')
+        
+        payload = {
+            'signal_id': signal_id,
+            'exit_price': exit_price,
+            'close_reason': close_reason
+        }
+        
+        response = requests.post(
+            f"{webhook_url}/api/signals/close",
+            json=payload,
+            timeout=5
+        )
+        
+        if response.status_code == 200:
+            worker_logger.info(f"✅ Signal Engine notified: {signal_id[:8]} closed ({close_reason})")
+        else:
+            worker_logger.warning(f"⚠️ Signal Engine webhook failed: {response.status_code}")
+            
+    except requests.exceptions.Timeout:
+        worker_logger.error(f"Signal Engine webhook timeout for {signal_id[:8]}")
+    except Exception as e:
+        worker_logger.error(f"Signal Engine webhook error: {e}")
 
 
 def run_once(db: Session):
@@ -220,6 +257,10 @@ def handle_signal_reversal(db: Session, user_id: int, new_signal: Signal):
                         worker_logger.info(f"📢 Sent reversal notification to Telegram for {position.symbol}")
                 except Exception as broadcast_error:
                     worker_logger.error(f"Telegram reversal notification failed: {broadcast_error}")
+                
+                # Notify Signal Engine that position closed (reversal)
+                if position.signal_id:
+                    notify_signal_engine_closure(position.signal_id, current_price, 'REVERSAL')
                 
                 db.flush()  # Commit the reversal before opening new position
             else:
@@ -477,6 +518,10 @@ def close_position_target(db: Session, position: Position, target_index: int, pr
                             worker_logger.info(f"📱 Sent trade end notification to user {position.user_id}")
                 except Exception as notif_error:
                     worker_logger.error(f"Trade end notification failed: {notif_error}")
+                
+                # Notify Signal Engine that position fully closed
+                if position.signal_id:
+                    notify_signal_engine_closure(position.signal_id, price, 'TP')
         
     except Exception as e:
         worker_logger.error(f"Close position target error: {e}")
@@ -550,6 +595,10 @@ def close_position_sl(db: Session, position: Position, sl_price: float):
                         worker_logger.info(f"📱 Sent trade end notification to user {position.user_id}")
             except Exception as notif_error:
                 worker_logger.error(f"Trade end notification failed: {notif_error}")
+            
+            # Notify Signal Engine that position closed (stop loss)
+            if position.signal_id:
+                notify_signal_engine_closure(position.signal_id, sl_price, 'SL')
         
     except Exception as e:
         worker_logger.error(f"Close position SL error: {e}")
