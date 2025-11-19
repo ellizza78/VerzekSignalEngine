@@ -6,7 +6,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from engine.base_strategy import BaseStrategy, Signal
+from engine.base_strategy import BaseStrategy
+from core.models import SignalCandidate
 from common.indicators import Indicators
 from typing import Optional
 import logging
@@ -37,7 +38,7 @@ class QFLBot(BaseStrategy):
         self.base_lookback = config.get('base_lookback_candles', 100)
         self.min_confidence = config.get('confidence_threshold', 80)
         
-    async def analyze(self, symbol: str) -> Optional[Signal]:
+    async def analyze(self, symbol: str) -> Optional[SignalCandidate]:
         """Analyze symbol for QFL opportunities (crashes)"""
         try:
             # Fetch market data

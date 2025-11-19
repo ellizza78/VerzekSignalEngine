@@ -6,7 +6,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from engine.base_strategy import BaseStrategy, Signal
+from engine.base_strategy import BaseStrategy
+from core.models import SignalCandidate
 from common.indicators import Indicators
 from typing import Optional
 import logging
@@ -36,7 +37,7 @@ class TrendBot(BaseStrategy):
         self.timeframe = config.get('primary_timeframe', '1h')
         self.min_confidence = config.get('confidence_threshold', 75)
         
-    async def analyze(self, symbol: str) -> Optional[Signal]:
+    async def analyze(self, symbol: str) -> Optional[SignalCandidate]:
         """Analyze symbol for trend-following opportunities"""
         try:
             # Fetch market data

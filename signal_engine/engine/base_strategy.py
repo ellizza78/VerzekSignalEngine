@@ -3,11 +3,18 @@ Base Strategy Class
 All trading bots inherit from this class
 """
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from datetime import datetime
 import logging
+import sys
+import os
+
+# Add core module to path for SignalCandidate import
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 from data_feed.live_data import get_market_feed
 from common.indicators import Indicators
+from core.models import SignalCandidate, generate_signal_id
 
 logger = logging.getLogger(__name__)
 
@@ -89,17 +96,42 @@ class BaseStrategy(ABC):
         self.last_signal_time = {}
         
     @abstractmethod
-    async def analyze(self, symbol: str) -> Optional[Signal]:
+    async def analyze(self, symbol: str) -> Optional[SignalCandidate]:
         """
-        Analyze market data and generate signal if conditions met
+        Analyze market data and generate signal candidate if conditions met
         
         Args:
             symbol: Trading pair to analyze
             
         Returns:
-            Signal object if signal generated, None otherwise
+            SignalCandidate object if signal generated, None otherwise
         """
         pass
+    
+    async def generate_signals(self, symbols: List[str] = None) -> List[SignalCandidate]:
+        """
+        Generate signals for multiple symbols (used by scheduler)
+        
+        Args:
+            symbols: List of symbols to analyze (optional)
+            
+        Returns:
+            List of SignalCandidate objects
+        """
+        candidates = []
+        
+        if not symbols:
+            return candidates
+        
+        for symbol in symbols:
+            try:
+                candidate = await self.analyze(symbol)
+                if candidate:
+                    candidates.append(candidate)
+            except Exception as e:
+                logger.error(f"{self.name} error on {symbol}: {e}")
+        
+        return candidates
     
     def fetch_market_data(self, symbol: str, timeframe: str, limit: int = 200):
         """Fetch OHLCV data for analysis"""
@@ -160,41 +192,41 @@ class BaseStrategy(ABC):
         
         return tp_price, sl_price
     
-    def validate_signal(self, signal: Signal) -> bool:
+    def validate_signal(self, candidate: SignalCandidate) -> bool:
         """
-        Validate signal meets minimum requirements
+        Validate signal candidate meets minimum requirements
         
         Args:
-            signal: Signal object to validate
+            candidate: SignalCandidate object to validate
             
         Returns:
             True if signal is valid, False otherwise
         """
         # Check confidence threshold
         min_confidence = self.config.get('confidence_threshold', 70)
-        if signal.confidence < min_confidence:
-            logger.debug(f"Signal rejected: confidence {signal.confidence} < {min_confidence}")
+        if candidate.confidence < min_confidence:
+            logger.debug(f"Signal rejected: confidence {candidate.confidence} < {min_confidence}")
             return False
         
         # Check TP/SL are valid
-        if signal.direction == 'LONG':
-            if signal.tp_price <= signal.entry_price:
+        if candidate.side == 'LONG':
+            if candidate.take_profits[0] <= candidate.entry:
                 logger.warning("Invalid LONG signal: TP <= Entry")
                 return False
-            if signal.sl_price >= signal.entry_price:
+            if candidate.stop_loss >= candidate.entry:
                 logger.warning("Invalid LONG signal: SL >= Entry")
                 return False
         else:  # SHORT
-            if signal.tp_price >= signal.entry_price:
+            if candidate.take_profits[0] >= candidate.entry:
                 logger.warning("Invalid SHORT signal: TP >= Entry")
                 return False
-            if signal.sl_price <= signal.entry_price:
+            if candidate.stop_loss <= candidate.entry:
                 logger.warning("Invalid SHORT signal: SL <= Entry")
                 return False
         
         # Check risk/reward ratio
-        risk = abs(signal.entry_price - signal.sl_price)
-        reward = abs(signal.tp_price - signal.entry_price)
+        risk = abs(candidate.entry - candidate.stop_loss)
+        reward = abs(candidate.take_profits[0] - candidate.entry)
         rr_ratio = reward / risk if risk > 0 else 0
         
         if rr_ratio < 1.0:
@@ -203,10 +235,71 @@ class BaseStrategy(ABC):
         
         return True
     
-    def log_signal(self, signal: Signal):
+    def log_signal(self, candidate: SignalCandidate):
         """Log signal generation"""
         logger.info(
-            f"📊 {self.name} SIGNAL: {signal.symbol} {signal.direction} "
-            f"@ {signal.entry_price:.4f} | TP: {signal.tp_price:.4f} | "
-            f"SL: {signal.sl_price:.4f} | Confidence: {signal.confidence:.0f}%"
+            f"📊 {self.name} SIGNAL: {candidate.symbol} {candidate.side} "
+            f"@ {candidate.entry:.4f} | TP: {candidate.take_profits[0]:.4f} | "
+            f"SL: {candidate.stop_loss:.4f} | Confidence: {candidate.confidence:.0f}%"
+        )
+    
+    def create_signal_candidate(
+        self,
+        symbol: str,
+        side: str,
+        entry_price: float,
+        confidence: float,
+        timeframe: str = None,
+        tp_pct: float = None,
+        sl_pct: float = None
+    ) -> SignalCandidate:
+        """
+        Create a SignalCandidate object with calculated TP/SL
+        
+        Args:
+            symbol: Trading symbol
+            side: "LONG" or "SHORT"
+            entry_price: Entry price
+            confidence: Confidence percentage (0-100)
+            timeframe: Trading timeframe (optional, uses self.timeframe if available)
+            tp_pct: Take profit percentage (optional, uses config if not provided)
+            sl_pct: Stop loss percentage (optional, uses config if not provided)
+            
+        Returns:
+            SignalCandidate object
+        """
+        # Use provided values or get from config
+        if timeframe is None:
+            timeframe = getattr(self, 'timeframe', '5m')
+        
+        if tp_pct is None:
+            tp_range = self.config.get('tp_range', [1.0, 2.0])
+            tp_pct = tp_range[0]  # Use conservative TP
+        
+        if sl_pct is None:
+            sl_range = self.config.get('sl_range', [0.5, 1.0])
+            sl_pct = sl_range[0]  # Use conservative SL
+        
+        # Calculate TP and SL prices
+        tp_price, sl_price = self.calculate_tp_sl(entry_price, side, tp_pct, sl_pct)
+        
+        # Get bot source name from strategy name
+        bot_source_map = {
+            'Scalping Bot': 'SCALPING',
+            'Trend Bot': 'TREND',
+            'QFL Bot': 'QFL',
+            'AI/ML Bot': 'AI_ML'
+        }
+        bot_source = bot_source_map.get(self.name, 'UNKNOWN')
+        
+        return SignalCandidate(
+            signal_id=generate_signal_id(),
+            symbol=symbol,
+            side=side,
+            entry=entry_price,
+            stop_loss=sl_price,
+            take_profits=[tp_price],
+            timeframe=timeframe,
+            confidence=confidence,
+            bot_source=bot_source
         )

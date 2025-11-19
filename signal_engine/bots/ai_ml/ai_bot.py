@@ -6,7 +6,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from engine.base_strategy import BaseStrategy, Signal
+from engine.base_strategy import BaseStrategy
+from core.models import SignalCandidate
 from common.indicators import Indicators
 from typing import Optional
 import logging
@@ -55,7 +56,7 @@ class AIBot(BaseStrategy):
             logger.warning(f"Could not load AI model: {e}. Using rule-based fallback.")
             self.model = None
     
-    async def analyze(self, symbol: str) -> Optional[Signal]:
+    async def analyze(self, symbol: str) -> Optional[SignalCandidate]:
         """Analyze symbol using AI/ML predictions"""
         try:
             # Fetch market data

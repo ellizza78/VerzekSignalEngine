@@ -6,7 +6,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
-from engine.base_strategy import BaseStrategy, Signal
+from engine.base_strategy import BaseStrategy
+from core.models import SignalCandidate
 from common.indicators import Indicators
 from typing import Optional
 import logging
@@ -36,7 +37,7 @@ class ScalpingBot(BaseStrategy):
         self.timeframe = config.get('primary_timeframe', '5m')
         self.min_confidence = config.get('confidence_threshold', 70)
         
-    async def analyze(self, symbol: str) -> Optional[Signal]:
+    async def analyze(self, symbol: str) -> Optional[SignalCandidate]:
         """Analyze symbol for scalping opportunities"""
         try:
             # Fetch market data
@@ -75,14 +76,19 @@ class ScalpingBot(BaseStrategy):
                 )
                 
                 if confidence >= self.min_confidence:
-                    signal = self._create_signal(
-                        symbol, 'LONG', current_price, confidence
+                    candidate = self.create_signal_candidate(
+                        symbol=symbol,
+                        side='LONG',
+                        entry_price=current_price,
+                        confidence=confidence,
+                        tp_pct=0.8,
+                        sl_pct=0.5
                     )
                     
-                    if self.validate_signal(signal):
+                    if self.validate_signal(candidate):
                         self.record_signal(symbol)
-                        self.log_signal(signal)
-                        return signal
+                        self.log_signal(candidate)
+                        return candidate
             
             # Check for SHORT signal
             short_signal = self._check_short_conditions(
@@ -97,14 +103,19 @@ class ScalpingBot(BaseStrategy):
                 )
                 
                 if confidence >= self.min_confidence:
-                    signal = self._create_signal(
-                        symbol, 'SHORT', current_price, confidence
+                    candidate = self.create_signal_candidate(
+                        symbol=symbol,
+                        side='SHORT',
+                        entry_price=current_price,
+                        confidence=confidence,
+                        tp_pct=0.8,
+                        sl_pct=0.5
                     )
                     
-                    if self.validate_signal(signal):
+                    if self.validate_signal(candidate):
                         self.record_signal(symbol)
-                        self.log_signal(signal)
-                        return signal
+                        self.log_signal(candidate)
+                        return candidate
             
             return None
             
