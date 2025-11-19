@@ -1,0 +1,356 @@
+
+🟦 REPLIT AI AGENT — MASTER ENGINE UPGRADE TASK LIST (BALANCED MODE + FULL SSH AUTOMATION)
+
+Please follow these tasks carefully and ask for clarification before making assumptions.
+
+
+---
+
+📍 PHASE 1 — SETUP SSH ACCESS FOR FULL AUTOMATION
+
+1. Create an SSH keypair inside Replit
+
+Path:
+/home/runner/.ssh/agent_key
+
+2. Add the public key to the Vultr server
+
+Server: 80.240.29.142
+User: root
+Target file: /root/.ssh/authorized_keys
+
+3. Configure SSH config inside Replit
+
+Content:
+
+Host verzek_vultr
+  HostName 80.240.29.142
+  User root
+  IdentityFile /home/runner/.ssh/agent_key
+  StrictHostKeyChecking no
+
+4. Enable passwordless sudo on Vultr
+
+Run:
+
+echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/root
+chmod 440 /etc/sudoers.d/root
+
+5. Test SSH connection
+
+Run:
+
+ssh verzek_vultr "echo OK"
+ssh verzek_vultr "systemctl status verzek-signalengine"
+
+6. Configure automatic deployment
+
+On any file update:
+
+ssh verzek_vultr "cd /root/VerzekSignalEngine && git pull && systemctl restart verzek-signalengine"
+
+
+---
+
+📍 PHASE 2 — IMPLEMENT MASTER FUSION ENGINE (BALANCED MODE, OPTION A)
+
+Implement a new file:
+
+signal_engine/core/fusion_engine.py
+
+Balanced Mode rules:
+
+Ignore price fluctuation inside the entry zone
+
+Reject opposite signals unless reversal confidence ≥ threshold
+
+Enforce cooldown
+
+Enforce trend bias
+
+No duplicate signals
+
+No late-entry signals
+
+Respect max signals/hour
+
+Log every approval and rejection reason
+
+
+FusionEngineBalanced structure (use exactly this logic):
+
+from datetime import datetime, timedelta
+from typing import List, Dict
+from .models import SignalCandidate
+
+class FusionEngineBalanced:
+    def __init__(self, config):
+        self.config = config
+        self.last_signal_by_symbol: Dict[str, SignalCandidate] = {}
+        self.last_close_reason_by_symbol: Dict[str, str] = {}
+        self.last_signal_time_by_symbol: Dict[str, datetime] = {}
+        self.trend_bias_by_symbol: Dict[str, str] = {}  # "LONG", "SHORT", "NEUTRAL"
+
+    def update_trend_bias(self, symbol: str, direction: str):
+        self.trend_bias_by_symbol[symbol] = direction
+
+    def process_candidates(self, candidates: List[SignalCandidate]) -> List[SignalCandidate]:
+        approved: List[SignalCandidate] = []
+        now = datetime.utcnow()
+
+        # group by symbol
+        by_symbol: Dict[str, List[SignalCandidate]] = {}
+        for c in candidates:
+            by_symbol.setdefault(c.symbol, []).append(c)
+
+        for symbol, symbol_candidates in by_symbol.items():
+
+            # cooldown rules
+            last_time = self.last_signal_time_by_symbol.get(symbol)
+            if last_time:
+                if now - last_time < timedelta(minutes=self.config["cooldown_same_direction_minutes"]):
+                    symbol_candidates = [
+                        c for c in symbol_candidates
+                        if c.confidence >= self.config["very_strong_confidence"]
+                    ]
+
+            if not symbol_candidates:
+                continue
+
+            # trend filter
+            bias = self.trend_bias_by_symbol.get(symbol, "NEUTRAL")
+
+            def allowed_by_trend(c: SignalCandidate):
+                if bias == "NEUTRAL":
+                    return True
+                if c.side == bias:
+                    return True
+                return c.confidence >= self.config["reversal_min_confidence"]
+
+            symbol_candidates = [c for c in symbol_candidates if allowed_by_trend(c)]
+            if not symbol_candidates:
+                continue
+
+            # choose best candidate
+            priority = {"TREND": 4, "AI_ML": 3, "SCALPING": 2, "QFL": 1}
+            symbol_candidates.sort(
+                key=lambda c: (c.confidence, priority.get(c.bot_source, 0)),
+                reverse=True
+            )
+            best = symbol_candidates[0]
+
+            # opposite direction block (Option A)
+            last = self.last_signal_by_symbol.get(symbol)
+            if last and last.side != best.side:
+                continue
+
+            approved.append(best)
+            self.last_signal_by_symbol[symbol] = best
+            self.last_signal_time_by_symbol[symbol] = now
+
+        return approved
+
+
+---
+
+📍 PHASE 3 — CREATE CENTRAL SIGNAL MODEL
+
+Create:
+
+signal_engine/core/models.py
+
+Add:
+
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import List
+import uuid
+
+@dataclass
+class SignalCandidate:
+    signal_id: str
+    symbol: str
+    side: str
+    entry: float
+    stop_loss: float
+    take_profits: List[float]
+    timeframe: str
+    confidence: float
+    bot_source: str
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+@dataclass
+class SignalOutcome:
+    signal_id: str
+    symbol: str
+    side: str
+    entry: float
+    exit_price: float
+    close_reason: str
+    profit_pct: float
+    opened_at: datetime
+    closed_at: datetime
+
+All bots must import and return SignalCandidate objects.
+
+Bots must NOT send signals directly.
+
+
+---
+
+📍 PHASE 4 — WIRE FUSION ENGINE INTO scheduler.py
+
+Inside the scheduler loop:
+
+raw_candidates = []
+raw_candidates.extend(await scalper.generate_signals())
+raw_candidates.extend(await qfl.generate_signals())
+raw_candidates.extend(await ai_ml.generate_signals())
+raw_candidates.extend(await trend.generate_signals())
+
+for c in raw_candidates:
+    if c.bot_source == "TREND":
+        fusion_engine.update_trend_bias(c.symbol, c.side)
+
+approved = fusion_engine.process_candidates(raw_candidates)
+
+if approved:
+    await dispatcher.send_signals(approved)
+
+Remove all direct bot → dispatcher calls.
+
+
+---
+
+📍 PHASE 5 — DISPATCHER UPDATE
+
+Modify dispatcher.send_signals():
+
+async def send_signals(self, signals: List[SignalCandidate]):
+    for s in signals:
+        await self._send_to_backend(s)
+        await self._send_to_telegram(s)
+        tracker.open_signal(s)
+
+Backend payload must include:
+
+signal_id
+
+bot_source
+
+timeframe
+
+confidence
+
+
+
+---
+
+📍 PHASE 6 — EXTEND engine_settings.json
+
+Add:
+
+"master_engine": {
+  "mode": "BALANCED",
+  "cooldown_same_direction_minutes": 10,
+  "cooldown_opposite_direction_minutes": 20,
+  "reversal_min_confidence": 90,
+  "very_strong_confidence": 92,
+  "max_signals_per_hour_per_symbol": 4,
+  "max_signals_per_hour_global": 12
+}
+
+
+---
+
+📍 PHASE 7 — SIGNAL TRACKING (SQLite)
+
+Create:
+
+signal_engine/services/tracker.py
+
+Functions:
+
+def open_signal(candidate: SignalCandidate): ...
+def close_signal(signal_id, exit_price, close_reason): ...
+
+Calculate profit:
+
+raw = (exit_price - entry) / entry * 100
+profit_pct = raw if side == "LONG" else -raw
+
+Use SignalOutcome for Telegram messages.
+
+
+---
+
+📍 PHASE 8 — HOOK TP / SL / CANCEL EVENTS
+
+Wherever your backend triggers TP/SL/CANCEL:
+
+outcome = tracker.close_signal(signal_id, exit_price, close_reason)
+
+Use outcome data to format the Telegram message (profit %, duration, posted time).
+
+
+---
+
+📍 PHASE 9 — DAILY REPORTER
+
+Create:
+
+signal_engine/services/daily_reporter.py
+
+Generate:
+
+total signals
+
+TP count
+
+SL count
+
+Cancel count
+
+Winrate
+
+Avg profit
+
+Best/worst trade
+
+Avg duration
+
+
+Send to VIP Telegram.
+
+Schedule in scheduler.py.
+
+
+---
+
+📍 PHASE 10 — PRICE FLUCTUATION HANDLING
+
+Add this rule:
+
+> Do NOT resend, cancel, or refresh a signal if price fluctuates but stays inside the entry range.
+Signal stays ACTIVE until TP, SL, or explicit FusionEngine cancellation.
+
+
+
+
+---
+
+📍 PHASE 11 — FUSION LOGGING
+
+Log reasons for:
+
+Confidence too low
+
+Rejected by trend
+
+Rejected by cooldown
+
+Rejected due to active opposite signal
+
+Late entry rejection
+
+
