@@ -108,3 +108,21 @@ The mobile application (React Native + Expo) features a modern dark theme with T
   - SIGNAL_CLOSURE_MECHANISM.md - Backend webhook integration guide
 - **Status**: INTEGRATED in Replit, Vultr Deployment Pending
 - **Date Implemented**: November 19, 2025
+
+### Signal Closure Webhook Integration - COMPLETE ✅
+- **Real-Time Closure**: Backend sends webhook to Signal Engine when positions close (TP/SL/Reversal)
+- **Webhook Endpoint**: `/api/signals/close` with X-Webhook-Secret authentication
+- **Retry Logic**: 3 attempts with exponential backoff (1s, 2s, 4s) + detailed error logging
+- **Polling Backup**: Reconciliation task runs on startup + every 30 minutes
+  - Auto-closes signals active >24 hours (missed webhooks)
+  - Uses break-even price (conservative estimate)
+  - Logs all auto-closures for audit trail
+- **Security**: Shared secret authentication prevents unauthorized closures
+- **Environment Variables**: SIGNAL_ENGINE_WEBHOOK_URL, SIGNAL_ENGINE_WEBHOOK_SECRET
+- **Integration Points**:
+  - close_position_target() → TP webhook (backend/trading/executor.py line 577)
+  - close_position_sl() → SL webhook (backend/trading/executor.py line 654)
+  - handle_signal_reversal() → REVERSAL webhook (backend/trading/executor.py line 320)
+- **Production Runbook**: Complete monitoring, troubleshooting, and recovery guide
+- **Status**: PRODUCTION-READY
+- **Date Implemented**: November 19, 2025

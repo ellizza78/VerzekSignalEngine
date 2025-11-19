@@ -21,37 +21,77 @@ from broadcast import broadcast_signal_cancelled
 
 def notify_signal_engine_closure(signal_id: str, exit_price: float, close_reason: str):
     """
-    Send webhook to Signal Engine to close tracked signal
+    Send webhook to Signal Engine to close tracked signal with retry logic
     
     Args:
         signal_id: Signal ID from signal engine
         exit_price: Actual exit price
         close_reason: TP, SL, CANCEL, or REVERSAL
     """
-    try:
-        webhook_url = os.getenv('SIGNAL_ENGINE_WEBHOOK_URL', 'http://localhost:8050')
-        
-        payload = {
-            'signal_id': signal_id,
-            'exit_price': exit_price,
-            'close_reason': close_reason
-        }
-        
-        response = requests.post(
-            f"{webhook_url}/api/signals/close",
-            json=payload,
-            timeout=5
-        )
-        
-        if response.status_code == 200:
-            worker_logger.info(f"✅ Signal Engine notified: {signal_id[:8]} closed ({close_reason})")
-        else:
-            worker_logger.warning(f"⚠️ Signal Engine webhook failed: {response.status_code}")
+    webhook_url = os.getenv('SIGNAL_ENGINE_WEBHOOK_URL', 'http://localhost:8050')
+    
+    payload = {
+        'signal_id': signal_id,
+        'exit_price': exit_price,
+        'close_reason': close_reason
+    }
+    
+    # Get webhook secret for authentication
+    webhook_secret = os.getenv('SIGNAL_ENGINE_WEBHOOK_SECRET', 'dev-secret-change-in-prod')
+    
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': webhook_secret
+    }
+    
+    # Retry up to 3 times with exponential backoff
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(
+                f"{webhook_url}/api/signals/close",
+                json=payload,
+                headers=headers,
+                timeout=5
+            )
             
-    except requests.exceptions.Timeout:
-        worker_logger.error(f"Signal Engine webhook timeout for {signal_id[:8]}")
-    except Exception as e:
-        worker_logger.error(f"Signal Engine webhook error: {e}")
+            if response.status_code == 200:
+                worker_logger.info(f"✅ Signal Engine notified: {signal_id[:8]} closed ({close_reason})")
+                return True
+            else:
+                worker_logger.warning(
+                    f"⚠️ Signal Engine webhook failed (attempt {attempt + 1}/{max_retries}): "
+                    f"Status {response.status_code}, Response: {response.text}"
+                )
+                
+        except requests.exceptions.Timeout:
+            worker_logger.error(
+                f"⏱️  Signal Engine webhook timeout (attempt {attempt + 1}/{max_retries}) "
+                f"for {signal_id[:8]}"
+            )
+        except requests.exceptions.ConnectionError:
+            worker_logger.error(
+                f"🔌 Signal Engine webhook connection error (attempt {attempt + 1}/{max_retries}) "
+                f"for {signal_id[:8]} - Is webhook server running?"
+            )
+        except Exception as e:
+            worker_logger.error(
+                f"❌ Signal Engine webhook error (attempt {attempt + 1}/{max_retries}): {e}"
+            )
+        
+        # Wait before retry (exponential backoff: 1s, 2s, 4s)
+        if attempt < max_retries - 1:
+            import time
+            wait_time = 2 ** attempt
+            worker_logger.info(f"Retrying in {wait_time}s...")
+            time.sleep(wait_time)
+    
+    # All retries failed - log critical error
+    worker_logger.error(
+        f"🚨 CRITICAL: Signal Engine webhook failed after {max_retries} attempts! "
+        f"Signal {signal_id[:8]} may be stuck ACTIVE. Manual intervention required."
+    )
+    return False
 
 
 def run_once(db: Session):

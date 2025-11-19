@@ -182,6 +182,75 @@ class BotScheduler:
                 logger.error(f"AI task error: {e}")
                 await asyncio.sleep(30)
     
+    async def reconciliation_task(self):
+        """
+        Polling backup mechanism: Auto-close signals that should be closed but webhook missed
+        Runs immediately on startup, then every 30 minutes as safety net for missed webhooks
+        """
+        # Run immediately on startup (don't wait 30 minutes)
+        first_run = True
+        
+        while self.running:
+            try:
+                if not first_run:
+                    await asyncio.sleep(1800)  # 30 minutes
+                first_run = False
+                
+                logger.info("🔄 Running reconciliation task (polling backup)...")
+                
+                # Get all active signals from tracker
+                active_signals = self.tracker.get_active_signals()
+                
+                if not active_signals:
+                    logger.debug("No active signals to reconcile")
+                    continue
+                
+                # For each active signal, check if it's been active too long (>24 hours)
+                # Auto-close these signals as they likely had webhook failures
+                from datetime import datetime
+                current_time = datetime.now()
+                closed_count = 0
+                
+                for signal in active_signals:
+                    opened_at = datetime.fromisoformat(signal['opened_at'])
+                    hours_active = (current_time - opened_at).total_seconds() / 3600
+                    
+                    if hours_active > 24:
+                        logger.warning(
+                            f"⚠️  Stale signal detected: {signal['signal_id'][:8]} "
+                            f"({signal['symbol']}) active for {hours_active:.1f} hours - AUTO-CLOSING"
+                        )
+                        
+                        # Auto-close with entry price (break-even) and TIMEOUT reason
+                        # This is conservative - assumes position was closed at entry if webhook missed
+                        outcome = self.tracker.close_signal(
+                            signal_id=signal['signal_id'],
+                            exit_price=signal['entry_price'],  # Break-even assumption
+                            close_reason='TIMEOUT'
+                        )
+                        
+                        if outcome:
+                            closed_count += 1
+                            logger.info(
+                                f"✅ Auto-closed stale signal: {signal['signal_id'][:8]} "
+                                f"({signal['symbol']}) at break-even (${signal['entry_price']})"
+                            )
+                        else:
+                            logger.error(
+                                f"❌ Failed to auto-close signal: {signal['signal_id'][:8]}"
+                            )
+                
+                if closed_count > 0:
+                    logger.warning(
+                        f"🚨 RECONCILIATION: Auto-closed {closed_count} stale signals "
+                        f"(active >24h). These had missed webhooks."
+                    )
+                else:
+                    logger.info("✅ Reconciliation complete: No stale signals found")
+                    
+            except Exception as e:
+                logger.error(f"Reconciliation task error: {e}")
+    
     async def stats_task(self):
         """Print statistics every 5 minutes"""
         while self.running:
@@ -249,6 +318,10 @@ class BotScheduler:
         
         # Add stats task
         tasks.append(asyncio.create_task(self.stats_task()))
+        
+        # Add reconciliation task (polling backup)
+        tasks.append(asyncio.create_task(self.reconciliation_task()))
+        logger.info("✅ Reconciliation task started (30m interval)")
         
         logger.info("=" * 60)
         logger.info("🔥 All bots running. Press Ctrl+C to stop.")

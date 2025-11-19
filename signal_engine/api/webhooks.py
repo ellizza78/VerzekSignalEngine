@@ -52,6 +52,8 @@ def close_signal():
     """
     Close a signal when position is closed in backend.
     
+    Authentication: Required via SIGNAL_ENGINE_WEBHOOK_SECRET header
+    
     Expected payload:
     {
         "signal_id": "abc-123-def",
@@ -71,6 +73,17 @@ def close_signal():
     }
     """
     try:
+        # Verify authentication (shared secret)
+        expected_secret = os.getenv('SIGNAL_ENGINE_WEBHOOK_SECRET', 'dev-secret-change-in-prod')
+        provided_secret = request.headers.get('X-Webhook-Secret')
+        
+        if not provided_secret or provided_secret != expected_secret:
+            logger.warning(f"Unauthorized webhook attempt from {request.remote_addr}")
+            return jsonify({
+                'status': 'error',
+                'message': 'Unauthorized: Invalid or missing X-Webhook-Secret header'
+            }), 401
+        
         # Validate request
         if not request.json:
             return jsonify({
