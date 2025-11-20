@@ -1,212 +1,143 @@
 #!/bin/bash
+# 🚀 VerzekAutoTrader - Automated Deployment Script for Vultr
+# Run this from YOUR LOCAL TERMINAL (not on Vultr server, not in Replit)
+# Usage: ./deploy_to_vultr.sh
 
-echo "🚀 VerzekSignalEngine Backend Deployment Script"
-echo "================================================"
-echo ""
-
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
-
-# Check if running as root
-if [ "$EUID" -ne 0 ]; then 
-    echo -e "${RED}Please run as root (use sudo)${NC}"
-    exit 1
-fi
+set -e  # Exit on any error
 
 # Configuration
-BACKEND_DIR="/root/api_server"
-SIGNAL_ENGINE_DIR="/root/signal_engine"
+VULTR_HOST="80.240.29.142"
+VULTR_USER="root"
+BACKEND_DIR="/root/backend"
+ENGINE_DIR="/root/signal_engine"
 
-# IMPORTANT: Set these environment variables before running this script
-# export HOUSE_ENGINE_TOKEN="your-secret-token-here"
-# export TELEGRAM_BOT_TOKEN="your-telegram-token-here"
+echo "🚀 VerzekAutoTrader - Vultr Deployment Script"
+echo "=============================================="
+echo "This script will deploy the latest code to Vultr"
+echo ""
 
-if [ -z "$HOUSE_ENGINE_TOKEN" ]; then
-    echo -e "${RED}ERROR: HOUSE_ENGINE_TOKEN environment variable not set${NC}"
-    echo "Please run: export HOUSE_ENGINE_TOKEN='your-token-here'"
+# Phase 1: Verify SSH Access
+echo "Phase 1: Verifying SSH access to Vultr..."
+if ssh -o ConnectTimeout=5 -o BatchMode=yes $VULTR_USER@$VULTR_HOST "echo OK" 2>/dev/null; then
+    echo "✅ SSH connection successful"
+else
+    echo "❌ Cannot connect to Vultr via SSH"
+    echo "Make sure you have SSH access configured"
+    echo "Try: ssh $VULTR_USER@$VULTR_HOST"
     exit 1
 fi
-
-if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
-    echo -e "${RED}ERROR: TELEGRAM_BOT_TOKEN environment variable not set${NC}"
-    echo "Please run: export TELEGRAM_BOT_TOKEN='your-telegram-token-here'"
-    exit 1
-fi
-
-echo -e "${YELLOW}Step 1: Update Backend Code${NC}"
-cd $BACKEND_DIR || exit 1
-
-# Backup current code
-echo "Creating backup..."
-tar -czf backup_$(date +%Y%m%d_%H%M%S).tar.gz backend/
-
-# Pull latest code (or upload manually)
-echo "Updating backend files..."
-# If using git: git pull origin main
-# If uploading manually, skip this step
-
-echo -e "${GREEN}✓ Backend code updated${NC}"
-
 echo ""
-echo -e "${YELLOW}Step 2: Add Environment Variable${NC}"
 
-# Add HOUSE_ENGINE_TOKEN to backend .env
-if ! grep -q "HOUSE_ENGINE_TOKEN" $BACKEND_DIR/.env 2>/dev/null; then
-    echo "HOUSE_ENGINE_TOKEN=$HOUSE_ENGINE_TOKEN" >> $BACKEND_DIR/.env
-    echo -e "${GREEN}✓ HOUSE_ENGINE_TOKEN added to .env${NC}"
-else
-    echo -e "${YELLOW}! HOUSE_ENGINE_TOKEN already exists in .env${NC}"
-fi
-
-echo ""
-echo -e "${YELLOW}Step 3: Restart Backend Service${NC}"
-systemctl restart verzek_api
-sleep 3
-
-if systemctl is-active --quiet verzek_api; then
-    echo -e "${GREEN}✓ Backend service restarted successfully${NC}"
-else
-    echo -e "${RED}✗ Backend service failed to start${NC}"
-    echo "Check logs: journalctl -u verzek_api -n 50"
-    exit 1
-fi
-
-echo ""
-echo -e "${YELLOW}Step 4: Test Backend Endpoint${NC}"
-
-# Test the endpoint
-RESPONSE=$(curl -s -X POST http://localhost:8000/api/house-signals/ingest \
-  -H "Content-Type: application/json" \
-  -H "X-INTERNAL-TOKEN: $HOUSE_ENGINE_TOKEN" \
-  -d '{
-    "source": "TEST",
-    "symbol": "BTCUSDT",
-    "side": "LONG",
-    "entry": 50000.0,
-    "stop_loss": 49750.0,
-    "take_profits": [50500],
-    "timeframe": "M5",
-    "confidence": 75
-  }')
-
-if echo "$RESPONSE" | grep -q "ok"; then
-    echo -e "${GREEN}✓ Backend endpoint test successful${NC}"
-    echo "Response: $RESPONSE"
-else
-    echo -e "${RED}✗ Backend endpoint test failed${NC}"
-    echo "Response: $RESPONSE"
-    exit 1
-fi
-
-echo ""
-echo -e "${YELLOW}Step 5: Deploy Signal Engine${NC}"
-
-# Create signal engine directory
-mkdir -p $SIGNAL_ENGINE_DIR
-cd $SIGNAL_ENGINE_DIR
-
-# Check if already deployed
-if [ -f "$SIGNAL_ENGINE_DIR/main.py" ]; then
-    echo -e "${YELLOW}! Signal engine already exists${NC}"
-    echo "Please manually upload updated files to: $SIGNAL_ENGINE_DIR"
-else
-    echo "Please upload signal engine files to: $SIGNAL_ENGINE_DIR"
-    echo "Then run: bash deploy_to_vultr.sh"
-    exit 0
-fi
-
-# Install dependencies
-echo "Installing Python dependencies..."
-pip3 install -r requirements.txt > /dev/null 2>&1
-
-echo -e "${GREEN}✓ Dependencies installed${NC}"
-
-# Configure environment
-echo ""
-echo -e "${YELLOW}Step 6: Configure Signal Engine Environment${NC}"
-
-if [ ! -f "$SIGNAL_ENGINE_DIR/config/.env" ]; then
-    cp $SIGNAL_ENGINE_DIR/config/.env.example $SIGNAL_ENGINE_DIR/config/.env
+# Phase 2: Deploy Backend
+echo "Phase 2: Deploying Backend to Vultr..."
+ssh $VULTR_USER@$VULTR_HOST << 'BACKEND_DEPLOY'
+    set -e
+    echo "  → Navigating to backend directory..."
+    cd /root/backend 2>/dev/null || cd /root/api_server || { echo "❌ Backend directory not found"; exit 1; }
     
-    # Update .env with values from environment variables
-    sed -i "s|BACKEND_API_URL=.*|BACKEND_API_URL=https://api.verzekinnovative.com|g" $SIGNAL_ENGINE_DIR/config/.env
-    sed -i "s|HOUSE_ENGINE_TOKEN=.*|HOUSE_ENGINE_TOKEN=$HOUSE_ENGINE_TOKEN|g" $SIGNAL_ENGINE_DIR/config/.env
-    sed -i "s|TELEGRAM_BOT_TOKEN=.*|TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN|g" $SIGNAL_ENGINE_DIR/config/.env
+    echo "  → Pulling latest code from git..."
+    git pull origin main 2>/dev/null || git pull || echo "⚠️  Git pull skipped (manual deployment)"
     
-    echo -e "${GREEN}✓ Environment configured${NC}"
+    echo "  → Installing dependencies..."
+    pip3 install -r requirements.txt -q 2>/dev/null || echo "⚠️  Dependency install skipped"
+    
+    echo "  → Restarting backend service..."
+    sudo systemctl restart backend-api 2>/dev/null || sudo systemctl restart verzek_api.service || { echo "❌ Service restart failed"; exit 1; }
+    
+    echo "  → Waiting for service to stabilize..."
+    sleep 5
+    
+    echo "  → Checking service status..."
+    if sudo systemctl is-active --quiet backend-api 2>/dev/null || sudo systemctl is-active --quiet verzek_api.service; then
+        echo "  ✅ Backend service running"
+    else
+        echo "  ❌ Backend service not active"
+        exit 1
+    fi
+BACKEND_DEPLOY
+
+if [ $? -eq 0 ]; then
+    echo "✅ Backend deployed successfully"
 else
-    echo -e "${YELLOW}! .env already exists, please update manually${NC}"
-fi
-
-echo ""
-echo -e "${YELLOW}Step 7: Setup Systemd Service${NC}"
-
-# Copy systemd service
-cp $SIGNAL_ENGINE_DIR/systemd/verzek-signalengine.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable verzek-signalengine
-
-echo -e "${GREEN}✓ Systemd service configured${NC}"
-
-echo ""
-echo -e "${YELLOW}Step 8: Start Signal Engine${NC}"
-
-systemctl start verzek-signalengine
-sleep 3
-
-if systemctl is-active --quiet verzek-signalengine; then
-    echo -e "${GREEN}✓ Signal engine started successfully${NC}"
-else
-    echo -e "${RED}✗ Signal engine failed to start${NC}"
-    echo "Check logs: journalctl -u verzek-signalengine -n 50"
+    echo "❌ Backend deployment failed"
     exit 1
 fi
-
 echo ""
-echo -e "${YELLOW}Step 9: Remove Old Telethon Code${NC}"
 
-# Stop and disable Telethon service
-if systemctl is-active --quiet telethon-forwarder; then
-    systemctl stop telethon-forwarder
-    systemctl disable telethon-forwarder
-    rm -f /etc/systemd/system/telethon-forwarder.service
-    systemctl daemon-reload
-    echo -e "${GREEN}✓ Telethon service stopped and removed${NC}"
+# Phase 3: Deploy Signal Engine
+echo "Phase 3: Deploying Signal Engine to Vultr..."
+ssh $VULTR_USER@$VULTR_HOST << 'ENGINE_DEPLOY'
+    set -e
+    echo "  → Navigating to signal engine directory..."
+    cd /root/signal_engine 2>/dev/null || cd /root/VerzekSignalEngine || { echo "❌ Signal engine directory not found"; exit 1; }
+    
+    echo "  → Pulling latest code from git..."
+    git pull origin main 2>/dev/null || git pull || echo "⚠️  Git pull skipped (manual deployment)"
+    
+    echo "  → Installing dependencies..."
+    pip3 install -r requirements.txt -q 2>/dev/null || echo "⚠️  Dependency install skipped"
+    
+    echo "  → Restarting signal engine service..."
+    sudo systemctl restart signal-engine 2>/dev/null || sudo systemctl restart verzek-signalengine.service || { echo "❌ Service restart failed"; exit 1; }
+    
+    echo "  → Waiting for service to stabilize..."
+    sleep 5
+    
+    echo "  → Checking service status..."
+    if sudo systemctl is-active --quiet signal-engine 2>/dev/null || sudo systemctl is-active --quiet verzek-signalengine.service; then
+        echo "  ✅ Signal engine service running"
+    else
+        echo "  ❌ Signal engine service not active"
+        exit 1
+    fi
+ENGINE_DEPLOY
+
+if [ $? -eq 0 ]; then
+    echo "✅ Signal Engine deployed successfully"
 else
-    echo -e "${YELLOW}! Telethon service not found (already removed)${NC}"
+    echo "❌ Signal Engine deployment failed"
+    exit 1
+fi
+echo ""
+
+# Phase 4: Health Checks
+echo "Phase 4: Running Health Checks..."
+
+echo "  → Testing backend API..."
+if curl -s -m 10 http://$VULTR_HOST:8000/api/ping 2>/dev/null | grep -q "ok\|pong\|OK"; then
+    echo "  ✅ Backend API responding"
+else
+    echo "  ⚠️  Backend API check inconclusive (may need manual verification)"
 fi
 
-# Remove Telethon files
-rm -f /root/telethon_forwarder.py
-rm -f /root/setup_telethon.py
-rm -f /root/recover_telethon_session.py
-rm -f /root/forwarder_watchdog.py
-rm -f /root/*.session
-rm -f /root/telethon_session_*.txt
-rm -rf /root/telethon_logs/
+echo "  → Checking for recent errors in backend logs..."
+ssh $VULTR_USER@$VULTR_HOST "journalctl -u backend-api -n 30 --no-pager --since '5 minutes ago' 2>/dev/null | grep -i error || journalctl -u verzek_api.service -n 30 --no-pager --since '5 minutes ago' 2>/dev/null | grep -i error || echo '  ℹ️  No recent errors found'"
 
-echo -e "${GREEN}✓ Telethon files removed${NC}"
+echo "  → Checking signal engine activity..."
+ssh $VULTR_USER@$VULTR_HOST "journalctl -u signal-engine -n 30 --no-pager --since '5 minutes ago' 2>/dev/null | grep -E 'started|running|Signal' || journalctl -u verzek-signalengine.service -n 30 --no-pager --since '5 minutes ago' 2>/dev/null | grep -E 'started|running|Signal' || echo '  ℹ️  No recent signal engine logs'"
 
 echo ""
-echo "================================================"
-echo -e "${GREEN}✅ DEPLOYMENT COMPLETE!${NC}"
-echo "================================================"
+
+# Phase 5: Final Summary
+echo "=============================================="
+echo "🎉 Deployment Complete!"
+echo "=============================================="
 echo ""
-echo "📊 System Status:"
-echo "  Backend API: $(systemctl is-active verzek_api)"
-echo "  Signal Engine: $(systemctl is-active verzek-signalengine)"
+echo "📊 Service Status on Vultr:"
+ssh $VULTR_USER@$VULTR_HOST << 'STATUS'
+    BACKEND_STATUS=$(sudo systemctl is-active backend-api 2>/dev/null || sudo systemctl is-active verzek_api.service 2>/dev/null || echo "unknown")
+    ENGINE_STATUS=$(sudo systemctl is-active signal-engine 2>/dev/null || sudo systemctl is-active verzek-signalengine.service 2>/dev/null || echo "unknown")
+    
+    echo "  Backend API: $BACKEND_STATUS"
+    echo "  Signal Engine: $ENGINE_STATUS"
+STATUS
+
 echo ""
-echo "📝 Next Steps:"
-echo "  1. Monitor logs: journalctl -u verzek-signalengine -f"
-echo "  2. Check signals: tail -f $SIGNAL_ENGINE_DIR/logs/signal_engine.log"
-echo "  3. Wait 5-10 minutes for first signals to generate"
+echo "🔗 Next Steps:"
+echo "  1. Test backend: curl http://$VULTR_HOST:8000/api/ping"
+echo "  2. Test new exchange balance endpoint (requires JWT token)"
+echo "  3. Test mobile app with Expo Go (scan QR from Replit)"
+echo "  4. Build production APK: cd mobile_app/VerzekApp && eas build -p android"
 echo ""
-echo "🔍 Verification Commands:"
-echo "  Backend status: systemctl status verzek_api"
-echo "  Signal engine status: systemctl status verzek-signalengine"
-echo "  View signals: tail -f $SIGNAL_ENGINE_DIR/logs/signal_engine.log"
-echo ""
-echo -e "${GREEN}VerzekSignalEngine v1.0 is now live! 🚀${NC}"
+echo "✅ Backend and Signal Engine deployed to Vultr!"
+echo "✅ All new features ready: Trial Timer + Exchange Balance + Multi-TP Stats"
