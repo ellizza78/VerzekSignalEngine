@@ -11,6 +11,7 @@ from db import SessionLocal
 from models import User, UserSettings, ExchangeAccount, DeviceToken
 from utils.security import encrypt_api_key, decrypt_api_key
 from utils.logger import api_logger
+from exchanges.exchange_router import ExchangeRouter
 
 bp = Blueprint('users', __name__)
 
@@ -351,6 +352,72 @@ def manage_exchanges(user_id):
     except Exception as e:
         api_logger.error(f"Manage exchanges error: {e}")
         return jsonify({"ok": False, "error": "Failed to manage exchanges"}), 500
+
+
+@bp.route('/<int:user_id>/exchanges/<int:exchange_id>/balance', methods=['GET'])
+@jwt_required()
+def get_exchange_balance(user_id, exchange_id):
+    """Get balance for a specific exchange account"""
+    try:
+        current_user = int(get_jwt_identity())
+        if current_user != user_id:
+            return jsonify({"ok": False, "error": "Unauthorized"}), 403
+        
+        db: Session = SessionLocal()
+        
+        exchange_account = db.query(ExchangeAccount).filter(
+            ExchangeAccount.id == exchange_id,
+            ExchangeAccount.user_id == user_id
+        ).first()
+        
+        if not exchange_account:
+            db.close()
+            return jsonify({"ok": False, "error": "Exchange account not found"}), 404
+        
+        if not exchange_account.is_active:
+            db.close()
+            return jsonify({"ok": False, "error": "Exchange account is inactive"}), 400
+        
+        try:
+            api_key = decrypt_api_key(exchange_account.api_key)
+            api_secret = decrypt_api_key(exchange_account.api_secret)
+            
+            client = ExchangeRouter.get_client(
+                exchange_name=exchange_account.exchange,
+                api_key=api_key,
+                api_secret=api_secret,
+                testnet=exchange_account.testnet
+            )
+            
+            if not client:
+                db.close()
+                return jsonify({
+                    "ok": False,
+                    "error": f"Failed to create {exchange_account.exchange} client"
+                }), 500
+            
+            balance_data = client.get_balance()
+            
+            db.close()
+            
+            return jsonify({
+                "ok": True,
+                "exchange": exchange_account.exchange,
+                "testnet": exchange_account.testnet,
+                "balance": balance_data
+            }), 200
+            
+        except Exception as e:
+            db.close()
+            api_logger.error(f"Balance fetch error for exchange {exchange_id}: {e}")
+            return jsonify({
+                "ok": False,
+                "error": "Failed to fetch balance from exchange"
+            }), 500
+        
+    except Exception as e:
+        api_logger.error(f"Get exchange balance error: {e}")
+        return jsonify({"ok": False, "error": "Failed to get exchange balance"}), 500
 
 
 @bp.route('/<int:user_id>/subscription', methods=['GET', 'PUT'])
