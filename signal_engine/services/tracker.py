@@ -477,13 +477,13 @@ class SignalTracker:
     
     def get_daily_stats(self, date: Optional[str] = None) -> Dict:
         """
-        Get performance statistics for a specific day
+        Get performance statistics for a specific day with TP1-TP5 breakdown
         
         Args:
             date: Date in YYYY-MM-DD format (defaults to today)
             
         Returns:
-            Dictionary with daily statistics
+            Dictionary with daily statistics including TP level breakdown
         """
         if date is None:
             date = datetime.now().strftime('%Y-%m-%d')
@@ -511,9 +511,9 @@ class SignalTracker:
             ''', (date,))
             
             row = cursor.fetchone()
-            conn.close()
             
             if not row or row[0] == 0:
+                conn.close()
                 return {
                     'date': date,
                     'total_signals': 0,
@@ -524,10 +524,45 @@ class SignalTracker:
                     'avg_profit': 0.0,
                     'best_trade': 0.0,
                     'worst_trade': 0.0,
-                    'avg_duration_minutes': 0
+                    'avg_duration_minutes': 0,
+                    'tp_breakdown': {'TP1': 0, 'TP2': 0, 'TP3': 0, 'TP4': 0, 'TP5': 0},
+                    'avg_tp_level': 0.0
                 }
             
             total, tp, sl, cancel, avg_profit, best, worst, avg_dur, winners, losers = row
+            
+            # Get TP1-TP5 breakdown for signals closed with TP
+            cursor.execute('''
+                SELECT
+                    SUM(CASE WHEN current_tp_index = 0 THEN 1 ELSE 0 END) as tp1_count,
+                    SUM(CASE WHEN current_tp_index = 1 THEN 1 ELSE 0 END) as tp2_count,
+                    SUM(CASE WHEN current_tp_index = 2 THEN 1 ELSE 0 END) as tp3_count,
+                    SUM(CASE WHEN current_tp_index = 3 THEN 1 ELSE 0 END) as tp4_count,
+                    SUM(CASE WHEN current_tp_index >= 4 THEN 1 ELSE 0 END) as tp5_count,
+                    AVG(current_tp_index + 1) as avg_tp_level
+                FROM signals
+                WHERE status = 'CLOSED'
+                AND close_reason = 'TP'
+                AND DATE(closed_at) = ?
+            ''', (date,))
+            
+            tp_row = cursor.fetchone()
+            conn.close()
+            
+            # Parse TP breakdown
+            if tp_row:
+                tp1, tp2, tp3, tp4, tp5, avg_tp = tp_row
+                tp_breakdown = {
+                    'TP1': tp1 or 0,
+                    'TP2': tp2 or 0,
+                    'TP3': tp3 or 0,
+                    'TP4': tp4 or 0,
+                    'TP5': tp5 or 0
+                }
+                avg_tp_level = avg_tp or 0.0
+            else:
+                tp_breakdown = {'TP1': 0, 'TP2': 0, 'TP3': 0, 'TP4': 0, 'TP5': 0}
+                avg_tp_level = 0.0
             
             win_rate = (winners / total * 100) if total > 0 else 0.0
             avg_duration_minutes = int(avg_dur / 60) if avg_dur else 0
@@ -544,7 +579,9 @@ class SignalTracker:
                 'avg_profit': avg_profit or 0.0,
                 'best_trade': best or 0.0,
                 'worst_trade': worst or 0.0,
-                'avg_duration_minutes': avg_duration_minutes
+                'avg_duration_minutes': avg_duration_minutes,
+                'tp_breakdown': tp_breakdown,
+                'avg_tp_level': avg_tp_level
             }
             
         except Exception as e:

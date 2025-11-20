@@ -58,7 +58,7 @@ class DailyReporter:
     
     def _format_report(self, stats: Dict) -> str:
         """
-        Format statistics into Telegram message
+        Format statistics into Telegram message with TP1-TP5 breakdown
         
         Args:
             stats: Statistics dictionary from tracker
@@ -78,6 +78,8 @@ class DailyReporter:
         best_trade = stats['best_trade']
         worst_trade = stats['worst_trade']
         avg_duration = stats['avg_duration_minutes']
+        tp_breakdown = stats.get('tp_breakdown', {})
+        avg_tp_level = stats.get('avg_tp_level', 0.0)
         
         # Determine performance emoji
         if win_rate >= 70:
@@ -88,6 +90,20 @@ class DailyReporter:
             performance_emoji = "⚡"
         else:
             performance_emoji = "⚠️"
+        
+        # Format TP breakdown section
+        tp_breakdown_text = ""
+        if tp_count > 0 and tp_breakdown:
+            tp_breakdown_text = f"""
+**🎯 TAKE-PROFIT BREAKDOWN** (Multi-TP System)
+• TP1 Hits: {tp_breakdown.get('TP1', 0)} (Partial)
+• TP2 Hits: {tp_breakdown.get('TP2', 0)} (Partial)
+• TP3 Hits: {tp_breakdown.get('TP3', 0)} (Partial)
+• TP4 Hits: {tp_breakdown.get('TP4', 0)} (Partial)
+• TP5 Hits: {tp_breakdown.get('TP5', 0)} (Final - All Targets)
+• Avg TP Level: {avg_tp_level:.1f}
+
+"""
         
         # Build report message
         report = f"""
@@ -106,7 +122,7 @@ class DailyReporter:
 • Losers: {losers} ❌
 • Avg Profit: {avg_profit:+.2f}%
 
-**🏆 BEST/WORST**
+{tp_breakdown_text}**🏆 BEST/WORST**
 • Best Trade: {best_trade:+.2f}%
 • Worst Trade: {worst_trade:+.2f}%
 
@@ -115,6 +131,7 @@ class DailyReporter:
 
 ━━━━━━━━━━━━━━━━━━
 📊 **VerzekSignalEngine v2.0 - Master Fusion Engine**
+🚀 **5-Level Progressive Take-Profit System Active**
 """.strip()
         
         return report
