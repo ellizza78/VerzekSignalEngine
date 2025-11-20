@@ -81,17 +81,21 @@ class SignalOutcome:
     """
     Signal outcome after closure (TP, SL, or cancellation)
     Used for tracking performance and reporting
+    Supports multi-TP tracking (5 levels)
     """
     signal_id: str
     symbol: str
     side: str
     entry: float
     exit_price: float
-    close_reason: str  # "TP", "SL", "CANCEL", "REVERSAL"
+    close_reason: str  # "TP", "SL", "CANCEL", "REVERSAL", "TIMEOUT"
     profit_pct: float  # Calculated profit percentage
     opened_at: datetime
     closed_at: datetime
     bot_source: str = ""
+    current_tp_index: int = 0  # Last TP hit (0-4 for TP1-TP5)
+    total_tps: int = 5  # Always 5 TP levels
+    partial_profits: List[float] = field(default_factory=list)  # Profit % per TP hit
     
     @property
     def duration_minutes(self) -> float:
@@ -103,6 +107,31 @@ class SignalOutcome:
     def is_profitable(self) -> bool:
         """Check if trade was profitable"""
         return self.profit_pct > 0
+    
+    @property
+    def is_final(self) -> bool:
+        """Check if this is the final TP (TP5) or a complete closure"""
+        return self.close_reason != "TP" or self.current_tp_index >= self.total_tps - 1
+    
+    @property
+    def duration_formatted(self) -> str:
+        """Format duration as 'X Days Y Hours Z Minutes'"""
+        delta = self.closed_at - self.opened_at
+        total_seconds = int(delta.total_seconds())
+        
+        days = total_seconds // 86400
+        hours = (total_seconds % 86400) // 3600
+        minutes = (total_seconds % 3600) // 60
+        
+        parts = []
+        if days > 0:
+            parts.append(f"{days} Day{'s' if days != 1 else ''}")
+        if hours > 0:
+            parts.append(f"{hours} Hour{'s' if hours != 1 else ''}")
+        if minutes > 0 or not parts:
+            parts.append(f"{minutes} Minute{'s' if minutes != 1 else ''}")
+        
+        return " ".join(parts)
     
     def to_telegram_message(self) -> str:
         """Format outcome for Telegram notification"""
@@ -146,7 +175,11 @@ class SignalOutcome:
             'opened_at': self.opened_at.isoformat(),
             'closed_at': self.closed_at.isoformat(),
             'duration_minutes': self.duration_minutes,
-            'bot_source': self.bot_source
+            'bot_source': self.bot_source,
+            'current_tp_index': self.current_tp_index,
+            'total_tps': self.total_tps,
+            'partial_profits': self.partial_profits,
+            'is_final': self.is_final
         }
 
 

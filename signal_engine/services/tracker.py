@@ -49,7 +49,10 @@ class SignalTracker:
                 profit_pct REAL,
                 duration_seconds INTEGER,
                 close_reason TEXT,
-                status TEXT DEFAULT 'ACTIVE'
+                status TEXT DEFAULT 'ACTIVE',
+                current_tp_index INTEGER DEFAULT 0,
+                total_tps INTEGER DEFAULT 5,
+                partial_profits TEXT DEFAULT '[]'
             )
         ''')
         
@@ -63,6 +66,25 @@ class SignalTracker:
         cursor.execute('''
             CREATE INDEX IF NOT EXISTS idx_bot_source ON signals(bot_source)
         ''')
+        
+        # Migration: Add multi-TP columns if they don't exist
+        try:
+            cursor.execute("PRAGMA table_info(signals)")
+            columns = [col[1] for col in cursor.fetchall()]
+            
+            if 'current_tp_index' not in columns:
+                cursor.execute('ALTER TABLE signals ADD COLUMN current_tp_index INTEGER DEFAULT 0')
+                logger.info("✅ Added current_tp_index column to signals table")
+            
+            if 'total_tps' not in columns:
+                cursor.execute('ALTER TABLE signals ADD COLUMN total_tps INTEGER DEFAULT 5')
+                logger.info("✅ Added total_tps column to signals table")
+            
+            if 'partial_profits' not in columns:
+                cursor.execute("ALTER TABLE signals ADD COLUMN partial_profits TEXT DEFAULT '[]'")
+                logger.info("✅ Added partial_profits column to signals table")
+        except Exception as e:
+            logger.error(f"Migration error: {e}")
         
         conn.commit()
         conn.close()
@@ -98,8 +120,9 @@ class SignalTracker:
             cursor.execute('''
                 INSERT INTO signals (
                     signal_id, symbol, side, entry_price, tp_pct, sl_pct,
-                    confidence, bot_source, timeframe, opened_at, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    confidence, bot_source, timeframe, opened_at, status,
+                    current_tp_index, total_tps, partial_profits
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 candidate.signal_id,
                 candidate.symbol,
@@ -111,7 +134,10 @@ class SignalTracker:
                 candidate.bot_source,
                 candidate.timeframe,
                 candidate.created_at.isoformat(),
-                'ACTIVE'
+                'ACTIVE',
+                0,  # current_tp_index starts at 0
+                len(candidate.take_profits),  # total_tps (should be 5)
+                '[]'  # partial_profits starts empty
             ))
             
             conn.commit()
@@ -215,6 +241,163 @@ class SignalTracker:
             
         except Exception as e:
             logger.error(f"Failed to close signal {signal_id}: {e}")
+            return None
+    
+    def on_target_hit(
+        self,
+        signal_id: str,
+        hit_price: float,
+        tp_number: int = None
+    ) -> Optional[SignalOutcome]:
+        """
+        Record a take-profit target hit (partial or final) with sequential validation
+        
+        For TP1-TP4: Updates partial_profits and current_tp_index, keeps signal ACTIVE
+        For TP5: Closes the signal completely
+        
+        Args:
+            signal_id: Signal ID
+            hit_price: Price at which TP was hit
+            tp_number: Optional TP number (1-5) for validation
+            
+        Returns:
+            SignalOutcome with is_final=False for partial TP, is_final=True for TP5
+        """
+        try:
+            import json
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Get signal data
+            cursor.execute('''
+                SELECT symbol, side, entry_price, opened_at, bot_source,
+                       current_tp_index, total_tps, partial_profits
+                FROM signals WHERE signal_id = ? AND status = 'ACTIVE'
+            ''', (signal_id,))
+            
+            row = cursor.fetchone()
+            if not row:
+                logger.error(f"Signal {signal_id[:8]} not found or already closed - cannot record TP hit")
+                conn.close()
+                return None
+            
+            symbol, side, entry_price, opened_at, bot_source, current_tp_index, total_tps, partial_profits_json = row
+            
+            # Parse partial_profits list
+            partial_profits = json.loads(partial_profits_json) if partial_profits_json else []
+            
+            # SEQUENTIAL VALIDATION: Enforce TP order
+            expected_tp_number = current_tp_index + 1  # Next expected TP (1-based)
+            
+            if tp_number is not None and tp_number != expected_tp_number:
+                logger.error(
+                    f"⚠️  OUT-OF-ORDER TP HIT REJECTED: {signal_id[:8]} "
+                    f"Expected TP{expected_tp_number}, got TP{tp_number}. "
+                    f"TPs must be hit sequentially."
+                )
+                conn.close()
+                return None
+            
+            # Validate we haven't already completed all TPs
+            if current_tp_index >= total_tps:
+                logger.error(
+                    f"⚠️  INVALID TP HIT: {signal_id[:8]} already completed all {total_tps} TPs"
+                )
+                conn.close()
+                return None
+            
+            # Calculate CUMULATIVE profit percentage from entry to THIS target
+            # Note: partial_profits stores cumulative profit, not incremental
+            # TP1: +2%, TP2: +4%, TP3: +6%, etc. (cumulative from entry)
+            if side in ['LONG', 'BUY']:
+                cumulative_profit_pct = ((hit_price - entry_price) / entry_price) * 100
+            else:  # SHORT/SELL
+                cumulative_profit_pct = ((entry_price - hit_price) / entry_price) * 100
+            
+            # Add to partial_profits list (stores cumulative profit at each TP)
+            partial_profits.append(cumulative_profit_pct)
+            new_tp_index = current_tp_index + 1
+            
+            # Use profit_pct as the variable name for consistency
+            profit_pct = cumulative_profit_pct
+            
+            # Calculate duration
+            opened_time = datetime.fromisoformat(opened_at)
+            current_time = datetime.now()
+            duration_seconds = int((current_time - opened_time).total_seconds())
+            
+            # CRITICAL: Only mark as final if this is truly the LAST TP
+            is_final = new_tp_index >= total_tps
+            
+            if is_final:
+                # TP5 - Close the signal completely
+                cursor.execute('''
+                    UPDATE signals SET
+                        closed_at = ?,
+                        exit_price = ?,
+                        profit_pct = ?,
+                        duration_seconds = ?,
+                        close_reason = 'TP',
+                        status = 'CLOSED',
+                        current_tp_index = ?,
+                        partial_profits = ?
+                    WHERE signal_id = ?
+                ''', (
+                    current_time.isoformat(),
+                    hit_price,
+                    profit_pct,
+                    duration_seconds,
+                    new_tp_index,
+                    json.dumps(partial_profits),
+                    signal_id
+                ))
+                
+                logger.info(
+                    f"🎯 TP5 HIT (FINAL): {signal_id[:8]} ({symbol} {side}) "
+                    f"{profit_pct:+.2f}% - SIGNAL CLOSED"
+                )
+            else:
+                # TP1-TP4 - Partial TP, keep signal ACTIVE
+                cursor.execute('''
+                    UPDATE signals SET
+                        current_tp_index = ?,
+                        partial_profits = ?
+                    WHERE signal_id = ?
+                ''', (
+                    new_tp_index,
+                    json.dumps(partial_profits),
+                    signal_id
+                ))
+                
+                logger.info(
+                    f"🎯 TP{new_tp_index} HIT (Partial): {signal_id[:8]} ({symbol} {side}) "
+                    f"{profit_pct:+.2f}% - Signal still ACTIVE"
+                )
+            
+            conn.commit()
+            conn.close()
+            
+            # Create outcome (is_final flag determines if signal is fully closed)
+            outcome = SignalOutcome(
+                signal_id=signal_id,
+                symbol=symbol,
+                side=side,
+                entry=entry_price,
+                exit_price=hit_price,
+                profit_pct=profit_pct,
+                close_reason='TP',
+                opened_at=opened_time,
+                closed_at=current_time,
+                bot_source=bot_source,
+                current_tp_index=new_tp_index - 1,  # 0-indexed (0=TP1, 4=TP5)
+                total_tps=total_tps,
+                partial_profits=partial_profits
+            )
+            
+            return outcome
+            
+        except Exception as e:
+            logger.error(f"Failed to record TP hit for {signal_id}: {e}")
             return None
     
     def get_active_signals(self) -> List[Dict]:

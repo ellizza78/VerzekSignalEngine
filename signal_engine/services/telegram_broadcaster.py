@@ -139,6 +139,72 @@ Please check the logs for details.
         
         await self._send_message(self.admin_group_id, message.strip())
     
+    async def send_partial_tp_message(self, outcome, tp_number: int = None):
+        """
+        Send partial TP message (TP1-TP4) to Telegram groups
+        
+        Args:
+            outcome: SignalOutcome from tracker.on_target_hit()
+            tp_number: TP level (1-4), defaults to current_tp_index + 1
+        """
+        if not self.bot:
+            logger.warning("Telegram bot not initialized")
+            return False
+        
+        # Calculate TP number from outcome if not provided
+        if tp_number is None:
+            tp_number = outcome.current_tp_index + 1
+        
+        # Format message for partial TP
+        message = f"""
+🔥 **VERZEK TRADING SIGNALS** 🔥
+
+{outcome.symbol} - 🚨 **Target {tp_number} reached**
+💸 Profit collected {outcome.profit_pct:+.2f}%
+⏰ Posted: {outcome.duration_formatted}
+        """
+        
+        # Broadcast to VIP and TRIAL groups
+        success = await self.broadcast_signal(message.strip(), to_groups=['vip', 'trial'])
+        
+        if success:
+            logger.info(f"✅ TP{tp_number} message sent: {outcome.symbol} {outcome.profit_pct:+.2f}%")
+        else:
+            logger.error(f"❌ Failed to send TP{tp_number} message for {outcome.symbol}")
+        
+        return success
+    
+    async def send_final_tp_message(self, outcome):
+        """
+        Send final TP message (TP5) to Telegram groups
+        
+        Args:
+            outcome: SignalOutcome from tracker.on_target_hit() with is_final=True
+        """
+        if not self.bot:
+            logger.warning("Telegram bot not initialized")
+            return False
+        
+        # Format message for final TP (TP5)
+        message = f"""
+🔥 **VERZEK TRADING SIGNALS** 🔥
+
+🏋🏻‍♀️ **Gained Profit on {outcome.symbol}**
+All take-profit targets achieved 😎
+Profit: {outcome.profit_pct:+.2f}% 📈
+Period: {outcome.duration_formatted} ⏰
+        """
+        
+        # Broadcast to VIP and TRIAL groups
+        success = await self.broadcast_signal(message.strip(), to_groups=['vip', 'trial'])
+        
+        if success:
+            logger.info(f"✅ TP5 (FINAL) message sent: {outcome.symbol} {outcome.profit_pct:+.2f}%")
+        else:
+            logger.error(f"❌ Failed to send TP5 (FINAL) message for {outcome.symbol}")
+        
+        return success
+    
     def get_stats(self) -> dict:
         """Get broadcast statistics"""
         return {

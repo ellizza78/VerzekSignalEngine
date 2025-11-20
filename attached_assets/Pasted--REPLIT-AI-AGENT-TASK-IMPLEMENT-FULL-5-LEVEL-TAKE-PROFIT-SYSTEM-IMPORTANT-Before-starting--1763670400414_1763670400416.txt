@@ -1,0 +1,274 @@
+
+🟦 REPLIT AI AGENT TASK — IMPLEMENT FULL 5-LEVEL TAKE PROFIT SYSTEM
+
+> IMPORTANT:
+Before starting, ensure Fusion Engine tasks are already completed or in progress.
+
+
+
+
+---
+
+📍 PHASE 1 — Update Signal Model to Support Multi-TP
+
+Modify SignalCandidate (in signal_engine/core/models.py)
+
+Ensure it includes:
+
+
+take_profits: List[float]   # 5 TP levels
+
+Modify SignalOutcome
+
+Add:
+
+current_tp_index: int       # last TP hit
+total_tps: int              # always 5
+partial_profits: List[float]  # store profit per TP hit
+
+
+---
+
+📍 PHASE 2 — Implement NEW Multi-TP Logic in tracker.py
+
+File: signal_engine/services/tracker.py
+
+Add new DB columns:
+
+current_tp_index INTEGER DEFAULT 0,
+total_tps INTEGER DEFAULT 5,
+partial_profits TEXT DEFAULT "[]"
+
+Add a NEW method:
+
+def on_target_hit(signal_id: str, hit_price: float):
+    # Load signal from DB
+    # Calculate profit % for this target
+    # Append to partial_profits
+    # Increment current_tp_index
+    # If current_tp_index < total_tps:
+    #     - DO NOT close the signal
+    #     - Return partial TP outcome (for Telegram message)
+    # Else:
+    #     - Close signal (final TP)
+    #     - Return final outcome (for TP5 message)
+
+Update open_signal():
+
+Set current_tp_index = 0
+
+Set total_tps = len(take_profits) (always 5)
+
+Set partial_profits = []
+
+
+
+---
+
+📍 PHASE 3 — Backend Price Engine Integration
+
+Wherever TP events are triggered (in backend service):
+
+Replace old TP logic with:
+
+outcome = tracker.on_target_hit(signal_id, current_price)
+if outcome.is_final:
+    telegram.send_final_tp_message(outcome)
+else:
+    telegram.send_partial_tp_message(outcome)
+
+
+---
+
+📍 PHASE 4 — Update Dispatcher Messaging
+
+File: signal_engine/services/dispatcher.py
+
+Add 2 new message functions:
+
+async def send_partial_tp_message(outcome: SignalOutcome):
+
+async def send_final_tp_message(outcome: SignalOutcome):
+
+Partial TP message format:
+
+🔥 VERZEK TRADING SIGNALS 🔥
+
+{symbol} - 🚨 Target {outcome.current_tp_index} reached
+💸 Profit collected {outcome.profit_pct:.2f}%
+⏰ Posted: {duration_string}
+
+Final TP message format:
+
+🔥 VERZEK TRADING SIGNALS 🔥
+
+🏋🏻‍♀️ Gained Profit on {symbol}
+All take-profit targets achieved 😎
+Profit: {outcome.profit_pct:.2f}% 📈
+Period: {duration_string} ⏰
+
+
+---
+
+📍 PHASE 5 — Dynamic TP5 (Final Take-Profit)
+
+Modify bot signal generator (all bots) to generate exactly 5 TPs:
+
+Fixed structure:
+
+TP1 = entry ± (ATR * 0.5)
+TP2 = entry ± (ATR * 1.0)
+TP3 = entry ± (ATR * 1.5)
+TP4 = entry ± (ATR * 2.0)
+TP5 = entry ± (ATR * dynamic_multiplier)
+
+Dynamic multiplier:
+
+If trend strong → 2.8  
+If normal → 2.3  
+If weak → 1.8  
+If sideways → 1.3
+
+Where “trend strength” = combination of:
+
+MA distance
+
+MACD slope
+
+Volume trend
+
+Volatility
+
+
+Add this logic to:
+
+scalping_bot.py
+
+trend_bot.py
+
+ai_bot.py
+
+qfl_bot.py
+
+
+(Wherever TP levels are generated.)
+
+
+---
+
+📍 PHASE 6 — Ensure Fusion Engine Handles Multi-TP Signals
+
+No change to Fusion logic EXCEPT:
+
+When filtering candidate signals, always expect 5 TPs
+
+Ensure approved signals still pass full TP list to dispatcher
+
+
+
+---
+
+📍 PHASE 7 — Modify SQLite Query for Daily Reports
+
+Update daily_reporter.py
+
+Daily report must include:
+
+Total signals
+
+TP1 hits (partial TP count)
+
+TP2 hits
+
+TP3 hits
+
+TP4 hits
+
+TP5 hits (final TP closures)
+
+SL count
+
+Cancelled count
+
+Winrate
+
+Best trade
+
+Worst trade
+
+Avg duration
+
+Avg profit
+
+
+Example:
+
+TP1 hits: 23
+TP2 hits: 18
+TP3 hits: 12
+TP4 hits: 7
+TP5 hits: 5 (Final + Closed)
+
+
+---
+
+📍 PHASE 8 — Telegram “Posted X Hours Ago”
+
+For EACH TP stage:
+
+duration = outcome.closed_at - outcome.opened_at
+Convert to “X Days Y Hours Z Minutes”
+
+Use same format as your example screenshots.
+
+
+---
+
+📍 PHASE 9 — AutoTrader Protection Logic
+
+Add rules:
+
+❗ DO NOT close trade early if TP1–TP4 hit
+
+(Only partial closure.)
+
+❗ Close trade if:
+
+SL hit
+
+Opposite signal confirmed by Fusion Engine
+
+Final TP5 hit
+
+
+❗ Prevent double-counting of TP hits
+
+Use current_tp_index to ensure each TP is counted once.
+
+
+---
+
+📍 PHASE 10 — Final Integration Tests
+
+After implementation, run:
+
+ssh verzek_vultr "systemctl restart verzek-signalengine"
+ssh verzek_vultr "tail -f /root/VerzekSignalEngine/signal_engine/logs/signal_engine.log"
+
+Verify:
+
+Signal opens with 5 TPs
+
+TP1 message appears
+
+TP2 message appears
+
+…
+
+TP5 final closure appears
+
+No duplicate messages
+
+Auto-trader respects OPEN → PARTIAL → FINAL
+
+

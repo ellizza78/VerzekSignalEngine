@@ -169,6 +169,122 @@ def close_signal():
         }), 500
 
 
+@app.route('/api/signals/tp-hit', methods=['POST'])
+def tp_hit():
+    """
+    Record a take-profit target hit (partial or final).
+    
+    Authentication: Required via SIGNAL_ENGINE_WEBHOOK_SECRET header
+    
+    Expected payload:
+    {
+        "signal_id": "abc-123-def",
+        "hit_price": 51500.00,
+        "tp_number": 1  // Optional: 1-5
+    }
+    
+    Returns:
+    {
+        "status": "success",
+        "outcome": {
+            "signal_id": "abc-123-def",
+            "profit_pct": 3.0,
+            "is_final": false,  // false for TP1-TP4, true for TP5
+            "current_tp_index": 0,  // 0 for TP1, 4 for TP5
+            "total_tps": 5
+        }
+    }
+    """
+    try:
+        # Verify authentication
+        expected_secret = os.getenv('SIGNAL_ENGINE_WEBHOOK_SECRET', 'dev-secret-change-in-prod')
+        provided_secret = request.headers.get('X-Webhook-Secret')
+        
+        if not provided_secret or provided_secret != expected_secret:
+            logger.warning(f"Unauthorized TP webhook attempt from {request.remote_addr}")
+            return jsonify({
+                'status': 'error',
+                'message': 'Unauthorized: Invalid or missing X-Webhook-Secret header'
+            }), 401
+        
+        # Validate request
+        if not request.json:
+            return jsonify({
+                'status': 'error',
+                'message': 'Invalid JSON payload'
+            }), 400
+        
+        data = request.json
+        signal_id = data.get('signal_id')
+        hit_price = data.get('hit_price')
+        tp_number = data.get('tp_number')
+        
+        # Validate required fields
+        if not signal_id:
+            return jsonify({
+                'status': 'error',
+                'message': 'Missing required field: signal_id'
+            }), 400
+        
+        if not hit_price:
+            return jsonify({
+                'status': 'error',
+                'message': 'Missing required field: hit_price'
+            }), 400
+        
+        # Convert to correct types
+        try:
+            hit_price = float(hit_price)
+            if tp_number is not None:
+                tp_number = int(tp_number)
+        except (ValueError, TypeError):
+            return jsonify({
+                'status': 'error',
+                'message': 'Invalid data types for hit_price or tp_number'
+            }), 400
+        
+        # Record TP hit in tracker
+        tracker_instance = get_tracker()
+        outcome = tracker_instance.on_target_hit(signal_id, hit_price, tp_number)
+        
+        if outcome:
+            tp_level = outcome.current_tp_index + 1
+            status_text = "FINAL" if outcome.is_final else "Partial"
+            
+            logger.info(
+                f"TP{tp_level} HIT ({status_text}): {signal_id[:8]} | "
+                f"Profit: {outcome.profit_pct:.2f}% | "
+                f"is_final: {outcome.is_final}"
+            )
+            
+            return jsonify({
+                'status': 'success',
+                'outcome': {
+                    'signal_id': outcome.signal_id,
+                    'symbol': outcome.symbol,
+                    'profit_pct': outcome.profit_pct,
+                    'is_final': outcome.is_final,
+                    'current_tp_index': outcome.current_tp_index,
+                    'total_tps': outcome.total_tps,
+                    'duration_formatted': outcome.duration_formatted,
+                    'close_reason': outcome.close_reason
+                }
+            }), 200
+        else:
+            logger.warning(f"Signal not found or already closed: {signal_id}")
+            return jsonify({
+                'status': 'error',
+                'message': f'Signal not found or already closed: {signal_id}'
+            }), 404
+    
+    except Exception as e:
+        logger.error(f"Error recording TP hit: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': f'Internal server error: {str(e)}'
+        }), 500
+
+
 @app.route('/api/signals/stats', methods=['GET'])
 def get_stats():
     """
