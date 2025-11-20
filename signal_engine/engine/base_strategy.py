@@ -192,6 +192,63 @@ class BaseStrategy(ABC):
         
         return tp_price, sl_price
     
+    def calculate_multi_tp(
+        self,
+        entry_price: float,
+        direction: str,
+        confidence: float,
+        base_tp_pct: float = None
+    ) -> List[float]:
+        """
+        Calculate 5 take-profit levels with progressive targets
+        
+        Args:
+            entry_price: Entry price
+            direction: 'LONG' or 'SHORT'
+            confidence: Signal confidence (0-100) for dynamic TP5
+            base_tp_pct: Base TP percentage (optional, calculated if not provided)
+            
+        Returns:
+            List of 5 TP prices [TP1, TP2, TP3, TP4, TP5]
+        """
+        # Use provided base or calculate from bot type
+        if base_tp_pct is None:
+            base_tp_pct = self.config.get('base_tp_pct', 1.0)
+        
+        # Progressive TP multipliers
+        # TP1-TP4: Fixed progression (0.4x, 0.7x, 1.0x, 1.3x of base)
+        # TP5: Dynamic based on confidence (1.3x-2.8x of base)
+        multipliers = [0.4, 0.7, 1.0, 1.3]
+        
+        # Calculate dynamic TP5 multiplier based on confidence
+        # High confidence (90+): 2.8x base
+        # Medium confidence (75-89): 2.0x base
+        # Low confidence (60-74): 1.5x base
+        if confidence >= 90:
+            tp5_multiplier = 2.8
+        elif confidence >= 80:
+            tp5_multiplier = 2.3
+        elif confidence >= 75:
+            tp5_multiplier = 2.0
+        else:
+            tp5_multiplier = 1.5
+        
+        multipliers.append(tp5_multiplier)
+        
+        # Calculate all 5 TP levels
+        tp_prices = []
+        for multiplier in multipliers:
+            tp_pct = base_tp_pct * multiplier
+            
+            if direction == 'LONG':
+                tp_price = entry_price * (1 + tp_pct / 100)
+            else:  # SHORT
+                tp_price = entry_price * (1 - tp_pct / 100)
+            
+            tp_prices.append(tp_price)
+        
+        return tp_prices
+    
     def validate_signal(self, candidate: SignalCandidate) -> bool:
         """
         Validate signal candidate meets minimum requirements
@@ -254,7 +311,7 @@ class BaseStrategy(ABC):
         sl_pct: float = None
     ) -> SignalCandidate:
         """
-        Create a SignalCandidate object with calculated TP/SL
+        Create a SignalCandidate object with 5 TP levels and SL
         
         Args:
             symbol: Trading symbol
@@ -262,11 +319,11 @@ class BaseStrategy(ABC):
             entry_price: Entry price
             confidence: Confidence percentage (0-100)
             timeframe: Trading timeframe (optional, uses self.timeframe if available)
-            tp_pct: Take profit percentage (optional, uses config if not provided)
+            tp_pct: Base take profit percentage for TP calculations (optional)
             sl_pct: Stop loss percentage (optional, uses config if not provided)
             
         Returns:
-            SignalCandidate object
+            SignalCandidate object with 5 TP levels
         """
         # Use provided values or get from config
         if timeframe is None:
@@ -274,14 +331,22 @@ class BaseStrategy(ABC):
         
         if tp_pct is None:
             tp_range = self.config.get('tp_range', [1.0, 2.0])
-            tp_pct = tp_range[0]  # Use conservative TP
+            tp_pct = tp_range[0]  # Use conservative TP as base
         
         if sl_pct is None:
             sl_range = self.config.get('sl_range', [0.5, 1.0])
             sl_pct = sl_range[0]  # Use conservative SL
         
-        # Calculate TP and SL prices
-        tp_price, sl_price = self.calculate_tp_sl(entry_price, side, tp_pct, sl_pct)
+        # Calculate 5 TP levels (TP1-TP5 with dynamic TP5)
+        tp_prices = self.calculate_multi_tp(
+            entry_price=entry_price,
+            direction=side,
+            confidence=confidence,
+            base_tp_pct=tp_pct
+        )
+        
+        # Calculate SL price
+        _, sl_price = self.calculate_tp_sl(entry_price, side, tp_pct, sl_pct)
         
         # Get bot source name from strategy name
         bot_source_map = {
@@ -292,13 +357,21 @@ class BaseStrategy(ABC):
         }
         bot_source = bot_source_map.get(self.name, 'UNKNOWN')
         
+        logger.debug(
+            f"{self.name} - {symbol} {side} | "
+            f"Entry: ${entry_price:.2f} | "
+            f"TPs: ${tp_prices[0]:.2f}, ${tp_prices[1]:.2f}, ${tp_prices[2]:.2f}, "
+            f"${tp_prices[3]:.2f}, ${tp_prices[4]:.2f} | "
+            f"SL: ${sl_price:.2f}"
+        )
+        
         return SignalCandidate(
             signal_id=generate_signal_id(),
             symbol=symbol,
             side=side,
             entry=entry_price,
             stop_loss=sl_price,
-            take_profits=[tp_price],
+            take_profits=tp_prices,
             timeframe=timeframe,
             confidence=confidence,
             bot_source=bot_source

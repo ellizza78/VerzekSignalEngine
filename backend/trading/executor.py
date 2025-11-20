@@ -19,6 +19,88 @@ from utils.notifications import (
 from broadcast import broadcast_signal_cancelled
 
 
+def notify_signal_engine_tp_hit(signal_id: str, hit_price: float, tp_number: int):
+    """
+    Send webhook to Signal Engine to record TP hit with retry logic
+    
+    Args:
+        signal_id: Signal ID from signal engine
+        hit_price: Price at which TP was hit
+        tp_number: TP number (1-5)
+    """
+    webhook_url = os.getenv('SIGNAL_ENGINE_WEBHOOK_URL', 'http://localhost:8050')
+    
+    payload = {
+        'signal_id': signal_id,
+        'hit_price': hit_price,
+        'tp_number': tp_number
+    }
+    
+    # Get webhook secret for authentication
+    webhook_secret = os.getenv('SIGNAL_ENGINE_WEBHOOK_SECRET', 'dev-secret-change-in-prod')
+    
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': webhook_secret
+    }
+    
+    # Retry up to 3 times with exponential backoff
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(
+                f"{webhook_url}/api/signals/tp-hit",
+                json=payload,
+                headers=headers,
+                timeout=5
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                outcome = result.get('outcome', {})
+                is_final = outcome.get('is_final', False)
+                
+                worker_logger.info(
+                    f"✅ Signal Engine notified: TP{tp_number} hit for {signal_id[:8]} "
+                    f"(Final: {is_final})"
+                )
+                return True
+            else:
+                worker_logger.warning(
+                    f"⚠️ Signal Engine TP webhook failed (attempt {attempt + 1}/{max_retries}): "
+                    f"Status {response.status_code}, Response: {response.text}"
+                )
+                
+        except requests.exceptions.Timeout:
+            worker_logger.error(
+                f"⏱️  Signal Engine TP webhook timeout (attempt {attempt + 1}/{max_retries}) "
+                f"for {signal_id[:8]}"
+            )
+        except requests.exceptions.ConnectionError:
+            worker_logger.error(
+                f"🔌 Signal Engine TP webhook connection error (attempt {attempt + 1}/{max_retries}) "
+                f"for {signal_id[:8]} - Is webhook server running?"
+            )
+        except Exception as e:
+            worker_logger.error(
+                f"❌ Signal Engine TP webhook error (attempt {attempt + 1}/{max_retries}): {e}"
+            )
+        
+        # Wait before retry (exponential backoff: 1s, 2s, 4s)
+        if attempt < max_retries - 1:
+            import time
+            wait_time = 2 ** attempt
+            worker_logger.info(f"Retrying in {wait_time}s...")
+            time.sleep(wait_time)
+    
+    # All retries failed - log error but don't block execution
+    worker_logger.error(
+        f"🚨 Signal Engine TP webhook failed after {max_retries} attempts for {signal_id[:8]}! "
+        f"TP{tp_number} hit may not be tracked."
+    )
+    return False
+
+
 def notify_signal_engine_closure(signal_id: str, exit_price: float, close_reason: str):
     """
     Send webhook to Signal Engine to close tracked signal with retry logic
@@ -538,6 +620,17 @@ def close_position_target(db: Session, position: Position, target_index: int, pr
                     worker_logger.info(f"📢 Telegram: TP{target_index} hit notification sent")
             except Exception as tg_error:
                 worker_logger.error(f"Telegram TP notification failed: {tg_error}")
+            
+            # Notify Signal Engine of TP hit for multi-TP tracking
+            if position.signal_id:
+                try:
+                    notify_signal_engine_tp_hit(
+                        signal_id=position.signal_id,
+                        hit_price=price,
+                        tp_number=target_index
+                    )
+                except Exception as se_error:
+                    worker_logger.error(f"Signal Engine TP notification failed: {se_error}")
             
             # Send trade end notification when position fully closes (PREMIUM users only)
             if position.status == 'CLOSED':
