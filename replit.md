@@ -1,7 +1,7 @@
 # VerzekAutoTrader
 
 ## Overview
-VerzekAutoTrader is a multi-tenant auto-trading platform focused on Dollar Cost Averaging (DCA) strategies. It automates trading by processing Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across multiple exchanges. The platform offers a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to provide a secure, reliable, and automated trading environment with a strong emphasis on user experience, enabling sophisticated automated trading strategies.
+VerzekAutoTrader is a multi-tenant auto-trading platform designed for Dollar Cost Averaging (DCA) strategies. It automates trading based on Telegram signals, broadcasting them to user groups, and executing DCA trades with advanced risk management across various exchanges. The platform includes a comprehensive subscription system with tiered access, progressive take-profit, auto-stop logic, and robust user/position management. The project aims to deliver a secure, reliable, and automated trading environment with a focus on user experience and sophisticated automated trading capabilities.
 
 ## User Preferences
 - **Production Safety**: Enterprise-grade PostgreSQL database with ACID compliance
@@ -20,22 +20,18 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Core Trading Modules**: DCA Engine, Safety Manager, DCA Orchestrator, and Position Tracker with target-based take-profit.
 - **Multi-User Management**: Supports multi-tenancy with per-user configurations, risk settings, exchange account management, symbol whitelists/blacklists, and subscription plans.
 - **Per-User Exchange API Keys**: Premium users connect their own Exchange API keys, encrypted at rest using Fernet (AES-128) and stored in PostgreSQL.
-- **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading. All exchange API calls route through ProxyHelper for static IP support.
-- **VerzekSignalEngine v2.0 - Master Fusion Engine**: Intelligent 4-bot signal generation system with centralized filtering and coordination. Features include:
-  - **4 Independent Bots**: Scalping (15s), Trend (5m), QFL (20s), AI/ML (30s) using CCXT market data and 25+ technical indicators
-  - **Fusion Engine (Balanced Mode)**: Centralized signal filtering with cooldown management (10min same direction, 20min opposite), trend bias filtering, rate limiting (12/hour global, 4/hour per symbol), opposite signal blocking, and bot priority weighting
-  - **Signal Tracking**: SQLite database for performance monitoring with SignalCandidate/SignalOutcome models
-  - **Daily Performance Reporting**: Automated daily stats (win rate, avg profit, best/worst trades) sent to VIP Telegram groups
-  - **59-Symbol Watchlist**: Comprehensive coverage across Layer 1s, DeFi, Memes, Gaming/Metaverse, and Infrastructure tokens
-- **Signal Broadcasting System**: Uses official Telegram Bot API for distributing signals from external VIP providers to user groups and the backend API, avoiding user account monitoring.
-- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for users, settings, subscriptions, exchange accounts, positions, and signal ingestion. Includes rate limiting, 2FA, and audit logging.
-- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, live signal feed, and help resources.
+- **Exchange Adapters**: Unified interface for Binance, Bybit, Phemex, and Kraken, supporting live and demo trading, with all API calls routed through ProxyHelper for static IP support.
+- **VerzekSignalEngine v2.0 - Master Fusion Engine**: An intelligent 4-bot signal generation system (Scalping, Trend, QFL, AI/ML) using CCXT market data and 25+ technical indicators. It includes a Fusion Engine for centralized signal filtering, cooldown management, trend bias filtering, rate limiting, opposite signal blocking, and bot priority weighting. Performance is tracked via SQLite, with daily reports sent to Telegram.
+- **Signal Broadcasting System**: Uses the official Telegram Bot API for distributing signals from external VIP providers to user groups and the backend API.
+- **REST API Server (Flask)**: Provides JWT-authenticated endpoints for users, settings, subscriptions, exchange accounts, positions, and signal ingestion, featuring rate limiting, 2FA, and audit logging.
+- **Mobile Application (React Native + Expo)**: Features JWT authentication, secure storage, account dashboard, API integration, auth-based navigation, a live signal feed, and help resources. Includes a TrialBanner component for subscription countdown and an Exchange Balance Display.
 - **Security & Payments**: Multi-layer security with JWT, server-side subscription validation, USDT TRC20 payment processing, automatic referral bonuses, HMAC signature verification, custom CAPTCHA, and email verification. API keys are encrypted at rest.
 - **Email Verification System**: Secure token-based email verification using Resend API.
-- **Signal Auto-Reversal System**: Automatically closes positions upon receiving opposite signals within a configurable time window, with Telegram notifications.
+- **Signal Auto-Reversal System**: Automatically closes positions upon receiving opposite signals with Telegram notifications. Supports instant market-based reversal logic and position stacking.
+- **Multi-TP System**: Implements a 5-level progressive take-profit system where bots generate TP1-TP5 with dynamic scaling for TP5 based on confidence. The system enforces sequential validation of TP hits and provides separate Telegram notifications for partial and final targets.
 - **Advanced Features**: AI Trade Assistant (GPT-4o-mini), Multi-Timeframe Analysis, Smart Order Routing, Social Trading, Advanced Charting, ML-powered Auto-Optimization, AI Risk Scoring, Trading Journal, Real-Time Price Feed (WebSockets), Portfolio Rebalancing, Webhook Integration, Advanced Order Types, Push Notifications (FCM), Admin Dashboard, Automated Backups, and TronScan Integration.
-- **Health Monitoring System**: Heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts.
-- **Dynamic Update Architecture**: Remote config system for instant updates, including feature flags, OTA updates via Expo EAS Update, force update flows, and auto-refresh.
+- **Health Monitoring System**: Includes heartbeat monitoring, watchdog auto-restart, and Telegram admin alerts.
+- **Dynamic Update Architecture**: Remote config system for instant updates, feature flags, OTA updates via Expo EAS Update, force update flows, and auto-refresh.
 
 ### System Design Choices
 - **Multi-tenancy**: Isolated configurations and strategies per user.
@@ -49,7 +45,7 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Scalability**: 4 Gunicorn workers handle concurrent traffic.
 
 ## External Dependencies
-- **Telegram API**: For signal broadcasting.
+- **Telegram API**: For signal broadcasting and notifications.
 - **Binance API**: For trading operations and market data.
 - **Bybit API**: For trading operations and market data.
 - **Phemex API**: For trading operations.
@@ -62,67 +58,3 @@ The mobile application (React Native + Expo) features a modern dark theme with T
 - **Firebase Cloud Messaging (FCM)**: For push notifications.
 - **TronScan API**: For USDT TRC20 payment verification.
 - **Resend API**: For transactional emails.
-### Signal Auto-Reversal System - LIVE ✅
-- **Smart Position Management**: Automatically detects and closes opposite direction positions when reversal signals arrive
-- **Database Schema**: Added `auto_reversal_enabled` (boolean, default: true) to user_settings table
-- **Reversal Detection Logic**: Implemented in `backend/trading/executor.py` with handle_signal_reversal() function
-  - Normalizes BUY/SELL and LONG/SHORT formats for compatibility
-  - **INSTANT detection** (no time windows) - market-based reversal logic
-  - Closes opposite positions at current market price before opening new position
-  - Logs reversal events with detailed metadata
-- **Position Stacking**: Multiple positions allowed for same symbol/direction (e.g., BTCUSDT SHORT + BTCUSDT SHORT)
-- **Telegram Notifications**: Broadcasts to VIP/TRIAL groups for:
-  - Signal reversals (e.g., "Signal Reversal: LONG → SHORT")
-  - Take-profit hits (e.g., "TARGET 1 HIT! BTCUSDT @ 50200")
-  - Stop-loss hits (e.g., "STOP LOSS TRIGGERED BTCUSDT @ 49750")
-- **API Endpoint**: `/users/{id}/reversal` PUT endpoint for managing reversal settings
-  - Requires JWT authentication and user ownership validation
-  - Returns reversal settings in GET `/users/{id}` response
-- **Example Flow**: 
-  - 2:39 PM: BTCUSDT LONG signal → Position opened
-  - 2:42 PM: BTCUSDT SHORT signal → **INSTANT reversal**: Close LONG, notify Telegram, open SHORT
-  - 3:10 PM: BTCUSDT SHORT signal → **Position stacking**: Open 2nd SHORT position (no reversal)
-- **Status**: LIVE in Replit + Production Deployment Pending
-- **Date Implemented**: November 18, 2025
-
-### Master Fusion Engine v2.0 - INTEGRATED ✅
-- **Intelligent Signal Coordination**: All 4 bots now route through centralized Fusion Engine for intelligent filtering
-- **Core Models**: SignalCandidate and SignalOutcome dataclasses replace legacy Signal format
-- **Fusion Engine Rules** (Balanced Mode):
-  - **Rate Limiting**: 12 signals/hour globally, 4 signals/hour per symbol
-  - **Cooldown Management**: 10 minutes same direction (bypass with 92%+ confidence), 20 minutes opposite direction (strict)
-  - **Trend Bias**: Follows Trend Bot direction, blocks counter-trend signals unless 90%+ confidence
-  - **Opposite Blocking**: Rejects opposite signals if active signal exists (Balanced Mode - Option A)
-  - **Bot Priority**: TREND (4) > AI_ML (3) > SCALPING (2) > QFL (1)
-- **Integration Pipeline**: Bot → Fusion Engine → Tracker → Dispatcher → Backend + Telegram
-- **Signal Tracking System**: SQLite database (`signal_engine/data/signals.db`) tracks opened/closed signals
-  - Tracks entry/exit prices, profit percentages, duration, close reasons (TP/SL/CANCEL/REVERSAL)
-  - Provides daily statistics: total signals, win rate, avg profit, best/worst trades
-  - **Note**: Signal closure requires backend webhook integration (see SIGNAL_CLOSURE_MECHANISM.md)
-- **Daily Performance Reporter**: Automated reports sent to VIP Telegram groups with performance metrics
-- **Deployment Ready**: Phases 1-10 complete, integration tested, ready for Vultr deployment
-- **Documentation**: 
-  - README_FUSION_ENGINE.md - Technical overview
-  - FUSION_ENGINE_UPGRADE_PROGRESS.md - Implementation phases
-  - DEPLOYMENT_CHECKLIST.md - Deployment procedures
-  - SIGNAL_CLOSURE_MECHANISM.md - Backend webhook integration guide
-- **Status**: INTEGRATED in Replit, Vultr Deployment Pending
-- **Date Implemented**: November 19, 2025
-
-### Signal Closure Webhook Integration - COMPLETE ✅
-- **Real-Time Closure**: Backend sends webhook to Signal Engine when positions close (TP/SL/Reversal)
-- **Webhook Endpoint**: `/api/signals/close` with X-Webhook-Secret authentication
-- **Retry Logic**: 3 attempts with exponential backoff (1s, 2s, 4s) + detailed error logging
-- **Polling Backup**: Reconciliation task runs on startup + every 30 minutes
-  - Auto-closes signals active >24 hours (missed webhooks)
-  - Uses break-even price (conservative estimate)
-  - Logs all auto-closures for audit trail
-- **Security**: Shared secret authentication prevents unauthorized closures
-- **Environment Variables**: SIGNAL_ENGINE_WEBHOOK_URL, SIGNAL_ENGINE_WEBHOOK_SECRET
-- **Integration Points**:
-  - close_position_target() → TP webhook (backend/trading/executor.py line 577)
-  - close_position_sl() → SL webhook (backend/trading/executor.py line 654)
-  - handle_signal_reversal() → REVERSAL webhook (backend/trading/executor.py line 320)
-- **Production Runbook**: Complete monitoring, troubleshooting, and recovery guide
-- **Status**: PRODUCTION-READY
-- **Date Implemented**: November 19, 2025
