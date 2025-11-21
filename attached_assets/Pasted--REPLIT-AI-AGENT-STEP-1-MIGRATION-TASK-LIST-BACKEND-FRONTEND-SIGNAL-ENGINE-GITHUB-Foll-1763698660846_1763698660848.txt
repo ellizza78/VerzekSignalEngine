@@ -1,0 +1,187 @@
+
+🚀 REPLIT AI AGENT — STEP 1 MIGRATION TASK LIST (BACKEND + FRONTEND + SIGNAL ENGINE → GITHUB)
+
+Follow these tasks EXACTLY as written. Do not skip anything.
+
+
+---
+
+✅ TASK 1 — CLEAN REPLIT PROJECT STRUCTURE (BACKEND)
+
+1. Remove ALL duplicate backend folders in the Replit workspace.
+Delete these if they exist:
+
+
+
+/root/backend
+/root/workspace/backend
+/root/workspace/api_server.py
+/root/api_server.py
+/backend_old
+/api_server_old
+
+2. ONLY keep this final backend structure inside Replit:
+
+
+
+backend/
+    api_server.py
+    config.py
+    requirements.txt
+    modules/
+    utils/
+    trade_executor.py
+vultr_production_sync/
+deploy_to_vultr.sh
+
+3. Make sure api_server.py is the latest and correct version (production v2.1.1).
+
+
+
+
+---
+
+✅ TASK 2 — CONNECT REPLIT BACKEND TO GITHUB (VerzekBackend repo)
+
+1. Open Replit Git panel.
+
+
+2. Connect to this GitHub repository:
+
+
+
+👉 https://github.com/ellizza78/VerzekBackend
+
+3. Add, commit, and push ALL backend files.
+
+
+
+If using shell:
+
+git add .
+git commit -m "Migration Step 1: Clean backend codebase from Replit → GitHub (v2.1.1)"
+git push origin main
+
+
+---
+
+✅ TASK 3 — CLEAN REPLIT PROJECT STRUCTURE (FRONTEND / MOBILE APP)
+
+Ensure this structure exists:
+
+mobile_app/
+    VerzekApp/
+        app.json
+        package.json
+        src/
+        assets/
+        ...
+
+Remove any duplicate app folders:
+
+/workspace/VerzekApp
+/mobile_app/old
+/VerzekApp_old
+
+Keep only mobile_app/VerzekApp/.
+
+
+---
+
+✅ TASK 4 — CONNECT REPLIT FRONTEND TO GITHUB (VerzekAutoTrader repo)
+
+1. In Replit, open the Git panel.
+
+
+2. Connect to:
+
+
+
+👉 https://github.com/ellizza78/VerzekAutoTrader
+
+3. Stage, commit, and push all Expo React Native files.
+
+
+
+If using shell:
+
+git add .
+git commit -m "Migration Step 1: Push React Native app from Replit → GitHub"
+git push origin main
+
+
+---
+
+✅ TASK 5 — PREPARE SIGNAL ENGINE MIGRATION
+
+If the folder exists:
+
+signal_engine/
+
+Do the following:
+
+1. Create a clean folder structure:
+
+
+
+signal_engine/
+    bots/
+    core/
+    services/
+    config/
+    logs/
+    main.py
+    requirements.txt
+
+2. Remove ANY duplicate or old folders in Replit:
+
+
+
+/root/signal_engine
+/signal_engine_old
+/signal_engine2
+
+3. DO NOT deploy this folder yet. Just clean and prepare it.
+
+
+
+
+---
+
+✅ TASK 6 — CONNECT SIGNAL ENGINE TO NEW GITHUB REPO (IF CREATED)
+
+If the user confirms they want a separate repo, push to:
+
+👉 https://github.com/ellizza78/VerzekSignalEngine
+
+Run:
+
+git init
+git remote add origin <repo-url>
+git add .
+git commit -m "Migration Step 1: Initial Signal Engine migration"
+git push -u origin main
+
+(If user prefers to keep Signal Engine inside Backend repo, skip this step—ask first.)
+
+
+---
+
+✅ TASK 7 — CONFIRM ALL GITHUB REPOS ARE SYNCED
+
+Verify:
+
+VerzekBackend repo has updated backend files
+
+VerzekAutoTrader repo has updated React Native app
+
+VerzekSignalEngine repo (optional) is ready
+
+
+
+---
+
+🔥 FINAL NOTE FOR AGENT
+
+Do not modify or delete anything outside the Replit workspace.
+This task only organizes code and pushes it to GitHub.
